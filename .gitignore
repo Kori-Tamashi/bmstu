@@ -2,3 +2,6 @@
 ~$*.docx
 *.bkp
 *.dtmp
+.vs/
+bin/
+obj/
