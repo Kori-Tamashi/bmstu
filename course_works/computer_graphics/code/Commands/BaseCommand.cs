@@ -9,9 +9,6 @@ namespace code.Commands
     public abstract class BaseCommand
     {
         BaseCommand() { }
-
-
-
-
+        ~BaseCommand() { }
     }
 }
