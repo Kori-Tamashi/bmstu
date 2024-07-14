@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
+using System.Windows.Forms.DataVisualization.Charting;
+
 
 namespace code
 {
@@ -13,9 +14,9 @@ namespace code
         {
             this.points = new List<Point3D> {
                 new Point3D(0, 0, 0),                   // 0
-                new Point3D(0.5, Math.Sqrt(3) / 2, 0),  // 1
-                new Point3D(1, 0, 0),                   // 2
-                new Point3D(0.5, Math.Sqrt(3) / 6, 1)   // 3
+                new Point3D((float)50, (float)Math.Sqrt(3) / 2 * 100, 0),  // 1
+                new Point3D(100, 0, 0),                   // 2
+                new Point3D((float)50, (float)Math.Sqrt(3) / 6 * 100, 100)   // 3
             };
 
             this.indexes = new List<int>() {

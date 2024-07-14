@@ -1,4 +1,6 @@
-﻿using System;
+﻿using code.Commands;
+using code;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,35 +14,29 @@ namespace code
 {
     public partial class Form1 : Form
     {
-        Bitmap image;
-        Graphics graphics;
-        Scene scene;
-        Pen basePen;
+        Canvas canvas;
+        Facade facade;
 
         public Form1()
         {
             InitializeComponent();
+            InitializeCanvas();
 
-            graphics = canvas.CreateGraphics();
-            scene = new Scene(canvas.Size);
+            facade = new Facade();
 
-            basePen = new Pen(Color.Black);
+            Model model = new Pyramid();
+            canvas.AddModel(model);
+        }
 
-            Cube cube = new Cube();
-            Pyramid pyramid = new Pyramid();
-            scene.AddModel(pyramid);
-            
-            
-
-
+        private void InitializeCanvas()
+        {
+            canvas = new Canvas(new Size(picture.Width, picture.Height), picture.CreateGraphics());
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
-
-
 
         private void toolTip1_Popup(object sender, PopupEventArgs e)
         {
@@ -54,12 +50,14 @@ namespace code
 
         private void triangularPyramid_button_Click(object sender, EventArgs e)
         {
-
+            DrawCommand command = new ClearCmd(ref canvas);
+            facade._execute(command);
         }
 
         private void Cube_button_Click(object sender, EventArgs e)
         {
-            scene.Draw(ref graphics, basePen);
+            DrawCommand command = new DrawCmd(ref canvas);
+            facade._execute(command);       
         }
     }
 }

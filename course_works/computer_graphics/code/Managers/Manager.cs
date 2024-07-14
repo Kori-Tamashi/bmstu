@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace code.Managers
+namespace code
 {
-    public abstract class BaseManager
+    class Manager
     {
-        public BaseManager() { }
+        public Manager() { }
+
+        public void _execute(Command command) { }
     }
 }

@@ -19,11 +19,11 @@ namespace code
             this.size = size;
         }
 
-        public void Draw(ref Graphics graphics, Pen pen)
+        public void Draw(Graphics graphics, Pen pen)
         {
             foreach (Model model in models)
             {
-                model.Draw(ref graphics, pen);
+                model.Draw(graphics, pen);
             }
         }
 

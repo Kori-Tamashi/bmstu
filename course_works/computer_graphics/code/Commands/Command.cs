@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace code.Commands
+namespace code
 {
-    public abstract class BaseCommand
+    class Command
     {
-        BaseCommand() { }
-        ~BaseCommand() { }
+        public Command() { }
+
     }
 }

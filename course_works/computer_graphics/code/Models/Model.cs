@@ -7,9 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using System.Windows.Shapes;
+using System.Windows.Forms.DataVisualization.Charting;
 
 using Pen = System.Drawing.Pen;
 
@@ -71,7 +69,7 @@ namespace code
         }
 
         #region Draw
-        public void Draw(ref Graphics graphics, Pen pen)
+        public void Draw(Graphics graphics, Pen pen)
         {
             foreach (Edge edge in edges)
             {

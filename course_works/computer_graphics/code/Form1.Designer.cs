@@ -46,14 +46,14 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
-            this.canvas = new System.Windows.Forms.PictureBox();
+            this.picture = new System.Windows.Forms.PictureBox();
             this.InteractionMenu_tabControl.SuspendLayout();
             this.Main_tabPage.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.Primitives_groupBox.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picture)).BeginInit();
             this.SuspendLayout();
             // 
             // InteractionMenu_tabControl
@@ -206,20 +206,20 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.canvas);
+            this.panel1.Controls.Add(this.picture);
             this.panel1.Location = new System.Drawing.Point(12, 201);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1485, 617);
             this.panel1.TabIndex = 1;
             // 
-            // canvas
+            // picture
             // 
-            this.canvas.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.canvas.Location = new System.Drawing.Point(0, 0);
-            this.canvas.Name = "canvas";
-            this.canvas.Size = new System.Drawing.Size(1484, 616);
-            this.canvas.TabIndex = 0;
-            this.canvas.TabStop = false;
+            this.picture.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.picture.Location = new System.Drawing.Point(0, 0);
+            this.picture.Name = "picture";
+            this.picture.Size = new System.Drawing.Size(1484, 616);
+            this.picture.TabIndex = 0;
+            this.picture.TabStop = false;
             // 
             // Form1
             // 
@@ -240,7 +240,7 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picture)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -263,7 +263,7 @@
         private System.Windows.Forms.Button truncatedPentagonalPyramid_button;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.PictureBox canvas;
+        private System.Windows.Forms.PictureBox picture;
     }
 }
 
