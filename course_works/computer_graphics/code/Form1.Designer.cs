@@ -32,28 +32,28 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.InteractionMenu_tabControl = new System.Windows.Forms.TabControl();
             this.Main_tabPage = new System.Windows.Forms.TabPage();
-            this.View_tabPage = new System.Windows.Forms.TabPage();
-            this.File_tabPage = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.Primitives_groupBox = new System.Windows.Forms.GroupBox();
-            this.Cube_button = new System.Windows.Forms.Button();
-            this.directPrism_button = new System.Windows.Forms.Button();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.inclinedPrism_button = new System.Windows.Forms.Button();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.Cube_button = new System.Windows.Forms.Button();
             this.triangularPyramid_button = new System.Windows.Forms.Button();
+            this.directPrism_button = new System.Windows.Forms.Button();
             this.Icosahedron_button = new System.Windows.Forms.Button();
             this.truncatedPentagonalPyramid_button = new System.Windows.Forms.Button();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.inclinedPrism_button = new System.Windows.Forms.Button();
+            this.View_tabPage = new System.Windows.Forms.TabPage();
+            this.File_tabPage = new System.Windows.Forms.TabPage();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
-            this.Canvas = new System.Windows.Forms.PictureBox();
+            this.canvas = new System.Windows.Forms.PictureBox();
             this.InteractionMenu_tabControl.SuspendLayout();
             this.Main_tabPage.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.Primitives_groupBox.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.SuspendLayout();
             // 
             // InteractionMenu_tabControl
@@ -81,28 +81,13 @@
             this.Main_tabPage.TabIndex = 0;
             this.Main_tabPage.Text = "Главная";
             // 
-            // View_tabPage
+            // flowLayoutPanel2
             // 
-            this.View_tabPage.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.View_tabPage.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.View_tabPage.Location = new System.Drawing.Point(4, 29);
-            this.View_tabPage.Name = "View_tabPage";
-            this.View_tabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.View_tabPage.Size = new System.Drawing.Size(1481, 179);
-            this.View_tabPage.TabIndex = 1;
-            this.View_tabPage.Text = "Вид";
-            this.View_tabPage.UseVisualStyleBackColor = true;
-            // 
-            // File_tabPage
-            // 
-            this.File_tabPage.BackColor = System.Drawing.Color.Transparent;
-            this.File_tabPage.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.File_tabPage.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.File_tabPage.Location = new System.Drawing.Point(4, 29);
-            this.File_tabPage.Name = "File_tabPage";
-            this.File_tabPage.Size = new System.Drawing.Size(1481, 179);
-            this.File_tabPage.TabIndex = 2;
-            this.File_tabPage.Text = "Файл";
+            this.flowLayoutPanel2.Controls.Add(this.Primitives_groupBox);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(4, 7);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(1471, 140);
+            this.flowLayoutPanel2.TabIndex = 0;
             // 
             // Primitives_groupBox
             // 
@@ -115,26 +100,6 @@
             this.Primitives_groupBox.TabIndex = 1;
             this.Primitives_groupBox.TabStop = false;
             this.Primitives_groupBox.Text = "Примитивы";
-            // 
-            // Cube_button
-            // 
-            this.Cube_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Cube_button.BackgroundImage")));
-            this.Cube_button.Location = new System.Drawing.Point(3, 3);
-            this.Cube_button.Name = "Cube_button";
-            this.Cube_button.Size = new System.Drawing.Size(50, 50);
-            this.Cube_button.TabIndex = 3;
-            this.toolTip.SetToolTip(this.Cube_button, "Куб");
-            this.Cube_button.UseVisualStyleBackColor = true;
-            // 
-            // directPrism_button
-            // 
-            this.directPrism_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("directPrism_button.BackgroundImage")));
-            this.directPrism_button.Location = new System.Drawing.Point(115, 3);
-            this.directPrism_button.Name = "directPrism_button";
-            this.directPrism_button.Size = new System.Drawing.Size(50, 50);
-            this.directPrism_button.TabIndex = 2;
-            this.toolTip.SetToolTip(this.directPrism_button, "Прямая призма");
-            this.directPrism_button.UseVisualStyleBackColor = true;
             // 
             // flowLayoutPanel1
             // 
@@ -149,15 +114,16 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(168, 113);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
-            // inclinedPrism_button
+            // Cube_button
             // 
-            this.inclinedPrism_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("inclinedPrism_button.BackgroundImage")));
-            this.inclinedPrism_button.Location = new System.Drawing.Point(115, 59);
-            this.inclinedPrism_button.Name = "inclinedPrism_button";
-            this.inclinedPrism_button.Size = new System.Drawing.Size(50, 50);
-            this.inclinedPrism_button.TabIndex = 4;
-            this.toolTip.SetToolTip(this.inclinedPrism_button, "Наклонная призма");
-            this.inclinedPrism_button.UseVisualStyleBackColor = true;
+            this.Cube_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Cube_button.BackgroundImage")));
+            this.Cube_button.Location = new System.Drawing.Point(3, 3);
+            this.Cube_button.Name = "Cube_button";
+            this.Cube_button.Size = new System.Drawing.Size(50, 50);
+            this.Cube_button.TabIndex = 3;
+            this.toolTip.SetToolTip(this.Cube_button, "Куб");
+            this.Cube_button.UseVisualStyleBackColor = true;
+            this.Cube_button.Click += new System.EventHandler(this.Cube_button_Click);
             // 
             // triangularPyramid_button
             // 
@@ -169,6 +135,17 @@
             this.triangularPyramid_button.TabIndex = 4;
             this.toolTip.SetToolTip(this.triangularPyramid_button, "Треугольная пирамида");
             this.triangularPyramid_button.UseVisualStyleBackColor = true;
+            this.triangularPyramid_button.Click += new System.EventHandler(this.triangularPyramid_button_Click);
+            // 
+            // directPrism_button
+            // 
+            this.directPrism_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("directPrism_button.BackgroundImage")));
+            this.directPrism_button.Location = new System.Drawing.Point(115, 3);
+            this.directPrism_button.Name = "directPrism_button";
+            this.directPrism_button.Size = new System.Drawing.Size(50, 50);
+            this.directPrism_button.TabIndex = 2;
+            this.toolTip.SetToolTip(this.directPrism_button, "Прямая призма");
+            this.directPrism_button.UseVisualStyleBackColor = true;
             // 
             // Icosahedron_button
             // 
@@ -193,31 +170,56 @@
             this.toolTip.SetToolTip(this.truncatedPentagonalPyramid_button, "Пятиугольная усеченная пирамида");
             this.truncatedPentagonalPyramid_button.UseVisualStyleBackColor = true;
             // 
-            // flowLayoutPanel2
+            // inclinedPrism_button
             // 
-            this.flowLayoutPanel2.Controls.Add(this.Primitives_groupBox);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(4, 7);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(1471, 140);
-            this.flowLayoutPanel2.TabIndex = 0;
+            this.inclinedPrism_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("inclinedPrism_button.BackgroundImage")));
+            this.inclinedPrism_button.Location = new System.Drawing.Point(115, 59);
+            this.inclinedPrism_button.Name = "inclinedPrism_button";
+            this.inclinedPrism_button.Size = new System.Drawing.Size(50, 50);
+            this.inclinedPrism_button.TabIndex = 4;
+            this.toolTip.SetToolTip(this.inclinedPrism_button, "Наклонная призма");
+            this.inclinedPrism_button.UseVisualStyleBackColor = true;
+            // 
+            // View_tabPage
+            // 
+            this.View_tabPage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.View_tabPage.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.View_tabPage.Location = new System.Drawing.Point(4, 29);
+            this.View_tabPage.Name = "View_tabPage";
+            this.View_tabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.View_tabPage.Size = new System.Drawing.Size(1481, 150);
+            this.View_tabPage.TabIndex = 1;
+            this.View_tabPage.Text = "Вид";
+            this.View_tabPage.UseVisualStyleBackColor = true;
+            // 
+            // File_tabPage
+            // 
+            this.File_tabPage.BackColor = System.Drawing.Color.Transparent;
+            this.File_tabPage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.File_tabPage.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.File_tabPage.Location = new System.Drawing.Point(4, 29);
+            this.File_tabPage.Name = "File_tabPage";
+            this.File_tabPage.Size = new System.Drawing.Size(1481, 150);
+            this.File_tabPage.TabIndex = 2;
+            this.File_tabPage.Text = "Файл";
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.Canvas);
+            this.panel1.Controls.Add(this.canvas);
             this.panel1.Location = new System.Drawing.Point(12, 201);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1485, 617);
             this.panel1.TabIndex = 1;
             // 
-            // Canvas
+            // canvas
             // 
-            this.Canvas.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.Canvas.Location = new System.Drawing.Point(0, 0);
-            this.Canvas.Name = "Canvas";
-            this.Canvas.Size = new System.Drawing.Size(1484, 616);
-            this.Canvas.TabIndex = 0;
-            this.Canvas.TabStop = false;
+            this.canvas.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.canvas.Location = new System.Drawing.Point(0, 0);
+            this.canvas.Name = "canvas";
+            this.canvas.Size = new System.Drawing.Size(1484, 616);
+            this.canvas.TabIndex = 0;
+            this.canvas.TabStop = false;
             // 
             // Form1
             // 
@@ -232,13 +234,13 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.InteractionMenu_tabControl.ResumeLayout(false);
             this.Main_tabPage.ResumeLayout(false);
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.Primitives_groupBox.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
-            this.flowLayoutPanel2.PerformLayout();
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -261,7 +263,7 @@
         private System.Windows.Forms.Button truncatedPentagonalPyramid_button;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.PictureBox Canvas;
+        private System.Windows.Forms.PictureBox canvas;
     }
 }
 
