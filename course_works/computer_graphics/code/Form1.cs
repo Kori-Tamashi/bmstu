@@ -1,5 +1,4 @@
-﻿using code.Commands;
-using code;
+﻿using code;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +16,9 @@ namespace code
         Canvas canvas;
         Facade facade;
 
+        DrawCommand drawCommand;
+        SceneCommand sceneCommand;
+
         public Form1()
         {
             InitializeComponent();
@@ -25,7 +27,8 @@ namespace code
             facade = new Facade();
 
             Model model = new Pyramid();
-            canvas.AddModel(model);
+            sceneCommand = new AddModelCmd(ref canvas, ref model);
+            facade._execute(sceneCommand);
         }
 
         private void InitializeCanvas()
@@ -50,14 +53,14 @@ namespace code
 
         private void triangularPyramid_button_Click(object sender, EventArgs e)
         {
-            DrawCommand command = new ClearCmd(ref canvas);
-            facade._execute(command);
+            drawCommand = new ClearCmd(ref canvas);
+            facade._execute(drawCommand);
         }
 
         private void Cube_button_Click(object sender, EventArgs e)
         {
-            DrawCommand command = new DrawCmd(ref canvas);
-            facade._execute(command);       
+            drawCommand = new DrawCmd(ref canvas);
+            facade._execute(drawCommand);       
         }
     }
 }

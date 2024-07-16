@@ -37,6 +37,7 @@ namespace code
                 3, 7
             };
 
+            ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
         }
     }

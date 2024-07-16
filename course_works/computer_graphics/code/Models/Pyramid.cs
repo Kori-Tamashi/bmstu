@@ -28,6 +28,7 @@ namespace code
                 2, 3
             };
 
+            ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
         }
     }

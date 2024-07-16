@@ -1,4 +1,4 @@
-﻿using code.Commands;
+﻿using code;
 using code;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,6 @@ using System.Windows.Forms;
 
 namespace code
 {
-   
 
     class Canvas
     {

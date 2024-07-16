@@ -10,5 +10,6 @@ namespace code
     {
         public Command() { }
 
+        public virtual void _execute() { }
     }
 }

@@ -4,18 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace code.Commands
+namespace code
 {
     class DrawCommand : Command 
     {
-        public Canvas canvas;
+        protected Canvas canvas;
 
         public DrawCommand(ref Canvas canvas) 
         { 
             this.canvas = canvas;
         }
-
-        public virtual void _execute() { }
     }
 
     class DrawCmd : DrawCommand
@@ -35,6 +33,16 @@ namespace code.Commands
         public override void _execute() 
         {
             canvas.Clear();
+        }
+    }
+
+    class RefreshCmd : DrawCommand
+    {
+        public RefreshCmd(ref Canvas canvas) : base(ref canvas) { }
+
+        public override void _execute()
+        {
+            canvas.Refresh();
         }
     }
 }

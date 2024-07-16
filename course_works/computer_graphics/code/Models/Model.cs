@@ -9,18 +9,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
 
-using Pen = System.Drawing.Pen;
-
 namespace code
 {
     class Model
     {
+
+        protected Point3D center;
         protected List<Point3D> points;
         protected List<int> indexes;
         protected List<Edge> edges;
 
         protected Model() 
-        { 
+        {
+            center = new Point3D();
             points = new List<Point3D>();
             indexes = new List<int>();
             edges = new List<Edge>();
@@ -30,6 +31,7 @@ namespace code
         {
             points.AddRange(points);
             indexes.AddRange(indexes);
+            ConstructCenter(points);
             ConstructEdges(points, indexes);
         }
 
@@ -38,6 +40,23 @@ namespace code
             edges.AddRange(edges);
             ConstructPoints(edges);
             ConstructIndexes(edges);
+            ConstructCenter(points);
+        }
+
+        protected void ConstructCenter(List<Point3D> points)
+        {
+            center = new Point3D();
+
+            foreach (Point3D point in points)
+            {
+                center.X += point.X;
+                center.Y += point.Y;
+                center.Z += point.Z;
+            }
+
+            center.X /= points.Count;
+            center.Y /= points.Count;
+            center.Z /= points.Count;
         }
 
         protected void ConstructPoints(List<Edge> edges)
@@ -68,103 +87,92 @@ namespace code
             }
         }
 
-        #region Draw
         public void Draw(Graphics graphics, Pen pen)
         {
             foreach (Edge edge in edges)
             {
                 graphics.DrawLine(
-                    pen, 
-                    (float)edge.start.X, 
-                    (float)edge.start.Y, 
-                    (float)edge.end.X, 
+                    pen,
+                    (float)edge.start.X,
+                    (float)edge.start.Y,
+                    (float)edge.end.X,
                     (float)edge.end.Y
                 );
             }
         }
-        #endregion
 
-        #region Add-Remove
-        protected void Add(Point3D point)
+        protected void UpdateCenter()
         {
-            AddPoint(point);
+            ConstructCenter(this.points);
         }
 
-        protected void Add(List<Point3D> points)
+        protected void Move()
         {
-            AddPoints(points);
+            
         }
 
-        protected void Add(List<int> indexes)
+        private void Transform(TransformationMatrix matrix, Point3D center)
         {
-            AddIndexes(indexes);
+            UpdateCenter();
+            MovePointsToOrigin(ref center);
+            TransformPoints(ref matrix);
+            MovePointsToCenter(ref center);
         }
 
-        protected void Add(Edge edge)
+        private void MovePointsToOrigin(ref Point3D center)
         {
-            AddEdge(edge);
+            Point3D diff = new Point3D(
+                0 - center.X,
+                0 - center.Y,
+                0 - center.Z
+            );
+
+            TransformationMatrix matrix = new TransformationMatrix(new float[4, 4] {
+                    {1,      0,      0,      0},
+                    {0,      1,      0,      0},
+                    {0,      0,      1,      0},
+                    {diff.X, diff.Y, diff.Z, 1}
+                }
+            );
+
+            TransformPoints(ref matrix);
+            UpdateCenter();
         }
 
-        protected void Add(List<Edge> edges)
+        private void MovePointsToCenter(ref Point3D center)
         {
-            AddEdges(edges);
+            Point3D diff = new Point3D(
+                center.X - 0,
+                center.Y - 0,
+                center.Z - 0
+            );
+
+            TransformationMatrix matrix = new TransformationMatrix(new float[4, 4] {
+                    {1,      0,      0,      0},
+                    {0,      1,      0,      0},
+                    {0,      0,      1,      0},
+                    {diff.X, diff.Y, diff.Z, 1}
+                }
+            );
+
+            TransformPoints(ref matrix);
+            UpdateCenter();
         }
 
-        private void AddPoints(List<Point3D> points)
+        private void TransformPoints(ref TransformationMatrix matrix)
         {
-            this.points.AddRange(points);
-        }
-
-        private void AddPoint(Point3D point)
-        {
-            points.Add(point);
-        }
-
-        private void AddPoints(List<Edge> edges)
-        {
-            foreach (Edge edge in edges)
+            foreach(Point3D point in points)
             {
-                points.Add(edge.start);
-                points.Add(edge.end);
+                Matrix cur_location = new Matrix(point);
+                Matrix new_location = cur_location * matrix;
+
+                point.X = new_location[0, 0];
+                point.Y = new_location[1, 0];
+                point.Z = new_location[2, 0];
             }
         }
 
-        private void AddIndexes(List<int> indexes)
-        {
-            this.indexes.AddRange(indexes);
-            AddEdges(indexes);
-        }
 
-        private void AddIndexes(List<Edge> edges)
-        {
-            int count = indexes.Count;
-            foreach (Edge edge in edges)
-            {
-                indexes.Add(count++);
-                indexes.Add(count++);
-            }
-        }
-
-        private void AddEdge(Edge edge)
-        {
-            edges.Add(edge);
-        }
-
-        private void AddEdges(List<int> indexes)
-        {
-            for (int i = 0; i < indexes.Count; i += 2)
-            {
-                Edge edge = new Edge(points[indexes[i]], points[indexes[i + 1]]);
-                edges.Add(edge);
-            }
-        }
-
-        private void AddEdges(List<Edge> edges)
-        {
-            this.edges.AddRange(edges);
-            AddPoints(edges);
-            AddIndexes(edges);
-        }
-        #endregion
+        
     }
 }

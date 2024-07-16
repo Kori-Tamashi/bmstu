@@ -1,17 +1,16 @@
-﻿using code;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace code
-{ 
-    class DrawManager : Manager
+namespace code.Managers
+{
+    class SceneManager : Manager
     {
-        public DrawManager() { }
+        public SceneManager() { }
 
-        public void _execute(DrawCommand command)
+        public void _execute(SceneCommand command)
         {
             command._execute();
         }
