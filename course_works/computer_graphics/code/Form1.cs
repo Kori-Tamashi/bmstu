@@ -18,6 +18,7 @@ namespace code
 
         DrawCommand drawCommand;
         SceneCommand sceneCommand;
+        TransformationCommand transformationCommand;
 
         public Form1()
         {
@@ -60,7 +61,21 @@ namespace code
         private void Cube_button_Click(object sender, EventArgs e)
         {
             drawCommand = new DrawCmd(ref canvas);
-            facade._execute(drawCommand);       
+            facade._execute(drawCommand);
+        }
+
+        private void directPrism_button_Click(object sender, EventArgs e)
+        {
+         
+            transformationCommand = new MoveCommand(ref canvas, 5, 5, 5);
+            facade._execute(transformationCommand);
+
+            transformationCommand = new RotateCommand(ref canvas, 5, 5, 5);
+            facade._execute(transformationCommand);
+
+            transformationCommand = new ScaleCommand(ref canvas, (float)1.01, (float)1.01, (float)1.01);
+            facade._execute(transformationCommand);
+            
         }
     }
 }

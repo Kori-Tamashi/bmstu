@@ -64,5 +64,22 @@ namespace code
             Draw();
         }
 
+        public void Move(Move move)
+        {
+            scene.Move(move);
+            Refresh();
+        }
+
+        public void Rotate(Rotate rotate)
+        {
+            scene.Rotate(rotate);
+            Refresh();
+        }
+
+        public void Scale(Scale scale)
+        {
+            scene.Scale(scale);
+            Refresh();
+        }
     }
 }

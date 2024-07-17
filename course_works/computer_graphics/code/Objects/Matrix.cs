@@ -25,7 +25,13 @@ namespace code
         {
             rows = row;
             columns = col;
+
             _matrix = new float[row, col];
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                    _matrix[i, j] = 0;
+            }
         }
 
         public Matrix(float[,] matrix)
@@ -37,13 +43,14 @@ namespace code
 
         public Matrix(Point3D point)
         {
-            rows = 3;
-            columns = 1;
+            rows = 1;
+            columns = 4;
 
-            _matrix = new float[3, 1];
+            _matrix = new float[1, 4];
             _matrix[0, 0] = point.X;
-            _matrix[1, 1] = point.Y;
-            _matrix[2, 2] = point.Z;
+            _matrix[0, 1] = point.Y;
+            _matrix[0, 2] = point.Z;
+            _matrix[0, 3] = 1;
         }
 
         public float this[int row, int col]
@@ -64,15 +71,20 @@ namespace code
 
         public static Matrix operator* (Matrix a, Matrix b)
         {
+            if (a.columns != b.rows)
+            {
+                throw new ArgumentException("Матрицы нельзя перемножить, так как количество столбцов первой матрицы не равно количеству строк второй матрицы.");
+            }
+
             Matrix result = new Matrix(a.rows, b.columns);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < a.rows; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < b.columns; j++)
                 {
-                    for (int k = 0; k < 4; k++)
+                    for (int k = 0; k < a.columns; k++) 
                     {
-                        result._matrix[i, j] += a._matrix[i, k] * b._matrix[k, j];
+                        result[i, j] += a[i, k] * b[k, j];
                     }
                 }
             }
@@ -80,6 +92,6 @@ namespace code
             return result;
         }
 
-        
+
     }
 }

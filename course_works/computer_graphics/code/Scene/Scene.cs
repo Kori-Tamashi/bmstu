@@ -46,5 +46,29 @@ namespace code
         {
             models.Clear();
         }
+
+        public void Move(Move move)
+        {
+            foreach (Model model in models)
+            {
+                model.Move(move);
+            }
+        }
+
+        public void Rotate(Rotate rotate)
+        {
+            foreach (Model model in models)
+            {
+                model.Rotate(rotate);
+            }
+        }
+
+        public void Scale(Scale scale)
+        {
+            foreach (Model model in models)
+            {
+                model.Scale(scale);
+            }
+        }
     }
 }

@@ -13,12 +13,12 @@ namespace code
 {
     class Model
     {
-
         protected Point3D center;
         protected List<Point3D> points;
         protected List<int> indexes;
         protected List<Edge> edges;
 
+        #region Constructors
         protected Model() 
         {
             center = new Point3D();
@@ -86,6 +86,7 @@ namespace code
                 edges.Add(edge);
             }
         }
+        #endregion
 
         public void Draw(Graphics graphics, Pen pen)
         {
@@ -101,25 +102,53 @@ namespace code
             }
         }
 
+        public void Move(Move move)
+        {
+            Transform(move, this.center);
+        }
+
+        public void Rotate(Rotate rotate)
+        {
+            Transform(rotate, this.center);
+        }
+
+        public void Rotate(Rotate rotate, Point3D center)
+        {
+            Transform(rotate, center);
+        }
+
+        public void Scale(Scale scale)
+        {
+            Transform(scale, this.center);
+        }
+
+        public void Scale(Scale scale, Point3D center)
+        {
+            Transform(scale, center);
+        }
+
         protected void UpdateCenter()
         {
             ConstructCenter(this.points);
         }
 
-        protected void Move()
+        private void Transform(Transformation transformation, Point3D center)
         {
-            
+            UpdateCenter();
+            MovePointsToOrigin(center);
+            TransformPoints(transformation);
+            MovePointsToCenter(center);
         }
 
         private void Transform(TransformationMatrix matrix, Point3D center)
         {
             UpdateCenter();
-            MovePointsToOrigin(ref center);
-            TransformPoints(ref matrix);
-            MovePointsToCenter(ref center);
+            MovePointsToOrigin(center);
+            TransformPoints(matrix);
+            MovePointsToCenter(center);
         }
 
-        private void MovePointsToOrigin(ref Point3D center)
+        private void MovePointsToOrigin(Point3D center)
         {
             Point3D diff = new Point3D(
                 0 - center.X,
@@ -128,18 +157,18 @@ namespace code
             );
 
             TransformationMatrix matrix = new TransformationMatrix(new float[4, 4] {
-                    {1,      0,      0,      0},
-                    {0,      1,      0,      0},
-                    {0,      0,      1,      0},
-                    {diff.X, diff.Y, diff.Z, 1}
+                    {1,       0,       0,       0},
+                    {0,       1,       0,       0},
+                    {0,       0,       1,       0},
+                    {diff.X,      diff.Y,      diff.Z,      1}
                 }
             );
 
-            TransformPoints(ref matrix);
+            TransformPoints(matrix);
             UpdateCenter();
         }
 
-        private void MovePointsToCenter(ref Point3D center)
+        private void MovePointsToCenter(Point3D center)
         {
             Point3D diff = new Point3D(
                 center.X - 0,
@@ -148,18 +177,31 @@ namespace code
             );
 
             TransformationMatrix matrix = new TransformationMatrix(new float[4, 4] {
-                    {1,      0,      0,      0},
-                    {0,      1,      0,      0},
-                    {0,      0,      1,      0},
-                    {diff.X, diff.Y, diff.Z, 1}
+                    {1,       0,       0,       0},
+                    {0,       1,       0,       0},
+                    {0,       0,       1,       0},
+                    {diff.X,      diff.Y,      diff.Z,      1}
                 }
             );
 
-            TransformPoints(ref matrix);
+            TransformPoints(matrix);
             UpdateCenter();
         }
 
-        private void TransformPoints(ref TransformationMatrix matrix)
+        private void TransformPoints(Transformation transformation)
+        {
+            foreach (Point3D point in points)
+            {
+                Matrix cur_location = new Matrix(point);
+                Matrix new_location = cur_location * transformation.matrix;
+
+                point.X = new_location[0, 0];
+                point.Y = new_location[0, 1];
+                point.Z = new_location[0, 2];
+            }
+        }
+
+        private void TransformPoints(TransformationMatrix matrix)
         {
             foreach(Point3D point in points)
             {
@@ -167,12 +209,9 @@ namespace code
                 Matrix new_location = cur_location * matrix;
 
                 point.X = new_location[0, 0];
-                point.Y = new_location[1, 0];
-                point.Z = new_location[2, 0];
+                point.Y = new_location[0, 1];
+                point.Z = new_location[0, 2];
             }
         }
-
-
-        
     }
 }

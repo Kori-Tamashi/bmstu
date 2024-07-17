@@ -12,11 +12,13 @@ namespace code
     {
         DrawManager drawManager;
         SceneManager sceneManager;
+        TransformationManager transformationManager;
 
         public Facade()
         { 
             drawManager = new DrawManager();
             sceneManager = new SceneManager();
+            transformationManager = new TransformationManager();
         }
 
         public void _execute(DrawCommand command)
@@ -27,6 +29,11 @@ namespace code
         public void _execute(SceneCommand command)
         {
             sceneManager._execute(command);
+        }
+
+        public void _execute(TransformationCommand command) 
+        { 
+            transformationManager._execute(command);
         }
     }
 }

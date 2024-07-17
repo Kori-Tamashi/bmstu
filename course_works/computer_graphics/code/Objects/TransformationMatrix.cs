@@ -30,5 +30,23 @@ namespace code
             columns = 4;
             _matrix = matrix;
         }
+
+        public static TransformationMatrix operator *(TransformationMatrix a, TransformationMatrix b)
+        {
+            TransformationMatrix result = new TransformationMatrix();
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    for (int k = 0; k < 4; k++)
+                    {
+                        result[i, j] += a[i, k] * b[k, j];
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 }

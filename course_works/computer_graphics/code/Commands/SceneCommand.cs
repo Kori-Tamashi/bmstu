@@ -44,5 +44,4 @@ namespace code
             canvas.RemoveModel(model);
         }
     }
-
 }
