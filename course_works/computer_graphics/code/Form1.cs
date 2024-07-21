@@ -13,6 +13,8 @@ namespace code
 {
     public partial class Form1 : Form
     {
+        Form2 dialogEdit;
+
         Canvas canvas;
         Facade facade;
 
@@ -23,13 +25,19 @@ namespace code
         public Form1()
         {
             InitializeComponent();
+            InitializeDialogs();
             InitializeCanvas();
 
             facade = new Facade();
 
-            Model model = new Pyramid();
+            Model model = new Cube();
             sceneCommand = new AddModelCmd(ref canvas, ref model);
             facade._execute(sceneCommand);
+        }
+
+        private void InitializeDialogs()
+        {
+            dialogEdit = new Form2();
         }
 
         private void InitializeCanvas()
@@ -66,16 +74,21 @@ namespace code
 
         private void directPrism_button_Click(object sender, EventArgs e)
         {
-         
-            transformationCommand = new MoveCommand(ref canvas, 5, 5, 5);
+
+            //transformationCommand = new MoveCommand(ref canvas, 5, 5, 5);
+           // facade._execute(transformationCommand);
+
+            transformationCommand = new RotateCommand(ref canvas, 0, 0, 5);
             facade._execute(transformationCommand);
 
-            transformationCommand = new RotateCommand(ref canvas, 5, 5, 5);
-            facade._execute(transformationCommand);
+            //transformationCommand = new ScaleCommand(ref canvas, (float)1.01, (float)1.01, (float)1.01);
+           // facade._execute(transformationCommand);
 
-            transformationCommand = new ScaleCommand(ref canvas, (float)1.01, (float)1.01, (float)1.01);
-            facade._execute(transformationCommand);
-            
+        }
+
+        private void Icosahedron_button_Click(object sender, EventArgs e)
+        {
+            dialogEdit.ShowDialog();
         }
     }
 }

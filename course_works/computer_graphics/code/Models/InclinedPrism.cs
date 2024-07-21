@@ -13,13 +13,13 @@ namespace code
         {
             this.points = new List<Point3D> {
                 new Point3D(0, 0, 0), // 0
-                new Point3D(1, 0, 0), // 1
-                new Point3D(1, 1, 0), // 2
-                new Point3D(0, 1, 0), // 3
-                new Point3D(2, 0, 2), // 4
-                new Point3D(3, 0, 2), // 5
-                new Point3D(3, 3, 2), // 6
-                new Point3D(0, 2, 2)  // 7
+                new Point3D(100, 0, 0), // 1
+                new Point3D(100, 100, 0), // 2
+                new Point3D(0, 100, 0), // 3
+                new Point3D(200, 200, 200), // 4
+                new Point3D(300, 200, 200), // 5
+                new Point3D(300, 300, 200), // 6
+                new Point3D(200, 300, 200)  // 7
             };
 
             this.indexes = new List<int> {

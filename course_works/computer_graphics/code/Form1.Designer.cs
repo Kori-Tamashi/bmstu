@@ -158,6 +158,7 @@
             Icosahedron_button.TabIndex = 5;
             toolTip.SetToolTip(Icosahedron_button, "Икосаэдр");
             Icosahedron_button.UseVisualStyleBackColor = true;
+            Icosahedron_button.Click += Icosahedron_button_Click;
             // 
             // truncatedPentagonalPyramid_button
             // 
