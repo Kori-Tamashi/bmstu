@@ -71,5 +71,10 @@ namespace code
         {
 
         }
+
+        private void numericUpDown_width_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
