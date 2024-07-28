@@ -58,6 +58,7 @@
             toolTip = new ToolTip(components);
             tableLayoutPanel3 = new TableLayoutPanel();
             colorDialog1 = new ColorDialog();
+            listView1 = new ListView();
             ((System.ComponentModel.ISupportInitialize)pictureBox_editModel).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
@@ -73,9 +74,9 @@
             // 
             // pictureBox_editModel
             // 
-            pictureBox_editModel.Location = new Point(4, 4);
+            pictureBox_editModel.Location = new Point(219, 4);
             pictureBox_editModel.Name = "pictureBox_editModel";
-            pictureBox_editModel.Size = new Size(356, 372);
+            pictureBox_editModel.Size = new Size(344, 372);
             pictureBox_editModel.TabIndex = 0;
             pictureBox_editModel.TabStop = false;
             // 
@@ -91,7 +92,7 @@
             tableLayoutPanel1.Controls.Add(label1, 0, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 2);
             tableLayoutPanel1.Controls.Add(label3, 0, 4);
-            tableLayoutPanel1.Location = new Point(367, 4);
+            tableLayoutPanel1.Location = new Point(570, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 6;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
@@ -100,7 +101,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 79F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 143F));
-            tableLayoutPanel1.Size = new Size(393, 372);
+            tableLayoutPanel1.Size = new Size(361, 372);
             tableLayoutPanel1.TabIndex = 2;
             // 
             // tableLayoutPanel4
@@ -121,7 +122,7 @@
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel4.Size = new Size(368, 73);
+            tableLayoutPanel4.Size = new Size(332, 73);
             tableLayoutPanel4.TabIndex = 4;
             // 
             // comboBox_material
@@ -129,9 +130,9 @@
             comboBox_material.FormattingEnabled = true;
             comboBox_material.ImeMode = ImeMode.Off;
             comboBox_material.Items.AddRange(new object[] { "<без материала>", "Дерево", "Камень", "Металл" });
-            comboBox_material.Location = new Point(154, 39);
+            comboBox_material.Location = new Point(139, 39);
             comboBox_material.Name = "comboBox_material";
-            comboBox_material.Size = new Size(199, 28);
+            comboBox_material.Size = new Size(189, 28);
             comboBox_material.TabIndex = 17;
             // 
             // textBox6
@@ -141,7 +142,7 @@
             textBox6.Location = new Point(4, 39);
             textBox6.Name = "textBox6";
             textBox6.ReadOnly = true;
-            textBox6.Size = new Size(139, 20);
+            textBox6.Size = new Size(128, 20);
             textBox6.TabIndex = 10;
             textBox6.Text = "Материал";
             toolTip.SetToolTip(textBox6, "Задает материал ");
@@ -163,9 +164,9 @@
             comboBox_color.FormattingEnabled = true;
             comboBox_color.ImeMode = ImeMode.Off;
             comboBox_color.Items.AddRange(new object[] { "<без цвета>", "выбрать цвет", " " });
-            comboBox_color.Location = new Point(154, 4);
+            comboBox_color.Location = new Point(139, 4);
             comboBox_color.Name = "comboBox_color";
-            comboBox_color.Size = new Size(199, 28);
+            comboBox_color.Size = new Size(189, 28);
             comboBox_color.TabIndex = 16;
             comboBox_color.SelectedIndexChanged += comboBox1_SelectedIndexChanged_1;
             // 
@@ -185,7 +186,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            tableLayoutPanel5.Size = new Size(371, 84);
+            tableLayoutPanel5.Size = new Size(332, 84);
             tableLayoutPanel5.TabIndex = 4;
             // 
             // textBox9
@@ -193,9 +194,9 @@
             textBox9.BackColor = SystemColors.Control;
             textBox9.BorderStyle = BorderStyle.None;
             textBox9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            textBox9.Location = new Point(155, 39);
+            textBox9.Location = new Point(139, 39);
             textBox9.Name = "textBox9";
-            textBox9.Size = new Size(202, 20);
+            textBox9.Size = new Size(189, 20);
             textBox9.TabIndex = 15;
             textBox9.Text = "<коэффициент>";
             // 
@@ -229,9 +230,9 @@
             textBox11.BackColor = SystemColors.Control;
             textBox11.BorderStyle = BorderStyle.None;
             textBox11.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            textBox11.Location = new Point(155, 4);
+            textBox11.Location = new Point(139, 4);
             textBox11.Name = "textBox11";
-            textBox11.Size = new Size(206, 20);
+            textBox11.Size = new Size(189, 20);
             textBox11.TabIndex = 13;
             textBox11.Text = "<тип>";
             // 
@@ -260,16 +261,16 @@
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
-            tableLayoutPanel2.Size = new Size(368, 204);
+            tableLayoutPanel2.Size = new Size(332, 204);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // numericUpDown_radius
             // 
-            numericUpDown_radius.Location = new Point(154, 171);
+            numericUpDown_radius.Location = new Point(139, 171);
             numericUpDown_radius.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
             numericUpDown_radius.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown_radius.Name = "numericUpDown_radius";
-            numericUpDown_radius.Size = new Size(199, 27);
+            numericUpDown_radius.Size = new Size(189, 27);
             numericUpDown_radius.TabIndex = 19;
             numericUpDown_radius.Value = new decimal(new int[] { 10, 0, 0, 0 });
             // 
@@ -287,31 +288,31 @@
             // 
             // numericUpDown_angle
             // 
-            numericUpDown_angle.Location = new Point(154, 134);
+            numericUpDown_angle.Location = new Point(139, 134);
             numericUpDown_angle.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
             numericUpDown_angle.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown_angle.Name = "numericUpDown_angle";
-            numericUpDown_angle.Size = new Size(199, 27);
+            numericUpDown_angle.Size = new Size(189, 27);
             numericUpDown_angle.TabIndex = 17;
             numericUpDown_angle.Value = new decimal(new int[] { 10, 0, 0, 0 });
             // 
             // numericUpDown_height
             // 
-            numericUpDown_height.Location = new Point(154, 102);
+            numericUpDown_height.Location = new Point(139, 102);
             numericUpDown_height.Maximum = new decimal(new int[] { 3000, 0, 0, 0 });
             numericUpDown_height.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             numericUpDown_height.Name = "numericUpDown_height";
-            numericUpDown_height.Size = new Size(199, 27);
+            numericUpDown_height.Size = new Size(189, 27);
             numericUpDown_height.TabIndex = 16;
             numericUpDown_height.Value = new decimal(new int[] { 10, 0, 0, 0 });
             // 
             // numericUpDown_width
             // 
-            numericUpDown_width.Location = new Point(154, 52);
+            numericUpDown_width.Location = new Point(139, 52);
             numericUpDown_width.Maximum = new decimal(new int[] { 3000, 0, 0, 0 });
             numericUpDown_width.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             numericUpDown_width.Name = "numericUpDown_width";
-            numericUpDown_width.Size = new Size(199, 27);
+            numericUpDown_width.Size = new Size(189, 27);
             numericUpDown_width.TabIndex = 15;
             numericUpDown_width.Value = new decimal(new int[] { 10, 0, 0, 0 });
             numericUpDown_width.ValueChanged += numericUpDown_width_ValueChanged;
@@ -349,7 +350,7 @@
             textBox3.Multiline = true;
             textBox3.Name = "textBox3";
             textBox3.ReadOnly = true;
-            textBox3.Size = new Size(139, 43);
+            textBox3.Size = new Size(128, 43);
             textBox3.TabIndex = 10;
             textBox3.Text = "Ширина основания";
             toolTip.SetToolTip(textBox3, "Задает ширину основания (только для призм)");
@@ -371,11 +372,11 @@
             // 
             // numericUpDown_length
             // 
-            numericUpDown_length.Location = new Point(154, 4);
+            numericUpDown_length.Location = new Point(139, 4);
             numericUpDown_length.Maximum = new decimal(new int[] { 3000, 0, 0, 0 });
             numericUpDown_length.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             numericUpDown_length.Name = "numericUpDown_length";
-            numericUpDown_length.Size = new Size(199, 27);
+            numericUpDown_length.Size = new Size(189, 27);
             numericUpDown_length.TabIndex = 14;
             numericUpDown_length.Value = new decimal(new int[] { 10, 0, 0, 0 });
             // 
@@ -386,7 +387,7 @@
             label1.ForeColor = SystemColors.MenuHighlight;
             label1.Location = new Point(4, 1);
             label1.Name = "label1";
-            label1.Size = new Size(345, 20);
+            label1.Size = new Size(279, 27);
             label1.TabIndex = 0;
             label1.Text = "Размеры ——————————————————";
             // 
@@ -397,7 +398,7 @@
             label2.ForeColor = SystemColors.MenuHighlight;
             label2.Location = new Point(4, 240);
             label2.Name = "label2";
-            label2.Size = new Size(347, 20);
+            label2.Size = new Size(249, 27);
             label2.TabIndex = 4;
             label2.Text = "Внешний вид ————————————————";
             // 
@@ -408,36 +409,46 @@
             label3.ForeColor = SystemColors.MenuHighlight;
             label3.Location = new Point(4, 348);
             label3.Name = "label3";
-            label3.Size = new Size(346, 20);
+            label3.Size = new Size(249, 27);
             label3.TabIndex = 5;
             label3.Text = "Информация ————————————————";
             // 
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            tableLayoutPanel3.ColumnCount = 2;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 47.4534149F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 52.5465851F));
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel1, 1, 0);
-            tableLayoutPanel3.Controls.Add(pictureBox_editModel, 0, 0);
+            tableLayoutPanel3.ColumnCount = 3;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38.01066F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 61.98934F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 366F));
+            tableLayoutPanel3.Controls.Add(listView1, 0, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel1, 2, 0);
+            tableLayoutPanel3.Controls.Add(pictureBox_editModel, 1, 0);
             tableLayoutPanel3.Location = new Point(12, 12);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel3.Size = new Size(766, 380);
+            tableLayoutPanel3.Size = new Size(935, 380);
             tableLayoutPanel3.TabIndex = 2;
+            // 
+            // listView1
+            // 
+            listView1.Location = new Point(4, 4);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(208, 372);
+            listView1.TabIndex = 3;
+            listView1.UseCompatibleStateImageBehavior = false;
             // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(830, 963);
+            ClientSize = new Size(968, 963);
             Controls.Add(tableLayoutPanel3);
             MaximumSize = new Size(1800, 1800);
             MinimumSize = new Size(800, 800);
             Name = "Form2";
-            Text = "Редактор объектов";
+            Text = "Редактор моделей";
             Load += Form2_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox_editModel).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
@@ -490,5 +501,6 @@
         private TextBox textBox2;
         private TextBox textBox4;
         private TextBox textBox9;
+        private ListView listView1;
     }
 }

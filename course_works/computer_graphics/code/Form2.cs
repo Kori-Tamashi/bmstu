@@ -12,6 +12,10 @@ namespace code
 {
     public partial class Form2 : Form
     {
+
+        Canvas mainCanvas;
+        Canvas selfCanvas;
+
         public Form2()
         {
             InitializeComponent();
@@ -21,6 +25,8 @@ namespace code
         {
 
         }
+
+
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
