@@ -38,6 +38,8 @@ namespace code
                 3, 7
             };
 
+            this.type = "Direct prism";
+
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
         }

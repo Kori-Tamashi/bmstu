@@ -28,10 +28,19 @@ namespace code
             InitializeDialogs();
             InitializeCanvas();
 
+            
             facade = new Facade();
 
             Model model = new Cube();
             sceneCommand = new AddModelCmd(ref canvas, ref model);
+            model = new Pyramid();
+            sceneCommand = new AddModelCmd(ref canvas, ref model);
+            //model = new DirectPrism();
+            //sceneCommand = new AddModelCmd(ref canvas, ref model);
+            //model = new InclinedPrism();
+            //sceneCommand = new AddModelCmd(ref canvas, ref model);
+
+
             facade._execute(sceneCommand);
         }
 
@@ -88,6 +97,8 @@ namespace code
 
         private void Icosahedron_button_Click(object sender, EventArgs e)
         {
+            
+
             dialogEdit.ShowDialog();
         }
     }

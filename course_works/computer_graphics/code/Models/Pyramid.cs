@@ -28,6 +28,8 @@ namespace code
                 2, 3
             };
 
+            this.type = "Pyramid";
+
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
         }

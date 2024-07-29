@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             pictureBox_editModel = new PictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
@@ -57,8 +58,9 @@
             label3 = new Label();
             toolTip = new ToolTip(components);
             tableLayoutPanel3 = new TableLayoutPanel();
+            listView_models = new ListView();
+            imageList = new ImageList(components);
             colorDialog1 = new ColorDialog();
-            listView1 = new ListView();
             ((System.ComponentModel.ISupportInitialize)pictureBox_editModel).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
@@ -74,9 +76,9 @@
             // 
             // pictureBox_editModel
             // 
-            pictureBox_editModel.Location = new Point(219, 4);
+            pictureBox_editModel.Location = new Point(159, 4);
             pictureBox_editModel.Name = "pictureBox_editModel";
-            pictureBox_editModel.Size = new Size(344, 372);
+            pictureBox_editModel.Size = new Size(355, 372);
             pictureBox_editModel.TabIndex = 0;
             pictureBox_editModel.TabStop = false;
             // 
@@ -92,7 +94,7 @@
             tableLayoutPanel1.Controls.Add(label1, 0, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 2);
             tableLayoutPanel1.Controls.Add(label3, 0, 4);
-            tableLayoutPanel1.Location = new Point(570, 4);
+            tableLayoutPanel1.Location = new Point(521, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 6;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
@@ -387,7 +389,7 @@
             label1.ForeColor = SystemColors.MenuHighlight;
             label1.Location = new Point(4, 1);
             label1.Name = "label1";
-            label1.Size = new Size(279, 27);
+            label1.Size = new Size(345, 20);
             label1.TabIndex = 0;
             label1.Text = "Размеры ——————————————————";
             // 
@@ -398,7 +400,7 @@
             label2.ForeColor = SystemColors.MenuHighlight;
             label2.Location = new Point(4, 240);
             label2.Name = "label2";
-            label2.Size = new Size(249, 27);
+            label2.Size = new Size(347, 20);
             label2.TabIndex = 4;
             label2.Text = "Внешний вид ————————————————";
             // 
@@ -409,7 +411,7 @@
             label3.ForeColor = SystemColors.MenuHighlight;
             label3.Location = new Point(4, 348);
             label3.Name = "label3";
-            label3.Size = new Size(249, 27);
+            label3.Size = new Size(346, 20);
             label3.TabIndex = 5;
             label3.Text = "Информация ————————————————";
             // 
@@ -417,10 +419,10 @@
             // 
             tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             tableLayoutPanel3.ColumnCount = 3;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38.01066F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 61.98934F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.9806576F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70.01934F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 366F));
-            tableLayoutPanel3.Controls.Add(listView1, 0, 0);
+            tableLayoutPanel3.Controls.Add(listView_models, 0, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel1, 2, 0);
             tableLayoutPanel3.Controls.Add(pictureBox_editModel, 1, 0);
             tableLayoutPanel3.Location = new Point(12, 12);
@@ -428,22 +430,38 @@
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel3.Size = new Size(935, 380);
+            tableLayoutPanel3.Size = new Size(886, 380);
             tableLayoutPanel3.TabIndex = 2;
             // 
-            // listView1
+            // listView_models
             // 
-            listView1.Location = new Point(4, 4);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(208, 372);
-            listView1.TabIndex = 3;
-            listView1.UseCompatibleStateImageBehavior = false;
+            listView_models.GridLines = true;
+            listView_models.LargeImageList = imageList;
+            listView_models.Location = new Point(4, 4);
+            listView_models.MultiSelect = false;
+            listView_models.Name = "listView_models";
+            listView_models.Size = new Size(148, 372);
+            listView_models.SmallImageList = imageList;
+            listView_models.TabIndex = 3;
+            listView_models.UseCompatibleStateImageBehavior = false;
+            // 
+            // imageList
+            // 
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
+            imageList.TransparentColor = Color.Transparent;
+            imageList.Images.SetKeyName(0, "cube.png");
+            imageList.Images.SetKeyName(1, "direct-prism.png");
+            imageList.Images.SetKeyName(2, "inclined-prism.png");
+            imageList.Images.SetKeyName(3, "triangular-pyramid.png");
+            imageList.Images.SetKeyName(4, "truncated-pentagonal-pyramid.png");
+            imageList.Images.SetKeyName(5, "icosahedron.png");
             // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(968, 963);
+            ClientSize = new Size(910, 963);
             Controls.Add(tableLayoutPanel3);
             MaximumSize = new Size(1800, 1800);
             MinimumSize = new Size(800, 800);
@@ -501,6 +519,7 @@
         private TextBox textBox2;
         private TextBox textBox4;
         private TextBox textBox9;
-        private ListView listView1;
+        private ListView listView_models;
+        private ImageList imageList;
     }
 }

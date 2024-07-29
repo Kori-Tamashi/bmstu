@@ -18,6 +18,9 @@ namespace code
         protected List<int> indexes;
         protected List<Edge> edges;
 
+        public String type = "Model";
+        public String name = "name";
+
         #region Constructors
         protected Model() 
         {

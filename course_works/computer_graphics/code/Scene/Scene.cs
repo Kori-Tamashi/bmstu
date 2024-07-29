@@ -10,7 +10,7 @@ namespace code
 {
     class Scene
     {
-        List<Model> models;
+        public List<Model> models;
         Size size;
         
         public Scene(Size size) 

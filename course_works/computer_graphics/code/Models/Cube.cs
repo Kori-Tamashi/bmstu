@@ -39,6 +39,8 @@ namespace code
                 3, 7
             };
 
+            this.type = "Cube";
+
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
 

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace code
 {
-    public partial class Form2 : Form
+    partial class Form2 : Form
     {
 
         Canvas mainCanvas;
@@ -19,6 +19,7 @@ namespace code
         public Form2()
         {
             InitializeComponent();
+            UpdateListModels(); 
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -26,7 +27,51 @@ namespace code
 
         }
 
+        private void UpdateListModels()
+        {
+            List<Model> models = new List<Model>
+            {
+                new Cube(),
+                new Pyramid(),
+                new DirectPrism()
+            };
 
+            // Clear list
+            listView_models.Clear();
+
+            // Initialize group
+            ListViewGroup listViewGroup = new ListViewGroup();
+            listViewGroup.Header = "Модели";
+
+            // Initialize items
+            foreach (Model model in models)
+            {
+                ListViewItem item = new ListViewItem(model.name, listViewGroup);
+                item.ImageIndex = ModelImageIndex(model.type);
+                listView_models.Items.Add(item);
+            }
+
+            // Add items
+            listView_models.Groups.Add(listViewGroup);
+            listView_models.Refresh();
+        }
+
+        private int ModelImageIndex(String modelType)
+        {
+            switch (modelType)
+            {
+                case "Cube":
+                    return 0;
+                case "Direct prism":
+                    return 1;
+                case "Inclined prism":
+                    return 2;
+                case "Pyramid":
+                    return 3;
+                default:
+                    return 5;
+            }
+        }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {

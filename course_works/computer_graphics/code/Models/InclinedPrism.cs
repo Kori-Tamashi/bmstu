@@ -37,6 +37,8 @@ namespace code
                 3, 7
             };
 
+            this.type = "Inclined prism";
+
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
         }
