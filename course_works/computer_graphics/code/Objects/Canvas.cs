@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
@@ -27,6 +28,26 @@ namespace code
             scene = new Scene(size);
             bitmap = new Bitmap(size.Width, size.Height);
             graphics = g;
+        }
+
+        public List<Model> Models()
+        {
+            return scene.models;
+        }
+
+        public Model Model(int index)
+        {
+            return scene.models[index];
+        }
+
+        public Point3D Center()
+        {
+            return scene.center;
+        }
+
+        public Size Size()
+        {
+            return size;
         }
 
         public void AddModel(Model model)
@@ -80,6 +101,12 @@ namespace code
         public void Scale(Scale scale)
         {
             scene.Scale(scale);
+            Refresh();
+        }
+
+        public void Centering(Centering centering)
+        {
+            scene.Centering(centering);
             Refresh();
         }
     }

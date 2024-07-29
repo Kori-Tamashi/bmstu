@@ -13,11 +13,15 @@ namespace code
 {
     class Model
     {
-        protected Point3D center;
         protected List<Point3D> points;
         protected List<int> indexes;
         protected List<Edge> edges;
 
+        protected float length;
+        protected float width;
+        protected float height;
+
+        public Point3D center;
         public Modeltype type = Modeltype.Model;
         public String name = "name";
 
@@ -155,6 +159,12 @@ namespace code
         public void Scale(Scale scale, Point3D center)
         {
             Transform(scale, center);
+        }
+
+        public void Centering(Centering centering)
+        {
+            Move(centering.move);
+            Scale(centering.scale);
         }
 
         protected void UpdateCenter()

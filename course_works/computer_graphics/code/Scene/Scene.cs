@@ -12,13 +12,13 @@ namespace code
     class Scene
     {
         public List<Model> models;
-
-        Point3D center;
-        Size size;
+        public Point3D center;
+        public Size size;
         
         public Scene(Size size) 
         { 
             models = new List<Model>();
+            center = new Point3D(size.Width / 2, size.Height / 2, (size.Width + size.Height) / 4);
             this.size = size;
         }
 
@@ -71,6 +71,14 @@ namespace code
             foreach (Model model in models)
             {
                 model.Scale(scale);
+            }
+        }
+
+        public void Centering(Centering centering)
+        {
+            foreach (Model model in models)
+            {
+                model.Centering(centering);
             }
         }
     }

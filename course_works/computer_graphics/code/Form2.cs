@@ -52,7 +52,7 @@ namespace code
             listViewGroup.Header = "Модели";
 
             // Initialize items
-            foreach (Model model in mainCanvas.scene.models)
+            foreach (Model model in mainCanvas.Models())
             {
                 ListViewItem item = new ListViewItem(model.name, listViewGroup);
                 item.ImageIndex = ModelImageIndex(model.type);
@@ -97,7 +97,7 @@ namespace code
             if (listView_models.SelectedItems.Count != 0)
             {
                 currentModelIndex = listView_models.SelectedItems[0].Index;
-                currentModel = new Model(mainCanvas.scene.models[currentModelIndex]);
+                currentModel = new Model(mainCanvas.Model(currentModelIndex));
 
                 sceneCommand = new DeleteModelsCommand(ref selfCanvas);
                 facade._execute(sceneCommand);
@@ -105,7 +105,10 @@ namespace code
                 sceneCommand = new AddModelCommand(ref selfCanvas, ref currentModel);
                 facade._execute(sceneCommand);
 
-                transformationCommand = new RotateCommand(ref selfCanvas, 30, 30, 0);
+                transformationCommand = new RotateCommand(ref selfCanvas, 15, 15, 0);
+                facade._execute(transformationCommand);
+
+                transformationCommand = new CenteringCommand(ref selfCanvas, currentModel.center, selfCanvas.Center(), selfCanvas.Size());
                 facade._execute(transformationCommand);
 
                 drawCommand = new RefreshCommand(ref selfCanvas);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
@@ -58,6 +59,21 @@ namespace code
         public override void _execute()
         {
             canvas.Scale(scale);
+        }
+    }
+
+    class CenteringCommand : TransformationCommand 
+    {
+        Centering centering;
+
+        public CenteringCommand(ref Canvas canvas, Point3D srcCenter, Point3D dstCenter, Size dstSize) : base(ref canvas)
+        {
+            centering = new Centering(srcCenter, dstCenter, dstSize);
+        }
+
+        public override void _execute()
+        {
+            canvas.Centering(centering);
         }
     }
 }
