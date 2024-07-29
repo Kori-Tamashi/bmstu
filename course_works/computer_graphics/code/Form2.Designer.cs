@@ -76,9 +76,9 @@
             // 
             // pictureBox_editModel
             // 
-            pictureBox_editModel.Location = new Point(159, 4);
+            pictureBox_editModel.Location = new Point(160, 4);
             pictureBox_editModel.Name = "pictureBox_editModel";
-            pictureBox_editModel.Size = new Size(355, 372);
+            pictureBox_editModel.Size = new Size(372, 372);
             pictureBox_editModel.TabIndex = 0;
             pictureBox_editModel.TabStop = false;
             // 
@@ -94,7 +94,7 @@
             tableLayoutPanel1.Controls.Add(label1, 0, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 2);
             tableLayoutPanel1.Controls.Add(label3, 0, 4);
-            tableLayoutPanel1.Location = new Point(521, 4);
+            tableLayoutPanel1.Location = new Point(539, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 6;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
@@ -103,7 +103,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 79F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 27F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 143F));
-            tableLayoutPanel1.Size = new Size(361, 372);
+            tableLayoutPanel1.Size = new Size(353, 372);
             tableLayoutPanel1.TabIndex = 2;
             // 
             // tableLayoutPanel4
@@ -389,7 +389,7 @@
             label1.ForeColor = SystemColors.MenuHighlight;
             label1.Location = new Point(4, 1);
             label1.Name = "label1";
-            label1.Size = new Size(345, 20);
+            label1.Size = new Size(279, 27);
             label1.TabIndex = 0;
             label1.Text = "Размеры ——————————————————";
             // 
@@ -400,7 +400,7 @@
             label2.ForeColor = SystemColors.MenuHighlight;
             label2.Location = new Point(4, 240);
             label2.Name = "label2";
-            label2.Size = new Size(347, 20);
+            label2.Size = new Size(249, 27);
             label2.TabIndex = 4;
             label2.Text = "Внешний вид ————————————————";
             // 
@@ -411,7 +411,7 @@
             label3.ForeColor = SystemColors.MenuHighlight;
             label3.Location = new Point(4, 348);
             label3.Name = "label3";
-            label3.Size = new Size(346, 20);
+            label3.Size = new Size(249, 27);
             label3.TabIndex = 5;
             label3.Text = "Информация ————————————————";
             // 
@@ -419,9 +419,9 @@
             // 
             tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             tableLayoutPanel3.ColumnCount = 3;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.9806576F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70.01934F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 366F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.032259F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70.96774F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 358F));
             tableLayoutPanel3.Controls.Add(listView_models, 0, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel1, 2, 0);
             tableLayoutPanel3.Controls.Add(pictureBox_editModel, 1, 0);
@@ -430,7 +430,7 @@
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel3.Size = new Size(886, 380);
+            tableLayoutPanel3.Size = new Size(896, 380);
             tableLayoutPanel3.TabIndex = 2;
             // 
             // listView_models
@@ -444,6 +444,7 @@
             listView_models.SmallImageList = imageList;
             listView_models.TabIndex = 3;
             listView_models.UseCompatibleStateImageBehavior = false;
+            listView_models.ItemSelectionChanged += listView_models_ItemSelectionChanged;
             // 
             // imageList
             // 
@@ -461,7 +462,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(910, 963);
+            ClientSize = new Size(960, 963);
             Controls.Add(tableLayoutPanel3);
             MaximumSize = new Size(1800, 1800);
             MinimumSize = new Size(800, 800);

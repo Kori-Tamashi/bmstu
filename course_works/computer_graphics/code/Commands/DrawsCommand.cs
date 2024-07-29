@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace code
 {
-    class DrawCommand : Command 
+    class DrawsCommand : Command 
     {
         protected Canvas canvas;
 
-        public DrawCommand(ref Canvas canvas) 
+        public DrawsCommand(ref Canvas canvas) 
         { 
             this.canvas = canvas;
         }
     }
 
-    class DrawCmd : DrawCommand
+    class DrawCommand : DrawsCommand
     {
-        public DrawCmd(ref Canvas canvas) : base(ref canvas) { }
+        public DrawCommand(ref Canvas canvas) : base(ref canvas) { }
 
         public override void _execute()
         {
@@ -26,9 +26,9 @@ namespace code
         }
     }
 
-    class ClearCmd : DrawCommand
+    class ClearCommand: DrawsCommand
     {
-        public ClearCmd(ref Canvas canvas) : base(ref canvas) { }
+        public ClearCommand(ref Canvas canvas) : base(ref canvas) { }
 
         public override void _execute() 
         {
@@ -36,9 +36,9 @@ namespace code
         }
     }
 
-    class RefreshCmd : DrawCommand
+    class RefreshCommand : DrawsCommand
     {
-        public RefreshCmd(ref Canvas canvas) : base(ref canvas) { }
+        public RefreshCommand(ref Canvas canvas) : base(ref canvas) { }
 
         public override void _execute()
         {

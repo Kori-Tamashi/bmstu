@@ -18,5 +18,11 @@ namespace code.Objects
             this.start = start;
             this.end = end;
         }
+
+        public Edge(Edge other)
+        {
+            start = new Point3D(other.start.X, other.start.Y, other.end.Z);
+            end = new Point3D(other.end.X, other.end.Y, other.end.Z);
+        }
     }
 }

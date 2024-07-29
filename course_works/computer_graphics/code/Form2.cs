@@ -12,39 +12,47 @@ namespace code
 {
     partial class Form2 : Form
     {
-
         Canvas mainCanvas;
         Canvas selfCanvas;
+        Facade facade;
 
-        public Form2()
+        DrawsCommand drawCommand;
+        SceneCommand sceneCommand;
+        TransformationCommand transformationCommand;
+
+        Model currentModel;
+        int currentModelIndex;
+
+        public Form2(ref Canvas mainCanvas)
         {
+            this.mainCanvas = mainCanvas;
+
             InitializeComponent();
-            UpdateListModels(); 
+            InitializeCanvas();
+            InitializeFacade();
+            InitializeListModels();
         }
 
-        private void Form2_Load(object sender, EventArgs e)
-        {
+        #region Initialize
 
+        private void InitializeCanvas()
+        {
+            selfCanvas = new Canvas(new Size(pictureBox_editModel.Width, pictureBox_editModel.Height), pictureBox_editModel.CreateGraphics());
         }
 
-        private void UpdateListModels()
+        private void InitializeFacade()
         {
-            List<Model> models = new List<Model>
-            {
-                new Cube(),
-                new Pyramid(),
-                new DirectPrism()
-            };
+            facade = new Facade();
+        }
 
-            // Clear list
-            listView_models.Clear();
-
+        private void InitializeListModels()
+        {
             // Initialize group
             ListViewGroup listViewGroup = new ListViewGroup();
             listViewGroup.Header = "Модели";
 
             // Initialize items
-            foreach (Model model in models)
+            foreach (Model model in mainCanvas.scene.models)
             {
                 ListViewItem item = new ListViewItem(model.name, listViewGroup);
                 item.ImageIndex = ModelImageIndex(model.type);
@@ -56,20 +64,52 @@ namespace code
             listView_models.Refresh();
         }
 
-        private int ModelImageIndex(String modelType)
+        #endregion
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private int ModelImageIndex(Modeltype modelType)
         {
             switch (modelType)
             {
-                case "Cube":
+                case Modeltype.Cube:
                     return 0;
-                case "Direct prism":
+                case Modeltype.DirectPrism:
                     return 1;
-                case "Inclined prism":
+                case Modeltype.InclinedPrism:
                     return 2;
-                case "Pyramid":
+                case Modeltype.Pyramid:
                     return 3;
+                case Modeltype.TruncatedPyramid:
+                    return 4;
+                case Modeltype.Icosahedron:
+                    return 5;
                 default:
                     return 5;
+            }
+        }
+
+        private void listView_models_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (listView_models.SelectedItems.Count != 0)
+            {
+                currentModelIndex = listView_models.SelectedItems[0].Index;
+                currentModel = new Model(mainCanvas.scene.models[currentModelIndex]);
+
+                sceneCommand = new DeleteModelsCommand(ref selfCanvas);
+                facade._execute(sceneCommand);
+
+                sceneCommand = new AddModelCommand(ref selfCanvas, ref currentModel);
+                facade._execute(sceneCommand);
+
+                transformationCommand = new RotateCommand(ref selfCanvas, 30, 30, 0);
+                facade._execute(transformationCommand);
+
+                drawCommand = new RefreshCommand(ref selfCanvas);
+                facade._execute(drawCommand);
             }
         }
 
@@ -127,5 +167,7 @@ namespace code
         {
 
         }
+
+        
     }
 }

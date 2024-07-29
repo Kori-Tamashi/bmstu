@@ -11,7 +11,7 @@ namespace code
     {
         public DrawManager() { }
 
-        public void _execute(DrawCommand command)
+        public void _execute(DrawsCommand command)
         {
             command._execute();
         }

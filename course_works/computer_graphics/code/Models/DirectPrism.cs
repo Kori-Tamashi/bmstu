@@ -38,7 +38,7 @@ namespace code
                 3, 7
             };
 
-            this.type = "Direct prism";
+            this.type = Modeltype.DirectPrism;
 
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);

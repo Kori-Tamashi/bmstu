@@ -18,7 +18,7 @@ namespace code
         Canvas canvas;
         Facade facade;
 
-        DrawCommand drawCommand;
+        DrawsCommand drawCommand;
         SceneCommand sceneCommand;
         TransformationCommand transformationCommand;
 
@@ -28,25 +28,20 @@ namespace code
             InitializeDialogs();
             InitializeCanvas();
 
-            
             facade = new Facade();
 
             Model model = new Cube();
-            sceneCommand = new AddModelCmd(ref canvas, ref model);
+            sceneCommand = new AddModelCommand(ref canvas, ref model);
+            facade._execute(sceneCommand);
+
             model = new Pyramid();
-            sceneCommand = new AddModelCmd(ref canvas, ref model);
-            //model = new DirectPrism();
-            //sceneCommand = new AddModelCmd(ref canvas, ref model);
-            //model = new InclinedPrism();
-            //sceneCommand = new AddModelCmd(ref canvas, ref model);
-
-
+            sceneCommand = new AddModelCommand(ref canvas, ref model);
             facade._execute(sceneCommand);
         }
 
         private void InitializeDialogs()
         {
-            dialogEdit = new Form2();
+            
         }
 
         private void InitializeCanvas()
@@ -71,13 +66,13 @@ namespace code
 
         private void triangularPyramid_button_Click(object sender, EventArgs e)
         {
-            drawCommand = new ClearCmd(ref canvas);
+            drawCommand = new ClearCommand(ref canvas);
             facade._execute(drawCommand);
         }
 
         private void Cube_button_Click(object sender, EventArgs e)
         {
-            drawCommand = new DrawCmd(ref canvas);
+            drawCommand = new DrawCommand(ref canvas);
             facade._execute(drawCommand);
         }
 
@@ -97,8 +92,7 @@ namespace code
 
         private void Icosahedron_button_Click(object sender, EventArgs e)
         {
-            
-
+            dialogEdit = new Form2(ref canvas);
             dialogEdit.ShowDialog();
         }
     }

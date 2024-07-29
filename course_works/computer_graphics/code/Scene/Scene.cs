@@ -5,12 +5,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
     class Scene
     {
         public List<Model> models;
+
+        Point3D center;
         Size size;
         
         public Scene(Size size) 

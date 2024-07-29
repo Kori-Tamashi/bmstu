@@ -18,11 +18,11 @@ namespace code
         protected List<int> indexes;
         protected List<Edge> edges;
 
-        public String type = "Model";
+        public Modeltype type = Modeltype.Model;
         public String name = "name";
 
         #region Constructors
-        protected Model() 
+        public Model() 
         {
             center = new Point3D();
             points = new List<Point3D>();
@@ -30,7 +30,17 @@ namespace code
             edges = new List<Edge>();
         }
 
-        protected Model(List<Point3D> points, List<int> indexes)
+        public Model(Model other)
+        {
+            type = other.type;
+            name = other.name;
+            center = other.center;
+            CopyPoints(other);
+            CopyIndexes(other);
+            ConstructEdges(points, indexes);
+        }
+
+        public Model(List<Point3D> points, List<int> indexes)
         {
             points.AddRange(points);
             indexes.AddRange(indexes);
@@ -38,7 +48,7 @@ namespace code
             ConstructEdges(points, indexes);
         }
 
-        protected Model(List<Edge> edges)
+        public Model(List<Edge> edges)
         {
             edges.AddRange(edges);
             ConstructPoints(edges);
@@ -64,6 +74,7 @@ namespace code
 
         protected void ConstructPoints(List<Edge> edges)
         {
+            points = new List<Point3D>();
             foreach (Edge edge in edges)
             {
                 points.Add(edge.start);
@@ -74,6 +85,7 @@ namespace code
         protected void ConstructIndexes(List<Edge> edges)
         {
             int count = 0;
+            indexes = new List<int>();
             foreach (Edge edge in edges)
             {
                 indexes.Add(count++);
@@ -83,11 +95,26 @@ namespace code
 
         protected void ConstructEdges(List<Point3D> points, List<int> indexes)
         {
+            edges = new List<Edge>();
             for (int i = 0; i < indexes.Count; i += 2)
             {
                 Edge edge = new Edge(points[indexes[i]], points[indexes[i + 1]]);
                 edges.Add(edge);
             }
+        }
+
+        private void CopyPoints(Model other)
+        {
+            points = new List<Point3D>();
+            foreach (Point3D point in other.points)
+            {
+                points.Add(new Point3D(point.X, point.Y, point.Z));
+            }
+        }
+
+        private void CopyIndexes(Model other)
+        {
+            indexes = new List<int>(other.indexes);
         }
         #endregion
 
@@ -163,7 +190,7 @@ namespace code
                     {1,       0,       0,       0},
                     {0,       1,       0,       0},
                     {0,       0,       1,       0},
-                    {diff.X,      diff.Y,      diff.Z,      1}
+                    {diff.X,  diff.Y,  diff.Z,  1}
                 }
             );
 
@@ -183,7 +210,7 @@ namespace code
                     {1,       0,       0,       0},
                     {0,       1,       0,       0},
                     {0,       0,       1,       0},
-                    {diff.X,      diff.Y,      diff.Z,      1}
+                    {diff.X,  diff.Y,  diff.Z,  1}
                 }
             );
 

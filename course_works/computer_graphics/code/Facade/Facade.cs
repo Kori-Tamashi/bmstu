@@ -21,7 +21,7 @@ namespace code
             transformationManager = new TransformationManager();
         }
 
-        public void _execute(DrawCommand command)
+        public void _execute(DrawsCommand command)
         {
             drawManager._execute(command);
         }

@@ -16,10 +16,10 @@ namespace code
         }
     }
 
-    class AddModelCmd : SceneCommand
+    class AddModelCommand : SceneCommand
     {
         protected Model model;
-        public AddModelCmd(ref Canvas canvas, ref Model model) : base(ref canvas)
+        public AddModelCommand(ref Canvas canvas, ref Model model) : base(ref canvas)
         {
             this.model = model;
         }
@@ -30,11 +30,11 @@ namespace code
         }
     }
 
-    class RemoveModelCmd : SceneCommand
+    class RemoveModelCommand : SceneCommand
     {
         protected Model model;
 
-        public RemoveModelCmd(ref Canvas canvas, ref Model model) : base(ref canvas)
+        public RemoveModelCommand(ref Canvas canvas, ref Model model) : base(ref canvas)
         {
             this.model = model;
         }
@@ -42,6 +42,16 @@ namespace code
         public override void _execute()
         {
             canvas.RemoveModel(model);
+        }
+    }
+
+    class DeleteModelsCommand : SceneCommand
+    {
+        public DeleteModelsCommand(ref Canvas canvas) : base(ref canvas) { }
+
+        public override void _execute()
+        {
+            canvas.DeleteModels();
         }
     }
 }

@@ -15,10 +15,11 @@ namespace code
     {
         Pen pen;
         Size size;
-        public Scene scene;
         Bitmap bitmap;
         Graphics graphics;
-        
+
+        public Scene scene;
+
         public Canvas(Size size, Graphics g)
         {
             this.size = size;

@@ -28,7 +28,7 @@ namespace code
                 2, 3
             };
 
-            this.type = "Pyramid";
+            this.type = Modeltype.Pyramid;
 
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);

@@ -37,7 +37,7 @@ namespace code
                 3, 7
             };
 
-            this.type = "Inclined prism";
+            this.type = Modeltype.InclinedPrism;
 
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);

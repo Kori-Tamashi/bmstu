@@ -39,7 +39,7 @@ namespace code
                 3, 7
             };
 
-            this.type = "Cube";
+            this.type = Modeltype.Cube;
 
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
