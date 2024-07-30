@@ -33,6 +33,11 @@ namespace code
             InitializeListModels();
         }
 
+        private void Form2_Load(object sender, EventArgs e)
+        {
+
+        }
+
         #region Initialize
 
         private void InitializeCanvas()
@@ -66,32 +71,6 @@ namespace code
 
         #endregion
 
-        private void Form2_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private int ModelImageIndex(Modeltype modelType)
-        {
-            switch (modelType)
-            {
-                case Modeltype.Cube:
-                    return 0;
-                case Modeltype.DirectPrism:
-                    return 1;
-                case Modeltype.InclinedPrism:
-                    return 2;
-                case Modeltype.Pyramid:
-                    return 3;
-                case Modeltype.TruncatedPyramid:
-                    return 4;
-                case Modeltype.Icosahedron:
-                    return 5;
-                default:
-                    return 5;
-            }
-        }
-
         private void listView_models_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (listView_models.SelectedItems.Count != 0)
@@ -113,6 +92,68 @@ namespace code
 
                 drawCommand = new RefreshCommand(ref selfCanvas);
                 facade._execute(drawCommand);
+
+                UpdateModelData(currentModel);
+            }
+        }
+
+        private void UpdateModelData(Model model)
+        {
+            switch (model.type)
+            {
+                case Modeltype.Cube:
+                    UpdateCubeData(model);
+                    break;
+                case Modeltype.Pyramid:
+                    UpdatePyramidData(model);
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        private void UpdateCubeData(Model cube)
+        {
+            numericUpDown_radius.Enabled = false;
+            numericUpDown_width.Enabled = false;
+            numericUpDown_height.Enabled = false;
+            numericUpDown_angle.Enabled = false;
+
+            numericUpDown_length.Value = (decimal) cube.length;
+            numericUpDown_width.Value = (decimal) cube.width;
+            numericUpDown_height.Value = (decimal) cube.height;
+            numericUpDown_angle.Value = (decimal) cube.angle;
+
+        }
+
+        private void UpdatePyramidData(Model pyramid) 
+        {
+            numericUpDown_radius.Enabled = false;
+            numericUpDown_width.Enabled = false;
+            numericUpDown_angle.Enabled = false;
+
+            numericUpDown_length.Value = (decimal) pyramid.length;
+            numericUpDown_height.Value = (decimal) pyramid.height;
+        }
+
+        private int ModelImageIndex(Modeltype modelType)
+        {
+            switch (modelType)
+            {
+                case Modeltype.Cube:
+                    return 0;
+                case Modeltype.DirectPrism:
+                    return 1;
+                case Modeltype.InclinedPrism:
+                    return 2;
+                case Modeltype.Pyramid:
+                    return 3;
+                case Modeltype.TruncatedPyramid:
+                    return 4;
+                case Modeltype.Icosahedron:
+                    return 5;
+                default:
+                    return 5;
             }
         }
 

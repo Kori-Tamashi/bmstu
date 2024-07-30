@@ -17,9 +17,13 @@ namespace code
         protected List<int> indexes;
         protected List<Edge> edges;
 
-        protected float length;
-        protected float width;
-        protected float height;
+        public float length;
+        public float width;
+        public float height;
+        public float radius;
+        public float angle;
+
+        public Color color;
 
         public Point3D center;
         public Modeltype type = Modeltype.Model;
@@ -32,6 +36,14 @@ namespace code
             points = new List<Point3D>();
             indexes = new List<int>();
             edges = new List<Edge>();
+
+            length = 0;
+            width = 0;
+            height = 0;
+            radius = 0;
+            angle = 0;
+
+            color = Color.Empty;
         }
 
         public Model(Model other)
@@ -39,6 +51,13 @@ namespace code
             type = other.type;
             name = other.name;
             center = other.center;
+            length = other.length;
+            width = other.width;
+            height = other.height;
+            radius = other.radius;
+            angle = other.angle;
+            color = other.color;
+
             CopyPoints(other);
             CopyIndexes(other);
             ConstructEdges(points, indexes);
@@ -167,6 +186,11 @@ namespace code
             Scale(centering.scale);
         }
 
+        protected virtual void Update()
+        {
+
+        }
+
         protected void UpdateCenter()
         {
             ConstructCenter(this.points);
@@ -178,6 +202,7 @@ namespace code
             MovePointsToOrigin(center);
             TransformPoints(transformation);
             MovePointsToCenter(center);
+            Update();
         }
 
         private void Transform(TransformationMatrix matrix, Point3D center)
@@ -186,6 +211,7 @@ namespace code
             MovePointsToOrigin(center);
             TransformPoints(matrix);
             MovePointsToCenter(center);
+            Update();
         }
 
         private void MovePointsToOrigin(Point3D center)

@@ -210,10 +210,10 @@
             textBox4.Multiline = true;
             textBox4.Name = "textBox4";
             textBox4.ReadOnly = true;
-            textBox4.Size = new Size(126, 28);
+            textBox4.Size = new Size(126, 41);
             textBox4.TabIndex = 14;
             textBox4.Text = "Коэффициент\r\nотражения\r\n";
-            toolTip.SetToolTip(textBox4, "Задает длину ребра основания");
+            toolTip.SetToolTip(textBox4, "Коэффициент отражения света материала модели");
             // 
             // textBox10
             // 
@@ -225,7 +225,7 @@
             textBox10.Size = new Size(126, 20);
             textBox10.TabIndex = 0;
             textBox10.Text = "Тип";
-            toolTip.SetToolTip(textBox10, "Задает длину ребра основания");
+            toolTip.SetToolTip(textBox10, "Тип модели");
             // 
             // textBox11
             // 
@@ -341,7 +341,7 @@
             textBox5.Size = new Size(76, 20);
             textBox5.TabIndex = 11;
             textBox5.Text = "Высота";
-            toolTip.SetToolTip(textBox5, "Задает высоту или длину бокового ребра");
+            toolTip.SetToolTip(textBox5, "Задает высоту ");
             textBox5.TextChanged += textBox5_TextChanged;
             // 
             // textBox3
