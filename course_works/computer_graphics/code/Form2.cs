@@ -84,10 +84,7 @@ namespace code
                 sceneCommand = new AddModelCommand(ref selfCanvas, ref currentModel);
                 facade._execute(sceneCommand);
 
-                transformationCommand = new RotateCommand(ref selfCanvas, 15, 15, 0);
-                facade._execute(transformationCommand);
-
-                transformationCommand = new CenteringCommand(ref selfCanvas, currentModel.center, selfCanvas.Center(), selfCanvas.Size());
+                transformationCommand = new CenteringCommand(ref selfCanvas, currentModel, selfCanvas.Center(), selfCanvas.Size());
                 facade._execute(transformationCommand);
 
                 drawCommand = new RefreshCommand(ref selfCanvas);
@@ -97,43 +94,24 @@ namespace code
             }
         }
 
+  
+
         private void UpdateModelData(Model model)
         {
-            switch (model.type)
-            {
-                case Modeltype.Cube:
-                    UpdateCubeData(model);
-                    break;
-                case Modeltype.Pyramid:
-                    UpdatePyramidData(model);
-                    break;
-                default:
-                    return;
-            }
-        }
+            numericUpDown_length.Value = model.length != -1 ? (decimal)model.length : (decimal)0;
+            numericUpDown_length.Enabled = model.length != -1;
 
-        private void UpdateCubeData(Model cube)
-        {
-            numericUpDown_radius.Enabled = false;
-            numericUpDown_width.Enabled = false;
-            numericUpDown_height.Enabled = false;
-            numericUpDown_angle.Enabled = false;
+            numericUpDown_width.Value = model.width != -1 ? (decimal)model.width : (decimal)0;
+            numericUpDown_width.Enabled = model.width != -1;
 
-            numericUpDown_length.Value = (decimal) cube.length;
-            numericUpDown_width.Value = (decimal) cube.width;
-            numericUpDown_height.Value = (decimal) cube.height;
-            numericUpDown_angle.Value = (decimal) cube.angle;
+            numericUpDown_height.Value = model.height != -1 ? (decimal)model.height : (decimal)0;
+            numericUpDown_height.Enabled = model.height != -1;
 
-        }
+            numericUpDown_angle.Value = model.angle != -1 ? (decimal)model.angle : (decimal)0;
+            numericUpDown_angle.Enabled = model.angle != -1;
 
-        private void UpdatePyramidData(Model pyramid) 
-        {
-            numericUpDown_radius.Enabled = false;
-            numericUpDown_width.Enabled = false;
-            numericUpDown_angle.Enabled = false;
-
-            numericUpDown_length.Value = (decimal) pyramid.length;
-            numericUpDown_height.Value = (decimal) pyramid.height;
+            numericUpDown_radius.Value = model.radius != -1 ? (decimal)model.radius : (decimal)0;
+            numericUpDown_radius.Enabled = model.radius != -1;
         }
 
         private int ModelImageIndex(Modeltype modelType)

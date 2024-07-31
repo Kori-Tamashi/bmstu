@@ -66,9 +66,9 @@ namespace code
     {
         Centering centering;
 
-        public CenteringCommand(ref Canvas canvas, Point3D srcCenter, Point3D dstCenter, Size dstSize) : base(ref canvas)
+        public CenteringCommand(ref Canvas canvas, Model model, Point3D dstCenter, Size dstSize) : base(ref canvas)
         {
-            centering = new Centering(srcCenter, dstCenter, dstSize);
+            centering = new Centering(model, dstCenter, dstSize);
         }
 
         public override void _execute()

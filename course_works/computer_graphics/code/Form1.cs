@@ -31,9 +31,9 @@ namespace code
             facade = new Facade();
 
             Model model = new Cube();
-            //model.name = "Кубик";
-            //sceneCommand = new AddModelCommand(ref canvas, ref model);
-            //facade._execute(sceneCommand);
+            model.name = "Кубик";
+            sceneCommand = new AddModelCommand(ref canvas, ref model);
+            facade._execute(sceneCommand);
 
             model = new Pyramid();
             model.name = "Пирамида";
@@ -80,16 +80,14 @@ namespace code
 
         private void directPrism_button_Click(object sender, EventArgs e)
         {
-
             transformationCommand = new MoveCommand(ref canvas, 5, 5, 5);
             facade._execute(transformationCommand);
 
             transformationCommand = new RotateCommand(ref canvas, 10, 10, 10);
             facade._execute(transformationCommand);
 
-            transformationCommand = new ScaleCommand(ref canvas, (float)1.01, (float)1.01, (float)1.01);
+            transformationCommand = new ScaleCommand(ref canvas, (float)1.8, (float)1.8, (float)1.8);
             facade._execute(transformationCommand);
-
         }
 
         private void Icosahedron_button_Click(object sender, EventArgs e)

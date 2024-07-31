@@ -41,9 +41,9 @@ namespace code
 
             this.type = Modeltype.Cube;
             this.length = 100;
-            this.width = 100;
-            this.height = 100;
-            this.angle = 90;
+            this.width = -1;
+            this.height = -1;
+            this.angle = -1;
             this.radius = -1;
 
             ConstructCenter(this.points);
@@ -55,8 +55,6 @@ namespace code
         {
             UpdateCenter();
             UpdateLength();
-            UpdateWidth();
-            UpdateHeight();
         }
 
         private void UpdateLength()
@@ -65,24 +63,6 @@ namespace code
                 Math.Pow(points[1].X - points[0].X, 2) + 
                 Math.Pow(points[1].Y - points[0].Y, 2) + 
                 Math.Pow(points[1].Z - points[0].Z, 2)
-                );
-        }
-
-        private void UpdateWidth()
-        {
-            width = (float) Math.Sqrt(
-                Math.Pow(points[4].X - points[0].X, 2) +
-                Math.Pow(points[4].Y - points[0].Y, 2) +
-                Math.Pow(points[4].Z - points[0].Z, 2)
-                );
-        }
-
-        private void UpdateHeight()
-        {
-            height = (float) Math.Sqrt(
-                Math.Pow(points[2].X - points[1].X, 2) +
-                Math.Pow(points[2].Y - points[1].Y, 2) +
-                Math.Pow(points[2].Z - points[1].Z, 2)
                 );
         }
     }

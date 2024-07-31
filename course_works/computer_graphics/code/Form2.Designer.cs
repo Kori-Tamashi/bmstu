@@ -260,8 +260,8 @@
             tableLayoutPanel2.RowCount = 5;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 49F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 33F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
             tableLayoutPanel2.Size = new Size(332, 204);
             tableLayoutPanel2.TabIndex = 3;
@@ -269,12 +269,11 @@
             // numericUpDown_radius
             // 
             numericUpDown_radius.Location = new Point(139, 171);
-            numericUpDown_radius.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
-            numericUpDown_radius.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown_radius.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_radius.Name = "numericUpDown_radius";
             numericUpDown_radius.Size = new Size(189, 27);
             numericUpDown_radius.TabIndex = 19;
-            numericUpDown_radius.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_radius.ThousandsSeparator = true;
             // 
             // textBox2
             // 
@@ -290,40 +289,37 @@
             // 
             // numericUpDown_angle
             // 
-            numericUpDown_angle.Location = new Point(139, 134);
-            numericUpDown_angle.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
-            numericUpDown_angle.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown_angle.Location = new Point(139, 137);
+            numericUpDown_angle.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_angle.Name = "numericUpDown_angle";
             numericUpDown_angle.Size = new Size(189, 27);
             numericUpDown_angle.TabIndex = 17;
-            numericUpDown_angle.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_angle.ThousandsSeparator = true;
             // 
             // numericUpDown_height
             // 
             numericUpDown_height.Location = new Point(139, 102);
-            numericUpDown_height.Maximum = new decimal(new int[] { 3000, 0, 0, 0 });
-            numericUpDown_height.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_height.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_height.Name = "numericUpDown_height";
             numericUpDown_height.Size = new Size(189, 27);
             numericUpDown_height.TabIndex = 16;
-            numericUpDown_height.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_height.ThousandsSeparator = true;
             // 
             // numericUpDown_width
             // 
             numericUpDown_width.Location = new Point(139, 52);
-            numericUpDown_width.Maximum = new decimal(new int[] { 3000, 0, 0, 0 });
-            numericUpDown_width.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_width.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_width.Name = "numericUpDown_width";
             numericUpDown_width.Size = new Size(189, 27);
             numericUpDown_width.TabIndex = 15;
-            numericUpDown_width.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_width.ThousandsSeparator = true;
             numericUpDown_width.ValueChanged += numericUpDown_width_ValueChanged;
             // 
             // textBox7
             // 
             textBox7.BorderStyle = BorderStyle.None;
             textBox7.Cursor = Cursors.Help;
-            textBox7.Location = new Point(4, 134);
+            textBox7.Location = new Point(4, 137);
             textBox7.Name = "textBox7";
             textBox7.ReadOnly = true;
             textBox7.Size = new Size(126, 20);
@@ -375,12 +371,11 @@
             // numericUpDown_length
             // 
             numericUpDown_length.Location = new Point(139, 4);
-            numericUpDown_length.Maximum = new decimal(new int[] { 3000, 0, 0, 0 });
-            numericUpDown_length.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_length.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_length.Name = "numericUpDown_length";
             numericUpDown_length.Size = new Size(189, 27);
             numericUpDown_length.TabIndex = 14;
-            numericUpDown_length.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown_length.ThousandsSeparator = true;
             // 
             // label1
             // 
