@@ -33,15 +33,24 @@
             pictureBox_editModel = new PictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
-            comboBox_material = new ComboBox();
+            button_color = new Button();
+            contextMenuStrip_buttonColor = new ContextMenuStrip(components);
+            toolStripMenuItem_chooseColor = new ToolStripMenuItem();
+            toolStripMenuItem_resetColor = new ToolStripMenuItem();
             textBox6 = new TextBox();
             textBox8 = new TextBox();
-            comboBox_color = new ComboBox();
+            button_material = new Button();
+            contextMenuStrip_buttonMaterial = new ContextMenuStrip(components);
+            toolStripMenuItem_chooseMaterial = new ToolStripMenuItem();
+            Wood = new ToolStripMenuItem();
+            Stone = new ToolStripMenuItem();
+            Metal = new ToolStripMenuItem();
+            toolStripMenuItem_resetMaterial = new ToolStripMenuItem();
             tableLayoutPanel5 = new TableLayoutPanel();
             textBox9 = new TextBox();
             textBox4 = new TextBox();
             textBox10 = new TextBox();
-            textBox11 = new TextBox();
+            textBox_modelType = new TextBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             numericUpDown_radius = new NumericUpDown();
             textBox2 = new TextBox();
@@ -64,6 +73,8 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox_editModel).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
+            contextMenuStrip_buttonColor.SuspendLayout();
+            contextMenuStrip_buttonMaterial.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_radius).BeginInit();
@@ -112,10 +123,10 @@
             tableLayoutPanel4.ColumnCount = 2;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40.871933F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 59.128067F));
-            tableLayoutPanel4.Controls.Add(comboBox_material, 1, 1);
+            tableLayoutPanel4.Controls.Add(button_color, 1, 0);
             tableLayoutPanel4.Controls.Add(textBox6, 0, 1);
             tableLayoutPanel4.Controls.Add(textBox8, 0, 0);
-            tableLayoutPanel4.Controls.Add(comboBox_color, 1, 0);
+            tableLayoutPanel4.Controls.Add(button_material, 1, 1);
             tableLayoutPanel4.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             tableLayoutPanel4.Location = new Point(4, 271);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -127,15 +138,37 @@
             tableLayoutPanel4.Size = new Size(332, 73);
             tableLayoutPanel4.TabIndex = 4;
             // 
-            // comboBox_material
+            // button_color
             // 
-            comboBox_material.FormattingEnabled = true;
-            comboBox_material.ImeMode = ImeMode.Off;
-            comboBox_material.Items.AddRange(new object[] { "<без материала>", "Дерево", "Камень", "Металл" });
-            comboBox_material.Location = new Point(139, 39);
-            comboBox_material.Name = "comboBox_material";
-            comboBox_material.Size = new Size(189, 28);
-            comboBox_material.TabIndex = 17;
+            button_color.ContextMenuStrip = contextMenuStrip_buttonColor;
+            button_color.Location = new Point(139, 4);
+            button_color.Name = "button_color";
+            button_color.Size = new Size(189, 28);
+            button_color.TabIndex = 3;
+            button_color.UseVisualStyleBackColor = true;
+            button_color.Click += buttonColor_Click;
+            // 
+            // contextMenuStrip_buttonColor
+            // 
+            contextMenuStrip_buttonColor.ImageScalingSize = new Size(20, 20);
+            contextMenuStrip_buttonColor.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_chooseColor, toolStripMenuItem_resetColor });
+            contextMenuStrip_buttonColor.Name = "contextMenuStrip1";
+            contextMenuStrip_buttonColor.Size = new Size(180, 52);
+            contextMenuStrip_buttonColor.Text = "Изменение цвета";
+            // 
+            // toolStripMenuItem_chooseColor
+            // 
+            toolStripMenuItem_chooseColor.Name = "toolStripMenuItem_chooseColor";
+            toolStripMenuItem_chooseColor.Size = new Size(179, 24);
+            toolStripMenuItem_chooseColor.Text = "Выбрать цвет";
+            toolStripMenuItem_chooseColor.Click += toolStripMenuItem2_Click;
+            // 
+            // toolStripMenuItem_resetColor
+            // 
+            toolStripMenuItem_resetColor.Name = "toolStripMenuItem_resetColor";
+            toolStripMenuItem_resetColor.Size = new Size(179, 24);
+            toolStripMenuItem_resetColor.Text = "Сбросить цвет";
+            toolStripMenuItem_resetColor.Click += toolStripMenuItem1_Click;
             // 
             // textBox6
             // 
@@ -161,16 +194,57 @@
             textBox8.Text = "Цвет";
             toolTip.SetToolTip(textBox8, "Задает цвет");
             // 
-            // comboBox_color
+            // button_material
             // 
-            comboBox_color.FormattingEnabled = true;
-            comboBox_color.ImeMode = ImeMode.Off;
-            comboBox_color.Items.AddRange(new object[] { "<без цвета>", "выбрать цвет", " " });
-            comboBox_color.Location = new Point(139, 4);
-            comboBox_color.Name = "comboBox_color";
-            comboBox_color.Size = new Size(189, 28);
-            comboBox_color.TabIndex = 16;
-            comboBox_color.SelectedIndexChanged += comboBox1_SelectedIndexChanged_1;
+            button_material.ContextMenuStrip = contextMenuStrip_buttonMaterial;
+            button_material.Location = new Point(139, 39);
+            button_material.Name = "button_material";
+            button_material.Size = new Size(189, 29);
+            button_material.TabIndex = 4;
+            button_material.UseVisualStyleBackColor = true;
+            button_material.Click += button_material_Click;
+            // 
+            // contextMenuStrip_buttonMaterial
+            // 
+            contextMenuStrip_buttonMaterial.ImageScalingSize = new Size(20, 20);
+            contextMenuStrip_buttonMaterial.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_chooseMaterial, toolStripMenuItem_resetMaterial });
+            contextMenuStrip_buttonMaterial.Name = "contextMenuStrip_buttonMaterial";
+            contextMenuStrip_buttonMaterial.Size = new Size(216, 52);
+            // 
+            // toolStripMenuItem_chooseMaterial
+            // 
+            toolStripMenuItem_chooseMaterial.DropDownItems.AddRange(new ToolStripItem[] { Wood, Stone, Metal });
+            toolStripMenuItem_chooseMaterial.Name = "toolStripMenuItem_chooseMaterial";
+            toolStripMenuItem_chooseMaterial.Size = new Size(215, 24);
+            toolStripMenuItem_chooseMaterial.Text = "Выбрать материал";
+            // 
+            // Wood
+            // 
+            Wood.Name = "Wood";
+            Wood.Size = new Size(145, 26);
+            Wood.Text = "Дерево";
+            Wood.Click += Wood_Click;
+            // 
+            // Stone
+            // 
+            Stone.Name = "Stone";
+            Stone.Size = new Size(145, 26);
+            Stone.Text = "Камень";
+            Stone.Click += Stone_Click;
+            // 
+            // Metal
+            // 
+            Metal.Name = "Metal";
+            Metal.Size = new Size(145, 26);
+            Metal.Text = "Металл";
+            Metal.Click += Metal_Click;
+            // 
+            // toolStripMenuItem_resetMaterial
+            // 
+            toolStripMenuItem_resetMaterial.Name = "toolStripMenuItem_resetMaterial";
+            toolStripMenuItem_resetMaterial.Size = new Size(215, 24);
+            toolStripMenuItem_resetMaterial.Text = "Сбросить материал";
+            toolStripMenuItem_resetMaterial.Click += toolStripMenuItem_resetMaterial_Click;
             // 
             // tableLayoutPanel5
             // 
@@ -181,7 +255,7 @@
             tableLayoutPanel5.Controls.Add(textBox9, 1, 1);
             tableLayoutPanel5.Controls.Add(textBox4, 0, 1);
             tableLayoutPanel5.Controls.Add(textBox10, 0, 0);
-            tableLayoutPanel5.Controls.Add(textBox11, 1, 0);
+            tableLayoutPanel5.Controls.Add(textBox_modelType, 1, 0);
             tableLayoutPanel5.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             tableLayoutPanel5.Location = new Point(4, 379);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -227,16 +301,16 @@
             textBox10.Text = "Тип";
             toolTip.SetToolTip(textBox10, "Тип модели");
             // 
-            // textBox11
+            // textBox_modelType
             // 
-            textBox11.BackColor = SystemColors.Control;
-            textBox11.BorderStyle = BorderStyle.None;
-            textBox11.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            textBox11.Location = new Point(139, 4);
-            textBox11.Name = "textBox11";
-            textBox11.Size = new Size(189, 20);
-            textBox11.TabIndex = 13;
-            textBox11.Text = "<тип>";
+            textBox_modelType.BackColor = SystemColors.Control;
+            textBox_modelType.BorderStyle = BorderStyle.None;
+            textBox_modelType.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            textBox_modelType.Location = new Point(139, 4);
+            textBox_modelType.Name = "textBox_modelType";
+            textBox_modelType.Size = new Size(189, 20);
+            textBox_modelType.TabIndex = 13;
+            textBox_modelType.Text = "<тип>";
             // 
             // tableLayoutPanel2
             // 
@@ -313,7 +387,6 @@
             numericUpDown_width.Size = new Size(189, 27);
             numericUpDown_width.TabIndex = 15;
             numericUpDown_width.ThousandsSeparator = true;
-            numericUpDown_width.ValueChanged += numericUpDown_width_ValueChanged;
             // 
             // textBox7
             // 
@@ -366,7 +439,7 @@
             textBox1.TabIndex = 0;
             textBox1.Text = "Длина ребра основания";
             toolTip.SetToolTip(textBox1, "Задает длину ребра основания");
-            textBox1.TextChanged += textBox1_TextChanged_1;
+            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // numericUpDown_length
             // 
@@ -469,6 +542,8 @@
             tableLayoutPanel1.PerformLayout();
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
+            contextMenuStrip_buttonColor.ResumeLayout(false);
+            contextMenuStrip_buttonMaterial.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
@@ -503,19 +578,28 @@
         private TableLayoutPanel tableLayoutPanel4;
         private TextBox textBox6;
         private TextBox textBox8;
-        private ComboBox comboBox_color;
         private ColorDialog colorDialog1;
-        private ComboBox comboBox_material;
         private NumericUpDown numericUpDown_angle;
         private Label label3;
         private TextBox textBox10;
         private TableLayoutPanel tableLayoutPanel5;
-        private TextBox textBox11;
+        private TextBox textBox_modelType;
         private NumericUpDown numericUpDown_radius;
         private TextBox textBox2;
         private TextBox textBox4;
         private TextBox textBox9;
         private ListView listView_models;
         private ImageList imageList;
+        private ContextMenuStrip contextMenuStrip_buttonColor;
+        private ToolStripMenuItem toolStripMenuItem_resetColor;
+        private ToolStripMenuItem toolStripMenuItem_chooseColor;
+        private Button button_color;
+        private ContextMenuStrip contextMenuStrip_buttonMaterial;
+        private ToolStripMenuItem toolStripMenuItem_chooseMaterial;
+        private ToolStripMenuItem toolStripMenuItem_resetMaterial;
+        private Button button_material;
+        private ToolStripMenuItem Wood;
+        private ToolStripMenuItem Stone;
+        private ToolStripMenuItem Metal;
     }
 }

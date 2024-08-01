@@ -32,6 +32,7 @@ namespace code
 
             Model model = new Cube();
             model.name = "Кубик";
+            model.color = Color.Red;
             sceneCommand = new AddModelCommand(ref canvas, ref model);
             facade._execute(sceneCommand);
 
@@ -86,7 +87,7 @@ namespace code
             transformationCommand = new RotateCommand(ref canvas, 10, 10, 10);
             facade._execute(transformationCommand);
 
-            transformationCommand = new ScaleCommand(ref canvas, (float)1.8, (float)1.8, (float)1.8);
+            transformationCommand = new ScaleCommand(ref canvas, (float)0.8, (float)0.8, (float)0.8);
             facade._execute(transformationCommand);
         }
 

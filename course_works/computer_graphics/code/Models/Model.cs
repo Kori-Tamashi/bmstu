@@ -24,6 +24,7 @@ namespace code
         public float angle;
 
         public Color color;
+        public Material material;
 
         public Point3D center;
         public Modeltype type = Modeltype.Model;
@@ -44,6 +45,7 @@ namespace code
             angle = 0;
 
             color = Color.Empty;
+            material = new Material();
         }
 
         public Model(Model other)
@@ -57,6 +59,7 @@ namespace code
             radius = other.radius;
             angle = other.angle;
             color = other.color;
+            material = other.material;
 
             CopyPoints(other);
             CopyIndexes(other);
