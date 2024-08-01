@@ -17,21 +17,22 @@ namespace code
         protected List<int> indexes;
         protected List<Edge> edges;
 
-        public float length;
-        public float width;
-        public float height;
-        public float radius;
-        public float angle;
+        protected float length;
+        protected float width;
+        protected float height;
+        protected float radius;
+        protected float angle;
 
-        public Color color;
-        public Material material;
+        protected Color color;
+        protected Material material;
 
-        public Point3D center;
-        public Modeltype type = Modeltype.Model;
-        public String name = "name";
+        protected Point3D center;
+        protected Modeltype type = Modeltype.Model;
+        protected String name = "name";
 
         #region Constructors
-        public Model() 
+
+        public Model()
         {
             center = new Point3D();
             points = new List<Point3D>();
@@ -45,6 +46,7 @@ namespace code
             angle = 0;
 
             color = Color.Empty;
+            type = Modeltype.Model;
             material = new Material();
         }
 
@@ -68,18 +70,28 @@ namespace code
 
         public Model(List<Point3D> points, List<int> indexes)
         {
+            color = Color.Empty;
+            type = Modeltype.Model;
+            material = new Material();
+
             points.AddRange(points);
             indexes.AddRange(indexes);
             ConstructCenter(points);
             ConstructEdges(points, indexes);
+            Update();
         }
 
         public Model(List<Edge> edges)
         {
+            color = Color.Empty;
+            type = Modeltype.Model;
+            material = new Material();
+
             edges.AddRange(edges);
             ConstructPoints(edges);
             ConstructIndexes(edges);
             ConstructCenter(points);
+            Update();
         }
 
         protected void ConstructCenter(List<Point3D> points)
@@ -142,21 +154,90 @@ namespace code
         {
             indexes = new List<int>(other.indexes);
         }
+
+        protected virtual void Update()
+        {
+
+        }
+
+        protected void UpdateCenter()
+        {
+            ConstructCenter(this.points);
+        }
+
         #endregion
 
-        public void Draw(Graphics graphics, Pen pen)
+        #region Getters & Setters
+
+        public float Length
         {
-            foreach (Edge edge in edges)
-            {
-                graphics.DrawLine(
-                    pen,
-                    (float)edge.start.X,
-                    (float)edge.start.Y,
-                    (float)edge.end.X,
-                    (float)edge.end.Y
-                );
-            }
+            get { return length; }
+            set { length = value; }
         }
+
+        public float Width
+        {
+            get { return width; }
+            set { width = value; }
+        }
+
+        public float Height
+        {
+            get { return height; }
+            set { height = value; }
+        }
+
+        public float Radius
+        {
+            get { return radius; }
+            set { radius = value; }
+        }
+
+        public float Angle
+        {
+            get { return angle; }
+            set { angle = value; }
+        }
+
+        public Color Color
+        {
+            get { return color; }
+            set { color = value; }
+        }
+
+        public Material Material
+        {
+            get { return material; }
+            set { material = value; }
+        }
+
+        public Point3D Center
+        {
+            get { return center; }
+            set { center = value; }
+        }
+
+        public Modeltype Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public MaterialType MaterialType
+        {
+            get { return material.type; }
+            set { material.type = value; }
+        }
+
+        #endregion
+
+        #region Transformation
 
         public void Move(Move move)
         {
@@ -187,16 +268,6 @@ namespace code
         {
             Move(centering.move);
             Scale(centering.scale);
-        }
-
-        protected virtual void Update()
-        {
-
-        }
-
-        protected void UpdateCenter()
-        {
-            ConstructCenter(this.points);
         }
 
         private void Transform(Transformation transformation, Point3D center)
@@ -280,6 +351,24 @@ namespace code
                 point.X = new_location[0, 0];
                 point.Y = new_location[0, 1];
                 point.Z = new_location[0, 2];
+            }
+        }
+
+        #endregion 
+
+        public void Draw(Graphics graphics)
+        {
+            Pen pen = new Pen(color != Color.Empty ? color : Color.Black);
+
+            foreach (Edge edge in edges)
+            {
+                graphics.DrawLine(
+                    pen,
+                    (float)edge.start.X,
+                    (float)edge.start.Y,
+                    (float)edge.end.X,
+                    (float)edge.end.Y
+                );
             }
         }
     }

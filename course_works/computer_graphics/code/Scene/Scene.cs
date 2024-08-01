@@ -11,9 +11,9 @@ namespace code
 {
     class Scene
     {
-        public List<Model> models;
-        public Point3D center;
-        public Size size;
+        List<Model> models;
+        Point3D center;
+        Size size;
         
         public Scene(Size size) 
         { 
@@ -22,11 +22,34 @@ namespace code
             this.size = size;
         }
 
-        public void Draw(Graphics graphics, Pen pen)
+        public List<Model> Models
+        {
+            get { return models; }
+            set { models = value; }
+        }
+
+        public Model Model(int index)
+        {
+            return models[index];
+        }
+
+        public Point3D Center
+        {
+            get { return center; }
+            set { center = value; }
+        }
+
+        public Size Size
+        {
+            get { return size; }
+            set { size = value; }
+        }
+
+        public void Draw(Graphics graphics)
         {
             foreach (Model model in models)
             {
-                model.Draw(graphics, pen);
+                model.Draw(graphics);
             }
         }
 

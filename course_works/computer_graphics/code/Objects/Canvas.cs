@@ -11,43 +11,42 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-
     class Canvas
     {
-        Pen pen;
         Size size;
+        Scene scene;
         Bitmap bitmap;
         Graphics graphics;
-
-        public Scene scene;
 
         public Canvas(Size size, Graphics g)
         {
             this.size = size;
-            pen = new Pen(Color.Black);
             scene = new Scene(size);
             bitmap = new Bitmap(size.Width, size.Height);
             graphics = g;
         }
 
-        public List<Model> Models()
+        public List<Model> Models
         {
-            return scene.models;
+            get { return scene.Models; }
+            set { scene.Models = value; }
         }
 
         public Model Model(int index)
         {
-            return scene.models[index];
+            return scene.Model(index);   
         }
 
-        public Point3D Center()
+        public Point3D Center
         {
-            return scene.center;
+            get { return scene.Center; }
+            set { scene.Center = value; }
         }
 
-        public Size Size()
+        public Size Size
         {
-            return size;
+            get { return size; }
+            set { size = value; }
         }
 
         public void AddModel(Model model)
@@ -72,7 +71,7 @@ namespace code
 
         public void Draw()
         {
-            scene.Draw(graphics, pen);
+            scene.Draw(graphics);
         }
 
         public void Clear()

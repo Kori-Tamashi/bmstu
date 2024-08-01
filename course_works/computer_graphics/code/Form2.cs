@@ -57,10 +57,10 @@ namespace code
             listViewGroup.Header = "Модели";
 
             // Initialize items
-            foreach (Model model in mainCanvas.Models())
+            foreach (Model model in mainCanvas.Models)
             {
-                ListViewItem item = new ListViewItem(model.name, listViewGroup);
-                item.ImageIndex = ModelImageIndex(model.type);
+                ListViewItem item = new ListViewItem(model.Name, listViewGroup);
+                item.ImageIndex = ModelImageIndex(model.Type);
                 listView_models.Items.Add(item);
             }
 
@@ -108,7 +108,7 @@ namespace code
                 sceneCommand = new AddModelCommand(ref selfCanvas, ref currentModel);
                 facade._execute(sceneCommand);
 
-                transformationCommand = new CenteringCommand(ref selfCanvas, currentModel, selfCanvas.Center(), selfCanvas.Size());
+                transformationCommand = new CenteringCommand(ref selfCanvas, currentModel, selfCanvas.Center, selfCanvas.Size);
                 facade._execute(transformationCommand);
 
                 drawCommand = new RefreshCommand(ref selfCanvas);
@@ -127,37 +127,37 @@ namespace code
         private void UpdateInformationTableSizes(Model model)
         {
             // length
-            numericUpDown_length.Value = model.length != -1 ? (decimal)model.length : (decimal)0;
-            numericUpDown_length.Enabled = model.length != -1;
+            numericUpDown_length.Value = model.Length != -1 ? (decimal)model.Length : (decimal)0;
+            numericUpDown_length.Enabled = model.Length != -1;
 
             // width
-            numericUpDown_width.Value = model.width != -1 ? (decimal)model.width : (decimal)0;
-            numericUpDown_width.Enabled = model.width != -1;
+            numericUpDown_width.Value = model.Width != -1 ? (decimal)model.Width : (decimal)0;
+            numericUpDown_width.Enabled = model.Width != -1;
 
             // height
-            numericUpDown_height.Value = model.height != -1 ? (decimal)model.height : (decimal)0;
-            numericUpDown_height.Enabled = model.height != -1;
+            numericUpDown_height.Value = model.Height != -1 ? (decimal)model.Height : (decimal)0;
+            numericUpDown_height.Enabled = model.Height != -1;
 
             // angle
-            numericUpDown_angle.Value = model.angle != -1 ? (decimal)model.angle : (decimal)0;
-            numericUpDown_angle.Enabled = model.angle != -1;
+            numericUpDown_angle.Value = model.Angle != -1 ? (decimal)model.Angle : (decimal)0;
+            numericUpDown_angle.Enabled = model.Angle != -1;
 
             // radius
-            numericUpDown_radius.Value = model.radius != -1 ? (decimal)model.radius : (decimal)0;
-            numericUpDown_radius.Enabled = model.radius != -1;
+            numericUpDown_radius.Value = model.Radius != -1 ? (decimal)model.Radius : (decimal)0;
+            numericUpDown_radius.Enabled = model.Radius != -1;
         }
 
         private void UpdateInformationTableColor(Model model)
         {
             // color
-            if (model.color == Color.Empty)
+            if (model.Color == Color.Empty)
             {
-                button_color.BackColor = model.color;
+                button_color.BackColor = model.Color;
                 button_color.Text = "<без цвета>";
             }
             else
             {
-                button_color.BackColor = model.color;
+                button_color.BackColor = model.Color;
                 button_color.Text = "";
             }
         }
@@ -165,7 +165,7 @@ namespace code
         private void UpdateInfromationTableMaterial(Model model)
         {
             // material
-            switch (model.material.type)
+            switch (model.MaterialType)
             {
                 case MaterialType.None:
                     button_material.BackColor = Color.Empty;
@@ -191,7 +191,7 @@ namespace code
         private void UpdateInformationTableCharacteristics(Model model)
         {
             // type
-            switch (model.type)
+            switch (model.Type)
             {
                 case Modeltype.Cube:
                     textBox_modelType.Text = "Куб";
@@ -216,9 +216,9 @@ namespace code
             }
         }
 
-        
-
         #endregion
+
+        #region Buttons
 
         private void buttonColor_Click(object sender, EventArgs e)
         {
@@ -227,15 +227,13 @@ namespace code
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            button_color.BackColor = Color.Empty;
-            button_color.Text = "<без цвета>";
+            ChangeColorEvent(Color.Empty);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
             colorDialog1.ShowDialog();
-            button_color.BackColor = colorDialog1.Color;
-            button_color.Text = "";
+            ChangeColorEvent(colorDialog1.Color);
         }
 
         private void button_material_Click(object sender, EventArgs e)
@@ -245,29 +243,51 @@ namespace code
 
         private void toolStripMenuItem_resetMaterial_Click(object sender, EventArgs e)
         {
-            button_material.BackColor = Color.Empty;
-            button_material.Text = "<без материала>";
+            ChangeMaterialEvent(MaterialType.None);
         }
 
         private void Wood_Click(object sender, EventArgs e)
         {
-            button_material.BackColor = Color.BurlyWood;
-            button_material.Text = Wood.Text;
+            ChangeMaterialEvent(MaterialType.Wood);
         }
 
         private void Stone_Click(object sender, EventArgs e)
         {
-            button_material.BackColor = Color.DarkGray;
-            button_material.Text = Stone.Text;
+            ChangeMaterialEvent(MaterialType.Stone);
         }
 
         private void Metal_Click(object sender, EventArgs e)
         {
-            button_material.BackColor = Color.Blue;
-            button_material.Text = Metal.Text;
+            ChangeMaterialEvent(MaterialType.Metal);
         }
 
-        
+        private void ChangeColorEvent(Color newColor)
+        {
+            currentModel.Color = newColor;
+            mainCanvas.Model(currentModelIndex).Color = newColor;
+            UpdateInformationTableColor(currentModel);
+
+            drawCommand = new RefreshCommand(ref selfCanvas);
+            facade._execute(drawCommand);
+
+            drawCommand = new RefreshCommand(ref mainCanvas);
+            facade._execute(drawCommand);
+        }
+
+        private void ChangeMaterialEvent(MaterialType newMaterialType)
+        {
+            currentModel.MaterialType = newMaterialType;
+            mainCanvas.Model(currentModelIndex).MaterialType = newMaterialType;
+            UpdateInfromationTableMaterial(currentModel);
+
+            drawCommand = new RefreshCommand(ref selfCanvas);
+            facade._execute(drawCommand);
+
+            drawCommand = new RefreshCommand(ref mainCanvas);
+            facade._execute(drawCommand);
+        }
+
+        #endregion
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -283,7 +303,5 @@ namespace code
         {
 
         }
-
-        
     }
 }

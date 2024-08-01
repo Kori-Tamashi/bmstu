@@ -16,17 +16,17 @@ namespace code
 
         public Centering(Model model, Point3D dstCenter, Size dstSize)
         {
-            float diffX = dstCenter.X - model.center.X;
-            float diffY = dstCenter.Y - model.center.Y;
-            float diffZ = dstCenter.Z - model.center.Z;
+            float diffX = dstCenter.X - model.Center.X;
+            float diffY = dstCenter.Y - model.Center.Y;
+            float diffZ = dstCenter.Z - model.Center.Z;
 
             float dstWidth = dstSize.Width;
             float dstHeight = dstSize.Height;
             float dstLength = (dstWidth + dstHeight) / 2;
 
-            float lengthK = dstLength / model.length;
-            float widthK = model.width != -1 ? dstWidth / model.width : lengthK;
-            float heightK = model.height != -1 ? dstHeight / model.height : lengthK;
+            float lengthK = dstLength / model.Length;
+            float widthK = model.Width != -1 ? dstWidth / model.Width : lengthK;
+            float heightK = model.Height != -1 ? dstHeight / model.Height : lengthK;
 
             lengthK *= scalek;
             widthK *= scalek;

@@ -31,13 +31,13 @@ namespace code
             facade = new Facade();
 
             Model model = new Cube();
-            model.name = "Кубик";
-            model.color = Color.Red;
+            model.Name = "Кубик";
+            model.Color = Color.Red;
             sceneCommand = new AddModelCommand(ref canvas, ref model);
             facade._execute(sceneCommand);
 
             model = new Pyramid();
-            model.name = "Пирамида";
+            model.Name = "Пирамида";
             sceneCommand = new AddModelCommand(ref canvas, ref model);
             facade._execute(sceneCommand);
         }
