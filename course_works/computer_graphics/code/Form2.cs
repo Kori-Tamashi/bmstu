@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinRT;
 
 namespace code
 {
@@ -100,20 +101,24 @@ namespace code
                 currentModelIndex = listView_models.SelectedItems[0].Index;
                 currentModel = new Model(mainCanvas.Model(currentModelIndex));
 
+                UpdateCanvas(currentModel);
                 UpdateInformationTable(currentModel);
-
-                sceneCommand = new DeleteModelsCommand(ref selfCanvas);
-                facade._execute(sceneCommand);
-
-                sceneCommand = new AddModelCommand(ref selfCanvas, ref currentModel);
-                facade._execute(sceneCommand);
-
-                transformationCommand = new CenteringCommand(ref selfCanvas, currentModel, selfCanvas.Center, selfCanvas.Size);
-                facade._execute(transformationCommand);
-
-                drawCommand = new RefreshCommand(ref selfCanvas);
-                facade._execute(drawCommand);
             }
+        }
+
+        private void UpdateCanvas(Model model)
+        {
+            sceneCommand = new DeleteModelsCommand(ref selfCanvas);
+            facade._execute(sceneCommand);
+
+            sceneCommand = new AddModelCommand(ref selfCanvas, ref currentModel);
+            facade._execute(sceneCommand);
+
+            transformationCommand = new CenteringCommand(ref selfCanvas, currentModel, selfCanvas.Center, selfCanvas.Size);
+            facade._execute(transformationCommand);
+
+            drawCommand = new RefreshCommand(ref selfCanvas);
+            facade._execute(drawCommand);
         }
 
         private void UpdateInformationTable(Model model)
@@ -161,7 +166,7 @@ namespace code
                 button_color.Text = "";
             }
         }
-        
+
         private void UpdateInfromationTableMaterial(Model model)
         {
             // material
@@ -187,7 +192,7 @@ namespace code
                     break;
             }
         }
-        
+
         private void UpdateInformationTableCharacteristics(Model model)
         {
             // type
@@ -214,6 +219,9 @@ namespace code
                 default:
                     break;
             }
+
+            //name
+            textBox_name.Text = model.Name;
         }
 
         #endregion
@@ -303,5 +311,53 @@ namespace code
         {
 
         }
+
+        private void textBox11_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_modelType_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_name_TextChanged(object sender, EventArgs e)
+        {
+            currentModel.Name = textBox_name.Text;
+            mainCanvas.Model(currentModelIndex).Name = textBox_name.Text;
+        }
+
+        private void numericUpDown_length_ValueChanged(object sender, EventArgs e)
+        {
+            mainCanvas.Model(currentModelIndex).Length = (float)numericUpDown_length.Value;
+            drawCommand = new RefreshCommand(ref mainCanvas);
+            facade._execute(drawCommand);
+
+            currentModel = new Model(mainCanvas.Model(currentModelIndex));
+            UpdateCanvas(currentModel);
+        }
+
+        private void numericUpDown_width_ValueChanged(object sender, EventArgs e)
+        {
+            mainCanvas.Model(currentModelIndex).Width = (float)numericUpDown_width.Value;
+            drawCommand = new RefreshCommand(ref mainCanvas);
+            facade._execute(drawCommand);
+
+            currentModel = new Model(mainCanvas.Model(currentModelIndex));
+            UpdateCanvas(currentModel);
+        }
+
+        private void numericUpDown_height_ValueChanged(object sender, EventArgs e)
+        {
+            mainCanvas.Model(currentModelIndex).Height = (float)numericUpDown_height.Value;
+            drawCommand = new RefreshCommand(ref mainCanvas);
+            facade._execute(drawCommand);
+
+            currentModel = new Model(mainCanvas.Model(currentModelIndex));
+            UpdateCanvas(currentModel);
+        }
+
+        
     }
 }

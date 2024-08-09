@@ -40,6 +40,7 @@ namespace code
             };
 
             this.type = Modeltype.Cube;
+            this.color = Color.Empty;
             this.length = 100;
             this.width = -1;
             this.height = -1;
@@ -64,6 +65,18 @@ namespace code
                 Math.Pow(points[1].Y - points[0].Y, 2) + 
                 Math.Pow(points[1].Z - points[0].Z, 2)
                 );
+        }
+
+        public override float Length
+        {
+            get { return length; }
+            set { SetLength(value); length = value; }
+        }
+
+        private void SetLength(float newLength)
+        {
+            float k = newLength / length;
+            Scale(new Scale(k, k, k));
         }
     }
 }

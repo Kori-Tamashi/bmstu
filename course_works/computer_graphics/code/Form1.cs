@@ -31,13 +31,23 @@ namespace code
             facade = new Facade();
 
             Model model = new Cube();
-            model.Name = "Кубик";
-            model.Color = Color.Red;
-            sceneCommand = new AddModelCommand(ref canvas, ref model);
-            facade._execute(sceneCommand);
+            //model.Name = "Кубик";
+            //model.Color = Color.Red;
+            //sceneCommand = new AddModelCommand(ref canvas, ref model);
+            //facade._execute(sceneCommand);
 
-            model = new Pyramid();
-            model.Name = "Пирамида";
+            //model = new Pyramid();
+            //model.Name = "Пирамида";
+            //sceneCommand = new AddModelCommand(ref canvas, ref model);
+            //facade._execute(sceneCommand);
+
+            //model = new DirectPrism();
+            //model.Name = "Прямая призма";
+            //sceneCommand = new AddModelCommand(ref canvas, ref model);
+            //facade._execute(sceneCommand);
+
+            model = new Icosahedron();
+            model.Name = "Икосаэдр";
             sceneCommand = new AddModelCommand(ref canvas, ref model);
             facade._execute(sceneCommand);
         }
@@ -84,11 +94,11 @@ namespace code
             transformationCommand = new MoveCommand(ref canvas, 5, 5, 5);
             facade._execute(transformationCommand);
 
-            transformationCommand = new RotateCommand(ref canvas, 10, 10, 10);
+            transformationCommand = new RotateCommand(ref canvas, 10, 10, 0);
             facade._execute(transformationCommand);
 
-            transformationCommand = new ScaleCommand(ref canvas, (float)0.8, (float)0.8, (float)0.8);
-            facade._execute(transformationCommand);
+            //transformationCommand = new ScaleCommand(ref canvas, (float)1.8, (float)1.8, (float)1.8);
+            //facade._execute(transformationCommand);
         }
 
         private void Icosahedron_button_Click(object sender, EventArgs e)

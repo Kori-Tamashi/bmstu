@@ -169,31 +169,31 @@ namespace code
 
         #region Getters & Setters
 
-        public float Length
+        public virtual float Length
         {
             get { return length; }
             set { length = value; }
         }
 
-        public float Width
+        public virtual float Width
         {
             get { return width; }
             set { width = value; }
         }
 
-        public float Height
+        public virtual float Height
         {
             get { return height; }
             set { height = value; }
         }
 
-        public float Radius
+        public virtual float Radius
         {
             get { return radius; }
             set { radius = value; }
         }
 
-        public float Angle
+        public virtual float Angle
         {
             get { return angle; }
             set { angle = value; }
@@ -231,8 +231,8 @@ namespace code
 
         public MaterialType MaterialType
         {
-            get { return material.type; }
-            set { material.type = value; }
+            get { return material.Type; }
+            set { material.Type = value; }
         }
 
         #endregion

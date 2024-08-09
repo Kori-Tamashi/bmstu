@@ -12,7 +12,7 @@ namespace code
         public Move move;
         public Scale scale;
 
-        float scalek = (float)0.5;
+        float scalek = (float)0.50;
 
         public Centering(Model model, Point3D dstCenter, Size dstSize)
         {
@@ -20,20 +20,18 @@ namespace code
             float diffY = dstCenter.Y - model.Center.Y;
             float diffZ = dstCenter.Z - model.Center.Z;
 
-            float dstWidth = dstSize.Width;
+            float dstLength = dstSize.Width;
             float dstHeight = dstSize.Height;
-            float dstLength = (dstWidth + dstHeight) / 2;
+            float dstWidth = (dstLength + dstHeight) / 2;
 
             float lengthK = dstLength / model.Length;
             float widthK = model.Width != -1 ? dstWidth / model.Width : lengthK;
             float heightK = model.Height != -1 ? dstHeight / model.Height : lengthK;
 
-            lengthK *= scalek;
-            widthK *= scalek;
-            heightK *= scalek;
+            float resultK = Math.Min(Math.Min(lengthK, widthK), heightK) * scalek;
 
             move = new Move(diffX, diffY, diffZ);
-            scale = new Scale(lengthK, widthK, heightK);
+            scale = new Scale(resultK, resultK, resultK);
         }
     }
 }

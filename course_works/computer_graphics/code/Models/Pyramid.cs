@@ -30,7 +30,7 @@ namespace code
             };
 
             this.type = Modeltype.Pyramid;
-
+            this.color = Color.Empty;
             this.length = 100;
             this.height = (float)Math.Sqrt(6) * 100 / 3;
             this.width = -1;
@@ -70,7 +70,29 @@ namespace code
             height = Vector3D.DotProduct(vector3, baseNormal);
             height = Math.Abs(height);
         }
+
+        public override float Length
+        {
+            get { return length; }
+            set { SetLength(value); length = value; }
+        }
+
+        public override float Height
+        {
+            get { return height; }
+            set { SetHeight(value); height = value; }
+        }
+
+        private void SetLength(float newLength)
+        {
+            float k = newLength / length;
+            Scale(new Scale(k, 1, k));
+        }
+
+        private void SetHeight(float newHeight)
+        {
+            float k = newHeight / height;
+            Scale(new code.Scale(1, k, 1));
+        }
     }
-
-
 }

@@ -47,10 +47,12 @@
             Metal = new ToolStripMenuItem();
             toolStripMenuItem_resetMaterial = new ToolStripMenuItem();
             tableLayoutPanel5 = new TableLayoutPanel();
+            textBox_name = new TextBox();
+            textBox11 = new TextBox();
             textBox9 = new TextBox();
+            textBox_modelType = new TextBox();
             textBox4 = new TextBox();
             textBox10 = new TextBox();
-            textBox_modelType = new TextBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             numericUpDown_radius = new NumericUpDown();
             textBox2 = new TextBox();
@@ -135,15 +137,15 @@
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel4.Size = new Size(332, 73);
+            tableLayoutPanel4.Size = new Size(324, 73);
             tableLayoutPanel4.TabIndex = 4;
             // 
             // button_color
             // 
             button_color.ContextMenuStrip = contextMenuStrip_buttonColor;
-            button_color.Location = new Point(139, 4);
+            button_color.Location = new Point(136, 4);
             button_color.Name = "button_color";
-            button_color.Size = new Size(189, 28);
+            button_color.Size = new Size(184, 28);
             button_color.TabIndex = 3;
             button_color.UseVisualStyleBackColor = true;
             button_color.Click += buttonColor_Click;
@@ -177,7 +179,7 @@
             textBox6.Location = new Point(4, 39);
             textBox6.Name = "textBox6";
             textBox6.ReadOnly = true;
-            textBox6.Size = new Size(128, 20);
+            textBox6.Size = new Size(125, 20);
             textBox6.TabIndex = 10;
             textBox6.Text = "Материал";
             toolTip.SetToolTip(textBox6, "Задает материал ");
@@ -189,7 +191,7 @@
             textBox8.Location = new Point(4, 4);
             textBox8.Name = "textBox8";
             textBox8.ReadOnly = true;
-            textBox8.Size = new Size(126, 20);
+            textBox8.Size = new Size(125, 20);
             textBox8.TabIndex = 0;
             textBox8.Text = "Цвет";
             toolTip.SetToolTip(textBox8, "Задает цвет");
@@ -197,9 +199,9 @@
             // button_material
             // 
             button_material.ContextMenuStrip = contextMenuStrip_buttonMaterial;
-            button_material.Location = new Point(139, 39);
+            button_material.Location = new Point(136, 39);
             button_material.Name = "button_material";
-            button_material.Size = new Size(189, 29);
+            button_material.Size = new Size(184, 29);
             button_material.TabIndex = 4;
             button_material.UseVisualStyleBackColor = true;
             button_material.Click += button_material_Click;
@@ -252,39 +254,77 @@
             tableLayoutPanel5.ColumnCount = 2;
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40.81081F));
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 59.18919F));
-            tableLayoutPanel5.Controls.Add(textBox9, 1, 1);
-            tableLayoutPanel5.Controls.Add(textBox4, 0, 1);
-            tableLayoutPanel5.Controls.Add(textBox10, 0, 0);
-            tableLayoutPanel5.Controls.Add(textBox_modelType, 1, 0);
+            tableLayoutPanel5.Controls.Add(textBox_name, 1, 0);
+            tableLayoutPanel5.Controls.Add(textBox11, 0, 0);
+            tableLayoutPanel5.Controls.Add(textBox9, 1, 2);
+            tableLayoutPanel5.Controls.Add(textBox_modelType, 1, 1);
+            tableLayoutPanel5.Controls.Add(textBox4, 0, 2);
+            tableLayoutPanel5.Controls.Add(textBox10, 0, 1);
             tableLayoutPanel5.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             tableLayoutPanel5.Location = new Point(4, 379);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
-            tableLayoutPanel5.RowCount = 2;
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            tableLayoutPanel5.Size = new Size(332, 84);
+            tableLayoutPanel5.RowCount = 3;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tableLayoutPanel5.Size = new Size(324, 119);
             tableLayoutPanel5.TabIndex = 4;
+            // 
+            // textBox_name
+            // 
+            textBox_name.Location = new Point(136, 4);
+            textBox_name.Name = "textBox_name";
+            textBox_name.Size = new Size(184, 27);
+            textBox_name.TabIndex = 3;
+            textBox_name.TextChanged += textBox_name_TextChanged;
+            // 
+            // textBox11
+            // 
+            textBox11.BorderStyle = BorderStyle.None;
+            textBox11.Cursor = Cursors.Help;
+            textBox11.Location = new Point(4, 4);
+            textBox11.Name = "textBox11";
+            textBox11.ReadOnly = true;
+            textBox11.Size = new Size(125, 20);
+            textBox11.TabIndex = 3;
+            textBox11.Text = "Имя";
+            toolTip.SetToolTip(textBox11, "Тип модели");
+            textBox11.TextChanged += textBox11_TextChanged;
             // 
             // textBox9
             // 
             textBox9.BackColor = SystemColors.Control;
             textBox9.BorderStyle = BorderStyle.None;
             textBox9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            textBox9.Location = new Point(139, 39);
+            textBox9.Location = new Point(136, 76);
             textBox9.Name = "textBox9";
-            textBox9.Size = new Size(189, 20);
+            textBox9.ReadOnly = true;
+            textBox9.Size = new Size(184, 20);
             textBox9.TabIndex = 15;
             textBox9.Text = "<коэффициент>";
+            // 
+            // textBox_modelType
+            // 
+            textBox_modelType.BackColor = SystemColors.Control;
+            textBox_modelType.BorderStyle = BorderStyle.None;
+            textBox_modelType.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            textBox_modelType.Location = new Point(136, 40);
+            textBox_modelType.Name = "textBox_modelType";
+            textBox_modelType.ReadOnly = true;
+            textBox_modelType.Size = new Size(184, 20);
+            textBox_modelType.TabIndex = 13;
+            textBox_modelType.Text = "<тип>";
+            textBox_modelType.TextChanged += textBox_modelType_TextChanged;
             // 
             // textBox4
             // 
             textBox4.BorderStyle = BorderStyle.None;
             textBox4.Cursor = Cursors.Help;
-            textBox4.Location = new Point(4, 39);
+            textBox4.Location = new Point(4, 76);
             textBox4.Multiline = true;
             textBox4.Name = "textBox4";
             textBox4.ReadOnly = true;
-            textBox4.Size = new Size(126, 41);
+            textBox4.Size = new Size(125, 39);
             textBox4.TabIndex = 14;
             textBox4.Text = "Коэффициент\r\nотражения\r\n";
             toolTip.SetToolTip(textBox4, "Коэффициент отражения света материала модели");
@@ -293,24 +333,13 @@
             // 
             textBox10.BorderStyle = BorderStyle.None;
             textBox10.Cursor = Cursors.Help;
-            textBox10.Location = new Point(4, 4);
+            textBox10.Location = new Point(4, 40);
             textBox10.Name = "textBox10";
             textBox10.ReadOnly = true;
-            textBox10.Size = new Size(126, 20);
+            textBox10.Size = new Size(125, 20);
             textBox10.TabIndex = 0;
             textBox10.Text = "Тип";
             toolTip.SetToolTip(textBox10, "Тип модели");
-            // 
-            // textBox_modelType
-            // 
-            textBox_modelType.BackColor = SystemColors.Control;
-            textBox_modelType.BorderStyle = BorderStyle.None;
-            textBox_modelType.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            textBox_modelType.Location = new Point(139, 4);
-            textBox_modelType.Name = "textBox_modelType";
-            textBox_modelType.Size = new Size(189, 20);
-            textBox_modelType.TabIndex = 13;
-            textBox_modelType.Text = "<тип>";
             // 
             // tableLayoutPanel2
             // 
@@ -337,15 +366,15 @@
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 33F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
-            tableLayoutPanel2.Size = new Size(332, 204);
+            tableLayoutPanel2.Size = new Size(324, 204);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // numericUpDown_radius
             // 
-            numericUpDown_radius.Location = new Point(139, 171);
+            numericUpDown_radius.Location = new Point(136, 171);
             numericUpDown_radius.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_radius.Name = "numericUpDown_radius";
-            numericUpDown_radius.Size = new Size(189, 27);
+            numericUpDown_radius.Size = new Size(184, 27);
             numericUpDown_radius.TabIndex = 19;
             numericUpDown_radius.ThousandsSeparator = true;
             // 
@@ -356,37 +385,39 @@
             textBox2.Location = new Point(4, 171);
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
-            textBox2.Size = new Size(126, 20);
+            textBox2.Size = new Size(125, 20);
             textBox2.TabIndex = 18;
             textBox2.Text = "Радиус";
             toolTip.SetToolTip(textBox2, "Задает радиус фигуры (только для икосаэдра)");
             // 
             // numericUpDown_angle
             // 
-            numericUpDown_angle.Location = new Point(139, 137);
+            numericUpDown_angle.Location = new Point(136, 137);
             numericUpDown_angle.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_angle.Name = "numericUpDown_angle";
-            numericUpDown_angle.Size = new Size(189, 27);
+            numericUpDown_angle.Size = new Size(184, 27);
             numericUpDown_angle.TabIndex = 17;
             numericUpDown_angle.ThousandsSeparator = true;
             // 
             // numericUpDown_height
             // 
-            numericUpDown_height.Location = new Point(139, 102);
+            numericUpDown_height.Location = new Point(136, 102);
             numericUpDown_height.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_height.Name = "numericUpDown_height";
-            numericUpDown_height.Size = new Size(189, 27);
+            numericUpDown_height.Size = new Size(184, 27);
             numericUpDown_height.TabIndex = 16;
             numericUpDown_height.ThousandsSeparator = true;
+            numericUpDown_height.ValueChanged += numericUpDown_height_ValueChanged;
             // 
             // numericUpDown_width
             // 
-            numericUpDown_width.Location = new Point(139, 52);
+            numericUpDown_width.Location = new Point(136, 52);
             numericUpDown_width.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_width.Name = "numericUpDown_width";
-            numericUpDown_width.Size = new Size(189, 27);
+            numericUpDown_width.Size = new Size(184, 27);
             numericUpDown_width.TabIndex = 15;
             numericUpDown_width.ThousandsSeparator = true;
+            numericUpDown_width.ValueChanged += numericUpDown_width_ValueChanged;
             // 
             // textBox7
             // 
@@ -395,7 +426,7 @@
             textBox7.Location = new Point(4, 137);
             textBox7.Name = "textBox7";
             textBox7.ReadOnly = true;
-            textBox7.Size = new Size(126, 20);
+            textBox7.Size = new Size(125, 20);
             textBox7.TabIndex = 12;
             textBox7.Text = "Угол наклона";
             toolTip.SetToolTip(textBox7, "Задает угол между боковым ребром и ребром основания (только для призм)");
@@ -421,7 +452,7 @@
             textBox3.Multiline = true;
             textBox3.Name = "textBox3";
             textBox3.ReadOnly = true;
-            textBox3.Size = new Size(128, 43);
+            textBox3.Size = new Size(125, 43);
             textBox3.TabIndex = 10;
             textBox3.Text = "Ширина основания";
             toolTip.SetToolTip(textBox3, "Задает ширину основания (только для призм)");
@@ -435,7 +466,7 @@
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
-            textBox1.Size = new Size(126, 41);
+            textBox1.Size = new Size(125, 41);
             textBox1.TabIndex = 0;
             textBox1.Text = "Длина ребра основания";
             toolTip.SetToolTip(textBox1, "Задает длину ребра основания");
@@ -443,12 +474,13 @@
             // 
             // numericUpDown_length
             // 
-            numericUpDown_length.Location = new Point(139, 4);
+            numericUpDown_length.Location = new Point(136, 4);
             numericUpDown_length.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
             numericUpDown_length.Name = "numericUpDown_length";
-            numericUpDown_length.Size = new Size(189, 27);
+            numericUpDown_length.Size = new Size(184, 27);
             numericUpDown_length.TabIndex = 14;
             numericUpDown_length.ThousandsSeparator = true;
+            numericUpDown_length.ValueChanged += numericUpDown_length_ValueChanged;
             // 
             // label1
             // 
@@ -490,8 +522,8 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.032259F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70.96774F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 358F));
-            tableLayoutPanel3.Controls.Add(listView_models, 0, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel1, 2, 0);
+            tableLayoutPanel3.Controls.Add(listView_models, 0, 0);
             tableLayoutPanel3.Controls.Add(pictureBox_editModel, 1, 0);
             tableLayoutPanel3.Location = new Point(12, 12);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -601,5 +633,7 @@
         private ToolStripMenuItem Wood;
         private ToolStripMenuItem Stone;
         private ToolStripMenuItem Metal;
+        private TextBox textBox11;
+        private TextBox textBox_name;
     }
 }
