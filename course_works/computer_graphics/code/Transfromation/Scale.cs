@@ -21,7 +21,16 @@ namespace code
                     {0,       0,       0,      1}
                 }
             );
+        }
 
+        static public void Transform(Scale scale, Point3D point)
+        {
+            Transformation.Transform(scale, point);
+        }
+
+        static public void Transform(Scale scale, Point3D point, Point3D center)
+        {
+            Transformation.Transform(scale, point, center);
         }
     }
 }

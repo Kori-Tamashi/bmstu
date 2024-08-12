@@ -48,5 +48,20 @@ namespace code.Objects
             Y /= length;
             Z /= length;
         }
+
+        public static Vector3D operator* (Vector3D v1, float scalar)
+        {
+            return new Vector3D(v1.X * scalar, v1.Y * scalar, v1.Z * scalar);
+        }
+
+        public static Vector3D operator+ (Vector3D v1, Point3D point)
+        {
+            return new Vector3D(v1.X + point.X, v1.Y + point.Y, v1.Z + point.Z);
+        }
+
+        public static Point3D operator+ (Point3D point, Vector3D v1)
+        {
+            return new Point3D(v1.X + point.X, v1.Y + point.Y, v1.Z + point.Z);
+        }
     }
 }
