@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace code
 {
-    class TransformationMatrix : Matrix
+    public class TransformationMatrix : Matrix
     {
         public TransformationMatrix()
         {

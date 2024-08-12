@@ -52,6 +52,24 @@ namespace code
 
         }
 
+        public Cube(Model other)
+        {
+            type = other.Type;
+            name = other.Name;
+            center = other.Center;
+            length = other.Length;
+            width = other.Width;
+            height = other.Height;
+            radius = other.Radius;
+            angle = other.Angle;
+            color = other.Color;
+            material = other.Material;
+
+            CopyPoints(other);
+            CopyIndexes(other);
+            ConstructEdges(points, indexes);
+        }
+
         protected override void Update()
         {
             UpdateCenter();
@@ -77,6 +95,11 @@ namespace code
         {
             float k = newLength / length;
             Scale(new Scale(k, k, k));
+        }
+
+        public override Model Copy()
+        {
+            return new Cube(this);
         }
     }
 }

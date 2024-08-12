@@ -32,9 +32,15 @@ namespace code
             set { scene.Models = value; }
         }
 
+        
         public Model Model(int index)
         {
             return scene.Model(index);   
+        }
+
+        public void Model(int index, Model model)
+        {
+            scene.Model(index, model);
         }
 
         public Point3D Center
@@ -88,25 +94,32 @@ namespace code
         public void Move(Move move)
         {
             scene.Move(move);
-            Refresh();
         }
 
         public void Rotate(Rotate rotate)
         {
             scene.Rotate(rotate);
-            Refresh();
         }
 
         public void Scale(Scale scale)
         {
             scene.Scale(scale);
-            Refresh();
         }
 
         public void Centering(Centering centering)
         {
             scene.Centering(centering);
-            Refresh();
         }
+
+        public void Centering()
+        {
+            scene.Centering();
+        }
+
+        public void Centering(Model model)
+        {
+            scene.Centering(new Centering(model, this.Center, this.Size));
+        }
+
     }
 }

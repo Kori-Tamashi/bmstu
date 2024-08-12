@@ -26,7 +26,7 @@ namespace code
 
             float lengthK = dstLength / model.Length;
             float widthK = model.Width != -1 ? dstWidth / model.Width : lengthK;
-            float heightK = model.Height != -1 ? dstHeight / model.Height : lengthK;
+            float heightK = model.Height != -1 ? dstHeight / model.Height : (model.Radius != -1 ? dstHeight / 2 * model.Radius : lengthK);
 
             float resultK = Math.Min(Math.Min(lengthK, widthK), heightK) * scalek;
 

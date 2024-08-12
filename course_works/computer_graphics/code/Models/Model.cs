@@ -141,7 +141,7 @@ namespace code
             }
         }
 
-        private void CopyPoints(Model other)
+        protected void CopyPoints(Model other)
         {
             points = new List<Point3D>();
             foreach (Point3D point in other.points)
@@ -150,10 +150,16 @@ namespace code
             }
         }
 
-        private void CopyIndexes(Model other)
+        protected void CopyIndexes(Model other)
         {
             indexes = new List<int>(other.indexes);
         }
+
+        public virtual Model Copy()
+        {
+            return new Model(this);
+        }
+
 
         protected virtual void Update()
         {
@@ -270,6 +276,13 @@ namespace code
             Scale(centering.scale);
         }
 
+        public void Centering(Point3D center, Size size)
+        {
+            Centering centering = new Centering(this, center, size);
+            Move(centering.move);
+            Scale(centering.scale);
+        }
+
         private void Transform(Transformation transformation, Point3D center)
         {
             UpdateCenter();
@@ -371,5 +384,7 @@ namespace code
                 );
             }
         }
+
+        
     }
 }

@@ -33,6 +33,11 @@ namespace code
             return models[index];
         }
 
+        public void Model(int index, Model model)
+        {
+            models[index] = model;
+        }
+
         public Point3D Center
         {
             get { return center; }
@@ -102,6 +107,14 @@ namespace code
             foreach (Model model in models)
             {
                 model.Centering(centering);
+            }
+        }
+
+        public void Centering()
+        {
+            foreach (Model model in models)
+            {
+                model.Centering(center, size);
             }
         }
     }

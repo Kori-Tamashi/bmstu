@@ -377,6 +377,7 @@
             numericUpDown_radius.Size = new Size(184, 27);
             numericUpDown_radius.TabIndex = 19;
             numericUpDown_radius.ThousandsSeparator = true;
+            numericUpDown_radius.ValueChanged += numericUpDown_radius_ValueChanged;
             // 
             // textBox2
             // 

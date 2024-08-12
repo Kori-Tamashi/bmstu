@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class Scale : Transformation
+    public class Scale : Transformation
     {
         public Scale(float kx, float ky, float kz) 
         {
@@ -20,6 +21,7 @@ namespace code
                     {0,       0,       0,      1}
                 }
             );
+
         }
     }
 }

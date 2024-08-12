@@ -8,7 +8,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class Matrix
+    public class Matrix
     {
         protected int rows;
         protected int columns;

@@ -17,11 +17,8 @@ namespace code
         Canvas selfCanvas;
         Facade facade;
 
-        DrawsCommand drawCommand;
-        SceneCommand sceneCommand;
-        TransformationCommand transformationCommand;
-
-        Model currentModel;
+        Model currentMainModel;
+        Model currentSelfModel;
         int currentModelIndex;
 
         public Form2(ref Canvas mainCanvas)
@@ -99,26 +96,21 @@ namespace code
             if (listView_models.SelectedItems.Count != 0)
             {
                 currentModelIndex = listView_models.SelectedItems[0].Index;
-                currentModel = new Model(mainCanvas.Model(currentModelIndex));
 
-                UpdateCanvas(currentModel);
-                UpdateInformationTable(currentModel);
+                currentMainModel = mainCanvas.Model(currentModelIndex);
+                currentSelfModel = currentMainModel.Copy();
+
+                UpdateInformationTable(currentMainModel);
+                UpdateCanvas(currentSelfModel);
             }
         }
 
         private void UpdateCanvas(Model model)
         {
-            sceneCommand = new DeleteModelsCommand(ref selfCanvas);
-            facade._execute(sceneCommand);
-
-            sceneCommand = new AddModelCommand(ref selfCanvas, ref currentModel);
-            facade._execute(sceneCommand);
-
-            transformationCommand = new CenteringCommand(ref selfCanvas, currentModel, selfCanvas.Center, selfCanvas.Size);
-            facade._execute(transformationCommand);
-
-            drawCommand = new RefreshCommand(ref selfCanvas);
-            facade._execute(drawCommand);
+            selfCanvas.DeleteModels();
+            selfCanvas.AddModel(currentSelfModel);
+            selfCanvas.Centering(new Centering(currentSelfModel, selfCanvas.Center, selfCanvas.Size));
+            selfCanvas.Refresh();
         }
 
         private void UpdateInformationTable(Model model)
@@ -271,28 +263,22 @@ namespace code
 
         private void ChangeColorEvent(Color newColor)
         {
-            currentModel.Color = newColor;
+            currentSelfModel.Color = newColor;
             mainCanvas.Model(currentModelIndex).Color = newColor;
-            UpdateInformationTableColor(currentModel);
+            UpdateInformationTableColor(currentSelfModel);
 
-            drawCommand = new RefreshCommand(ref selfCanvas);
-            facade._execute(drawCommand);
-
-            drawCommand = new RefreshCommand(ref mainCanvas);
-            facade._execute(drawCommand);
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
         }
 
         private void ChangeMaterialEvent(MaterialType newMaterialType)
         {
-            currentModel.MaterialType = newMaterialType;
+            currentSelfModel.MaterialType = newMaterialType;
             mainCanvas.Model(currentModelIndex).MaterialType = newMaterialType;
-            UpdateInfromationTableMaterial(currentModel);
+            UpdateInfromationTableMaterial(currentSelfModel);
 
-            drawCommand = new RefreshCommand(ref selfCanvas);
-            facade._execute(drawCommand);
-
-            drawCommand = new RefreshCommand(ref mainCanvas);
-            facade._execute(drawCommand);
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
         }
 
         #endregion
@@ -324,40 +310,80 @@ namespace code
 
         private void textBox_name_TextChanged(object sender, EventArgs e)
         {
-            currentModel.Name = textBox_name.Text;
+            currentSelfModel.Name = textBox_name.Text;
             mainCanvas.Model(currentModelIndex).Name = textBox_name.Text;
         }
 
         private void numericUpDown_length_ValueChanged(object sender, EventArgs e)
         {
-            mainCanvas.Model(currentModelIndex).Length = (float)numericUpDown_length.Value;
-            drawCommand = new RefreshCommand(ref mainCanvas);
-            facade._execute(drawCommand);
+            if (currentMainModel.Length == -1)
+                return;
 
-            currentModel = new Model(mainCanvas.Model(currentModelIndex));
-            UpdateCanvas(currentModel);
+            float newLength = (float)numericUpDown_length.Value;
+            float modelLength = currentMainModel.Length;
+
+            currentSelfModel.Length *= newLength / modelLength;
+            currentMainModel.Length = newLength;
+
+            selfCanvas.Centering();
+            UpdateInformationTableSizes(currentMainModel);
+
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
         }
 
         private void numericUpDown_width_ValueChanged(object sender, EventArgs e)
         {
-            mainCanvas.Model(currentModelIndex).Width = (float)numericUpDown_width.Value;
-            drawCommand = new RefreshCommand(ref mainCanvas);
-            facade._execute(drawCommand);
+            if (currentMainModel.Width == -1)
+                return;
 
-            currentModel = new Model(mainCanvas.Model(currentModelIndex));
-            UpdateCanvas(currentModel);
+            float newWidth = (float)numericUpDown_width.Value;
+            float modelWidth = currentMainModel.Length;
+
+            currentSelfModel.Width *= newWidth / modelWidth;
+            currentMainModel.Width = newWidth;
+
+            selfCanvas.Centering();
+            UpdateInformationTableSizes(currentMainModel);
+
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
         }
 
         private void numericUpDown_height_ValueChanged(object sender, EventArgs e)
         {
-            mainCanvas.Model(currentModelIndex).Height = (float)numericUpDown_height.Value;
-            drawCommand = new RefreshCommand(ref mainCanvas);
-            facade._execute(drawCommand);
+            if (currentMainModel.Height == -1)
+                return;
 
-            currentModel = new Model(mainCanvas.Model(currentModelIndex));
-            UpdateCanvas(currentModel);
+            float newHeight = (float)numericUpDown_height.Value;
+            float modelHeight = currentMainModel.Height;
+
+            currentSelfModel.Height *= newHeight / modelHeight;
+            currentMainModel.Height = newHeight;
+
+            selfCanvas.Centering();
+            UpdateInformationTableSizes(currentMainModel);
+
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
         }
 
-        
+        private void numericUpDown_radius_ValueChanged(object sender, EventArgs e)
+        {
+            if (currentMainModel.Radius == -1)
+                return;
+
+            float newRadius = (float)numericUpDown_radius.Value;
+            float modelRadius = currentMainModel.Radius;
+
+            currentSelfModel.Radius *= newRadius / modelRadius;
+            currentMainModel.Radius = newRadius;
+
+            selfCanvas.Centering();
+            UpdateInformationTableSizes(currentMainModel);
+
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
+        }
     }
 }
