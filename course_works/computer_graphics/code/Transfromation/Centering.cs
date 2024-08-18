@@ -12,7 +12,7 @@ namespace code
         public Move move;
         public Scale scale;
 
-        float scalek = (float)0.50;
+        float scalek = (float)0.45;
 
         public Centering(Model model, Point3D dstCenter, Size dstSize)
         {

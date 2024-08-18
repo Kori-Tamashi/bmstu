@@ -312,6 +312,7 @@ namespace code
         {
             currentSelfModel.Name = textBox_name.Text;
             mainCanvas.Model(currentModelIndex).Name = textBox_name.Text;
+            listView_models.SelectedItems[0].Text = textBox_name.Text;
         }
 
         private void numericUpDown_length_ValueChanged(object sender, EventArgs e)

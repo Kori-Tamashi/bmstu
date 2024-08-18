@@ -133,25 +133,35 @@ namespace code
         public override float Length
         {
             get { return length; }
-            set { SetLength(value); length = value; }
+            set { SetLength(value); Update(); length = value; }
         }
 
         public override float Radius
         {
             get { return radius; }
-            set { SetRadius(value); radius = value; }
+            set { SetRadius(value); Update(); radius = value; }
         }
 
         private void SetLength(float newLength)
         {
             float k = newLength / length;
-            Scale(new Scale(k, k, k));
+            Scale scale = new Scale(k, k, k);
+
+            foreach (Point3D point in points)
+            {
+                code.Scale.Transform(scale, point, center);
+            }
         }
 
         private void SetRadius(float newRadius)
         {
             float k = newRadius / radius;
-            Scale(new Scale(k, k, k));
+            Scale scale = new Scale(k, k, k);
+
+            foreach (Point3D point in points)
+            {
+                code.Scale.Transform(scale, point, center);
+            }
         }
 
         public override Model Copy()
