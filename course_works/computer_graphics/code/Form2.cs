@@ -339,7 +339,7 @@ namespace code
                 return;
 
             float newWidth = (float)numericUpDown_width.Value;
-            float modelWidth = currentMainModel.Length;
+            float modelWidth = currentMainModel.Width;
 
             currentSelfModel.Width *= newWidth / modelWidth;
             currentMainModel.Width = newWidth;

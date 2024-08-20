@@ -40,14 +40,15 @@ namespace code
 
             this.type = Modeltype.DirectPrism;
             this.color = Color.Empty;
-            this.length = 100;
-            this.width = 100;
-            this.height = 200;
-            this.radius = -1;
+            this.length = -1;
+            this.width = -1;
+            this.height = -1;
             this.angle = -1;
+            this.radius = -1;
 
-            ConstructCenter(this.points);
-            ConstructEdges(this.points, this.indexes);
+            ConstructCenter(points);
+            ConstructEdges(points, indexes);
+            Update();
         }
 
         public DirectPrism(Model other)
@@ -79,18 +80,18 @@ namespace code
         private void UpdateLength()
         {
             length = (float)Math.Sqrt(
-                Math.Pow(points[1].X - points[0].X, 2) +
-                Math.Pow(points[1].Y - points[0].Y, 2) +
-                Math.Pow(points[1].Z - points[0].Z, 2)
+                Math.Pow(points[2].X - points[1].X, 2) +
+                Math.Pow(points[2].Y - points[1].Y, 2) +
+                Math.Pow(points[2].Z - points[1].Z, 2)
                 );
         }
 
         private void UpdateWidth()
         {
             width = (float)Math.Sqrt(
-                Math.Pow(points[2].X - points[1].X, 2) +
-                Math.Pow(points[2].Y - points[1].Y, 2) +
-                Math.Pow(points[2].Z - points[1].Z, 2)
+                Math.Pow(points[1].X - points[0].X, 2) +
+                Math.Pow(points[1].Y - points[0].Y, 2) +
+                Math.Pow(points[1].Z - points[0].Z, 2)
                 );
         }
 
@@ -106,37 +107,52 @@ namespace code
         public override float Length
         {
             get { return length; }
-            set { SetLength(value); length = value; }
+            set { SetLength(value); Update(); length = value; }
         }
 
         public override float Width
         {
             get { return width; }
-            set { SetWidth(value); width = value; }
+            set { SetWidth(value); Update(); width = value; }
         }
 
         public override float Height
         {
             get { return height; }
-            set { SetHeight(value); height = value; }
+            set { SetHeight(value); Update(); height = value; }
         }
 
         private void SetLength(float newLength)
         {
             float k = newLength / length;
-            Scale(new Scale(1, 1, k));
+            Scale scale = new Scale(k, k, k);
+
+            code.Scale.Transform(scale, points[3], points[0]);
+            code.Scale.Transform(scale, points[2], points[1]);
+            code.Scale.Transform(scale, points[7], points[4]);
+            code.Scale.Transform(scale, points[6], points[5]);
         }
 
         private void SetWidth(float newWidth)
         {
             float k = newWidth / width;
-            Scale(new Scale(k, 1, 1));
+            Scale scale = new Scale(k, k, k);
+
+            code.Scale.Transform(scale, points[0], points[1]);
+            code.Scale.Transform(scale, points[3], points[2]);
+            code.Scale.Transform(scale, points[4], points[5]);
+            code.Scale.Transform(scale, points[7], points[6]);
         }
 
         private void SetHeight(float newHeight)
         {
             float k = newHeight / height;
-            Scale(new code.Scale(1, k, 1));
+            Scale scale = new Scale(k, k, k);
+
+            for (int i = 0; i < 4; i++)
+            {
+                code.Scale.Transform(scale, points[i], points[i + 4]);
+            }
         }
 
         public override Model Copy()

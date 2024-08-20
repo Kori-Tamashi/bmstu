@@ -103,6 +103,7 @@ namespace code
         private void SetLength(float newLength)
         {
             float k = newLength / length;
+            Scale scale = new Scale(k, k, k);
 
             Point3D baseCenter = new Point3D(
                     (points[0].X + points[1].X + points[2].X) / 3,
@@ -110,7 +111,6 @@ namespace code
                     (points[0].Z + points[1].Z + points[2].Z) / 3
                 );
 
-            Scale scale = new Scale(k, k, k);
             for (int i = 0; i < 3; i++)
             {
                 code.Scale.Transform(scale, points[i], baseCenter);
@@ -120,6 +120,7 @@ namespace code
         private void SetHeight(float newHeight)
         {
             float k = newHeight / height;
+            Scale scale = new Scale(k, k, k);
 
             Point3D baseCenter = new Point3D(
                     (points[0].X + points[1].X + points[2].X) / 3,
@@ -127,7 +128,6 @@ namespace code
                     (points[0].Z + points[1].Z + points[2].Z) / 3
                 );
 
-            Scale scale = new Scale(k, k, k);
             code.Scale.Transform(scale, points[3], baseCenter);
         }
 

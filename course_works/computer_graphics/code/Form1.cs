@@ -31,25 +31,25 @@ namespace code
             facade = new Facade();
 
             Model model = new Cube();
-            //model.Name = "Кубик";
-            //model.Color = Color.Red;
-            //sceneCommand = new AddModelCommand(ref canvas, ref model);
-            //facade._execute(sceneCommand);
-
-            //model = new Pyramid();
-            //model.Name = "Пирамида";
-            //sceneCommand = new AddModelCommand(ref canvas, ref model);
-            //facade._execute(sceneCommand);
-
-            //model = new DirectPrism();
-            //model.Name = "Прямая призма";
-            //sceneCommand = new AddModelCommand(ref canvas, ref model);
-            //facade._execute(sceneCommand);
-
-            model = new Icosahedron();
-            model.Name = "Икосаэдр";
+            model.Name = "Кубик";
+            model.Color = Color.Red;
             sceneCommand = new AddModelCommand(ref canvas, ref model);
             facade._execute(sceneCommand);
+
+            model = new Pyramid();
+            model.Name = "Пирамида";
+            sceneCommand = new AddModelCommand(ref canvas, ref model);
+            facade._execute(sceneCommand);
+
+            model = new DirectPrism();
+            model.Name = "Прямая призма";
+            sceneCommand = new AddModelCommand(ref canvas, ref model);
+            facade._execute(sceneCommand);
+
+            //model = new Icosahedron();
+            //model.Name = "Икосаэдр";
+            //sceneCommand = new AddModelCommand(ref canvas, ref model);
+            //facade._execute(sceneCommand);
         }
 
         private void InitializeDialogs()

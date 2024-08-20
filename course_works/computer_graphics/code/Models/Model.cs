@@ -160,7 +160,6 @@ namespace code
             return new Model(this);
         }
 
-
         protected virtual void Update()
         {
 

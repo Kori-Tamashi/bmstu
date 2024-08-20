@@ -41,7 +41,7 @@ namespace code
 
             this.type = Modeltype.Cube;
             this.color = Color.Empty;
-            this.length = 100;
+            this.length = -1;
             this.width = -1;
             this.height = -1;
             this.angle = -1;
@@ -49,7 +49,7 @@ namespace code
 
             ConstructCenter(this.points);
             ConstructEdges(this.points, this.indexes);
-
+            Update();
         }
 
         public Cube(Model other)
@@ -88,13 +88,18 @@ namespace code
         public override float Length
         {
             get { return length; }
-            set { SetLength(value); length = value; }
+            set { SetLength(value); Update();  length = value; }
         }
 
         private void SetLength(float newLength)
         {
             float k = newLength / length;
-            Scale(new Scale(k, k, k));
+            Scale scale = new Scale(k, k, k);
+
+            foreach (Point3D point in points)
+            {
+                code.Scale.Transform(scale, point, center);
+            }
         }
 
         public override Model Copy()
