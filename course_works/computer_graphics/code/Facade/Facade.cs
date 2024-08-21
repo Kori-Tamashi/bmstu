@@ -10,15 +10,22 @@ namespace code
 {
     class Facade
     {
+        FormManager formManager;
         DrawManager drawManager;
         SceneManager sceneManager;
         TransformationManager transformationManager;
 
         public Facade()
         { 
+            formManager = new FormManager();
             drawManager = new DrawManager();
             sceneManager = new SceneManager();
             transformationManager = new TransformationManager();
+        }
+
+        public void _execute(FormCommand command)
+        {
+            formManager._execute(command);
         }
 
         public void _execute(DrawsCommand command)

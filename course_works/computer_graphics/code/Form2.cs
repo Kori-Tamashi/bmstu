@@ -15,7 +15,6 @@ namespace code
     {
         Canvas mainCanvas;
         Canvas selfCanvas;
-        Facade facade;
 
         Model currentMainModel;
         Model currentSelfModel;
@@ -27,7 +26,6 @@ namespace code
 
             InitializeComponent();
             InitializeCanvas();
-            InitializeFacade();
             InitializeListModels();
         }
 
@@ -43,11 +41,6 @@ namespace code
             selfCanvas = new Canvas(new Size(pictureBox_editModel.Width, pictureBox_editModel.Height), pictureBox_editModel.CreateGraphics());
         }
 
-        private void InitializeFacade()
-        {
-            facade = new Facade();
-        }
-
         private void InitializeListModels()
         {
             // Initialize group
@@ -58,33 +51,13 @@ namespace code
             foreach (Model model in mainCanvas.Models)
             {
                 ListViewItem item = new ListViewItem(model.Name, listViewGroup);
-                item.ImageIndex = ModelImageIndex(model.Type);
+                item.ImageIndex = ModelType.ModelImageIndex(model.Type);
                 listView_models.Items.Add(item);
             }
 
             // Add items
             listView_models.Groups.Add(listViewGroup);
             listView_models.Refresh();
-        }
-        private int ModelImageIndex(Modeltype modelType)
-        {
-            switch (modelType)
-            {
-                case Modeltype.Cube:
-                    return 0;
-                case Modeltype.DirectPrism:
-                    return 1;
-                case Modeltype.InclinedPrism:
-                    return 2;
-                case Modeltype.Pyramid:
-                    return 3;
-                case Modeltype.TruncatedPyramid:
-                    return 4;
-                case Modeltype.Icosahedron:
-                    return 5;
-                default:
-                    return 5;
-            }
         }
 
         #endregion

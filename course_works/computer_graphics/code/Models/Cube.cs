@@ -39,6 +39,7 @@ namespace code
                 3, 7
             };
 
+            name = "Куб";
             type = Modeltype.Cube;
             color = Color.Empty;
             length = -1;

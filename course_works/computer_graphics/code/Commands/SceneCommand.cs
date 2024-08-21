@@ -19,6 +19,7 @@ namespace code
     class AddModelCommand : SceneCommand
     {
         protected Model model;
+
         public AddModelCommand(ref Canvas canvas, ref Model model) : base(ref canvas)
         {
             this.model = model;
@@ -27,6 +28,7 @@ namespace code
         public override void _execute()
         {
             canvas.AddModel(model);
+
         }
     }
 

@@ -33,6 +33,11 @@
             InteractionMenu_tabControl = new TabControl();
             Main_tabPage = new TabPage();
             flowLayoutPanel2 = new FlowLayoutPanel();
+            groupBox6 = new GroupBox();
+            button6 = new Button();
+            button5 = new Button();
+            button_Clear = new Button();
+            button_dialogEdit = new Button();
             Primitives_groupBox = new GroupBox();
             flowLayoutPanel1 = new FlowLayoutPanel();
             Cube_button = new Button();
@@ -41,17 +46,19 @@
             Icosahedron_button = new Button();
             truncatedPentagonalPyramid_button = new Button();
             inclinedPrism_button = new Button();
+            listView_modelsMain = new ListView();
+            imageList = new ImageList(components);
             groupBox3 = new GroupBox();
-            button_moveX = new Button();
+            button_moveModel = new Button();
             tableLayoutPanel2 = new TableLayoutPanel();
             label2 = new Label();
-            numericUpDown3 = new NumericUpDown();
+            numericUpDown_moveZ = new NumericUpDown();
             numericUpDown_moveY = new NumericUpDown();
             numericUpDown_moveX = new NumericUpDown();
             label6 = new Label();
             label4 = new Label();
             groupBox4 = new GroupBox();
-            button_rotate = new Button();
+            button_rotateModel = new Button();
             tableLayoutPanel7 = new TableLayoutPanel();
             label5 = new Label();
             numericUpDown_angleOz = new NumericUpDown();
@@ -60,7 +67,7 @@
             label8 = new Label();
             label9 = new Label();
             groupBox5 = new GroupBox();
-            button4 = new Button();
+            button_scaleModel = new Button();
             tableLayoutPanel3 = new TableLayoutPanel();
             label3 = new Label();
             numericUpDown_scaleZ = new NumericUpDown();
@@ -87,11 +94,12 @@
             InteractionMenu_tabControl.SuspendLayout();
             Main_tabPage.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
+            groupBox6.SuspendLayout();
             Primitives_groupBox.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             groupBox3.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveX).BeginInit();
             groupBox4.SuspendLayout();
@@ -142,7 +150,9 @@
             // flowLayoutPanel2
             // 
             flowLayoutPanel2.Anchor = AnchorStyles.None;
+            flowLayoutPanel2.Controls.Add(groupBox6);
             flowLayoutPanel2.Controls.Add(Primitives_groupBox);
+            flowLayoutPanel2.Controls.Add(listView_modelsMain);
             flowLayoutPanel2.Controls.Add(groupBox3);
             flowLayoutPanel2.Controls.Add(groupBox4);
             flowLayoutPanel2.Controls.Add(groupBox5);
@@ -151,12 +161,65 @@
             flowLayoutPanel2.Size = new Size(1471, 182);
             flowLayoutPanel2.TabIndex = 0;
             // 
+            // groupBox6
+            // 
+            groupBox6.Anchor = AnchorStyles.None;
+            groupBox6.Controls.Add(button6);
+            groupBox6.Controls.Add(button5);
+            groupBox6.Controls.Add(button_Clear);
+            groupBox6.Controls.Add(button_dialogEdit);
+            groupBox6.Font = new Font("Segoe UI", 10F);
+            groupBox6.Location = new Point(3, 3);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(196, 179);
+            groupBox6.TabIndex = 8;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Действия";
+            // 
+            // button6
+            // 
+            button6.Location = new Point(3, 131);
+            button6.Name = "button6";
+            button6.Size = new Size(187, 29);
+            button6.TabIndex = 3;
+            button6.Text = "button6";
+            button6.UseVisualStyleBackColor = true;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(3, 96);
+            button5.Name = "button5";
+            button5.Size = new Size(187, 29);
+            button5.TabIndex = 2;
+            button5.Text = "button5";
+            button5.UseVisualStyleBackColor = true;
+            // 
+            // button_Clear
+            // 
+            button_Clear.Location = new Point(3, 61);
+            button_Clear.Name = "button_Clear";
+            button_Clear.Size = new Size(187, 29);
+            button_Clear.TabIndex = 1;
+            button_Clear.Text = "Очистка";
+            button_Clear.UseVisualStyleBackColor = true;
+            button_Clear.Click += button_Clear_Click;
+            // 
+            // button_dialogEdit
+            // 
+            button_dialogEdit.Location = new Point(3, 26);
+            button_dialogEdit.Name = "button_dialogEdit";
+            button_dialogEdit.Size = new Size(187, 29);
+            button_dialogEdit.TabIndex = 0;
+            button_dialogEdit.Text = "Редактор моделей";
+            button_dialogEdit.UseVisualStyleBackColor = true;
+            button_dialogEdit.Click += button_dialogEdit_Click;
+            // 
             // Primitives_groupBox
             // 
             Primitives_groupBox.AutoSize = true;
             Primitives_groupBox.Controls.Add(flowLayoutPanel1);
             Primitives_groupBox.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            Primitives_groupBox.Location = new Point(3, 3);
+            Primitives_groupBox.Location = new Point(205, 3);
             Primitives_groupBox.Name = "Primitives_groupBox";
             Primitives_groupBox.Size = new Size(180, 179);
             Primitives_groupBox.TabIndex = 1;
@@ -243,29 +306,56 @@
             inclinedPrism_button.TabIndex = 4;
             toolTip.SetToolTip(inclinedPrism_button, "Наклонная призма");
             inclinedPrism_button.UseVisualStyleBackColor = true;
+            inclinedPrism_button.Click += inclinedPrism_button_Click;
+            // 
+            // listView_modelsMain
+            // 
+            listView_modelsMain.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            listView_modelsMain.GridLines = true;
+            listView_modelsMain.LargeImageList = imageList;
+            listView_modelsMain.Location = new Point(391, 3);
+            listView_modelsMain.MultiSelect = false;
+            listView_modelsMain.Name = "listView_modelsMain";
+            listView_modelsMain.Size = new Size(338, 175);
+            listView_modelsMain.SmallImageList = imageList;
+            listView_modelsMain.TabIndex = 4;
+            listView_modelsMain.UseCompatibleStateImageBehavior = false;
+            // 
+            // imageList
+            // 
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageStream = (ImageListStreamer)resources.GetObject("imageList.ImageStream");
+            imageList.TransparentColor = Color.Transparent;
+            imageList.Images.SetKeyName(0, "cube.png");
+            imageList.Images.SetKeyName(1, "direct-prism.png");
+            imageList.Images.SetKeyName(2, "inclined-prism.png");
+            imageList.Images.SetKeyName(3, "triangular-pyramid.png");
+            imageList.Images.SetKeyName(4, "truncated-pentagonal-pyramid.png");
+            imageList.Images.SetKeyName(5, "icosahedron.png");
             // 
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.None;
-            groupBox3.Controls.Add(button_moveX);
+            groupBox3.Controls.Add(button_moveModel);
             groupBox3.Controls.Add(tableLayoutPanel2);
             groupBox3.Font = new Font("Segoe UI", 10F);
-            groupBox3.Location = new Point(189, 3);
+            groupBox3.Location = new Point(735, 3);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(196, 178);
             groupBox3.TabIndex = 5;
             groupBox3.TabStop = false;
             groupBox3.Text = "Перемещение";
             // 
-            // button_moveX
+            // button_moveModel
             // 
-            button_moveX.Font = new Font("Segoe UI", 10F);
-            button_moveX.Location = new Point(6, 143);
-            button_moveX.Name = "button_moveX";
-            button_moveX.Size = new Size(184, 29);
-            button_moveX.TabIndex = 5;
-            button_moveX.Text = "Переместить";
-            button_moveX.UseVisualStyleBackColor = true;
+            button_moveModel.Font = new Font("Segoe UI", 10F);
+            button_moveModel.Location = new Point(6, 143);
+            button_moveModel.Name = "button_moveModel";
+            button_moveModel.Size = new Size(184, 29);
+            button_moveModel.TabIndex = 5;
+            button_moveModel.Text = "Переместить";
+            button_moveModel.UseVisualStyleBackColor = true;
+            button_moveModel.Click += button_moveModel_Click;
             // 
             // tableLayoutPanel2
             // 
@@ -275,7 +365,7 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 28F));
             tableLayoutPanel2.Controls.Add(label2, 0, 2);
-            tableLayoutPanel2.Controls.Add(numericUpDown3, 1, 2);
+            tableLayoutPanel2.Controls.Add(numericUpDown_moveZ, 1, 2);
             tableLayoutPanel2.Controls.Add(numericUpDown_moveY, 1, 1);
             tableLayoutPanel2.Controls.Add(numericUpDown_moveX, 1, 0);
             tableLayoutPanel2.Controls.Add(label6, 0, 1);
@@ -300,15 +390,15 @@
             label2.TabIndex = 7;
             label2.Text = "ΔZ";
             // 
-            // numericUpDown3
+            // numericUpDown_moveZ
             // 
-            numericUpDown3.Font = new Font("Segoe UI", 10F);
-            numericUpDown3.Location = new Point(47, 77);
-            numericUpDown3.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
-            numericUpDown3.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
-            numericUpDown3.Name = "numericUpDown3";
-            numericUpDown3.Size = new Size(128, 30);
-            numericUpDown3.TabIndex = 8;
+            numericUpDown_moveZ.Font = new Font("Segoe UI", 10F);
+            numericUpDown_moveZ.Location = new Point(47, 77);
+            numericUpDown_moveZ.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_moveZ.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_moveZ.Name = "numericUpDown_moveZ";
+            numericUpDown_moveZ.Size = new Size(128, 30);
+            numericUpDown_moveZ.TabIndex = 8;
             // 
             // numericUpDown_moveY
             // 
@@ -355,25 +445,26 @@
             // groupBox4
             // 
             groupBox4.Anchor = AnchorStyles.None;
-            groupBox4.Controls.Add(button_rotate);
+            groupBox4.Controls.Add(button_rotateModel);
             groupBox4.Controls.Add(tableLayoutPanel7);
             groupBox4.Font = new Font("Segoe UI", 10F);
-            groupBox4.Location = new Point(391, 3);
+            groupBox4.Location = new Point(937, 3);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(196, 179);
             groupBox4.TabIndex = 6;
             groupBox4.TabStop = false;
             groupBox4.Text = "Поворот";
             // 
-            // button_rotate
+            // button_rotateModel
             // 
-            button_rotate.Font = new Font("Segoe UI", 9F);
-            button_rotate.Location = new Point(6, 143);
-            button_rotate.Name = "button_rotate";
-            button_rotate.Size = new Size(180, 29);
-            button_rotate.TabIndex = 5;
-            button_rotate.Text = "Повернуть";
-            button_rotate.UseVisualStyleBackColor = true;
+            button_rotateModel.Font = new Font("Segoe UI", 9F);
+            button_rotateModel.Location = new Point(6, 143);
+            button_rotateModel.Name = "button_rotateModel";
+            button_rotateModel.Size = new Size(180, 29);
+            button_rotateModel.TabIndex = 5;
+            button_rotateModel.Text = "Повернуть";
+            button_rotateModel.UseVisualStyleBackColor = true;
+            button_rotateModel.Click += button_rotateModel_Click;
             // 
             // tableLayoutPanel7
             // 
@@ -463,25 +554,26 @@
             // groupBox5
             // 
             groupBox5.Anchor = AnchorStyles.None;
-            groupBox5.Controls.Add(button4);
+            groupBox5.Controls.Add(button_scaleModel);
             groupBox5.Controls.Add(tableLayoutPanel3);
             groupBox5.Font = new Font("Segoe UI", 10F);
-            groupBox5.Location = new Point(593, 3);
+            groupBox5.Location = new Point(1139, 3);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(196, 179);
             groupBox5.TabIndex = 7;
             groupBox5.TabStop = false;
             groupBox5.Text = "Масштабирование";
             // 
-            // button4
+            // button_scaleModel
             // 
-            button4.Font = new Font("Segoe UI", 9F);
-            button4.Location = new Point(6, 143);
-            button4.Name = "button4";
-            button4.Size = new Size(180, 29);
-            button4.TabIndex = 5;
-            button4.Text = "Повернуть";
-            button4.UseVisualStyleBackColor = true;
+            button_scaleModel.Font = new Font("Segoe UI", 9F);
+            button_scaleModel.Location = new Point(6, 143);
+            button_scaleModel.Name = "button_scaleModel";
+            button_scaleModel.Size = new Size(180, 29);
+            button_scaleModel.TabIndex = 5;
+            button_scaleModel.Text = "Повернуть";
+            button_scaleModel.UseVisualStyleBackColor = true;
+            button_scaleModel.Click += button_scaleModel_Click;
             // 
             // tableLayoutPanel3
             // 
@@ -525,6 +617,7 @@
             numericUpDown_scaleZ.Name = "numericUpDown_scaleZ";
             numericUpDown_scaleZ.Size = new Size(109, 30);
             numericUpDown_scaleZ.TabIndex = 8;
+            numericUpDown_scaleZ.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // numericUpDown_scaleY
             // 
@@ -535,6 +628,7 @@
             numericUpDown_scaleY.Name = "numericUpDown_scaleY";
             numericUpDown_scaleY.Size = new Size(109, 30);
             numericUpDown_scaleY.TabIndex = 7;
+            numericUpDown_scaleY.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // numericUpDown_scaleX
             // 
@@ -545,6 +639,7 @@
             numericUpDown_scaleX.Name = "numericUpDown_scaleX";
             numericUpDown_scaleX.Size = new Size(109, 30);
             numericUpDown_scaleX.TabIndex = 6;
+            numericUpDown_scaleX.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // label10
             // 
@@ -595,9 +690,9 @@
             // 
             panel1.BorderStyle = BorderStyle.FixedSingle;
             panel1.Controls.Add(picture);
-            panel1.Location = new Point(12, 238);
+            panel1.Location = new Point(12, 231);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1485, 580);
+            panel1.Size = new Size(1485, 587);
             panel1.TabIndex = 1;
             // 
             // picture
@@ -734,13 +829,14 @@
             Main_tabPage.ResumeLayout(false);
             flowLayoutPanel2.ResumeLayout(false);
             flowLayoutPanel2.PerformLayout();
+            groupBox6.ResumeLayout(false);
             Primitives_groupBox.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
             groupBox3.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveZ).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveY).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveX).EndInit();
             groupBox4.ResumeLayout(false);
@@ -798,16 +894,16 @@
         private NumericUpDown numericUpDown1;
         private GroupBox groupBox2;
         private GroupBox groupBox3;
-        private Button button_moveX;
+        private Button button_moveModel;
         private TableLayoutPanel tableLayoutPanel2;
         private Label label2;
-        private NumericUpDown numericUpDown3;
+        private NumericUpDown numericUpDown_moveZ;
         private NumericUpDown numericUpDown_moveY;
         private NumericUpDown numericUpDown_moveX;
         private Label label6;
         private Label label4;
         private GroupBox groupBox4;
-        private Button button_rotate;
+        private Button button_rotateModel;
         private TableLayoutPanel tableLayoutPanel7;
         private Label label5;
         private NumericUpDown numericUpDown_angleOz;
@@ -816,7 +912,7 @@
         private Label label8;
         private Label label9;
         private GroupBox groupBox5;
-        private Button button4;
+        private Button button_scaleModel;
         private TableLayoutPanel tableLayoutPanel3;
         private Label label3;
         private NumericUpDown numericUpDown_scaleZ;
@@ -824,6 +920,13 @@
         private NumericUpDown numericUpDown_scaleX;
         private Label label10;
         private Label label11;
+        private ListView listView_modelsMain;
+        private ImageList imageList;
+        private GroupBox groupBox6;
+        private Button button6;
+        private Button button5;
+        private Button button_Clear;
+        private Button button_dialogEdit;
     }
 }
 

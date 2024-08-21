@@ -80,14 +80,20 @@ namespace code
             scene.Draw(graphics);
         }
 
-        public void Clear()
+        public void GraphicsClear()
         {
             graphics.Clear(Color.White);
         }
 
+        public void Clear()
+        {
+            DeleteModels();
+            GraphicsClear();
+        }
+
         public void Refresh()
         {
-            Clear();
+            GraphicsClear();
             Draw();
         }
 
@@ -96,14 +102,29 @@ namespace code
             scene.Move(move);
         }
 
+        public void Move(Move move, int index)
+        {
+            scene.Move(move, index);
+        }
+
         public void Rotate(Rotate rotate)
         {
             scene.Rotate(rotate);
         }
 
+        public void Rotate(Rotate rotate, int index)
+        {
+            scene.Rotate(rotate, index);
+        }
+
         public void Scale(Scale scale)
         {
             scene.Scale(scale);
+        }
+
+        public void Scale(Scale scale, int index)
+        {
+            scene.Scale(scale, index);
         }
 
         public void Centering(Centering centering)

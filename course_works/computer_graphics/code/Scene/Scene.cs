@@ -86,6 +86,11 @@ namespace code
             }
         }
 
+        public void Move(Move move, int index)
+        {
+            models[index].Move(move);
+        }
+
         public void Rotate(Rotate rotate)
         {
             foreach (Model model in models)
@@ -94,12 +99,22 @@ namespace code
             }
         }
 
+        public void Rotate(Rotate rotate, int index)
+        {
+            models[index].Rotate(rotate);
+        }
+
         public void Scale(Scale scale)
         {
             foreach (Model model in models)
             {
                 model.Scale(scale);
             }
+        }
+
+        public void Scale(Scale scale, int index)
+        {
+            models[index].Scale(scale);
         }
 
         public void Centering(Centering centering)
