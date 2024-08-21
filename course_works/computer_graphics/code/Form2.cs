@@ -11,7 +11,7 @@ using WinRT;
 
 namespace code
 {
-    partial class Form2 : Form
+    partial class DialogEdit : Form
     {
         Canvas mainCanvas;
         Canvas selfCanvas;
@@ -21,7 +21,7 @@ namespace code
         Model currentSelfModel;
         int currentModelIndex;
 
-        public Form2(ref Canvas mainCanvas)
+        public DialogEdit(ref Canvas mainCanvas)
         {
             this.mainCanvas = mainCanvas;
 
@@ -385,6 +385,29 @@ namespace code
 
             mainCanvas.Refresh();
             selfCanvas.Refresh();
+        }
+
+        private void numericUpDown_angle_ValueChanged(object sender, EventArgs e)
+        {
+            if (currentMainModel.Angle == -1)
+                return;
+
+            float newAngle = (float)numericUpDown_angle.Value;
+            float modelAngle = currentMainModel.Angle;
+
+            currentSelfModel.Angle = newAngle;
+            currentMainModel.Angle = newAngle;
+
+            selfCanvas.Centering();
+            UpdateInformationTableSizes(currentMainModel);
+
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -13,14 +13,14 @@ namespace code
     {
         public Pyramid() 
         {
-            this.points = new List<Point3D> {
+            points = new List<Point3D> {
                 new Point3D(0, (float) Math.Sqrt(6) * 100 / 3, 0),                          // 0
                 new Point3D(50, (float) Math.Sqrt(6) * 100 / 3, (float)Math.Sqrt(3) * 50),  // 1
                 new Point3D(100, (float) Math.Sqrt(6) * 100 / 3, 0),                        // 2
                 new Point3D(50, 0, (float)Math.Sqrt(3) / 3 * 50)                            // 3
             };
 
-            this.indexes = new List<int>() {
+            indexes = new List<int>() {
                 0, 1,
                 1, 2,
                 2, 0,
@@ -29,16 +29,16 @@ namespace code
                 2, 3
             };
 
-            this.type = Modeltype.Pyramid;
-            this.color = Color.Empty;
-            this.length = -1;
-            this.height = -1;
-            this.width = -1;
-            this.radius = -1;
-            this.angle = -1;
+            type = Modeltype.Pyramid;
+            color = Color.Empty;
+            length = -1;
+            height = -1;
+            width = -1;
+            radius = -1;
+            angle = -1;
 
-            ConstructCenter(this.points);
-            ConstructEdges(this.points, this.indexes);
+            ConstructCenter(points);
+            ConstructEdges(points, indexes);
             Update();
         }
 

@@ -167,7 +167,7 @@ namespace code
 
         protected void UpdateCenter()
         {
-            ConstructCenter(this.points);
+            ConstructCenter(points);
         }
 
         #endregion
@@ -246,12 +246,12 @@ namespace code
 
         public void Move(Move move)
         {
-            Transform(move, this.center);
+            Transform(move, center);
         }
 
         public void Rotate(Rotate rotate)
         {
-            Transform(rotate, this.center);
+            Transform(rotate, center);
         }
 
         public void Rotate(Rotate rotate, Point3D center)
@@ -261,7 +261,7 @@ namespace code
 
         public void Scale(Scale scale)
         {
-            Transform(scale, this.center);
+            Transform(scale, center);
         }
 
         public void Scale(Scale scale, Point3D center)

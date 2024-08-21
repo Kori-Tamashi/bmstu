@@ -41,17 +41,103 @@ namespace code.Objects
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
         }
 
+        public static float Angle(Vector3D v1, Vector3D v2)
+        {
+            float angleRadians = (float)Math.Acos( DotProduct(v1, v2) / (v1.Length() * v2.Length()) );
+            return (float)( angleRadians * 180 / Math.PI );
+        }
+
+        public float Length()
+        {
+            return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        }
+
+        public void Abs()
+        {
+            X = Math.Abs(X);
+            Y = Math.Abs(Y);
+            Z = Math.Abs(Z);
+        }
+        
+        public void Turn()
+        {
+            X *= -1;
+            Y *= -1;
+            Z *= -1;
+        }
+
         public void Normalize()
         {
-            float length = (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+            float length = Length();
             X /= length;
             Y /= length;
             Z /= length;
         }
 
+        public Vector3D NormalizedCopy()
+        {
+            float length = Length();
+            return new Vector3D(X / length, Y / length, Z / length);
+        }
+
+        public Vector3D XYProjection()
+        {
+            return new Vector3D(X, Y, 0);
+        }
+
+        public Vector3D YZProjection()
+        {
+            return new Vector3D(0, Y, Z);
+        }
+
+        public Vector3D XZProjection()
+        {
+            return new Vector3D(X, 0, Z);
+        }
+
+        public float XYAngle()
+        {
+            return Angle(this, XYProjection());
+        }
+
+        public float YZAngle()
+        {
+            return Angle(this, YZProjection());
+        }
+
+        public float XZAngle()
+        {
+            return Angle(this, XZProjection());
+        }
+
+        public float OXAngle()
+        {
+            return Angle(this, new Vector3D(1, 0, 0));
+        }
+
+        public float OYAngle()
+        {
+            return Angle(this, new Vector3D(0, 1, 0));
+        }
+
+        public float OZAngle()
+        {
+            return Angle(this, new Vector3D(0, 0, 1));
+        }
+
         public static Vector3D operator* (Vector3D v1, float scalar)
         {
             return new Vector3D(v1.X * scalar, v1.Y * scalar, v1.Z * scalar);
+        }
+
+        public static Vector3D operator- (Vector3D v1, Vector3D v2)
+        {
+            return new Vector3D(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
+        }
+
+        public static Vector3D operator+ (Vector3D v1, Vector3D v2)
+        {
+            return new Vector3D(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
         }
 
         public static Vector3D operator+ (Vector3D v1, Point3D point)

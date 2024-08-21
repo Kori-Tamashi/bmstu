@@ -14,7 +14,7 @@ namespace code
             // Золотое сечение
             float phi = (float)(1 + Math.Sqrt(5)) / 2;
 
-            this.points = new List<Point3D> {
+            points = new List<Point3D> {
                 new Point3D(phi * 100, 100, 0), // 0
                 new Point3D(phi * 100, -100, 0), // 1
                 new Point3D(-phi * 100, -100, 0), // 2
@@ -29,7 +29,7 @@ namespace code
                 new Point3D(-100, 0, phi * 100) // 11
             };
 
-            this.indexes = new List<int> {
+            indexes = new List<int> {
                 1, 9,
                 9, 10,
                 10, 2,
@@ -74,16 +74,16 @@ namespace code
                 0, 1
             };
             
-            this.type = Modeltype.Icosahedron;
-            this.color = Color.Empty;
-            this.length = -1;
-            this.height = -1;
-            this.width = -1;
-            this.radius = -1;
-            this.angle = -1;
+            type = Modeltype.Icosahedron;
+            color = Color.Empty;
+            length = -1;
+            height = -1;
+            width = -1;
+            radius = -1;
+            angle = -1;
 
-            ConstructCenter(this.points);
-            ConstructEdges(this.points, this.indexes);
+            ConstructCenter(points);
+            ConstructEdges(points, indexes);
             Update();
         }
 

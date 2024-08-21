@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 { 
@@ -38,7 +39,17 @@ namespace code
                 }
             );
 
-            this.matrix = matrix_x * matrix_y * matrix_z;
+            matrix = matrix_x * matrix_y * matrix_z;
+        }
+
+        static public void Transform(Rotate rotate, Point3D point)
+        {
+            Transformation.Transform(rotate, point);
+        }
+
+        static public void Transform(Rotate rotate, Point3D point, Point3D center)
+        {
+            Transformation.Transform(rotate, point, center);
         }
     }
 }

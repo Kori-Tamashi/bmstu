@@ -12,7 +12,7 @@ namespace code
     {
         public DirectPrism() 
         {
-            this.points = new List<Point3D> {
+            points = new List<Point3D> {
                 new Point3D(0, 0, 0), // 0
                 new Point3D(0, 0, 100), // 1
                 new Point3D(100, 0, 100), // 2
@@ -23,7 +23,7 @@ namespace code
                 new Point3D(100, 200, 0), // 7
             };
 
-            this.indexes = new List<int> {
+            indexes = new List<int> {
                 0, 1,
                 1, 2,
                 2, 3,
@@ -38,13 +38,13 @@ namespace code
                 3, 7
             };
 
-            this.type = Modeltype.DirectPrism;
-            this.color = Color.Empty;
-            this.length = -1;
-            this.width = -1;
-            this.height = -1;
-            this.angle = -1;
-            this.radius = -1;
+            type = Modeltype.DirectPrism;
+            color = Color.Empty;
+            length = -1;
+            width = -1;
+            height = -1;
+            angle = -1;
+            radius = -1;
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);

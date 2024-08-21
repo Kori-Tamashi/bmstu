@@ -118,7 +118,7 @@ namespace code
 
         public void Centering(Model model)
         {
-            scene.Centering(new Centering(model, this.Center, this.Size));
+            scene.Centering(new Centering(model, Center, Size));
         }
 
     }

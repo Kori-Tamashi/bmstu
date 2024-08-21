@@ -14,7 +14,7 @@ namespace code
             if (kx == 0 || ky == 0 || kz == 0)
                 throw new ArgumentException();
 
-            this.matrix = new TransformationMatrix(new float[4, 4] {
+            matrix = new TransformationMatrix(new float[4, 4] {
                     {kx,      0,       0,      0},
                     {0,       ky,      0,      0},
                     {0,       0,       kz,     0},

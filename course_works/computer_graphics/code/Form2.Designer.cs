@@ -1,6 +1,6 @@
 ﻿namespace code
 {
-    partial class Form2
+    partial class DialogEdit
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DialogEdit));
             pictureBox_editModel = new PictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
@@ -72,6 +72,7 @@
             listView_models = new ListView();
             imageList = new ImageList(components);
             colorDialog1 = new ColorDialog();
+            tableLayoutPanel8 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)pictureBox_editModel).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
@@ -394,11 +395,12 @@
             // numericUpDown_angle
             // 
             numericUpDown_angle.Location = new Point(136, 137);
-            numericUpDown_angle.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            numericUpDown_angle.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
             numericUpDown_angle.Name = "numericUpDown_angle";
             numericUpDown_angle.Size = new Size(184, 27);
             numericUpDown_angle.TabIndex = 17;
             numericUpDown_angle.ThousandsSeparator = true;
+            numericUpDown_angle.ValueChanged += numericUpDown_angle_ValueChanged;
             // 
             // numericUpDown_height
             // 
@@ -559,15 +561,29 @@
             imageList.Images.SetKeyName(4, "truncated-pentagonal-pyramid.png");
             imageList.Images.SetKeyName(5, "icosahedron.png");
             // 
-            // Form2
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.ColumnCount = 2;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.Location = new Point(0, 0);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 3;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.Size = new Size(200, 100);
+            tableLayoutPanel8.TabIndex = 0;
+            // 
+            // DialogEdit
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(960, 963);
+            ClientSize = new Size(913, 409);
             Controls.Add(tableLayoutPanel3);
-            MaximumSize = new Size(1800, 1800);
-            MinimumSize = new Size(800, 800);
-            Name = "Form2";
+            MaximumSize = new Size(931, 456);
+            MinimumSize = new Size(931, 456);
+            Name = "DialogEdit";
             Text = "Редактор моделей";
             Load += Form2_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox_editModel).EndInit();
@@ -636,5 +652,6 @@
         private ToolStripMenuItem Metal;
         private TextBox textBox11;
         private TextBox textBox_name;
+        private TableLayoutPanel tableLayoutPanel8;
     }
 }
