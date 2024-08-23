@@ -73,7 +73,8 @@ namespace code
                 9, 0,
                 0, 1
             };
-            
+
+            name = "Икосаэдр";
             type = Modeltype.Icosahedron;
             color = Color.Empty;
             length = -1;

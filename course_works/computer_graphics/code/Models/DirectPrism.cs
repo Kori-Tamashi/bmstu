@@ -38,6 +38,7 @@ namespace code
                 3, 7
             };
 
+            name = "Прямая призма";
             type = Modeltype.DirectPrism;
             color = Color.Empty;
             length = -1;

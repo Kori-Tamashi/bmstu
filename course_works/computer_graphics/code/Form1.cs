@@ -38,22 +38,6 @@ namespace code
             facade = new Facade();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolTip1_Popup(object sender, PopupEventArgs e)
-        {
-
-        }
-
-        private void toolTip1_Popup_1(object sender, PopupEventArgs e)
-        {
-
-        }
-
-
         private void Cube_button_Click(object sender, EventArgs e)
         {
             Model model = new Cube();
@@ -183,6 +167,21 @@ namespace code
 
             facade._execute(transformationCommand);
             facade._execute(drawCommand);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        private void toolTip1_Popup_1(object sender, PopupEventArgs e)
+        {
+
         }
     }
 }

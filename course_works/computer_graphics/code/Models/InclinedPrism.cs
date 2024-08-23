@@ -50,6 +50,7 @@ namespace code
                 3, 7
             };
 
+            name = "Наклонная призма";
             type = Modeltype.InclinedPrism;
             color = Color.Empty;
             length = -1;
