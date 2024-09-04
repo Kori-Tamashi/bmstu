@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 
 namespace code
 {
-    public class TransformationMatrix : Matrix
+    public class TransformationMatrix : Matrix<float>
     {
         public TransformationMatrix()
         {
             rows = 4;
             columns = 4;
 
-            _matrix = new float[4, 4];
+            _matrix = new List<List<float>>(4);
             for (int i = 0; i < 4; i++)
             {
+                _matrix.Add(new List<float>(4));
                 for (int j = 0; j < 4; j++)
-                    _matrix[i, j] = 0;
+                    _matrix[i].Add(0);
             }
         }
 
@@ -28,7 +29,14 @@ namespace code
 
             rows = 4;
             columns = 4;
-            _matrix = matrix;
+
+            _matrix = new List<List<float>>(4);
+            for (int i = 0; i < 4; i++) 
+            {
+                _matrix.Add(new List<float>(4));
+                for (int j = 0; j < 4; j++)
+                    _matrix[i].Add(matrix[i, j]);
+            }
         }
 
         public static TransformationMatrix operator *(TransformationMatrix a, TransformationMatrix b)

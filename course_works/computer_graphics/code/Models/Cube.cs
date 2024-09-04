@@ -13,7 +13,7 @@ namespace code
     {
         public Cube() 
         {
-            points = new List<Point3D> { 
+            points = new List<Point3D> {
                 new Point3D(0, 0, 0), // 0
                 new Point3D(100, 0, 0), // 1
                 new Point3D(100, 100, 0), // 2
@@ -50,6 +50,7 @@ namespace code
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);
+            ConstructPolygons();
             Update();
         }
 
@@ -71,10 +72,23 @@ namespace code
             ConstructEdges(points, indexes);
         }
 
+        protected override void ConstructPolygons()
+        {
+            polygons = new List<Polygon> {
+                new Polygon(points[0], points[1], points[5], points[4]),
+                new Polygon(points[3], points[2], points[6], points[7]),
+                new Polygon(points[0], points[1], points[2], points[3]),
+                new Polygon(points[1], points[5], points[6], points[2]),
+                new Polygon(points[5], points[4], points[7], points[6]),
+                new Polygon(points[4], points[0], points[3], points[7])
+            };
+        }
+
         protected override void Update()
         {
             UpdateCenter();
             UpdateLength();
+            UpdatePolygons();
         }
 
         private void UpdateLength()
@@ -84,6 +98,11 @@ namespace code
                 Math.Pow(points[1].Y - points[0].Y, 2) + 
                 Math.Pow(points[1].Z - points[0].Z, 2)
                 );
+        }
+
+        private void UpdatePolygons()
+        {
+            ConstructPolygons();
         }
 
         public override float Length

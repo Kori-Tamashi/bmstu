@@ -1,4 +1,4 @@
-﻿using code.Objects;
+﻿using code;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +13,7 @@ namespace code
 {
     class Model
     {
+        protected List<Polygon> polygons;
         protected List<Point3D> points;
         protected List<int> indexes;
         protected List<Edge> edges;
@@ -141,6 +142,11 @@ namespace code
             }
         }
 
+        protected virtual void ConstructPolygons()
+        {
+
+        }
+
         protected void CopyPoints(Model other)
         {
             points = new List<Point3D>();
@@ -238,6 +244,11 @@ namespace code
         {
             get { return material.Type; }
             set { material.Type = value; }
+        }
+
+        public List<Polygon> Polygons
+        {
+            get { return polygons; }
         }
 
         #endregion
@@ -344,8 +355,8 @@ namespace code
         {
             foreach (Point3D point in points)
             {
-                Matrix cur_location = new Matrix(point);
-                Matrix new_location = cur_location * transformation.matrix;
+                Matrix<float> cur_location = new Matrix<float>(point);
+                Matrix<float> new_location = cur_location * transformation.matrix;
 
                 point.X = new_location[0, 0];
                 point.Y = new_location[0, 1];
@@ -357,8 +368,8 @@ namespace code
         {
             foreach(Point3D point in points)
             {
-                Matrix cur_location = new Matrix(point);
-                Matrix new_location = cur_location * matrix;
+                Matrix<float> cur_location = new Matrix<float>(point);
+                Matrix<float> new_location = cur_location * matrix;
 
                 point.X = new_location[0, 0];
                 point.Y = new_location[0, 1];

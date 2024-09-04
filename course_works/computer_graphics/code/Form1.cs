@@ -183,5 +183,25 @@ namespace code
         {
 
         }
+
+        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            ZBuffer zBuffer = new ZBuffer(canvas.Size, canvas.Models);
+            picture.Image = zBuffer.Image;
+            picture.Refresh();
+
+            //canvas.Graphics = picture.CreateGraphics();
+
+            //drawCommand = new DrawsCommand(ref canvas);
+            //facade._execute(drawCommand);
+
+            //drawCommand = new RefreshCommand(ref canvas);
+            //facade._execute(drawCommand);
+        }
     }
 }

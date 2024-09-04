@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace code.Objects
+namespace code
 {
     public class Vector3D
     {
@@ -36,6 +36,11 @@ namespace code.Objects
             );
         }
 
+        public float Length
+        {
+            get { return GetLength(); }
+        }
+
         public static float DotProduct(Vector3D v1, Vector3D v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
@@ -43,11 +48,11 @@ namespace code.Objects
 
         public static float Angle(Vector3D v1, Vector3D v2)
         {
-            float angleRadians = (float)Math.Acos( DotProduct(v1, v2) / (v1.Length() * v2.Length()) );
+            float angleRadians = (float)Math.Acos( DotProduct(v1, v2) / (v1.Length * v2.Length) );
             return (float)( angleRadians * 180 / Math.PI );
         }
 
-        public float Length()
+        public float GetLength()
         {
             return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
         }
@@ -66,17 +71,29 @@ namespace code.Objects
             Z *= -1;
         }
 
+        public bool IsNull()
+        {
+            return Math.Abs(X) < 1e-5 && Math.Abs(Y) < 1e-5 && Math.Abs(Z) < 1e-5;
+        }
+
         public void Normalize()
         {
-            float length = Length();
+            float length = Length;
             X /= length;
             Y /= length;
             Z /= length;
         }
 
+        public void PlaneRotate(bool clockwise = true)
+        {
+            Functions<float>.Swap(ref X, ref Y);
+            Y *= clockwise ? -1 : 1;
+            X *= clockwise ? 1 : -1;
+        }
+
         public Vector3D NormalizedCopy()
         {
-            float length = Length();
+            float length = Length;
             return new Vector3D(X / length, Y / length, Z / length);
         }
 

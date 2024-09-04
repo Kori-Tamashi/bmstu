@@ -148,8 +148,8 @@ namespace code
 
         static private void TransformPoints(Transformation transformation, Point3D point)
         {
-            Matrix cur_location = new Matrix(point);
-            Matrix new_location = cur_location * transformation.matrix;
+            Matrix<float> cur_location = new Matrix<float>(point);
+            Matrix<float> new_location = cur_location * transformation.matrix;
 
             point.X = new_location[0, 0];
             point.Y = new_location[0, 1];
@@ -158,8 +158,8 @@ namespace code
 
         static private void TransformPoints(TransformationMatrix matrix, Point3D point)
         {
-            Matrix cur_location = new Matrix(point);
-            Matrix new_location = cur_location * matrix;
+            Matrix<float> cur_location = new Matrix<float>(point);
+            Matrix<float> new_location = cur_location * matrix;
 
             point.X = new_location[0, 0];
             point.Y = new_location[0, 1];
@@ -171,8 +171,8 @@ namespace code
         {
             foreach (Point3D point in points)
             {
-                Matrix cur_location = new Matrix(point);
-                Matrix new_location = cur_location * transformation.matrix;
+                Matrix<float> cur_location = new Matrix<float>(point);
+                Matrix<float> new_location = cur_location * transformation.matrix;
 
                 point.X = new_location[0, 0];
                 point.Y = new_location[0, 1];
@@ -184,8 +184,8 @@ namespace code
         {
             foreach (Point3D point in points)
             {
-                Matrix cur_location = new Matrix(point);
-                Matrix new_location = cur_location * matrix;
+                Matrix<float> cur_location = new Matrix<float>(point);
+                Matrix<float> new_location = cur_location * matrix;
 
                 point.X = new_location[0, 0];
                 point.Y = new_location[0, 1];

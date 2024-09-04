@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace code.Objects
+namespace code
 {
     public class Edge
     {
@@ -24,5 +24,25 @@ namespace code.Objects
             start = new Point3D(other.start.X, other.start.Y, other.end.Z);
             end = new Point3D(other.end.X, other.end.Y, other.end.Z);
         }
+
+        public float Length
+        {
+            get { return GetLength(); }
+        }
+
+        public Vector3D ToVector()
+        {
+            return new Vector3D(start, end);
+        }
+
+        public float GetLength()
+        {
+            return (float)Math.Sqrt(
+                Math.Pow(end.X - start.X, 2) + 
+                Math.Pow(end.Y - start.Y, 2) + 
+                Math.Pow(end.Z - start.Z, 2)
+                );
+        }
+
     }
 }

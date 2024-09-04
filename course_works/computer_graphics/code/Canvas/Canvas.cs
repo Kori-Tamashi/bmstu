@@ -26,6 +26,12 @@ namespace code
             graphics = g;
         }
 
+        public Graphics Graphics
+        {
+            get { return graphics; }
+            set { graphics = value; }
+        }
+
         public List<Model> Models
         {
             get { return scene.Models; }
@@ -46,13 +52,11 @@ namespace code
         public Point3D Center
         {
             get { return scene.Center; }
-            set { scene.Center = value; }
         }
 
         public Size Size
         {
             get { return size; }
-            set { size = value; }
         }
 
         public void AddModel(Model model)

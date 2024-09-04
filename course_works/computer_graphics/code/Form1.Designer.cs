@@ -160,6 +160,7 @@
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Size = new Size(1471, 182);
             flowLayoutPanel2.TabIndex = 0;
+            flowLayoutPanel2.Paint += flowLayoutPanel2_Paint;
             // 
             // groupBox6
             // 
@@ -193,6 +194,7 @@
             button5.TabIndex = 2;
             button5.Text = "button5";
             button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // button_Clear
             // 
@@ -571,7 +573,7 @@
             button_scaleModel.Name = "button_scaleModel";
             button_scaleModel.Size = new Size(180, 29);
             button_scaleModel.TabIndex = 5;
-            button_scaleModel.Text = "Повернуть";
+            button_scaleModel.Text = "Масштабировать";
             button_scaleModel.UseVisualStyleBackColor = true;
             button_scaleModel.Click += button_scaleModel_Click;
             // 
