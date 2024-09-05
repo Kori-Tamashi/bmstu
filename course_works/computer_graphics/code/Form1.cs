@@ -189,19 +189,24 @@ namespace code
 
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private async void button5_Click(object sender, EventArgs e)
         {
-            ZBuffer zBuffer = new ZBuffer(canvas.Size, canvas.Models);
-            picture.Image = zBuffer.Image;
-            picture.Refresh();
+            LoadingBar bar = new LoadingBar();
+            bar.Start();
 
-            //canvas.Graphics = picture.CreateGraphics();
+            await Task.Run(() =>
+            {
+                ZBuffer zBuffer = new ZBuffer(canvas.Size, canvas.Models);
+                Action updateImage = () => picture.Image = zBuffer.Image;
+                picture.Invoke(updateImage);
+            });
 
-            //drawCommand = new DrawsCommand(ref canvas);
-            //facade._execute(drawCommand);
+            bar.Stop();
+        }
 
-            //drawCommand = new RefreshCommand(ref canvas);
-            //facade._execute(drawCommand);
+        private void LongTask()
+        {
+            
         }
     }
 }

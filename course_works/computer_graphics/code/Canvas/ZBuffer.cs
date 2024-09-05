@@ -139,9 +139,9 @@ namespace code
                 {
                     for (int x = 0; x < zBuffer.Columns; x++)
                     {
-                        int Z = (int)polygon.Z(x, y);
-                        if (polygon.IsInside(x, y, Z))
-                            ProcessPoint(x, y, Z, model.Color);
+                        int z = (int)polygon.Z(x, y);
+                        if (polygon.IsInside(x, y, z))
+                            ProcessPoint(x, y, z, model.Color);
                     }
                 }
             }
