@@ -55,14 +55,6 @@ namespace code
                 4, 11,
 
                 1, 8,
-                9, 7,
-                7, 10,
-                10, 3,
-                3, 2,
-                2, 11,
-                11, 5,
-
-                1, 8,
                 8, 5,
                 5, 11,
                 11, 2,
@@ -85,6 +77,7 @@ namespace code
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);
+            ConstructPolygons(points);
             Update();
         }
 
@@ -106,11 +99,40 @@ namespace code
             ConstructEdges(points, indexes);
         }
 
+        protected override void ConstructPolygons(List<Point3D> points)
+        {
+            polygons = new List<Polygon> {
+                new Polygon(points[1], points[6], points[9]),
+                new Polygon(points[9], points[6], points[10]),
+                new Polygon(points[10], points[6], points[2]),
+                new Polygon(points[2], points[6], points[5]),
+                new Polygon(points[5], points[6], points[1]),
+
+                new Polygon(points[8], points[4], points[0]),
+                new Polygon(points[0], points[4], points[7]),
+                new Polygon(points[7], points[4], points[3]),
+                new Polygon(points[3], points[4], points[11]),
+                new Polygon(points[11], points[4], points[8]),
+
+                new Polygon(points[1], points[8], points[5]),
+                new Polygon(points[8], points[5], points[11]),
+                new Polygon(points[5], points[11], points[2]),
+                new Polygon(points[11], points[2], points[3]),
+                new Polygon(points[2], points[3], points[10]),
+                new Polygon(points[3], points[10], points[7]),
+                new Polygon(points[10], points[7], points[9]),
+                new Polygon(points[7], points[9], points[0]),
+                new Polygon(points[9], points[0], points[1]),
+                new Polygon(points[0], points[1], points[8]),
+            };
+        }
+
         protected override void Update()
         {
             UpdateCenter();
             UpdateRadius();
             UpdateLength();
+            UpdatePolygons();
         }
 
         private void UpdateRadius()
@@ -129,6 +151,11 @@ namespace code
                 Math.Pow(points[1].Y - points[9].Y, 2) +
                 Math.Pow(points[1].Z - points[9].Z, 2)
                 );
+        }
+
+        private void UpdatePolygons()
+        {
+            ConstructPolygons(points);
         }
 
         public override float Length

@@ -50,7 +50,7 @@ namespace code
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);
-            ConstructPolygons();
+            ConstructPolygons(points);
             Update();
         }
 
@@ -70,9 +70,10 @@ namespace code
             CopyPoints(other);
             CopyIndexes(other);
             ConstructEdges(points, indexes);
+            ConstructPolygons(points);
         }
 
-        protected override void ConstructPolygons()
+        protected override void ConstructPolygons(List<Point3D> points)
         {
             polygons = new List<Polygon> {
                 new Polygon(points[0], points[1], points[5], points[4]),
@@ -102,7 +103,7 @@ namespace code
 
         private void UpdatePolygons()
         {
-            ConstructPolygons();
+            ConstructPolygons(points);
         }
 
         public override float Length

@@ -199,14 +199,10 @@ namespace code
                 ZBuffer zBuffer = new ZBuffer(canvas.Size, canvas.Models);
                 Action updateImage = () => picture.Image = zBuffer.Image;
                 picture.Invoke(updateImage);
+                Thread.Sleep(10);
             });
 
             bar.Stop();
-        }
-
-        private void LongTask()
-        {
-            
         }
     }
 }

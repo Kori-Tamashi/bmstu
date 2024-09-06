@@ -39,6 +39,7 @@ namespace code
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);
+            ConstructPolygons(points);
             Update();
         }
 
@@ -58,6 +59,17 @@ namespace code
             CopyPoints(other);
             CopyIndexes(other);
             ConstructEdges(points, indexes);
+            ConstructPolygons(points);
+        }
+
+        protected override void ConstructPolygons(List<Point3D> points)
+        {
+            polygons = new List<Polygon> {
+                new Polygon(points[0], points[1], points[2]),
+                new Polygon(points[0], points[3], points[1]),
+                new Polygon(points[1], points[3], points[2]),
+                new Polygon(points[2], points[3], points[0]),
+            };
         }
 
         protected override void Update()
@@ -65,6 +77,7 @@ namespace code
             UpdateCenter();
             UpdateLength();
             UpdateHeight();
+            UpdatePolygons();
         }
 
         private void UpdateLength()
@@ -86,6 +99,11 @@ namespace code
             Vector3D vector3 = new Vector3D(points[0], points[3]);
             height = Vector3D.DotProduct(vector3, baseNormal);
             height = Math.Abs(height);
+        }
+
+        private void UpdatePolygons()
+        {
+            ConstructPolygons(points);
         }
 
         public override float Length

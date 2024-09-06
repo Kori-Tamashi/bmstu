@@ -142,7 +142,7 @@ namespace code
             }
         }
 
-        protected virtual void ConstructPolygons()
+        protected virtual void ConstructPolygons(List<Point3D> points)
         {
 
         }

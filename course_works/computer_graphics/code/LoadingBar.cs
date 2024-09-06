@@ -32,8 +32,6 @@ namespace code
                 Close();
         }
 
-
-
         private void LoadingBar_Load(object sender, EventArgs e)
         {
 
@@ -43,7 +41,7 @@ namespace code
         {
             for (int i = 0; i <= 100; i++)
             {
-                Thread.Sleep(35);
+                Thread.Sleep(90);
                 backgroundWorker1.ReportProgress(i);
             }
         }
