@@ -16,6 +16,8 @@ namespace code
         Canvas canvas;
         Facade facade;
 
+        CameraSystem cameraSystem;
+
         FormCommand formCommand;
         DrawsCommand drawCommand;
         SceneCommand sceneCommand;
@@ -26,6 +28,7 @@ namespace code
             InitializeComponent();
             InitializeCanvas();
             InitializeFacade();
+            InitializeCameras();
         }
 
         private void InitializeCanvas()
@@ -36,6 +39,11 @@ namespace code
         private void InitializeFacade()
         {
             facade = new Facade();
+        }
+
+        private void InitializeCameras()
+        {
+            cameraSystem = new CameraSystem(canvas.Size);
         }
 
         private void Cube_button_Click(object sender, EventArgs e)
@@ -203,6 +211,18 @@ namespace code
             });
 
             bar.Stop();
+        }
+
+        private void button_cameraUp_Click(object sender, EventArgs e)
+        {
+            Move move = new Move(0, -5, 0);
+            cameraSystem.MoveCamera(Direction.Up);
+
+            move.Turn();
+
+            canvas.Move(move);
+
+            canvas.Refresh();
         }
     }
 }

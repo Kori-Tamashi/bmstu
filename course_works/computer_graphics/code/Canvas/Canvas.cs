@@ -17,6 +17,7 @@ namespace code
         Scene scene;
         Bitmap bitmap;
         Graphics graphics;
+        List<Camera> cameras;
 
         public Canvas(Size size, Graphics g)
         {

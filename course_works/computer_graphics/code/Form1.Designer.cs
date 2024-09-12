@@ -76,6 +76,15 @@
             label10 = new Label();
             label11 = new Label();
             View_tabPage = new TabPage();
+            tableLayoutPanel4 = new TableLayoutPanel();
+            button_cameraRIghtDown = new Button();
+            button_cameraDown = new Button();
+            button_cameraLeftDown = new Button();
+            button_cameraRight = new Button();
+            button_CmeraLeft = new Button();
+            button_cameraRightUp = new Button();
+            button_cameraUp = new Button();
+            button_cameraLeftUp = new Button();
             File_tabPage = new TabPage();
             colorDialog1 = new ColorDialog();
             toolTip = new ToolTip(components);
@@ -112,6 +121,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_scaleZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_scaleY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_scaleX).BeginInit();
+            View_tabPage.SuspendLayout();
+            tableLayoutPanel4.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picture).BeginInit();
             groupBox1.SuspendLayout();
@@ -179,7 +190,7 @@
             // 
             // button6
             // 
-            button6.Location = new Point(3, 131);
+            button6.Location = new Point(3, 129);
             button6.Name = "button6";
             button6.Size = new Size(187, 29);
             button6.TabIndex = 3;
@@ -188,7 +199,7 @@
             // 
             // button5
             // 
-            button5.Location = new Point(3, 96);
+            button5.Location = new Point(3, 94);
             button5.Name = "button5";
             button5.Size = new Size(187, 29);
             button5.TabIndex = 2;
@@ -198,7 +209,7 @@
             // 
             // button_Clear
             // 
-            button_Clear.Location = new Point(3, 61);
+            button_Clear.Location = new Point(3, 24);
             button_Clear.Name = "button_Clear";
             button_Clear.Size = new Size(187, 29);
             button_Clear.TabIndex = 1;
@@ -208,7 +219,7 @@
             // 
             // button_dialogEdit
             // 
-            button_dialogEdit.Location = new Point(3, 26);
+            button_dialogEdit.Location = new Point(3, 59);
             button_dialogEdit.Name = "button_dialogEdit";
             button_dialogEdit.Size = new Size(187, 29);
             button_dialogEdit.TabIndex = 0;
@@ -334,6 +345,14 @@
             imageList.Images.SetKeyName(3, "triangular-pyramid.png");
             imageList.Images.SetKeyName(4, "truncated-pentagonal-pyramid.png");
             imageList.Images.SetKeyName(5, "icosahedron.png");
+            imageList.Images.SetKeyName(6, "arrow-down.png");
+            imageList.Images.SetKeyName(7, "arrow-left.png");
+            imageList.Images.SetKeyName(8, "arrow-leftDown.png");
+            imageList.Images.SetKeyName(9, "arrow-leftUp.png");
+            imageList.Images.SetKeyName(10, "arrow-right.png");
+            imageList.Images.SetKeyName(11, "arrow-rightDown.png");
+            imageList.Images.SetKeyName(12, "arrow-rightUp.png");
+            imageList.Images.SetKeyName(13, "arrow-up.png");
             // 
             // groupBox3
             // 
@@ -667,6 +686,7 @@
             // 
             // View_tabPage
             // 
+            View_tabPage.Controls.Add(tableLayoutPanel4);
             View_tabPage.Cursor = Cursors.Hand;
             View_tabPage.ForeColor = SystemColors.ControlText;
             View_tabPage.Location = new Point(4, 29);
@@ -676,6 +696,112 @@
             View_tabPage.TabIndex = 1;
             View_tabPage.Text = "Вид";
             View_tabPage.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel4
+            // 
+            tableLayoutPanel4.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+            tableLayoutPanel4.ColumnCount = 3;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel4.Controls.Add(button_cameraRIghtDown, 2, 2);
+            tableLayoutPanel4.Controls.Add(button_cameraDown, 1, 2);
+            tableLayoutPanel4.Controls.Add(button_cameraLeftDown, 0, 2);
+            tableLayoutPanel4.Controls.Add(button_cameraRight, 2, 1);
+            tableLayoutPanel4.Controls.Add(button_CmeraLeft, 0, 1);
+            tableLayoutPanel4.Controls.Add(button_cameraRightUp, 2, 0);
+            tableLayoutPanel4.Controls.Add(button_cameraUp, 1, 0);
+            tableLayoutPanel4.Controls.Add(button_cameraLeftUp, 0, 0);
+            tableLayoutPanel4.Location = new Point(401, 6);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 3;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel4.Size = new Size(180, 175);
+            tableLayoutPanel4.TabIndex = 2;
+            // 
+            // button_cameraRIghtDown
+            // 
+            button_cameraRIghtDown.ImageKey = "arrow-rightDown.png";
+            button_cameraRIghtDown.ImageList = imageList;
+            button_cameraRIghtDown.Location = new Point(122, 120);
+            button_cameraRIghtDown.Name = "button_cameraRIghtDown";
+            button_cameraRIghtDown.Size = new Size(54, 51);
+            button_cameraRIghtDown.TabIndex = 11;
+            button_cameraRIghtDown.UseVisualStyleBackColor = true;
+            // 
+            // button_cameraDown
+            // 
+            button_cameraDown.ImageKey = "arrow-down.png";
+            button_cameraDown.ImageList = imageList;
+            button_cameraDown.Location = new Point(63, 120);
+            button_cameraDown.Name = "button_cameraDown";
+            button_cameraDown.Size = new Size(52, 51);
+            button_cameraDown.TabIndex = 10;
+            button_cameraDown.UseVisualStyleBackColor = true;
+            // 
+            // button_cameraLeftDown
+            // 
+            button_cameraLeftDown.ImageKey = "arrow-leftDown.png";
+            button_cameraLeftDown.ImageList = imageList;
+            button_cameraLeftDown.Location = new Point(4, 120);
+            button_cameraLeftDown.Name = "button_cameraLeftDown";
+            button_cameraLeftDown.Size = new Size(52, 51);
+            button_cameraLeftDown.TabIndex = 9;
+            button_cameraLeftDown.UseVisualStyleBackColor = true;
+            // 
+            // button_cameraRight
+            // 
+            button_cameraRight.ImageKey = "arrow-right.png";
+            button_cameraRight.ImageList = imageList;
+            button_cameraRight.Location = new Point(122, 62);
+            button_cameraRight.Name = "button_cameraRight";
+            button_cameraRight.Size = new Size(54, 51);
+            button_cameraRight.TabIndex = 8;
+            button_cameraRight.UseVisualStyleBackColor = true;
+            // 
+            // button_CmeraLeft
+            // 
+            button_CmeraLeft.ImageKey = "arrow-left.png";
+            button_CmeraLeft.ImageList = imageList;
+            button_CmeraLeft.Location = new Point(4, 62);
+            button_CmeraLeft.Name = "button_CmeraLeft";
+            button_CmeraLeft.Size = new Size(52, 51);
+            button_CmeraLeft.TabIndex = 6;
+            button_CmeraLeft.UseVisualStyleBackColor = true;
+            // 
+            // button_cameraRightUp
+            // 
+            button_cameraRightUp.ImageKey = "arrow-rightUp.png";
+            button_cameraRightUp.ImageList = imageList;
+            button_cameraRightUp.Location = new Point(122, 4);
+            button_cameraRightUp.Name = "button_cameraRightUp";
+            button_cameraRightUp.Size = new Size(54, 51);
+            button_cameraRightUp.TabIndex = 5;
+            button_cameraRightUp.UseVisualStyleBackColor = true;
+            // 
+            // button_cameraUp
+            // 
+            button_cameraUp.ImageKey = "arrow-up.png";
+            button_cameraUp.ImageList = imageList;
+            button_cameraUp.Location = new Point(63, 4);
+            button_cameraUp.Name = "button_cameraUp";
+            button_cameraUp.Size = new Size(52, 51);
+            button_cameraUp.TabIndex = 4;
+            button_cameraUp.TabStop = false;
+            button_cameraUp.UseVisualStyleBackColor = true;
+            button_cameraUp.Click += button_cameraUp_Click;
+            // 
+            // button_cameraLeftUp
+            // 
+            button_cameraLeftUp.ImageKey = "arrow-leftUp.png";
+            button_cameraLeftUp.ImageList = imageList;
+            button_cameraLeftUp.Location = new Point(4, 4);
+            button_cameraLeftUp.Name = "button_cameraLeftUp";
+            button_cameraLeftUp.Size = new Size(52, 51);
+            button_cameraLeftUp.TabIndex = 3;
+            button_cameraLeftUp.UseVisualStyleBackColor = true;
             // 
             // File_tabPage
             // 
@@ -819,7 +945,7 @@
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.Inherit;
-            ClientSize = new Size(1513, 830);
+            ClientSize = new Size(1924, 830);
             Controls.Add(panel1);
             Controls.Add(InteractionMenu_tabControl);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -853,6 +979,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_scaleZ).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_scaleY).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_scaleX).EndInit();
+            View_tabPage.ResumeLayout(false);
+            tableLayoutPanel4.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)picture).EndInit();
             groupBox1.ResumeLayout(false);
@@ -929,6 +1057,15 @@
         private Button button5;
         private Button button_Clear;
         private Button button_dialogEdit;
+        private TableLayoutPanel tableLayoutPanel4;
+        private Button button_cameraRIghtDown;
+        private Button button_cameraDown;
+        private Button button_cameraLeftDown;
+        private Button button_cameraRight;
+        private Button button_CmeraLeft;
+        private Button button_cameraRightUp;
+        private Button button_cameraUp;
+        private Button button_cameraLeftUp;
     }
 }
 

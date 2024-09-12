@@ -45,6 +45,13 @@ namespace code
             );
         }
 
+        public void Turn()
+        {
+            matrix[3, 0] *= -1;
+            matrix[3, 1] *= -1;
+            matrix[3, 2] *= -1;
+        }
+
         static public void Transform(Move move, Point3D point)
         {
             Transformation.Transform(move, point);
