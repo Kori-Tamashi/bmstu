@@ -12,7 +12,7 @@ namespace code
         Vector3D direction;
         Point3D position;
 
-        const int moveStep = 5;
+        const int moveStep = 15;
 
         public Camera(Vector3D direction, Point3D position)
         {
@@ -104,6 +104,11 @@ namespace code
         {
             MoveRight();
             MoveDown();
+        }
+
+        public void Move(Move move)
+        {
+            code.Move.Transform(move, position);
         }
 
         public void Rotate(Rotate rotate)

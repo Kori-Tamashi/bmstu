@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 
 using IntBuffer = code.Matrix<int>;
 using ColorBuffer = System.Drawing.Color[][];
+using System.Drawing.Imaging;
 
 namespace code
 {
-    class ZBuffer : CanvasProcessor
+    class ParallelZBuffer : CanvasProcessor
     {
         const int minLimitZ = -10000;
 
@@ -17,7 +19,7 @@ namespace code
         IntBuffer zBuffer;
         ColorBuffer colorBuffer;
 
-        public ZBuffer(Bitmap bitmap, List<Model> models)
+        public ParallelZBuffer(Bitmap bitmap, List<Model> models)
         {
             InitializeZbuffer(bitmap);
             InitializeBitmap(bitmap);
@@ -25,7 +27,7 @@ namespace code
             ParallelProcessing(models);
         }
 
-        public ZBuffer(Size size, List<Model> models)
+        public ParallelZBuffer(Size size, List<Model> models)
         {
             InitializeZbuffer(size);
             InitializeBitmap(size);
@@ -42,12 +44,28 @@ namespace code
 
         private void InitializeZbuffer(Bitmap bitmap)
         {
-            zBuffer = new IntBuffer(bitmap.Height, bitmap.Width, minLimitZ);
+            zBuffer = new IntBuffer(bitmap.Height, bitmap.Width);
+
+            for (int i = 0; i < zBuffer.Rows; i++)
+            {
+                for (int j = 0; j < zBuffer.Columns; j++)
+                {
+                    zBuffer[i, j] = minLimitZ;
+                }
+            }
         }
 
         private void InitializeZbuffer(Size size)
         {
-            zBuffer = new IntBuffer(size.Height, size.Width, minLimitZ);
+            zBuffer = new IntBuffer(size.Height, size.Width);
+
+            for (int i = 0; i < zBuffer.Rows; i++)
+            {
+                for (int j = 0; j < zBuffer.Columns; j++)
+                {
+                    zBuffer[i, j] = minLimitZ;
+                }
+            }
         }
 
         private void InitializeBitmap(Bitmap originalBitmap)
@@ -63,7 +81,6 @@ namespace code
         private void InitializeColorBuffer(Bitmap bitmap)
         {
             colorBuffer = new Color[bitmap.Height][];
-
             for (int i = 0; i < bitmap.Height; i++)
             {
                 colorBuffer[i] = new Color[bitmap.Width];
@@ -91,75 +108,47 @@ namespace code
 
         #region Processing
 
-        private void Processing(List<Model> models)
-        {
-            ProcessModels(models);
-            ProcessBitmap();
-        }
-
         private void ParallelProcessing(List<Model> models)
-        {   
-
-            ParallelProcessModels(models);
-            ProcessBitmap();
-        }
-
-        private void ProcessBitmap()
         {
-            for (int y = 0; y < bitmap.Height; y++)
-            {
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    bitmap.SetPixel(x, y, colorBuffer[y][x]);
-                }
-            }
+            ParallelProcessModels(models);
+            ParallelProcessBitmap();
         }
 
         private void ParallelProcessBitmap()
         {
-            lock (bitmap)
+            BitmapData data = bitmap.LockBits(
+                new Rectangle(0, 0, bitmap.Width, bitmap.Height), 
+                ImageLockMode.ReadWrite, 
+                PixelFormat.Format32bppArgb
+                );
+
+            unsafe
             {
-                Parallel.ForEach(Enumerable.Range(0, bitmap.Height), y =>
+                byte* ptr = (byte*)data.Scan0;
+
+                for (int y = 0; y < bitmap.Height; y++)
                 {
                     for (int x = 0; x < bitmap.Width; x++)
                     {
-                        bitmap.SetPixel(x, y, colorBuffer[y][x]);
-                    }
-                });
-            }
-        }
+                        int offset = (y * data.Stride) +(x * 4);
 
-        private void ProcessModels(List<Model> models)
-        {
-            foreach (Model model in models)
-            {
-                ProcessModel(model);
+                        ptr[offset] = colorBuffer[y][x].B;
+                        ptr[offset + 1] = colorBuffer[y][x].G;
+                        ptr[offset + 2] = colorBuffer[y][x].R;
+                        ptr[offset + 3] = colorBuffer[y][x].A;
+                    }
+                }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private void ParallelProcessModels(List<Model> models)
         {
-            // Параллельная обработка каждой модели
             Parallel.ForEach(models, model =>
             {
-                ProcessModel(model);
+                ParallelProcessModel(model);
             });
-        }
-
-        private void ProcessModel(Model model)
-        {
-            for (int y = 0; y < zBuffer.Rows; y++)
-            {
-                foreach (Polygon polygon in model.Polygons)
-                {
-                    for (int x = 0; x < zBuffer.Columns; x++)
-                    {
-                        int z = (int)polygon.Z(x, y);
-                        if (polygon.IsInside(x, y, z))
-                            ProcessPoint(x, y, z, model.Color);
-                    }
-                }
-            }
         }
 
         private void ParallelProcessModel(Model model)
@@ -179,19 +168,9 @@ namespace code
             });
         }
 
-        private void ProcessPoint(int x, int y, int z, Color color)
-        {
-            if (z > zBuffer[y, x])
-            {
-                zBuffer[y, x] = z;
-                colorBuffer[y][x] = color == Color.Empty ? Color.Black : color;
-            }
-        }
-
         private void ParallelProcessPoint(int x, int y, int z, Color color)
         {
-            // Критическая секция для обеспечения синхронизации доступа к zBuffer и colorBuffer
-            lock (zBuffer) 
+            lock (zBuffer)
             {
                 if (z > zBuffer[y, x])
                 {

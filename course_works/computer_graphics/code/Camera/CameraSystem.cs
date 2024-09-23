@@ -32,6 +32,11 @@ namespace code
             cameras[currentCamera].Move(direction);
         }
 
+        public void MoveCamera(Move move)
+        {
+            cameras[currentCamera].Move(move);
+        }
+
         public void RotateCamera(Rotate rotate)
         {
             cameras[currentCamera].Rotate(rotate);

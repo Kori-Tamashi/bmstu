@@ -45,6 +45,20 @@ namespace code
             }
         }
 
+        public Matrix(int row, int col, T fill)
+        {
+            rows = row;
+            columns = col;
+
+            _matrix = new List<List<T>>(row);
+            for (int i = 0; i < row; i++)
+            {
+                _matrix.Add(new List<T>(col));
+                for (int j = 0; j < col; j++)
+                    _matrix[i].Add((T)Convert.ChangeType(fill, typeof(T)));
+            }
+        }
+
         public Matrix(List<List<T>> matrix)
         {
             rows = matrix.Count;

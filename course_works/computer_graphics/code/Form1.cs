@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
 
 namespace code
 {
@@ -15,13 +16,7 @@ namespace code
     {
         Canvas canvas;
         Facade facade;
-
         CameraSystem cameraSystem;
-
-        FormCommand formCommand;
-        DrawsCommand drawCommand;
-        SceneCommand sceneCommand;
-        TransformationCommand transformationCommand;
 
         public Form1()
         {
@@ -50,80 +45,68 @@ namespace code
         {
             Model model = new Cube();
 
-            formCommand = new ListViewAddModelCommand(ref listView_modelsMain, ref model);
-            sceneCommand = new AddModelCommand(ref canvas, ref model);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(formCommand);
-            facade._execute(sceneCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new ListViewAddModelCommand(ref listView_modelsMain, ref model),
+                new AddModelCommand(ref canvas, ref model),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void directPrism_button_Click(object sender, EventArgs e)
         {
             Model model = new DirectPrism();
 
-            formCommand = new ListViewAddModelCommand(ref listView_modelsMain, ref model);
-            sceneCommand = new AddModelCommand(ref canvas, ref model);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(formCommand);
-            facade._execute(sceneCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new ListViewAddModelCommand(ref listView_modelsMain, ref model),
+                new AddModelCommand(ref canvas, ref model),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void triangularPyramid_button_Click(object sender, EventArgs e)
         {
             Model model = new Pyramid();
 
-            formCommand = new ListViewAddModelCommand(ref listView_modelsMain, ref model);
-            sceneCommand = new AddModelCommand(ref canvas, ref model);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(formCommand);
-            facade._execute(sceneCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new ListViewAddModelCommand(ref listView_modelsMain, ref model),
+                new AddModelCommand(ref canvas, ref model),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void Icosahedron_button_Click(object sender, EventArgs e)
         {
             Model model = new Icosahedron();
 
-            formCommand = new ListViewAddModelCommand(ref listView_modelsMain, ref model);
-            sceneCommand = new AddModelCommand(ref canvas, ref model);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(formCommand);
-            facade._execute(sceneCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new ListViewAddModelCommand(ref listView_modelsMain, ref model),
+                new AddModelCommand(ref canvas, ref model),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void inclinedPrism_button_Click(object sender, EventArgs e)
         {
             Model model = new InclinedPrism();
 
-            formCommand = new ListViewAddModelCommand(ref listView_modelsMain, ref model);
-            sceneCommand = new AddModelCommand(ref canvas, ref model);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(formCommand);
-            facade._execute(sceneCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new ListViewAddModelCommand(ref listView_modelsMain, ref model),
+                new AddModelCommand(ref canvas, ref model),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void button_dialogEdit_Click(object sender, EventArgs e)
         {
-            formCommand = new DialogEditShowCommand(ref canvas);
-            facade._execute(formCommand);
+            facade._execute(new DialogEditShowCommand(ref canvas));
         }
 
         private void button_Clear_Click(object sender, EventArgs e)
         {
-            drawCommand = new ClearCommand(ref canvas);
-            formCommand = new ListViewClearCommand(ref listView_modelsMain);
-
-            facade._execute(formCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new ClearCommand(ref canvas),
+                new ListViewClearCommand(ref listView_modelsMain)
+            );
         }
 
         private void button_moveModel_Click(object sender, EventArgs e)
@@ -136,11 +119,10 @@ namespace code
                 (float)numericUpDown_moveZ.Value
             );
 
-            transformationCommand = new MoveModelCommand(ref canvas, ref move, currentIndex);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(transformationCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new MoveModelCommand(ref canvas, ref move, currentIndex),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void button_rotateModel_Click(object sender, EventArgs e)
@@ -153,11 +135,10 @@ namespace code
                 (float)numericUpDown_angleOz.Value
             );
 
-            transformationCommand = new RotateModelCommand(ref canvas, ref rotate, currentIndex);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(transformationCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new RotateModelCommand(ref canvas, ref rotate, currentIndex),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void button_scaleModel_Click(object sender, EventArgs e)
@@ -170,11 +151,10 @@ namespace code
                 (float)numericUpDown_scaleZ.Value
             );
 
-            transformationCommand = new ScaleModelCommand(ref canvas, ref scale, currentIndex);
-            drawCommand = new RefreshCommand(ref canvas);
-
-            facade._execute(transformationCommand);
-            facade._execute(drawCommand);
+            facade._execute(
+                new ScaleModelCommand(ref canvas, ref scale, currentIndex),
+                new RefreshCommand(ref canvas)
+            );
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -199,30 +179,79 @@ namespace code
 
         private async void button5_Click(object sender, EventArgs e)
         {
-            LoadingBar bar = new LoadingBar();
-            bar.Start();
-
-            await Task.Run(() =>
-            {
-                ZBuffer zBuffer = new ZBuffer(canvas.Size, canvas.Models);
-                Action updateImage = () => picture.Image = zBuffer.Image;
-                picture.Invoke(updateImage);
-                Thread.Sleep(10);
-            });
-
-            bar.Stop();
+            facade._execute(new ParallelZBufferProcessCommand(ref canvas, ref picture));
         }
 
         private void button_cameraUp_Click(object sender, EventArgs e)
         {
-            Move move = new Move(0, -5, 0);
-            cameraSystem.MoveCamera(Direction.Up);
+            facade._execute(
+                new CameraUpMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
 
-            move.Turn();
+        private void button_cameraDown_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraDownMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
 
-            canvas.Move(move);
+        private void button_cameraRight_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraRightMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
 
-            canvas.Refresh();
+        private void button_CmeraLeft_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraDownMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
+
+        private void button_cameraLeft_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraLeftMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
+
+        private void button_cameraRightUp_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraUpRightMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
+
+        private void button_cameraRightDown_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraDownRightMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
+
+        private void button_cameraLeftUp_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraUpLeftMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
+        }
+
+        private void button_cameraLeftDown_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraDownLeftMoveCommand(ref canvas, ref cameraSystem),
+                new RefreshCommand(ref canvas)
+            );
         }
     }
 }

@@ -10,6 +10,7 @@ namespace code
 {
     class Facade
     {
+        Manager manager;
         FormManager formManager;
         DrawManager drawManager;
         SceneManager sceneManager;
@@ -17,6 +18,7 @@ namespace code
 
         public Facade()
         { 
+            manager = new Manager();
             formManager = new FormManager();
             drawManager = new DrawManager();
             sceneManager = new SceneManager();
@@ -41,6 +43,14 @@ namespace code
         public void _execute(TransformationCommand command) 
         { 
             transformationManager._execute(command);
+        }
+
+        public void _execute(params Command[] commands)
+        {
+            foreach (var command in commands)
+            {
+                manager._execute(command);
+            }
         }
     }
 }

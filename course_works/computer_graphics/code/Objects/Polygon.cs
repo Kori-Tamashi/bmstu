@@ -137,43 +137,6 @@ namespace code
             return normal;
         }
 
-        public bool IsOn(float x, float y, float z)
-        {
-            foreach (Edge edge in edges)
-            {
-                Vector3D startToPoint = new Vector3D(edge.start, new Point3D(x, y, z));
-                Vector3D pointToEnd = new Vector3D(new Point3D(x, y, z), edge.end);
-
-                if (Math.Abs(edge.Length - startToPoint.Length - pointToEnd.Length) < 1e-6)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public bool IsOn_(float x, float y, float z)
-        {
-            foreach (Edge edge in edges)
-            {
-                Vector3D vectorEdge = edge.ToVector();
-                Vector3D vectorToPoint = new Vector3D(edge.start, new Point3D(x, y, z));
-                Vector3D normal = Vector3D.CrossProduct(vectorEdge, vectorToPoint);
-
-                if (normal.IsNull())
-                {
-                    if (Functions.LowerEqual(edge.start.X, x) &&
-                        Functions.LowerEqual(x, edge.end.X) &&
-                        Functions.LowerEqual(edge.start.Y, y) &&
-                        Functions.LowerEqual(y, edge.end.Y) &&
-                        Functions.LowerEqual(edge.start.Z, z) &&
-                        Functions.LowerEqual(z, edge.end.Z))
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
         public bool IsInside(float x, float y, float z)
         {
             Vector3D polygonNormal = Normal();
@@ -191,6 +154,28 @@ namespace code
             }
 
             return true;
+        }
+
+        public bool IsInsideParallel(float x, float y, float z)
+        {
+            Vector3D polygonNormal = Normal();
+            bool inside = true;
+
+            Parallel.ForEach(edges, edge =>
+            {
+                Vector3D vectorEdge = edge.ToVector();
+                Vector3D vectorEdgeNormal = Vector3D.CrossProduct(vectorEdge, polygonNormal);
+                vectorEdgeNormal.Turn();
+
+                Vector3D vectorToPoint = new Vector3D(edge.start, new Point3D(x, y, z));
+
+                if (Vector3D.DotProduct(vectorEdgeNormal, vectorToPoint) < 0)
+                {
+                    inside = false;
+                }
+            });
+
+            return inside;
         }
     }
 }

@@ -10,6 +10,9 @@ namespace code
     {
         public Manager() { }
 
-        public void _execute(Command command) { }
+        public void _execute(Command command) 
+        {
+            command._execute();
+        }
     }
 }
