@@ -63,4 +63,20 @@ namespace code
             dialogEdit.Show();
         }
     }
+
+    class ErrorMessageShowCommand : FormCommand
+    {
+        protected string text;
+
+        public ErrorMessageShowCommand(string text)
+        {
+            this.text = text;
+        }
+
+        public override void _execute()
+        {
+            ErrorMessage errorMessage = new ErrorMessage();
+            errorMessage.Show(text);
+        }
+    }
 }

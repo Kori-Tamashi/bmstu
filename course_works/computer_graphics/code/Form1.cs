@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.AxHost;
 
 namespace code
 {
@@ -26,6 +25,8 @@ namespace code
             InitializeCameras();
         }
 
+        #region Initialize
+
         private void InitializeCanvas()
         {
             canvas = new Canvas(new Size(picture.Width, picture.Height), picture.CreateGraphics());
@@ -40,6 +41,10 @@ namespace code
         {
             cameraSystem = new CameraSystem(canvas.Size);
         }
+
+        #endregion
+
+        #region ModelsButtons
 
         private void Cube_button_Click(object sender, EventArgs e)
         {
@@ -96,6 +101,10 @@ namespace code
             );
         }
 
+        #endregion
+
+        #region ActionsButtons
+
         private void button_dialogEdit_Click(object sender, EventArgs e)
         {
             facade._execute(new DialogEditShowCommand(ref canvas));
@@ -109,10 +118,22 @@ namespace code
             );
         }
 
+        private async void button5_Click(object sender, EventArgs e)
+        {
+            facade._execute(new ParallelSolidShadingProcessCommand(ref canvas, ref picture));
+        }
+
+        #endregion
+
+        #region TransformationsButtons
+
         private void button_moveModel_Click(object sender, EventArgs e)
         {
-            int currentIndex = listView_modelsMain.SelectedItems[0].Index;
+            int currentIndex = GetCurrentModelIndex();
 
+            if (currentIndex == -1)
+                return;
+            
             Move move = new Move(
                 (float)numericUpDown_moveX.Value,
                 (float)numericUpDown_moveY.Value,
@@ -127,7 +148,10 @@ namespace code
 
         private void button_rotateModel_Click(object sender, EventArgs e)
         {
-            int currentIndex = listView_modelsMain.SelectedItems[0].Index;
+            int currentIndex = GetCurrentModelIndex();
+
+            if (currentIndex == -1)
+                return;
 
             Rotate rotate = new Rotate(
                 (float)numericUpDown_angleOx.Value,
@@ -143,7 +167,10 @@ namespace code
 
         private void button_scaleModel_Click(object sender, EventArgs e)
         {
-            int currentIndex = listView_modelsMain.SelectedItems[0].Index;
+            int currentIndex = GetCurrentModelIndex();
+
+            if (currentIndex == -1)
+                return;
 
             Scale scale = new Scale(
                 (float)numericUpDown_scaleX.Value,
@@ -157,30 +184,9 @@ namespace code
             );
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+        #endregion
 
-        }
-
-        private void toolTip1_Popup(object sender, PopupEventArgs e)
-        {
-
-        }
-
-        private void toolTip1_Popup_1(object sender, PopupEventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private async void button5_Click(object sender, EventArgs e)
-        {
-            facade._execute(new ParallelSolidShadingProcessCommand(ref canvas, ref picture));
-        }
+        #region Camera
 
         private void button_cameraUp_Click(object sender, EventArgs e)
         {
@@ -253,5 +259,51 @@ namespace code
                 new RefreshCommand(ref canvas)
             );
         }
+
+        #endregion
+
+        #region Functions
+
+        private int GetCurrentModelIndex()
+        {
+            int currentIndex = -1;
+
+            try
+            {
+                currentIndex = listView_modelsMain.SelectedItems[0].Index;
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                facade._execute(new ErrorMessageShowCommand("Модель не выбрана."));
+            }
+
+            return currentIndex;
+        }
+
+        #endregion
+
+        #region Other
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        private void toolTip1_Popup_1(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        #endregion
     }
 }

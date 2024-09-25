@@ -100,6 +100,7 @@
             label1 = new Label();
             numericUpDown1 = new NumericUpDown();
             groupBox2 = new GroupBox();
+            errorProvider1 = new ErrorProvider(components);
             InteractionMenu_tabControl.SuspendLayout();
             Main_tabPage.SuspendLayout();
             Primitives_groupBox.SuspendLayout();
@@ -131,6 +132,7 @@
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             SuspendLayout();
             // 
             // InteractionMenu_tabControl
@@ -967,6 +969,10 @@
             groupBox2.TabIndex = 0;
             groupBox2.TabStop = false;
             // 
+            // errorProvider1
+            // 
+            errorProvider1.ContainerControl = this;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.Inherit;
@@ -1016,6 +1022,7 @@
             tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             ResumeLayout(false);
         }
 
@@ -1091,6 +1098,7 @@
         private Button button_Clear;
         private Button button_dialogEdit;
         private CheckedListBox checkedBox_algorithm;
+        private ErrorProvider errorProvider1;
     }
 }
 
