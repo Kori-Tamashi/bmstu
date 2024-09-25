@@ -142,7 +142,7 @@
             InteractionMenu_tabControl.Location = new Point(12, 12);
             InteractionMenu_tabControl.Name = "InteractionMenu_tabControl";
             InteractionMenu_tabControl.SelectedIndex = 0;
-            InteractionMenu_tabControl.Size = new Size(1493, 253);
+            InteractionMenu_tabControl.Size = new Size(1481, 253);
             InteractionMenu_tabControl.SizeMode = TabSizeMode.FillToRight;
             InteractionMenu_tabControl.TabIndex = 0;
             // 
@@ -160,7 +160,7 @@
             Main_tabPage.Location = new Point(4, 29);
             Main_tabPage.Name = "Main_tabPage";
             Main_tabPage.Padding = new Padding(3);
-            Main_tabPage.Size = new Size(1485, 220);
+            Main_tabPage.Size = new Size(1473, 220);
             Main_tabPage.TabIndex = 0;
             Main_tabPage.Text = "Главная";
             // 
@@ -309,7 +309,7 @@
             groupBox5.Controls.Add(button_scaleModel);
             groupBox5.Controls.Add(tableLayoutPanel3);
             groupBox5.Font = new Font("Segoe UI", 10F);
-            groupBox5.Location = new Point(1275, 12);
+            groupBox5.Location = new Point(1269, 12);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(196, 181);
             groupBox5.TabIndex = 7;
@@ -422,7 +422,7 @@
             groupBox6.Controls.Add(button_Clear);
             groupBox6.Controls.Add(button_dialogEdit);
             groupBox6.Font = new Font("Segoe UI", 10F);
-            groupBox6.Location = new Point(347, 60);
+            groupBox6.Location = new Point(341, 60);
             groupBox6.Name = "groupBox6";
             groupBox6.Size = new Size(261, 154);
             groupBox6.TabIndex = 8;
@@ -465,7 +465,7 @@
             groupBox4.Controls.Add(button_rotateModel);
             groupBox4.Controls.Add(tableLayoutPanel7);
             groupBox4.Font = new Font("Segoe UI", 10F);
-            groupBox4.Location = new Point(1073, 12);
+            groupBox4.Location = new Point(1067, 12);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(196, 180);
             groupBox4.TabIndex = 6;
@@ -577,7 +577,7 @@
             groupBox3.Controls.Add(button_moveModel);
             groupBox3.Controls.Add(tableLayoutPanel2);
             groupBox3.Font = new Font("Segoe UI", 10F);
-            groupBox3.Location = new Point(871, 12);
+            groupBox3.Location = new Point(865, 12);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(196, 181);
             groupBox3.TabIndex = 5;
@@ -691,7 +691,7 @@
             View_tabPage.Location = new Point(4, 29);
             View_tabPage.Name = "View_tabPage";
             View_tabPage.Padding = new Padding(3);
-            View_tabPage.Size = new Size(1485, 220);
+            View_tabPage.Size = new Size(1473, 220);
             View_tabPage.TabIndex = 1;
             View_tabPage.Text = "Вид";
             View_tabPage.UseVisualStyleBackColor = true;
@@ -835,7 +835,7 @@
             File_tabPage.ForeColor = SystemColors.ControlText;
             File_tabPage.Location = new Point(4, 29);
             File_tabPage.Name = "File_tabPage";
-            File_tabPage.Size = new Size(1485, 220);
+            File_tabPage.Size = new Size(1473, 220);
             File_tabPage.TabIndex = 2;
             File_tabPage.Text = "Файл";
             // 
@@ -845,7 +845,7 @@
             panel1.Controls.Add(picture);
             panel1.Location = new Point(12, 267);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1481, 551);
+            panel1.Size = new Size(1477, 551);
             panel1.TabIndex = 1;
             // 
             // picture
@@ -853,7 +853,7 @@
             picture.Cursor = Cursors.Cross;
             picture.Location = new Point(3, 3);
             picture.Name = "picture";
-            picture.Size = new Size(1473, 572);
+            picture.Size = new Size(1469, 572);
             picture.TabIndex = 0;
             picture.TabStop = false;
             // 

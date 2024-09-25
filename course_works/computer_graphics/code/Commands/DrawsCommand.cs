@@ -70,7 +70,6 @@ namespace code
                 ZBuffer zBuffer = new ZBuffer(canvas.Size, canvas.Models);
                 Action updateImage = () => picture.Image = zBuffer.Image;
                 picture.Invoke(updateImage);
-                Thread.Sleep(10);
             });
 
             bar.Stop();
@@ -91,7 +90,46 @@ namespace code
                 ParallelZBuffer zBuffer = new ParallelZBuffer(canvas.Size, canvas.Models);
                 Action updateImage = () => picture.Image = zBuffer.Image;
                 picture.Invoke(updateImage);
-                Thread.Sleep(10);
+            });
+
+            bar.Stop();
+        }
+    }
+
+    class SolidShadingProcessCommand : CanvasProcessCommand
+    {
+        public SolidShadingProcessCommand(ref Canvas canvas, ref PictureBox picture) : base(ref canvas, ref picture) { }
+
+        public async override void _execute()
+        {
+            LoadingBar bar = new LoadingBar();
+            bar.Start();
+
+            await Task.Run(() =>
+            {
+                SolidShading solidShading = new SolidShading(canvas.Size, canvas.Models);
+                Action updateImage = () => picture.Image = solidShading.Image;
+                picture.Invoke(updateImage);
+            });
+
+            bar.Stop();
+        }
+    }
+
+    class ParallelSolidShadingProcessCommand : CanvasProcessCommand
+    {
+        public ParallelSolidShadingProcessCommand(ref Canvas canvas, ref PictureBox picture) : base(ref canvas, ref picture) { }
+
+        public async override void _execute()
+        {
+            LoadingBar bar = new LoadingBar();
+            bar.Start();
+
+            await Task.Run(() =>
+            {
+                ParallelSolidShading solidShading = new ParallelSolidShading(canvas.Size, canvas.Models);
+                Action updateImage = () => picture.Image = solidShading.Image;
+                picture.Invoke(updateImage);
             });
 
             bar.Stop();

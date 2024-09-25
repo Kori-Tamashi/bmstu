@@ -46,10 +46,20 @@ namespace code
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
         }
 
+        public static float DotProduct(Light light, Vector3D v)
+        {
+            return DotProduct(light.Direction, v);
+        }
+
         public static float Angle(Vector3D v1, Vector3D v2)
         {
             float angleRadians = (float)Math.Acos( DotProduct(v1, v2) / (v1.Length * v2.Length) );
             return (float)( angleRadians * 180 / Math.PI );
+        }
+
+        public static float Angle(Light light, Vector3D v)
+        {
+            return Angle(light.Direction, v);
         }
 
         public float GetLength()

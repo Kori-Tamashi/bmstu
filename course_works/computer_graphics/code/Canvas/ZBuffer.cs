@@ -22,7 +22,7 @@ namespace code
             InitializeZbuffer(bitmap);
             InitializeBitmap(bitmap);
             InitializeColorBuffer(bitmap);
-            ParallelProcessing(models);
+            Processing(models);
         }
 
         public ZBuffer(Size size, List<Model> models)
@@ -30,7 +30,7 @@ namespace code
             InitializeZbuffer(size);
             InitializeBitmap(size);
             InitializeColorBuffer(size);
-            ParallelProcessing(models);
+            Processing(models);
         }
 
         public Bitmap Image
@@ -97,13 +97,6 @@ namespace code
             ProcessBitmap();
         }
 
-        private void ParallelProcessing(List<Model> models)
-        {   
-
-            ParallelProcessModels(models);
-            ProcessBitmap();
-        }
-
         private void ProcessBitmap()
         {
             for (int y = 0; y < bitmap.Height; y++)
@@ -115,35 +108,12 @@ namespace code
             }
         }
 
-        private void ParallelProcessBitmap()
-        {
-            lock (bitmap)
-            {
-                Parallel.ForEach(Enumerable.Range(0, bitmap.Height), y =>
-                {
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        bitmap.SetPixel(x, y, colorBuffer[y][x]);
-                    }
-                });
-            }
-        }
-
         private void ProcessModels(List<Model> models)
         {
             foreach (Model model in models)
             {
                 ProcessModel(model);
             }
-        }
-
-        private void ParallelProcessModels(List<Model> models)
-        {
-            // Параллельная обработка каждой модели
-            Parallel.ForEach(models, model =>
-            {
-                ProcessModel(model);
-            });
         }
 
         private void ProcessModel(Model model)
@@ -162,42 +132,12 @@ namespace code
             }
         }
 
-        private void ParallelProcessModel(Model model)
-        {
-            // Параллельная обработка каждого полигона модели
-            Parallel.ForEach(model.Polygons, polygon =>
-            {
-                for (int y = 0; y < zBuffer.Rows; y++)
-                {
-                    for (int x = 0; x < zBuffer.Columns; x++)
-                    {
-                        int z = (int)polygon.Z(x, y);
-                        if (polygon.IsInside(x, y, z))
-                            ParallelProcessPoint(x, y, z, model.Color);
-                    }
-                }
-            });
-        }
-
         private void ProcessPoint(int x, int y, int z, Color color)
         {
             if (z > zBuffer[y, x])
             {
                 zBuffer[y, x] = z;
                 colorBuffer[y][x] = color == Color.Empty ? Color.Black : color;
-            }
-        }
-
-        private void ParallelProcessPoint(int x, int y, int z, Color color)
-        {
-            // Критическая секция для обеспечения синхронизации доступа к zBuffer и colorBuffer
-            lock (zBuffer) 
-            {
-                if (z > zBuffer[y, x])
-                {
-                    zBuffer[y, x] = z;
-                    colorBuffer[y][x] = color == Color.Empty ? Color.Black : color;
-                }
             }
         }
 

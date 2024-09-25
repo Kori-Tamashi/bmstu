@@ -179,7 +179,7 @@ namespace code
 
         private async void button5_Click(object sender, EventArgs e)
         {
-            facade._execute(new ParallelZBufferProcessCommand(ref canvas, ref picture));
+            facade._execute(new ParallelSolidShadingProcessCommand(ref canvas, ref picture));
         }
 
         private void button_cameraUp_Click(object sender, EventArgs e)
