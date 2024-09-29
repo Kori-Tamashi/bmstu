@@ -847,7 +847,7 @@
             panel1.Controls.Add(picture);
             panel1.Location = new Point(12, 267);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1477, 551);
+            panel1.Size = new Size(1481, 551);
             panel1.TabIndex = 1;
             // 
             // picture
@@ -855,7 +855,7 @@
             picture.Cursor = Cursors.Cross;
             picture.Location = new Point(3, 3);
             picture.Name = "picture";
-            picture.Size = new Size(1469, 572);
+            picture.Size = new Size(1473, 572);
             picture.TabIndex = 0;
             picture.TabStop = false;
             // 

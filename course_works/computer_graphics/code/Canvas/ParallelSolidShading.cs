@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using IntBuffer = code.Matrix<int>;
 using ColorBuffer = System.Drawing.Color[][];
+using System.Drawing.Imaging;
 
 namespace code
 {
@@ -14,17 +15,17 @@ namespace code
     {
         const int minLimitZ = -10000;
 
-        Light light;
+        List<Light> lights;
         Vector3D supervisor;
 
         Bitmap bitmap;
         IntBuffer zBuffer;
         ColorBuffer colorBuffer;
 
-        public ParallelSolidShading(Size size, List<Model> models)
+        public ParallelSolidShading(Size size, List<Model> models, List<Light> lights, Vector3D supervisor)
         {
-            light = new Light();
-            supervisor = new Vector3D(0, 0, -1).NormalizedCopy();
+            this.lights = lights;
+            this.supervisor = supervisor;
 
             InitializeZbuffer(size);
             InitializeBitmap(size);
@@ -63,18 +64,36 @@ namespace code
         public void Processing(List<Model> models)
         {
             ParallelProcessModels(models);
-            ProcessBitmap();
+            ParallelProcessBitmap();
         }
 
-        private void ProcessBitmap()
+        private void ParallelProcessBitmap()
         {
-            for (int y = 0; y < bitmap.Height; y++)
+            BitmapData data = bitmap.LockBits(
+                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite,
+                PixelFormat.Format32bppArgb
+                );
+
+            unsafe
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                byte* ptr = (byte*)data.Scan0;
+
+                for (int y = 0; y < bitmap.Height; y++)
                 {
-                    bitmap.SetPixel(x, y, colorBuffer[y][x]);
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        int offset = (y * data.Stride) + (x * 4);
+
+                        ptr[offset] = colorBuffer[y][x].B;
+                        ptr[offset + 1] = colorBuffer[y][x].G;
+                        ptr[offset + 2] = colorBuffer[y][x].R;
+                        ptr[offset + 3] = colorBuffer[y][x].A;
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
         private void ParallelProcessModels(List<Model> models)
@@ -120,13 +139,18 @@ namespace code
             float R_y = 2 * normal.Z * normal.Y;
             Vector3D reflection = new Vector3D(R_x, R_y, R_z);
 
-            return Math.Abs(
-                material.I_a * material.k_a + (light.Intensity / (material.d + material.K)) * (
+            float intensity = material.I_a * material.k_a;
+
+            foreach (Light light in lights)
+            {
+                intensity += (light.Intensity / (material.d + material.K)) * (
                     material.k_d * Vector3D.DotProduct(light, normal) +
                     material.k_s * (float)Math.Pow(
                         Vector3D.DotProduct(reflection, supervisor), material.n)
-                    )
-                );
+                    );
+            }
+
+            return Math.Abs(intensity);
         }
 
         private void ParallelProcessPoint(int x, int y, int z, float intensity, Color modelColor)

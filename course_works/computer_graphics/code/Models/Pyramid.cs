@@ -29,6 +29,7 @@ namespace code
                 2, 3
             };
 
+            name = "Пирамида";
             type = Modeltype.Pyramid;
             color = Color.Empty;
             length = -1;
