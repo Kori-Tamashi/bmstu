@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -251,6 +252,11 @@ namespace code
             get { return polygons; }
         }
 
+        public virtual Matrix<float> Matrix
+        {
+            get { return _Matrix(); }
+        }
+
         #endregion
 
         #region Transformation
@@ -395,6 +401,19 @@ namespace code
             }
         }
 
+        protected virtual Matrix<float> _Matrix()
+        {
+            Matrix<float> modelMatrix = new Matrix<float>(4, polygons.Count);
+            for (int i = 0; i < polygons.Count; i++)
+            {
+                modelMatrix[0, i] = polygons[i].A;
+                modelMatrix[1, i] = polygons[i].B;
+                modelMatrix[2, i] = polygons[i].C;
+                modelMatrix[3, i] = polygons[i].D;
+            }
+
+            return modelMatrix;
+        }
         
     }
 }

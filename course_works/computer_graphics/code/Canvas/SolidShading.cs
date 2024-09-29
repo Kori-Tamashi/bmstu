@@ -89,13 +89,13 @@ namespace code
         {
             foreach (Polygon polygon in model.Polygons)
             {
-                ProcessPolygon(polygon, model.Color);
+                ProcessPolygon(polygon, model.Material, model.Color);
             }
         }
 
-        private void ProcessPolygon(Polygon polygon, Color modelColor)
+        private void ProcessPolygon(Polygon polygon, Material material, Color modelColor)
         {
-            float intensity = GetIntensity(polygon);
+            float intensity = GetIntensity(polygon, material);
 
             for (int y = 0; y < bitmap.Height; y++)
             {
@@ -108,7 +108,7 @@ namespace code
             }
         }
 
-        private float GetIntensity(Polygon polygon)
+        private float GetIntensity(Polygon polygon, Material material)
         {
             Vector3D normal = polygon.Normal().NormalizedCopy();
 
@@ -117,16 +117,11 @@ namespace code
             float R_y = 2 * normal.Z * normal.Y;
             Vector3D reflection = new Vector3D(R_x, R_y, R_z);
 
-            float LNAngle = Vector3D.Angle(light, normal);
-            float SRAngle = Vector3D.Angle(supervisor, reflection);
-
-            Metal metal = new Metal();
-
             return Math.Abs(
-                metal.I_a * metal.k_a + (light.Intensity / (0 + metal.K)) * (
-                    metal.k_d * Vector3D.DotProduct(light, normal) +
-                    metal.k_s * (float)Math.Pow(
-                        Vector3D.DotProduct(reflection, supervisor), metal.n)
+                material.I_a * material.k_a + (light.Intensity / (material.d + material.K)) * (
+                    material.k_d * Vector3D.DotProduct(light, normal) +
+                    material.k_s * (float)Math.Pow(
+                        Vector3D.DotProduct(reflection, supervisor), material.n)
                     )
                 );
         }

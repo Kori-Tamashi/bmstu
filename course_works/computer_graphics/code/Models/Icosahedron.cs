@@ -196,5 +196,19 @@ namespace code
         {
             return new Icosahedron(this);
         }
+
+        protected override Matrix<float> _Matrix()
+        {
+            Matrix<float> matrix = base._Matrix();
+            List<int> _indexes = new List<int> { 0, 1, 2, 3, 4, 10, 12, 14, 16, 18};
+
+            foreach (int index in _indexes)
+            {
+                for (int i = 0; i < 4; i++)
+                    matrix[i, index] *= -1;
+            }
+
+            return -1 * matrix;
+        }
     }
 }

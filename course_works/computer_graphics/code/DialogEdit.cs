@@ -216,22 +216,22 @@ namespace code
 
         private void toolStripMenuItem_resetMaterial_Click(object sender, EventArgs e)
         {
-            ChangeMaterialEvent(MaterialType.None);
+            ChangeMaterialEvent(new Material());
         }
 
         private void Wood_Click(object sender, EventArgs e)
         {
-            ChangeMaterialEvent(MaterialType.Wood);
+            ChangeMaterialEvent(new Wood());
         }
 
         private void Stone_Click(object sender, EventArgs e)
         {
-            ChangeMaterialEvent(MaterialType.Stone);
+            ChangeMaterialEvent(new Stone());
         }
 
         private void Metal_Click(object sender, EventArgs e)
         {
-            ChangeMaterialEvent(MaterialType.Metal);
+            ChangeMaterialEvent(new Metal());
         }
 
         private void ChangeColorEvent(Color newColor)
@@ -248,6 +248,16 @@ namespace code
         {
             currentSelfModel.MaterialType = newMaterialType;
             mainCanvas.Model(currentModelIndex).MaterialType = newMaterialType;
+            UpdateInfromationTableMaterial(currentSelfModel);
+
+            mainCanvas.Refresh();
+            selfCanvas.Refresh();
+        }
+
+        private void ChangeMaterialEvent(Material material)
+        {
+            currentSelfModel.Material = material;
+            mainCanvas.Model(currentModelIndex).Material = material;
             UpdateInfromationTableMaterial(currentSelfModel);
 
             mainCanvas.Refresh();

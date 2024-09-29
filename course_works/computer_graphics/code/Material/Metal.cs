@@ -11,11 +11,12 @@ namespace code
         public Metal()
         {
             I_a = 1;
-            k_a = (float)0.15;
-            k_d = (float)0.15;
-            k_s = (float)0.8;
+            k_a = 0.15f;
+            k_d = 0.15f;
+            k_s = 0.8f;
             K = 1;
             n = 5;
+            d = 0;
             type = MaterialType.Metal;
         }
     }

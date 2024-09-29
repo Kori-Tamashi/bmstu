@@ -35,34 +35,29 @@ namespace code
             ConstructEdges(this.points);
         }
 
+        public Polygon(bool turn, params Point3D[] points)
+        {
+            if (points.Length < 3)
+                throw new ArgumentException("Точек для инициализации плоскости должно быть минимум 3.");
+
+            this.points = new List<Point3D>(points);
+            ConstructCoefficients_NormalMethod(this.points);
+            ConstructEdges(this.points);
+        }
+
         private void ConstructCoefficients_NewellMethod(List<Point3D> points)
         {
-            // Theory - D. Rogers page 253
+            // Theory - D. Rogers page 254
 
-            // Создание матрицы точек
-            Matrix<float> matrixPoints = new Matrix<float>(3, 3);
+            a = b = c = 0;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0, j = 1; i < points.Count; i++, j = (i == points.Count - 1) ? 0 : i + 1) 
             {
-                matrixPoints[i, 0] = points[i].X;
-                matrixPoints[i, 1] = points[i].Y;
-                matrixPoints[i, 2] = points[i].Z;
+                a += (points[i].Y - points[j].Y) * (points[i].Z + points[j].Z);
+                b += (points[i].Z - points[j].Z) * (points[i].X + points[j].X);
+                c += (points[i].X - points[j].X) * (points[i].Y + points[j].Y);
             }
 
-            // Создание матрицы D (все элементы равны -1)
-            Matrix<float> matrixD = new Matrix<float>(3, 1);
-
-            for (int i = 0; i < 3; i++)
-            {
-                matrixD[i, 0] = -1;
-            }
-
-            // Получение коэффициентов
-            Matrix<float> matrixCoeffs = matrixPoints.Inverse() * matrixD;
-
-            a = matrixCoeffs[0, 0];
-            b = matrixCoeffs[1, 0];
-            c = matrixCoeffs[2, 0];
             d = -(a * points[0].X + b * points[0].Y + c * points[0].Z);
         }
 
@@ -71,7 +66,6 @@ namespace code
             Vector3D vector1 = new Vector3D(points[1], points[0]);
             Vector3D vector2 = new Vector3D(points[1], points[2]);
             Vector3D baseNormal = Vector3D.CrossProduct(vector1, vector2);
-            baseNormal.Normalize();
 
             a = baseNormal.X;
             b = baseNormal.Y;

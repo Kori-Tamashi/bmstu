@@ -63,6 +63,14 @@ namespace code
             ConstructEdges(points, indexes);
             ConstructPolygons(points);
             Update();
+
+            Matrix<float> point = new Matrix<float>(1, 4);
+            point[0, 0] = 50;
+            point[0, 1] = 50;
+            point[0, 2] = 50;
+            point[0, 3] = 1;
+
+            Matrix<float> mul = point * Matrix;
         }
 
         public InclinedPrism(Model other)
@@ -229,6 +237,16 @@ namespace code
         public override Model Copy()
         {
             return new InclinedPrism(this);
+        }
+
+        protected override Matrix<float> _Matrix()
+        {
+            Matrix<float> matrix = base._Matrix();
+
+            for (int i = 0; i < 4; i++)
+                matrix[i, 0] *= -1;
+
+            return -1 * matrix;
         }
     }
 }

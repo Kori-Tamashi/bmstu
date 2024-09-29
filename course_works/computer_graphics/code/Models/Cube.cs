@@ -127,5 +127,15 @@ namespace code
         {
             return new Cube(this);
         }
+
+        protected override Matrix<float> _Matrix()
+        {
+            Matrix<float> matrix = base._Matrix();
+
+            for (int i = 0; i < 4; i++)
+                matrix[i, 0] *= -1;
+
+            return -1 * matrix;
+        }
     }
 }

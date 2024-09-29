@@ -45,6 +45,7 @@ namespace code
             }
         }
 
+
         public Matrix(int row, int col, T fill)
         {
             rows = row;
@@ -166,7 +167,7 @@ namespace code
 
             if (Determinant() == 0)
             {
-                throw new InvalidOperationException("Матрица должны быть не вырожденной, чтобый найти её обратную.");
+                throw new InvalidOperationException("Матрица должны быть не вырожденной, чтобы найти её обратную.");
             }
 
             // Создание копии
@@ -270,6 +271,17 @@ namespace code
             return result;
         }
 
+        public static Matrix<T> operator *(float k, Matrix<T> a)
+        {
+            Matrix<T> result = new Matrix<T>(a);
 
+            for (int i = 0; i < a.rows; i++)
+            {
+                for (int j = 0; j < a.columns; j++)
+                    result[i, j] = (dynamic)a[i, j] * k;
+            }
+
+            return result;
+        }
     }
 }

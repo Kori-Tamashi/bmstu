@@ -87,16 +87,18 @@ namespace code
 
         private void ParallelProcessModel(Model model)
         {
+            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model);
+
             // Параллельная обработка каждого полигона модели
-            Parallel.ForEach(model.Polygons, polygon =>
+            Parallel.ForEach(visiblePolygons, polygon =>
             {
-                ParallelProcessPolygon(polygon, model.Color);
+                ParallelProcessPolygon(polygon, model.Material, model.Color);
             });
         }
 
-        private void ParallelProcessPolygon(Polygon polygon, Color modelColor)
+        private void ParallelProcessPolygon(Polygon polygon, Material modelMaterial, Color modelColor)
         {
-            float intensity = GetIntensity(polygon);
+            float intensity = GetIntensity(polygon, modelMaterial);
 
             for (int y = 0; y < zBuffer.Rows; y++)
             {
@@ -109,7 +111,7 @@ namespace code
             }
         }
 
-        private float GetIntensity(Polygon polygon)
+        private float GetIntensity(Polygon polygon, Material material)
         {
             Vector3D normal = polygon.Normal().NormalizedCopy();
 
@@ -118,16 +120,11 @@ namespace code
             float R_y = 2 * normal.Z * normal.Y;
             Vector3D reflection = new Vector3D(R_x, R_y, R_z);
 
-            float LNAngle = Vector3D.Angle(light, normal);
-            float SRAngle = Vector3D.Angle(supervisor, reflection);
-
-            Metal metal = new Metal();
-
             return Math.Abs(
-                metal.I_a * metal.k_a + (light.Intensity / (0 + metal.K)) * (
-                    metal.k_d * Vector3D.DotProduct(light, normal) +
-                    metal.k_s * (float)Math.Pow(
-                        Vector3D.DotProduct(reflection, supervisor), metal.n)
+                material.I_a * material.k_a + (light.Intensity / (material.d + material.K)) * (
+                    material.k_d * Vector3D.DotProduct(light, normal) +
+                    material.k_s * (float)Math.Pow(
+                        Vector3D.DotProduct(reflection, supervisor), material.n)
                     )
                 );
         }
@@ -141,16 +138,16 @@ namespace code
                     zBuffer[y, x] = z;
                     colorBuffer[y][x] = (modelColor == Color.Empty) ?
                         Color.FromArgb(
-                        (int)(Color.Black.A * intensity),
-                        (int)(Color.Black.R * intensity),
-                        (int)(Color.Black.G * intensity),
-                        (int)(Color.Black.B * intensity))
+                        (int)(Math.Min(Color.Black.A * intensity, 255)),
+                        (int)(Math.Min(Color.Black.R * intensity, 255)),
+                        (int)(Math.Min(Color.Black.G * intensity, 255)),
+                        (int)(Math.Min(Color.Black.B * intensity, 255)))
                         :
                         Color.FromArgb(
-                        (int)(modelColor.A * intensity),
-                        (int)(modelColor.R * intensity),
-                        (int)(modelColor.G * intensity),
-                        (int)(modelColor.B * intensity)
+                        (int)(Math.Min(modelColor.A * intensity, 255)),
+                        (int)(Math.Min(modelColor.R * intensity, 255)),
+                        (int)(Math.Min(modelColor.G * intensity, 255)),
+                        (int)(Math.Min(modelColor.B * intensity, 255))
                     );
                 }
             }
