@@ -6,23 +6,24 @@ using System.Threading.Tasks;
 
 using IntBuffer = code.Matrix<int>;
 using ColorBuffer = System.Drawing.Color[][];
+using System.Drawing.Imaging;
+using System.Reflection;
 
 namespace code
 {
     class ZBuffer : CanvasProcessor
     {
-        const int minLimitZ = -10000;
+        protected const int minLimitZ = -10000;
 
-        Bitmap bitmap;
-        IntBuffer zBuffer;
-        ColorBuffer colorBuffer;
-
-        public ZBuffer(Bitmap bitmap, List<Model> models)
+        protected Bitmap bitmap;
+        protected IntBuffer zBufferModels;
+        protected ColorBuffer colorBufferModels;
+        
+        public ZBuffer(Size size)
         {
-            InitializeZbuffer(bitmap);
-            InitializeBitmap(bitmap);
-            InitializeColorBuffer(bitmap);
-            Processing(models);
+            InitializeZbuffer(size);
+            InitializeBitmap(size);
+            InitializeColorBuffer(size);
         }
 
         public ZBuffer(Size size, List<Model> models)
@@ -33,82 +34,84 @@ namespace code
             Processing(models);
         }
 
-        public Bitmap Image
-        {
-            get { return bitmap; }
-        }
-
         #region Initialize
 
-        private void InitializeZbuffer(Bitmap bitmap)
+        protected virtual void InitializeZbuffer(Size size)
         {
-            zBuffer = new IntBuffer(bitmap.Height, bitmap.Width, minLimitZ);
+            zBufferModels = new IntBuffer(size.Height, size.Width, minLimitZ);
         }
 
-        private void InitializeZbuffer(Size size)
-        {
-            zBuffer = new IntBuffer(size.Height, size.Width, minLimitZ);
-        }
-
-        private void InitializeBitmap(Bitmap originalBitmap)
-        {
-            bitmap = new Bitmap(bitmap);
-        }
-
-        private void InitializeBitmap(Size size)
+        protected virtual void InitializeBitmap(Size size)
         {
             bitmap = new Bitmap(size.Width, size.Height);
         }
 
-        private void InitializeColorBuffer(Bitmap bitmap)
+        protected virtual void InitializeColorBuffer(Size size)
         {
-            colorBuffer = new Color[bitmap.Height][];
+            colorBufferModels = new Color[size.Height][];
 
-            for (int i = 0; i < bitmap.Height; i++)
+            // Инициализация каждого ряда в отдельном потоке
+            Parallel.For(0, size.Height, i =>
             {
-                colorBuffer[i] = new Color[bitmap.Width];
-                for (int j = 0; j < bitmap.Width; j++)
+                colorBufferModels[i] = new Color[size.Width];
+
+                // Заполнение ряда цветом
+                for (int j = 0; j < size.Width; j++)
                 {
-                    colorBuffer[i][j] = Color.White;
+                    colorBufferModels[i][j] = Color.White;
                 }
-            }
+            });
         }
 
-        private void InitializeColorBuffer(Size size)
+        #endregion
+
+        #region Getters & Setters
+
+        public Bitmap Image
         {
-            colorBuffer = new Color[size.Height][];
-            for (int i = 0; i < size.Height; i++)
-            {
-                colorBuffer[i] = new Color[size.Width];
-                for (int j = 0; j < bitmap.Width; j++)
-                {
-                    colorBuffer[i][j] = Color.White;
-                }
-            }
+            get { return bitmap; }
         }
 
         #endregion
 
         #region Processing
 
-        private void Processing(List<Model> models)
+        protected virtual void Processing(List<Model> models)
         {
             ProcessModels(models);
             ProcessBitmap();
         }
 
-        private void ProcessBitmap()
+        protected virtual void ProcessBitmap()
         {
-            for (int y = 0; y < bitmap.Height; y++)
+            BitmapData data = bitmap.LockBits(
+                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite,
+                PixelFormat.Format32bppArgb
+                );
+
+            unsafe
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                byte* ptr = (byte*)data.Scan0;
+
+                for (int y = 0; y < bitmap.Height; y++)
                 {
-                    bitmap.SetPixel(x, y, colorBuffer[y][x]);
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        int offset = (y * data.Stride) + (x * 4);
+
+                        ptr[offset] = colorBufferModels[y][x].B;
+                        ptr[offset + 1] = colorBufferModels[y][x].G;
+                        ptr[offset + 2] = colorBufferModels[y][x].R;
+                        ptr[offset + 3] = colorBufferModels[y][x].A;
+                    }
                 }
             }
+
+            bitmap.UnlockBits(data);
         }
 
-        private void ProcessModels(List<Model> models)
+        protected virtual void ProcessModels(List<Model> models)
         {
             foreach (Model model in models)
             {
@@ -116,28 +119,35 @@ namespace code
             }
         }
 
-        private void ProcessModel(Model model)
+        protected virtual void ProcessModel(Model model)
         {
-            for (int y = 0; y < zBuffer.Rows; y++)
+            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model);
+
+            foreach (Polygon polygon in visiblePolygons)
             {
-                foreach (Polygon polygon in model.Polygons)
+                ProcessPolygon(polygon, model.Color);
+            }
+        }
+
+        protected virtual void ProcessPolygon(Polygon polygon, Color modelColor)
+        {
+            for (int y = 0; y < zBufferModels.Rows; y++)
+            {
+                for (int x = 0; x < zBufferModels.Columns; x++)
                 {
-                    for (int x = 0; x < zBuffer.Columns; x++)
-                    {
-                        int z = (int)polygon.Z(x, y);
-                        if (polygon.IsInside(x, y, z))
-                            ProcessPoint(x, y, z, model.Color);
-                    }
+                    int z = (int)polygon.Z(x, y);
+                    if (polygon.IsInside(x, y, z))
+                        ProcessPoint(x, y, z, modelColor);
                 }
             }
         }
 
-        private void ProcessPoint(int x, int y, int z, Color color)
+        protected virtual void ProcessPoint(int x, int y, int z, Color color)
         {
-            if (z > zBuffer[y, x])
+            if (z > zBufferModels[y, x])
             {
-                zBuffer[y, x] = z;
-                colorBuffer[y][x] = color == Color.Empty ? Color.Black : color;
+                zBufferModels[y, x] = z;
+                colorBufferModels[y][x] = color == Color.Empty ? Color.Black : color;
             }
         }
 

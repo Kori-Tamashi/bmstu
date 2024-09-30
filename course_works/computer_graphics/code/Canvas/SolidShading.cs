@@ -5,95 +5,31 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-using IntBuffer = code.Matrix<int>;
-using ColorBuffer = System.Drawing.Color[][];
-
 namespace code
 {
-    class SolidShading : CanvasProcessor
+    class SolidShading : ZBuffer
     {
-        const int minLimitZ = -10000;
+        protected List<Light> lights;
+        protected Vector3D supervisor;
 
-        Light light;
-        Vector3D supervisor;
-
-        Bitmap bitmap;
-        IntBuffer zBuffer;
-        ColorBuffer colorBuffer;
-
-        public SolidShading(Size size, List<Model> models)
+        public SolidShading(Size size, List<Model> models, List<Light> lights, Vector3D supervisor) : base(size)
         {
-            light = new Light();
-            supervisor = new Vector3D(0, 0, -1).NormalizedCopy();
-
-            InitializeZbuffer(size);
-            InitializeBitmap(size);
-            InitializeColorBuffer(size);
+            this.lights = lights;
+            this.supervisor = supervisor;
             Processing(models);
         }
 
-        private void InitializeZbuffer(Size size)
+        protected override void ProcessModel(Model model)
         {
-            zBuffer = new IntBuffer(size.Height, size.Width, minLimitZ);
-        }
+            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model);
 
-        private void InitializeBitmap(Size size)
-        {
-            bitmap = new Bitmap(size.Width, size.Height);
-        }
-
-        private void InitializeColorBuffer(Size size)
-        {
-            colorBuffer = new Color[size.Height][];
-            for (int i = 0; i < size.Height; i++)
-            {
-                colorBuffer[i] = new Color[size.Width];
-                for (int j = 0; j < bitmap.Width; j++)
-                {
-                    colorBuffer[i][j] = Color.White;
-                }
-            }
-        }
-
-        public Bitmap Image
-        {
-            get { return bitmap; }
-        }
-
-        public void Processing(List<Model> models)
-        {
-            ProcessModels(models);
-            ProcessBitmap();
-        }
-
-        private void ProcessBitmap()
-        {
-            for (int y = 0; y < bitmap.Height; y++)
-            {
-                for (int x = 0; x < bitmap.Width; x++)
-                {
-                    bitmap.SetPixel(x, y, colorBuffer[y][x]);
-                }
-            }
-        }
-
-        private void ProcessModels(List<Model> models)
-        {
-            foreach (Model model in models)
-            {
-                ProcessModel(model);
-            }
-        }
-
-        private void ProcessModel(Model model)
-        {
-            foreach (Polygon polygon in model.Polygons)
+            foreach (Polygon polygon in visiblePolygons)
             {
                 ProcessPolygon(polygon, model.Material, model.Color);
             }
         }
 
-        private void ProcessPolygon(Polygon polygon, Material material, Color modelColor)
+        protected virtual void ProcessPolygon(Polygon polygon, Material material, Color modelColor)
         {
             float intensity = GetIntensity(polygon, material);
 
@@ -108,7 +44,25 @@ namespace code
             }
         }
 
-        private float GetIntensity(Polygon polygon, Material material)
+        protected virtual void ProcessPoint(int x, int y, int z, float intensity, Color modelColor)
+        {
+            if (z > zBufferModels[y, x])
+            {
+                zBufferModels[y, x] = z;
+                colorBufferModels[y][x] = (modelColor == Color.Empty) ? _Color(Color.Black, intensity) : _Color(modelColor, intensity);
+            }
+        }
+
+        protected Color _Color(Color color, float intensity)
+        {
+            return Color.FromArgb(
+                    (int)(Math.Max(0, Math.Min(color.A * intensity, 255))),
+                    (int)(Math.Max(0, Math.Min(color.R * intensity, 255))),
+                    (int)(Math.Max(0, Math.Min(color.G * intensity, 255))),
+                    (int)(Math.Max(0, Math.Min(color.B * intensity, 255))));
+        }
+
+        protected virtual float GetIntensity(Polygon polygon, Material material)
         {
             Vector3D normal = polygon.Normal().NormalizedCopy();
 
@@ -117,34 +71,18 @@ namespace code
             float R_y = 2 * normal.Z * normal.Y;
             Vector3D reflection = new Vector3D(R_x, R_y, R_z);
 
-            return Math.Abs(
-                material.I_a * material.k_a + (light.Intensity / (material.d + material.K)) * (
+            float intensity = material.I_a * material.k_a;
+
+            foreach (Light light in lights)
+            {
+                intensity += (light.Intensity / (material.d + material.K)) * (
                     material.k_d * Vector3D.DotProduct(light, normal) +
                     material.k_s * (float)Math.Pow(
                         Vector3D.DotProduct(reflection, supervisor), material.n)
-                    )
-                );
-        }
-
-        private void ProcessPoint(int x, int y, int z, float intensity, Color modelColor)
-        {
-            if (z > zBuffer[y, x])
-            {
-                zBuffer[y, x] = z;
-                colorBuffer[y][x] = (modelColor == Color.Empty) ?
-                    Color.FromArgb(
-                    (int)(Color.Black.A * intensity),
-                    (int)(Color.Black.R * intensity),
-                    (int)(Color.Black.G * intensity),
-                    (int)(Color.Black.B * intensity))
-                    :
-                    Color.FromArgb(
-                    (int)(modelColor.A * intensity),
-                    (int)(modelColor.R * intensity),
-                    (int)(modelColor.G * intensity),
-                    (int)(modelColor.B * intensity)
-                );
+                    );
             }
+
+            return Math.Abs(intensity);
         }
     }
 }

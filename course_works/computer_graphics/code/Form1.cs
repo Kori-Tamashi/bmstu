@@ -9,6 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+/*
+ * Light system
+ * Shadows
+ * Camera rotate
+ * Dialog edit clear
+ */
+
 namespace code
 {
     public partial class Form1 : Form
@@ -22,7 +29,7 @@ namespace code
             InitializeComponent();
             InitializeCanvas();
             InitializeFacade();
-            InitializeCameras();
+            InitializeCameraSystem();
         }
 
         #region Initialize
@@ -37,7 +44,7 @@ namespace code
             facade = new Facade();
         }
 
-        private void InitializeCameras()
+        private void InitializeCameraSystem()
         {
             cameraSystem = new CameraSystem(canvas.Size);
         }

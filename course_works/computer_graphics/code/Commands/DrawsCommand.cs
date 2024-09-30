@@ -105,9 +105,12 @@ namespace code
             LoadingBar bar = new LoadingBar();
             bar.Start();
 
+            List<Light> lights = new List<Light> { new Light() };
+            Vector3D supervisor = new Vector3D(0, 0, -1);
+
             await Task.Run(() =>
             {
-                SolidShading solidShading = new SolidShading(canvas.Size, canvas.Models);
+                SolidShading solidShading = new SolidShading(canvas.Size, canvas.Models, lights, supervisor);
                 Action updateImage = () => picture.Image = solidShading.Image;
                 picture.Invoke(updateImage);
             });
