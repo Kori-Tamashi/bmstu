@@ -24,11 +24,30 @@ namespace code
             get { return columns; }
         }
 
+        public List<List<T>> Matrix_
+        {
+            get { return _matrix;}
+        }
+
         public Matrix() 
         {
             rows = 0;
             columns = 0;
             _matrix = new List<List<T>>();
+        }
+
+        public Matrix(int row, int col, T[,] matrix)
+        {
+            rows = row;
+            columns = col;
+
+            _matrix = new List<List<T>>(row);
+            for (int i = 0; i < row; i++)
+            {
+                _matrix.Add(new List<T>(col));
+                for (int j = 0; j < col; j++)
+                    _matrix[i].Add((T)Convert.ChangeType(matrix[i, j], typeof(T)));
+            }
         }
 
         public Matrix(int row, int col) 

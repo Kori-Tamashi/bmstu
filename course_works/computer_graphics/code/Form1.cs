@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 /*
  * Light system
@@ -125,9 +126,14 @@ namespace code
             );
         }
 
-        private async void button5_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e)
         {
             facade._execute(new ParallelSolidShadingProcessCommand(ref canvas, ref picture));
+
+            //List<Light> lights = new List<Light> { new Light(new Vector3D(-0.707f, 0, -0.707f), new Point3D(canvas.Size.Width / 2, canvas.Size.Height / 2, 150)) };
+            //ZBufferShadows zBuffer = new ZBufferShadows(canvas.Size, canvas.Models, lights, new Vector3D(0, 0, -1));
+            //Action updateImage = () => picture.Image = zBuffer.Image;
+            //picture.Invoke(updateImage);
         }
 
         #endregion

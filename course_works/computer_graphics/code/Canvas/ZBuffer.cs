@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing.Imaging;
+using System.Reflection;
 
 using IntBuffer = code.Matrix<int>;
 using ColorBuffer = System.Drawing.Color[][];
-using System.Drawing.Imaging;
-using System.Reflection;
+
 
 namespace code
 {
@@ -21,22 +22,22 @@ namespace code
         
         public ZBuffer(Size size)
         {
-            InitializeZbuffer(size);
             InitializeBitmap(size);
-            InitializeColorBuffer(size);
+            InitializeZbufferModels(size);
+            InitializeColorBufferModels(size);
         }
 
         public ZBuffer(Size size, List<Model> models)
         {
-            InitializeZbuffer(size);
             InitializeBitmap(size);
-            InitializeColorBuffer(size);
+            InitializeZbufferModels(size);
+            InitializeColorBufferModels(size);
             Processing(models);
         }
 
         #region Initialize
 
-        protected virtual void InitializeZbuffer(Size size)
+        protected virtual void InitializeZbufferModels(Size size)
         {
             zBufferModels = new IntBuffer(size.Height, size.Width, minLimitZ);
         }
@@ -46,7 +47,7 @@ namespace code
             bitmap = new Bitmap(size.Width, size.Height);
         }
 
-        protected virtual void InitializeColorBuffer(Size size)
+        protected virtual void InitializeColorBufferModels(Size size)
         {
             colorBufferModels = new Color[size.Height][];
 
@@ -79,10 +80,10 @@ namespace code
         protected virtual void Processing(List<Model> models)
         {
             ProcessModels(models);
-            ProcessBitmap();
+            ProcessBitmap(bitmap);
         }
 
-        protected virtual void ProcessBitmap()
+        protected virtual void ProcessBitmap(Bitmap bitmap)
         {
             BitmapData data = bitmap.LockBits(
                 new Rectangle(0, 0, bitmap.Width, bitmap.Height),

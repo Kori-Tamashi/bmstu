@@ -20,6 +20,13 @@ namespace code
             Z = z;
         }
 
+        public Vector3D(Point3D point)
+        {
+            X = point.X;
+            Y = point.Y;
+            Z = point.Z;
+        }
+
         public Vector3D(Point3D start, Point3D end)
         {
             X = end.X - start.X;
@@ -53,8 +60,26 @@ namespace code
 
         public static float Angle(Vector3D v1, Vector3D v2)
         {
-            float angleRadians = (float)Math.Acos( DotProduct(v1, v2) / (v1.Length * v2.Length) );
+            float dotProduct = DotProduct(v1, v2) / (v1.Length * v2.Length);
+            float angleRadians = (dotProduct - 1 <= 0) ? (float)Math.Acos(dotProduct) : 0;
             return (float)( angleRadians * 180 / Math.PI );
+        }
+
+        public static (float oxAngle, float oyAngle, float ozAngle) AngleXYZ(Vector3D v1, Vector3D v2)
+        {
+            Vector3D w1 = v1.NormalizedCopy();
+            Vector3D w2 = v2.NormalizedCopy();
+
+            Vector3D rotationAxis = CrossProduct(w1, w2);
+            rotationAxis.Normalize();
+
+            float oxAngleRadians = (float)Math.Atan2(rotationAxis.Z, rotationAxis.Y);
+            float oyAngleRadians = (float)Math.Atan2(rotationAxis.X, rotationAxis.Z);
+            float ozAngleRadians = (float)Math.Atan2(rotationAxis.Y, rotationAxis.X);
+
+            return ( oxAngleRadians * 180f / (float)Math.PI,
+                     oyAngleRadians * 180f / (float)Math.PI,
+                     ozAngleRadians * 180f / (float)Math.PI );
         }
 
         public static float Angle(Light light, Vector3D v)
@@ -105,6 +130,11 @@ namespace code
         {
             float length = Length;
             return new Vector3D(X / length, Y / length, Z / length);
+        }
+
+        public Point3D ToPoint()
+        {
+            return new Point3D(X, Y, Z);
         }
 
         public Vector3D XYProjection()

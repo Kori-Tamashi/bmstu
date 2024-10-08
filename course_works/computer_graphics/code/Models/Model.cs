@@ -1,4 +1,5 @@
-﻿using code;
+﻿using Azure;
+using code;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -167,6 +168,11 @@ namespace code
             return new Model(this);
         }
 
+        public void Update_()
+        {
+            Update();
+        }
+
         protected virtual void Update()
         {
 
@@ -180,6 +186,11 @@ namespace code
         #endregion
 
         #region Getters & Setters
+
+        public List<Point3D> Points 
+        {
+            get { return points; } 
+        }
 
         public virtual float Length
         {

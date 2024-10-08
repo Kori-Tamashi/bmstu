@@ -17,7 +17,7 @@ namespace code
         {
             intensity = 5;
             direction = new Vector3D(0, 0, -1);
-            position = new Point3D(0, 0, -200);
+            position = new Point3D(0, 0, 200);
         }
 
         public Light(float intensity, Vector3D direction, Point3D position)
@@ -27,7 +27,7 @@ namespace code
             this.position = position;
         }
 
-        public Light(Vector3D direction, Point3D position, float intensity = 1)
+        public Light(Vector3D direction, Point3D position, float intensity = 5)
         {
             this.intensity = intensity;
             this.direction = direction;

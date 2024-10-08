@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace code
 {
-    internal class FormCommand : Command
+    class FormCommand : Command
     {
     }
 

@@ -12,6 +12,12 @@ namespace code
         protected List<Light> lights;
         protected Vector3D supervisor;
 
+        protected SolidShading(Size size, List<Light> lights, Vector3D supervisor) : base(size) 
+        {
+            this.lights = lights;
+            this.supervisor = supervisor;
+        }
+
         public SolidShading(Size size, List<Model> models, List<Light> lights, Vector3D supervisor) : base(size)
         {
             this.lights = lights;
