@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             InteractionMenu_tabControl = new TabControl();
             Main_tabPage = new TabPage();
+            button2 = new Button();
             checkedBox_algorithm = new CheckedListBox();
             Primitives_groupBox = new GroupBox();
             flowLayoutPanel1 = new FlowLayoutPanel();
@@ -151,6 +152,7 @@
             // Main_tabPage
             // 
             Main_tabPage.BackColor = Color.Transparent;
+            Main_tabPage.Controls.Add(button2);
             Main_tabPage.Controls.Add(checkedBox_algorithm);
             Main_tabPage.Controls.Add(Primitives_groupBox);
             Main_tabPage.Controls.Add(listView_modelsMain);
@@ -165,6 +167,16 @@
             Main_tabPage.Size = new Size(1473, 220);
             Main_tabPage.TabIndex = 0;
             Main_tabPage.Text = "Главная";
+            // 
+            // button2
+            // 
+            button2.Location = new Point(680, 98);
+            button2.Name = "button2";
+            button2.Size = new Size(94, 29);
+            button2.TabIndex = 10;
+            button2.Text = "button2";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // checkedBox_algorithm
             // 
@@ -855,7 +867,7 @@
             picture.Cursor = Cursors.Cross;
             picture.Location = new Point(3, 3);
             picture.Name = "picture";
-            picture.Size = new Size(1473, 572);
+            picture.Size = new Size(1473, 543);
             picture.TabIndex = 0;
             picture.TabStop = false;
             // 
@@ -1099,6 +1111,7 @@
         private Button button_dialogEdit;
         private CheckedListBox checkedBox_algorithm;
         private ErrorProvider errorProvider1;
+        private Button button2;
     }
 }
 

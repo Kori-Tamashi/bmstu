@@ -254,7 +254,7 @@ namespace code
         {
             Point3D res = new Point3D(point.X, point.Y, point.Z);
             Rotate rotate = new Rotate(angles[lightIndex, 0], angles[lightIndex, 1], 0);
-            Rotate.Transform(rotate, res, new Point3D(bitmap.Width / 2, bitmap.Height / 2, (bitmap.Width + bitmap.Height) / 4));
+            Rotate.Transform(rotate, res, new Point3D(lights[lightIndex].Position.X, lights[lightIndex].Position.Y, lights[lightIndex].Position.Z));
             return res;
         }
 

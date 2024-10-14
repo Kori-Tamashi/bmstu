@@ -21,6 +21,14 @@ namespace code
             this.matrix = matrix;
         }
 
+        public void ToIdentity()
+        {
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                matrix[i, i] = 1;
+            }
+        }
+
         static public void Transform(Transformation transformation, Point3D point)
         {
             TransformPoints(transformation, point);
@@ -191,6 +199,23 @@ namespace code
                 point.Y = new_location[0, 1];
                 point.Z = new_location[0, 2];
             }
+        }
+
+        public float this[int row, int col]
+        {
+            get
+            {
+                return matrix[row, col];
+            }
+            set
+            {
+                matrix[row, col] = value;
+            }
+        }
+
+        public static Transformation operator *(Transformation a, Transformation b)
+        {
+            return new Transformation(a.matrix * b.matrix);
         }
     }
 }

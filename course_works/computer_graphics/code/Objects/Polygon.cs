@@ -9,7 +9,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace code
 {
-    class Polygon
+    public class Polygon
     {
         float a, b, c, d;
         List<Point3D> points;
@@ -35,14 +35,15 @@ namespace code
             ConstructEdges(this.points);
         }
 
-        public Polygon(bool turn, params Point3D[] points)
+        public Polygon(Vector3D normal)
         {
-            if (points.Length < 3)
-                throw new ArgumentException("Точек для инициализации плоскости должно быть минимум 3.");
+            a = normal.X;
+            b = normal.Y;
+            c = normal.Z;
+            d = 0;
 
-            this.points = new List<Point3D>(points);
-            ConstructCoefficients_NormalMethod(this.points);
-            ConstructEdges(this.points);
+            points = new List<Point3D>();
+            edges = new List<Edge>();
         }
 
         private void ConstructCoefficients_NewellMethod(List<Point3D> points)
@@ -84,6 +85,16 @@ namespace code
                 else
                     edges.Add(new Edge(points[i], points[0]));
             }
+        }
+
+        public List<Point3D> Points
+        {
+            get { return points; }
+        }
+
+        public List<Edge> Edges
+        {
+            get { return edges; }
         }
 
         public float A

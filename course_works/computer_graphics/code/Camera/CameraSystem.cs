@@ -27,11 +27,6 @@ namespace code
             get { return cameras[currentCamera].MoveStep; }
         }
 
-        public void MoveCamera(Direction direction)
-        {
-            cameras[currentCamera].Move(direction);
-        }
-
         public void MoveCamera(Move move)
         {
             cameras[currentCamera].Move(move);

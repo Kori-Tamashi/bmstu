@@ -1,4 +1,5 @@
-﻿using System;
+﻿using code;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,10 @@ namespace code
 {
     class Camera
     {
-        Vector3D direction;
         Point3D position;
+        Vector3D direction;
+        Vector3D right;
+        Vector3D up;
 
         const int moveStep = 15;
 
@@ -18,6 +21,20 @@ namespace code
         {
             this.direction = direction;
             this.position = position;
+
+            InitializeVectors();
+        }
+
+        private void InitializeVectors()
+        {
+            Vector3D top = new Vector3D(0, 1, 0);
+
+            right = Vector3D.CrossProduct(direction, top);
+            up = Vector3D.CrossProduct(direction, right);
+
+            direction.Normalize();
+            right.Normalize();
+            up.Normalize();
         }
 
         public int MoveStep
@@ -25,85 +42,24 @@ namespace code
             get { return moveStep; }
         }
 
-        public void Move(Direction direction)
+        public Point3D Position
         {
-            switch (direction)
-            {
-                case Direction.Up:
-                    MoveUp();
-                    break;
-                case Direction.Down:
-                    MoveDown(); 
-                    break;
-                case Direction.Left:
-                    MoveLeft();
-                    break;
-                case Direction.Right:
-                    MoveRight();
-                    break;
-                case Direction.LeftUp:
-                    MoveLeftUp();
-                    break;
-                case Direction.RightUp:
-                    MoveRightUp();
-                    break;
-                case Direction.LeftDown:
-                    MoveLeftDown();
-                    break;
-                case Direction.RightDown:
-                    MoveRightDown();
-                    break;
-                default:
-                    break;
-            }
+            get { return position; }
         }
 
-        public void MoveUp()
+        public Vector3D Direction
         {
-            Move move = new Move(0, -moveStep, 0);
-            code.Move.Transform(move, position);
+            get { return direction; }
         }
 
-        public void MoveDown()
+        public Vector3D Right
         {
-            Move move = new Move(0, moveStep, 0);
-            code.Move.Transform(move, position);
+            get { return right; }
         }
 
-        public void MoveLeft()
+        public Vector3D Up
         {
-            Move move = new Move(-moveStep, 0, 0);
-            code.Move.Transform(move, position);
-        }
-
-        public void MoveRight()
-        {
-            Move move = new Move(moveStep, 0, 0);
-            code.Move.Transform(move, position);
-        }
-
-        public void MoveLeftUp()
-        {
-            MoveLeft();
-            MoveUp();
-        }
-
-        public void MoveLeftDown()
-        {
-            MoveLeft();
-            MoveDown();
-        }
-
-        public void MoveRightUp()
-        {
-            MoveRight();
-            MoveUp();
-        }
-
-        public void MoveRightDown()
-        {
-            MoveRight();
-            MoveDown();
+            get { return up; }
         }
 
         public void Move(Move move)

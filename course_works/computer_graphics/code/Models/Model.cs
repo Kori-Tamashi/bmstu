@@ -192,6 +192,11 @@ namespace code
             get { return points; } 
         }
 
+        public List<Edge> Edges
+        {
+            get { return edges; }
+        }
+
         public virtual float Length
         {
             get { return length; }

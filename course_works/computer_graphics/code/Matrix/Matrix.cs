@@ -174,6 +174,21 @@ namespace code
             return submatrix;
         }
 
+        public Matrix<T> Transpose()
+        {
+            Matrix<T> transposed = new Matrix<T>(columns, rows);
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    transposed[j, i] = _matrix[i][j];
+                }
+            }
+
+            return transposed;
+        }
+
         public Matrix<T> Inverse()
         {
             // Проверка, является ли матрица квадратной

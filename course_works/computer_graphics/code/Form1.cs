@@ -33,6 +33,16 @@ namespace code
             InitializeCameraSystem();
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Model cube = new Cube();
+            ViewingFrustum vf = new ViewingFrustum(picture.Width, picture.Height, 100, 400, new Camera(new Vector3D(0, 0, -1), new Point3D(cube.Center.X, -cube.Center.Y, 200)));
+
+            Graphics gr = picture.CreateGraphics();
+
+            vf.ProcessModel(cube, gr);
+        }
+
         #region Initialize
 
         private void InitializeCanvas()
@@ -128,12 +138,12 @@ namespace code
 
         private void button5_Click(object sender, EventArgs e)
         {
-            facade._execute(new ParallelSolidShadingProcessCommand(ref canvas, ref picture));
+            //facade._execute(new ParallelSolidShadingProcessCommand(ref canvas, ref picture));
 
-            //List<Light> lights = new List<Light> { new Light(new Vector3D(-0.707f, 0, -0.707f), new Point3D(canvas.Size.Width / 2, canvas.Size.Height / 2, 150)) };
-            //ZBufferShadows zBuffer = new ZBufferShadows(canvas.Size, canvas.Models, lights, new Vector3D(0, 0, -1));
-            //Action updateImage = () => picture.Image = zBuffer.Image;
-            //picture.Invoke(updateImage);
+            List<Light> lights = new List<Light> { new Light(new Vector3D(-0.707f, 0, -0.707f), new Point3D(canvas.Size.Width / 2, canvas.Size.Height / 2, 150)) };
+            ZBufferShadows zBuffer = new ZBufferShadows(canvas.Size, canvas.Models, lights, new Vector3D(0, 0, -1));
+            Action updateImage = () => picture.Image = zBuffer.Image;
+            picture.Invoke(updateImage);
         }
 
         #endregion
@@ -146,7 +156,7 @@ namespace code
 
             if (currentIndex == -1)
                 return;
-            
+
             Move move = new Move(
                 (float)numericUpDown_moveX.Value,
                 (float)numericUpDown_moveY.Value,
@@ -318,5 +328,7 @@ namespace code
         }
 
         #endregion
+
+        
     }
 }

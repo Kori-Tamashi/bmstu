@@ -11,7 +11,6 @@ namespace code
 {
     class Move : Transformation
     {
-
         public Move(float dx, float dy, float dz)
         {
             matrix = new TransformationMatrix(new float[4, 4] {

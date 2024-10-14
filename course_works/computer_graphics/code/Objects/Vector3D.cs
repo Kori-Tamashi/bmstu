@@ -182,29 +182,85 @@ namespace code
             return Angle(this, new Vector3D(0, 0, 1));
         }
 
-        public static Vector3D operator* (Vector3D v1, float scalar)
-        {
-            return new Vector3D(v1.X * scalar, v1.Y * scalar, v1.Z * scalar);
-        }
-
-        public static Vector3D operator- (Vector3D v1, Vector3D v2)
+        public static Vector3D operator -(Vector3D v1, Vector3D v2)
         {
             return new Vector3D(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
         }
 
-        public static Vector3D operator+ (Vector3D v1, Vector3D v2)
+        public static Vector3D operator +(Vector3D v1, Vector3D v2)
         {
             return new Vector3D(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
         }
 
-        public static Vector3D operator+ (Vector3D v1, Point3D point)
+        public static Vector3D operator *(Vector3D v1, float scalar)
+        {
+            return new Vector3D(v1.X * scalar, v1.Y * scalar, v1.Z * scalar);
+        }
+
+        public static Vector3D operator *(float scalar, Vector3D v1)
+        {
+            return new Vector3D(v1.X * scalar, v1.Y * scalar, v1.Z * scalar);
+        }
+
+        public static Vector3D operator +(Vector3D v1, Point3D point)
         {
             return new Vector3D(v1.X + point.X, v1.Y + point.Y, v1.Z + point.Z);
         }
 
-        public static Point3D operator+ (Point3D point, Vector3D v1)
+        public static Point3D operator +(Point3D point, Vector3D v1)
         {
             return new Point3D(v1.X + point.X, v1.Y + point.Y, v1.Z + point.Z);
+        }
+
+        public static Vector3D operator -(Point3D p, Vector3D v)
+        {
+            return new Vector3D(p.X - v.X, p.Y - v.Y, p.Z - v.Z);
+        }
+
+        public static Vector3D operator -(Vector3D v, Point3D p)
+        {
+            return new Vector3D(v.X - p.X, v.Y - p.Y, v.Z - p.Z);
+        }
+
+        public float this[int i]
+        {
+            get
+            {
+                if (i < 0 || i > 2)
+                    throw new ArgumentOutOfRangeException();
+                
+                switch (i)
+                {
+                    case 0:
+                        return X;
+                    case 1:
+                        return Y;
+                    case 2:
+                        return Z;
+                    default:
+                        return 0;
+                }
+            }
+            set
+            {
+                if (i < 0 || i > 2)
+                    throw new ArgumentOutOfRangeException();
+
+                switch (i)
+                {
+                    case 0:
+                        X = value;
+                        break;
+                    case 1:
+                        Y = value;
+                        break;
+                    case 2:
+                        Z = value;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }
