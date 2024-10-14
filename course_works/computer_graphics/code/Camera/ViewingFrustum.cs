@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,6 @@ namespace code
         float near_plane_distance;
 
         Camera camera;
-        Bitmap bitmap;
-        Matrix<int> display;
         List<Polygon> planes;
 
         public ViewingFrustum(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance, Camera camera)
@@ -31,23 +30,17 @@ namespace code
             this.far_plane_distance = far_plane_distance;
             this.near_plane_distance = near_plane_distance;
 
-            InitializeDisplay(view_field_height, view_field_width);
             InitializeViewFieldAngle(view_field_height, near_plane_distance);
             InitializePlanes(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera);
         }
 
         #region Initialize
 
-        private void InitializeDisplay(float view_field_height, float view_field_width)
-        {
-            display = new Matrix<int>((int)view_field_height, (int)view_field_width, 0);
-        }
-
         private void InitializeViewFieldAngle(float view_field_height, float near_plane_distance)
         {
-            //view_field_angle = 2 * (float)Math.Atan(view_field_height / (2 * near_plane_distance));
-            //view_field_angle *= 180 / (float)Math.PI;
-            view_field_angle = 90;
+            view_field_angle = 2 * (float)Math.Atan(view_field_height / (2 * near_plane_distance));
+            view_field_angle *= 180 / (float)Math.PI;
+            //view_field_angle = 90;
         }
 
         private void InitializePlanes(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance, Camera camera)
@@ -84,7 +77,7 @@ namespace code
                 near_plane_right_top.ToPoint(),
                 near_plane_right_bottom.ToPoint(),
                 near_plane_left_bottom.ToPoint()
-                ));
+                ).NormalizedCopy());
         }
 
         private void InitializeFarPlane(float view_field_width, float view_field_height, float far_plane_distance, Camera camera)
@@ -112,7 +105,7 @@ namespace code
                 far_plane_right_top.ToPoint(),
                 far_plane_right_bottom.ToPoint(),
                 far_plane_left_bottom.ToPoint()
-                ));
+                ).NormalizedCopy());
         }
 
         private void InitializeOtherPlanes()
@@ -133,7 +126,7 @@ namespace code
                 far_plane_right_top,
                 near_plane_right_top,
                 near_plane_left_top
-                ));
+                ).NormalizedCopy());
 
             // bottom plane
             planes.Add(new Polygon(
@@ -141,7 +134,7 @@ namespace code
                 far_plane_right_bottom,
                 near_plane_right_bottom,
                 near_plane_left_bottom
-                ));
+                ).NormalizedCopy());
 
             //right plane
             planes.Add(new Polygon(
@@ -149,7 +142,7 @@ namespace code
                 far_plane_right_bottom,
                 near_plane_right_bottom,
                 near_plane_right_top
-                ));
+                ).NormalizedCopy());
 
             // left plane
             planes.Add(new Polygon(
@@ -157,7 +150,7 @@ namespace code
                 far_plane_left_bottom,
                 near_plane_left_bottom,
                 near_plane_left_top
-                ));
+                ).NormalizedCopy());
         }
 
         #endregion
@@ -174,11 +167,6 @@ namespace code
             Transformation rotate = new Transformation();
             Transformation move = new Transformation();
 
-            //move.ToIdentity();
-            //move[3, 0] = -camera.Position.X;
-            //move[3, 1] = -camera.Position.Y;
-            //move[3, 2] = -camera.Position.Z;
-
             move.ToIdentity();
             move[0, 3] = -camera.Position.X;
             move[1, 3] = -camera.Position.Y;
@@ -191,8 +179,6 @@ namespace code
                 rotate[i, 1] = camera.Up[i];
                 rotate[i, 2] = camera.Direction[i];
             }
-
-            
 
             return move * rotate;
         }
@@ -234,18 +220,20 @@ namespace code
 
         private Matrix<float> PointMatrix(Point3D point)
         {
-            Matrix<float> p = new Matrix<float>(point);
-
-            //p[0, 0] = (p[0, 0] == 0) ? 1e-1f : p[0, 0];
-            //p[0, 1] = (p[0, 1] == 0) ? 1e-1f : p[0, 1];
-            //p[0, 2] = (p[0, 2] == 0) ? 1e-1f : p[0, 2];
-
-            return p;
+            return new Matrix<float>(point);
         }
 
         #endregion
 
         #region Processing
+
+        public void ProcessModels(List<Model> models, Graphics gr)
+        {
+            foreach (Model model in models)
+            {
+                ProcessModel(model, gr);
+            }
+        }
 
         public void ProcessModel(Model model, Graphics gr)
         {
@@ -257,9 +245,9 @@ namespace code
 
         private void ProcessPolygon(Polygon polygon, Graphics gr)
         {
-            Polygon clippedPolygon = Clipping.ClipPolygon(planes, polygon);
+            //Polygon clippedPolygon = Clipping.ClipPolygon(planes, polygon);
 
-            foreach (Edge edge in clippedPolygon.Edges)
+            foreach (Edge edge in polygon.Edges)
             {
                 Point start = ViewPortPoint(edge.start);
                 Point end = ViewPortPoint(edge.end);

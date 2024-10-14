@@ -988,7 +988,7 @@
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.Inherit;
-            ClientSize = new Size(1924, 830);
+            ClientSize = new Size(1507, 830);
             Controls.Add(panel1);
             Controls.Add(InteractionMenu_tabControl);
             Icon = (Icon)resources.GetObject("$this.Icon");

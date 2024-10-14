@@ -36,7 +36,12 @@ namespace code
         private void button2_Click(object sender, EventArgs e)
         {
             Model cube = new Cube();
-            ViewingFrustum vf = new ViewingFrustum(picture.Width, picture.Height, 100, 400, new Camera(new Vector3D(0, 0, -1), new Point3D(cube.Center.X, -cube.Center.Y, 200)));
+            ViewingFrustum vf = new ViewingFrustum(
+                picture.Width, 
+                picture.Height, 
+                100, 400, 
+                new Camera(new Vector3D(-1, 0, -1), 
+                new Point3D(85, -85, 200)));
 
             Graphics gr = picture.CreateGraphics();
 

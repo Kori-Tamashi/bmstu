@@ -23,12 +23,12 @@ namespace code
 
         static private Polygon ClipPolygonByPlane(Polygon plane, Polygon polygon)
         {
-            int first = polygon.Points.Count - 1, second;
+            int first = 0, second;
             List<Point3D> resultPoints = new List<Point3D>(polygon.Points.Count);
 
-            for (int i = 0; i < polygon.Points.Count; i++)
+            for (int i = 1; i <= polygon.Points.Count; i++)
             {
-                second = i;
+                second = i % polygon.Points.Count;
 
                 Point3D start = polygon.Points[first];
                 Point3D end = polygon.Points[second];
@@ -63,6 +63,10 @@ namespace code
         {
             Vector4D vecPlane = new Vector4D(plane);
             Vector4D vecPoint = new Vector4D(point);
+            float tmo = Vector4D.DotProduct(vecPlane, vecPoint);
+
+            if (tmo < 0)
+                return false;
 
             return Vector4D.DotProduct(vecPlane, vecPoint) > -1e-12f;
         }

@@ -35,7 +35,7 @@ namespace code
             X = p.A;
             Y = p.B;
             Z = p.C;
-            W = 1;
+            W = p.D;
         }
 
         public Vector4D(Point3D start, Point3D end)
@@ -43,7 +43,7 @@ namespace code
             X = end.X - start.X;
             Y = end.Y - start.Y;
             Z = end.Z - start.Z;
-            W = 1;
+            W = 0;
         }
 
         public float Length

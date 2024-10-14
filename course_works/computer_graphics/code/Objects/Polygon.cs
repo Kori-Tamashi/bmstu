@@ -46,6 +46,18 @@ namespace code
             edges = new List<Edge>();
         }
 
+        public Polygon(Vector3D normal, List<Point3D> points)
+        {
+            this.points = points;
+
+            a = normal.X;
+            b = normal.Y;
+            c = normal.Z;
+            d = -(a * points[0].X + b * points[0].Y + c * points[0].Z);
+
+            ConstructEdges(points);
+        }
+
         private void ConstructCoefficients_NewellMethod(List<Point3D> points)
         {
             // Theory - D. Rogers page 254
@@ -132,6 +144,16 @@ namespace code
             return -(a * x + b * y + d) / c;
         }
 
+        public void Turn()
+        {
+            Vector3D vec = new Vector3D(a, b, c);
+            vec.Turn();
+
+            a = vec.X;
+            b = vec.Y;
+            c = vec.Z;
+        }
+
         public Vector3D Normal()
         {
             Vector3D vector1 = edges[0].ToVector();
@@ -140,6 +162,12 @@ namespace code
             normal.Normalize();
 
             return normal;
+        }
+
+        public Polygon NormalizedCopy()
+        {
+            Polygon p = new Polygon(Normal(), points);
+            return p;
         }
 
         public bool IsInside(float x, float y, float z)
