@@ -17,15 +17,38 @@ namespace code
         Scene scene;
         Bitmap bitmap;
         Graphics graphics;
-        List<Camera> cameras;
+        ViewingSystem viewingSystem;
 
-        public Canvas(Size size, Graphics g)
-        {
-            this.size = size;
-            scene = new Scene(size);
-            bitmap = new Bitmap(size.Width, size.Height);
-            graphics = g;
+        public Canvas(Size viewPortSize, Graphics pictureBoxGraphics)
+        { 
+            size = viewPortSize;
+            graphics = pictureBoxGraphics;
+
+            InitializeScene(viewPortSize);
+            InitializeBitmap(viewPortSize);
+            InitializeViewingSystem(viewPortSize);
         }
+
+        #region Initialize
+
+        private void InitializeScene(Size viewPortSize)
+        {
+            scene = new Scene(viewPortSize);
+        }
+
+        private void InitializeBitmap(Size viewPortSize)
+        {
+            bitmap = new Bitmap(viewPortSize.Width, viewPortSize.Height);
+        }
+
+        private void InitializeViewingSystem(Size viewPortSize)
+        {
+            viewingSystem = new ViewingSystem(viewPortSize);
+        }
+
+        #endregion
+
+        #region Getters & Setters
 
         public Graphics Graphics
         {
@@ -39,7 +62,6 @@ namespace code
             set { scene.Models = value; }
         }
 
-        
         public Model Model(int index)
         {
             return scene.Model(index);   
@@ -60,6 +82,10 @@ namespace code
             get { return size; }
         }
 
+        #endregion
+
+        #region Scene
+
         public void AddModel(Model model)
         {
             scene.AddModel(model);
@@ -78,28 +104,6 @@ namespace code
         public void DeleteModels()
         {
             scene.Clear();
-        }
-
-        public void Draw()
-        {
-            scene.Draw(graphics);
-        }
-
-        public void GraphicsClear()
-        {
-            graphics.Clear(Color.White);
-        }
-
-        public void Clear()
-        {
-            DeleteModels();
-            GraphicsClear();
-        }
-
-        public void Refresh()
-        {
-            GraphicsClear();
-            Draw();
         }
 
         public void Move(Move move)
@@ -147,5 +151,86 @@ namespace code
             scene.Centering(new Centering(model, Center, Size));
         }
 
+        #endregion
+
+        #region Drawing
+
+        public void Draw()
+        {
+            viewingSystem.Processing(scene, graphics);
+        }
+
+        public void GraphicsClear()
+        {
+            graphics.Clear(Color.White);
+        }
+
+        public void Clear()
+        {
+            DeleteModels();
+            GraphicsClear();
+        }
+
+        public void Refresh()
+        {
+            GraphicsClear();
+            Draw();
+        }
+
+        #endregion
+
+        #region ViewingSystem
+
+        public void MoveCamera(Move move)
+        {
+            viewingSystem.Move(move);
+        }
+
+        public void MoveCamera(float dX, float dY, float dZ)
+        {
+            viewingSystem.Move( new Move(dX, dY, dZ) ); 
+        }
+
+        public void MoveCameraRight(float d)
+        {
+            viewingSystem.MoveRight(d);
+        }
+
+        public void MoveCameraUp(float d)
+        {
+            viewingSystem.MoveUp(d);
+        }
+
+        public void MoveCameraLeft(float d)
+        {
+            viewingSystem.MoveLeft(d);
+        }
+
+        public void MoveCameraDown(float d)
+        {
+            viewingSystem.MoveDown(d);
+        }
+
+        public void MoveUpRight(float d)
+        {
+            viewingSystem.MoveUpRight(d);
+        }
+
+        public void MoveUpLeft(float d)
+        {
+            viewingSystem.MoveUpLeft(d);
+        }
+
+        public void MoveDownRight(float d)
+        {
+            viewingSystem.MoveDownRight(d);
+        }
+
+        public void MoveDownLeft(float d)
+        {
+            viewingSystem.MoveDownLeft(d);
+        }
+
+        #endregion
     }
 }

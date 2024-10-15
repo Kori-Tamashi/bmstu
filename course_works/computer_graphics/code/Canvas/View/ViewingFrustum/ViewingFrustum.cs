@@ -38,9 +38,10 @@ namespace code
 
         private void InitializeViewFieldAngle(float view_field_height, float near_plane_distance)
         {
-            view_field_angle = 2 * (float)Math.Atan(view_field_height / (2 * near_plane_distance));
-            view_field_angle *= 180 / (float)Math.PI;
-            //view_field_angle = 90;
+            //view_field_angle = 2 * (float)Math.Atan(view_field_height / (2 * near_plane_distance));
+            //view_field_angle *= 180 / (float)Math.PI;
+
+            view_field_angle = 90;
         }
 
         private void InitializePlanes(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance, Camera camera)
@@ -54,19 +55,16 @@ namespace code
 
         private void InitializeNearPlane(float view_field_width, float view_field_height, float near_plane_distance, Camera camera)
         {
-            // Calculate near plane's normal vector
             Vector3D near_plane_normal = camera.Direction;
 
-            // Calculate near plane's distance from camera's position
+
             float near_plane_distance_from_camera = near_plane_distance;
 
-            // Calculate near plane's left, right, top, and bottom points
             float near_plane_left = -view_field_width / 2;
             float near_plane_right = view_field_width / 2;
             float near_plane_top = view_field_height / 2;
             float near_plane_bottom = -view_field_height / 2;
 
-            // Calculate points in camera's coordinate system
             Vector3D near_plane_left_top = near_plane_left * camera.Right + near_plane_top * camera.Up + near_plane_distance_from_camera * near_plane_normal + camera.Position;
             Vector3D near_plane_right_top = near_plane_right * camera.Right + near_plane_top * camera.Up + near_plane_distance_from_camera * near_plane_normal + camera.Position;
             Vector3D near_plane_left_bottom = near_plane_left * camera.Right + near_plane_bottom * camera.Up + near_plane_distance_from_camera * near_plane_normal + camera.Position;
@@ -82,19 +80,15 @@ namespace code
 
         private void InitializeFarPlane(float view_field_width, float view_field_height, float far_plane_distance, Camera camera)
         {
-            // Calculate far plane's normal vector
             Vector3D far_plane_normal = camera.Direction;
 
-            // Calculate far plane's distance from camera's position
             float far_plane_distance_from_camera = far_plane_distance;
 
-            // Calculate far plane's left, right, top, and bottom points
             float far_plane_left = -view_field_width / 2;
             float far_plane_right = view_field_width / 2;
             float far_plane_top = view_field_height / 2;
             float far_plane_bottom = -view_field_height / 2;
 
-            // Calculate points in camera's coordinate system
             Vector3D far_plane_left_top = far_plane_left * camera.Right + far_plane_top * camera.Up + far_plane_distance_from_camera * far_plane_normal + camera.Position;
             Vector3D far_plane_right_top = far_plane_right * camera.Right + far_plane_top * camera.Up + far_plane_distance_from_camera * far_plane_normal + camera.Position;
             Vector3D far_plane_left_bottom = far_plane_left * camera.Right + far_plane_bottom * camera.Up + far_plane_distance_from_camera * far_plane_normal + camera.Position;
@@ -153,11 +147,16 @@ namespace code
                 ).NormalizedCopy());
         }
 
+        private void Update()
+        {
+            InitializePlanes(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera);
+        }
+
         #endregion
 
         #region Matrix
 
-        public TransformationMatrix ViewMatrix()
+        protected TransformationMatrix ViewMatrix()
         {
             return ViewTransformation().matrix;
         }
@@ -183,7 +182,7 @@ namespace code
             return move * rotate;
         }
 
-        public TransformationMatrix ProjectionMatrix()
+        protected TransformationMatrix ProjectionMatrix()
         {
             return ProjectionTransformation().matrix;
         }
@@ -208,7 +207,7 @@ namespace code
             return projection;
         }
 
-        public TransformationMatrix WorldMatrix(Point3D point)
+        protected TransformationMatrix WorldMatrix(Point3D point)
         {
             return WorldTransformation(point).matrix;
         }
@@ -218,7 +217,7 @@ namespace code
             return new Move(point.X, point.Y, point.Z);
         }
 
-        private Matrix<float> PointMatrix(Point3D point)
+        protected Matrix<float> PointMatrix(Point3D point)
         {
             return new Matrix<float>(point);
         }
@@ -227,7 +226,7 @@ namespace code
 
         #region Processing
 
-        public void ProcessModels(List<Model> models, Graphics gr)
+        public virtual void ProcessModels(List<Model> models, Graphics gr)
         {
             foreach (Model model in models)
             {
@@ -235,7 +234,7 @@ namespace code
             }
         }
 
-        public void ProcessModel(Model model, Graphics gr)
+        public virtual void ProcessModel(Model model, Graphics gr)
         {
             foreach (Polygon p in model.Polygons)
             {
@@ -243,7 +242,7 @@ namespace code
             }
         }
 
-        private void ProcessPolygon(Polygon polygon, Graphics gr)
+        protected virtual void ProcessPolygon(Polygon polygon, Graphics gr)
         {
             //Polygon clippedPolygon = Clipping.ClipPolygon(planes, polygon);
 
@@ -256,7 +255,7 @@ namespace code
             }
         }
 
-        public bool ViewingFrustumPointIsClipped(Point3D worldPoint)
+        protected virtual bool ViewingFrustumPointIsClipped(Point3D worldPoint)
         {
             Matrix<float> mtr = ViewingFrustumPointMatrix(worldPoint);
 
@@ -265,7 +264,7 @@ namespace code
                    ( mtr[2, 0] < 0 || Math.Abs(mtr[2, 0]) > mtr[3, 0] );
         }
 
-        public Point ViewPortPoint(Point3D worldPoint)
+        protected virtual Point ViewPortPoint(Point3D worldPoint)
         {
             Point3D p = ViewingFrustumPoint(worldPoint);
 
@@ -278,14 +277,14 @@ namespace code
             return new Point(u, v);
         }
 
-        private Point3D ViewingFrustumPoint(Point3D worldPoint)
+        protected virtual Point3D ViewingFrustumPoint(Point3D worldPoint)
         {
             Matrix<float> mtr = ViewingFrustumPointMatrix(worldPoint);
 
             return new Point3D(mtr[0, 0], mtr[1, 0], mtr[2, 0]);
         }
 
-        private Matrix<float> ViewingFrustumPointMatrix(Point3D worldPoint)
+        protected virtual Matrix<float> ViewingFrustumPointMatrix(Point3D worldPoint)
         {
             Matrix<float> mtr = ProjectionMatrix() * (ViewMatrix() * (WorldMatrix(worldPoint).Transpose() * PointMatrix(worldPoint).Transpose()));
 
@@ -295,6 +294,64 @@ namespace code
             }
 
             return mtr;
+        }
+
+        #endregion
+
+        #region Movement
+
+        public void Move(Move move)
+        {
+            camera.Move(move);
+            Update();
+        }
+
+        public void MoveRight(float d)
+        { 
+            camera.MoveRight(d);
+            Update();
+        }
+
+        public void MoveUp(float d)
+        {
+            camera.MoveUp(d);
+            Update();
+        }
+
+        public void MoveLeft(float d)
+        {
+            camera.MoveLeft(d);
+            Update();
+        }
+
+        public void MoveDown(float d)
+        {
+            camera.MoveDown(d);
+            Update();
+        }
+
+        public void MoveUpRight(float d)
+        {
+            camera.MoveUpRight(d);
+            Update();
+        }
+
+        public void MoveUpLeft(float d)
+        {
+            camera.MoveUpLeft(d);
+            Update();
+        }
+
+        public void MoveDownRight(float d)
+        {
+            camera.MoveDownRight(d);
+            Update();
+        }
+
+        public void MoveDownLeft(float d)
+        {
+            camera.MoveDownLeft(d);
+            Update();
         }
 
         #endregion

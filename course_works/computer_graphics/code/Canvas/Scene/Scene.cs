@@ -18,7 +18,8 @@ namespace code
         public Scene(Size size) 
         { 
             models = new List<Model>();
-            center = new Point3D(size.Width / 2, size.Height / 2, (size.Width + size.Height) / 4);
+            //center = new Point3D(size.Width / 2, size.Height / 2, (size.Width + size.Height) / 4);
+            center = new Point3D(0, 0, 0);
             this.size = size;
         }
 

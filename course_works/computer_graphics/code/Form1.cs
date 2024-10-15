@@ -23,14 +23,12 @@ namespace code
     {
         Canvas canvas;
         Facade facade;
-        CameraSystem cameraSystem;
 
         public Form1()
         {
             InitializeComponent();
             InitializeCanvas();
             InitializeFacade();
-            InitializeCameraSystem();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -42,6 +40,11 @@ namespace code
                 100, 400, 
                 new Camera(new Vector3D(-1, 0, -1), 
                 new Point3D(85, -85, 200)));
+
+            foreach (var p in cube.Polygons)
+            {
+                List<Point3D> pl = p.InsidePoints;
+            }
 
             Graphics gr = picture.CreateGraphics();
 
@@ -58,11 +61,6 @@ namespace code
         private void InitializeFacade()
         {
             facade = new Facade();
-        }
-
-        private void InitializeCameraSystem()
-        {
-            cameraSystem = new CameraSystem(canvas.Size);
         }
 
         #endregion
@@ -219,7 +217,7 @@ namespace code
         private void button_cameraUp_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraUpMoveCommand(ref canvas, ref cameraSystem),
+                new CameraUpMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -227,7 +225,7 @@ namespace code
         private void button_cameraDown_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownMoveCommand(ref canvas, ref cameraSystem),
+                new CameraDownMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -235,7 +233,7 @@ namespace code
         private void button_cameraRight_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraRightMoveCommand(ref canvas, ref cameraSystem),
+                new CameraRightMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -243,7 +241,7 @@ namespace code
         private void button_CmeraLeft_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownMoveCommand(ref canvas, ref cameraSystem),
+                new CameraDownMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -251,7 +249,7 @@ namespace code
         private void button_cameraLeft_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraLeftMoveCommand(ref canvas, ref cameraSystem),
+                new CameraLeftMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -259,7 +257,7 @@ namespace code
         private void button_cameraRightUp_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraUpRightMoveCommand(ref canvas, ref cameraSystem),
+                new CameraUpRightMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -267,7 +265,7 @@ namespace code
         private void button_cameraRightDown_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownRightMoveCommand(ref canvas, ref cameraSystem),
+                new CameraDownRightMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -275,7 +273,7 @@ namespace code
         private void button_cameraLeftUp_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraUpLeftMoveCommand(ref canvas, ref cameraSystem),
+                new CameraUpLeftMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }
@@ -283,7 +281,7 @@ namespace code
         private void button_cameraLeftDown_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownLeftMoveCommand(ref canvas, ref cameraSystem),
+                new CameraDownLeftMoveCommand(ref canvas, 5),
                 new RefreshCommand(ref canvas)
             );
         }

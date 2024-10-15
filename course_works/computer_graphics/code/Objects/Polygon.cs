@@ -58,6 +58,8 @@ namespace code
             ConstructEdges(points);
         }
 
+        #region Initialize
+
         private void ConstructCoefficients_NewellMethod(List<Point3D> points)
         {
             // Theory - D. Rogers page 254
@@ -99,6 +101,10 @@ namespace code
             }
         }
 
+        #endregion
+
+        #region Getters & Setters
+
         public List<Point3D> Points
         {
             get { return points; }
@@ -129,19 +135,33 @@ namespace code
             get { return d; }
         }
 
+        public List<Point3D> InsidePoints
+        {
+            get { return GetInsidePoints(); }
+        }
+
+        public BoundingBox BoundingBox
+        {
+            get { return GetBoundingBox(); }
+        }
+
+        #endregion
+
+        #region Methods
+
         public float X(float y, float z)
         {
-            return -(b * y + c * z + d) / a;
+            return (a == 0) ? 0 : -(b * y + c * z + d) / a;
         }
 
         public float Y(float x, float z)
         {
-            return -(a * x + c * z + d) / b;
+            return (b == 0) ? 0 : -(a * x + c * z + d) / b;
         }
 
         public float Z(float x, float y)
         {
-            return -(a * x + b * y + d) / c;
+            return (c == 0) ? 0 : -(a * x + b * y + d) / c;
         }
 
         public void Turn()
@@ -210,5 +230,82 @@ namespace code
 
             return inside;
         }
+
+        public List<Point3D> GetInsidePoints()
+        {
+            List<Point3D> pointsInside = new List<Point3D>();
+            BoundingBox bb = GetBoundingBox();
+
+            int diffX = (int)( bb.Max.X - bb.Min.X );
+            int diffY = (int)( bb.Max.Y - bb.Min.Y );
+            int diffZ = (int)( bb.Max.Z - bb.Min.Z ) ;
+
+            if (diffY != 0)
+            {
+                if (diffX != 0)
+                {
+                    for (int y = (int)bb.Min.Y; y <= bb.Max.Y; y++)
+                    {
+                        for (int x = (int)bb.Min.X; x <= bb.Max.X; x++)
+                        {
+                            float z = Z(x, y);
+                            if (IsInside(x, y, z))
+                                pointsInside.Add(new Point3D(x, y, z));
+                        }
+                    }
+                }
+                else
+                {
+                    for (int y = (int)bb.Min.Y; y <= bb.Max.Y; y++)
+                    {
+                        for (int z = (int)bb.Min.Z; z <= bb.Max.Z; z++)
+                        {
+                            float x = X(y, z);
+                            if (IsInside(x, y, z))
+                                pointsInside.Add(new Point3D(x, y, z));
+                        }
+                    }
+                }
+                
+            }
+            else
+            {
+                for (int x = (int)bb.Min.X; x <= bb.Max.X; x++)
+                {
+                    for (int z = (int)bb.Min.Z; z <= bb.Max.Z; z++)
+                    {
+                        float y = Y(x, z);
+                        if (IsInside(x, y, z))
+                            pointsInside.Add(new Point3D(x, y, z));
+                    }
+                }
+            }
+
+            return pointsInside;
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            float minX = float.MaxValue;
+            float minY = float.MaxValue;
+            float minZ = float.MaxValue;
+            float maxX = float.MinValue;
+            float maxY = float.MinValue;
+            float maxZ = float.MinValue;
+
+            foreach (Point3D point in Points)
+            {
+                minX = Math.Min(minX, point.X);
+                minY = Math.Min(minY, point.Y);
+                minZ = Math.Min(minZ, point.Z);
+                maxX = Math.Max(maxX, point.X);
+                maxY = Math.Max(maxY, point.Y);
+                maxZ = Math.Max(maxZ, point.Z);
+            }
+
+            return new BoundingBox(new Point3D(minX, minY, minZ), new Point3D(maxX, maxY, maxZ));
+        }
+
+        #endregion
     }
 }
