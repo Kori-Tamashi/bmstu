@@ -13,14 +13,14 @@ namespace code
 {
     class ViewingFrustum
     {
-        float view_field_angle;
-        float view_field_width;
-        float view_field_height;
-        float far_plane_distance;
-        float near_plane_distance;
+        protected Camera camera;
+        protected List<Polygon> planes;
 
-        Camera camera;
-        List<Polygon> planes;
+        protected float view_field_angle;
+        protected float view_field_width;
+        protected float view_field_height;
+        protected float far_plane_distance;
+        protected float near_plane_distance;
 
         public ViewingFrustum(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance, Camera camera)
         {

@@ -34,21 +34,20 @@ namespace code
         private void button2_Click(object sender, EventArgs e)
         {
             Model cube = new Cube();
-            ViewingFrustum vf = new ViewingFrustum(
+            ViewingFrustum_ZBuffer vf = new ViewingFrustum_ZBuffer(
                 picture.Width, 
                 picture.Height, 
                 100, 400, 
                 new Camera(new Vector3D(-1, 0, -1), 
                 new Point3D(85, -85, 200)));
 
-            foreach (var p in cube.Polygons)
-            {
-                List<Point3D> pl = p.InsidePoints;
-            }
-
             Graphics gr = picture.CreateGraphics();
 
-            vf.ProcessModel(cube, gr);
+            vf.Processing(cube);
+            Action updateImage = () => picture.Image = vf.Image;
+            picture.Invoke(updateImage);
+
+            //vf.ProcessModel(cube, gr);
         }
 
         #region Initialize

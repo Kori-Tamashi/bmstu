@@ -236,53 +236,68 @@ namespace code
             List<Point3D> pointsInside = new List<Point3D>();
             BoundingBox bb = GetBoundingBox();
 
-            int diffX = (int)( bb.Max.X - bb.Min.X );
-            int diffY = (int)( bb.Max.Y - bb.Min.Y );
-            int diffZ = (int)( bb.Max.Z - bb.Min.Z ) ;
+            int diffX = (int)(bb.Max.X - bb.Min.X);
+            int diffY = (int)(bb.Max.Y - bb.Min.Y);
+            int diffZ = (int)(bb.Max.Z - bb.Min.Z);
+
+            float x = bb.Min.X;
+            float y = bb.Min.Y;
+            float z = bb.Min.Z;
+
+            float increment = 0.5f;
 
             if (diffY != 0)
             {
                 if (diffX != 0)
                 {
-                    for (int y = (int)bb.Min.Y; y <= bb.Max.Y; y++)
+                    while (y <= bb.Max.Y)
                     {
-                        for (int x = (int)bb.Min.X; x <= bb.Max.X; x++)
+                        while (x <= bb.Max.X)
                         {
-                            float z = Z(x, y);
-                            if (IsInside(x, y, z))
-                                pointsInside.Add(new Point3D(x, y, z));
+                            float zCoord = Z(x, y);
+                            if (IsInside(x, y, zCoord))
+                                pointsInside.Add(new Point3D(x, y, zCoord));
+                            x += increment;
                         }
+                        x = bb.Min.X;
+                        y += increment;
                     }
                 }
                 else
                 {
-                    for (int y = (int)bb.Min.Y; y <= bb.Max.Y; y++)
+                    while (y <= bb.Max.Y)
                     {
-                        for (int z = (int)bb.Min.Z; z <= bb.Max.Z; z++)
+                        while (z <= bb.Max.Z)
                         {
-                            float x = X(y, z);
-                            if (IsInside(x, y, z))
-                                pointsInside.Add(new Point3D(x, y, z));
+                            float xCoord = X(y, z);
+                            if (IsInside(xCoord, y, z))
+                                pointsInside.Add(new Point3D(xCoord, y, z));
+                            z += increment;
                         }
+                        z = bb.Min.Z;
+                        y += increment;
                     }
                 }
-                
             }
             else
             {
-                for (int x = (int)bb.Min.X; x <= bb.Max.X; x++)
+                while (x <= bb.Max.X)
                 {
-                    for (int z = (int)bb.Min.Z; z <= bb.Max.Z; z++)
+                    while (z <= bb.Max.Z)
                     {
-                        float y = Y(x, z);
-                        if (IsInside(x, y, z))
-                            pointsInside.Add(new Point3D(x, y, z));
+                        float yCoord = Y(x, z);
+                        if (IsInside(x, yCoord, z))
+                            pointsInside.Add(new Point3D(x, yCoord, z));
+                        z += increment;
                     }
+                    z = bb.Min.Z;
+                    x += increment;
                 }
             }
 
             return pointsInside;
         }
+
 
         public BoundingBox GetBoundingBox()
         {

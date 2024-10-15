@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
+using System.Windows.Forms.DataVisualization.Charting;
 
 using IntBuffer = code.Matrix<int>;
 using ColorBuffer = System.Drawing.Color[][];
+using System.Drawing.Imaging;
+
 
 namespace code
 {
@@ -64,17 +67,94 @@ namespace code
 
         #endregion
 
-        protected virtual void ProcessPolygon(Polygon polygon, Graphics gr)
+        #region Getters & Setters
+
+        public Bitmap Image
         {
-            //Polygon clippedPolygon = Clipping.ClipPolygon(planes, polygon);
+            get { return bitmap; }
+        }
 
-            foreach (Edge edge in polygon.Edges)
+        #endregion
+
+        #region Processing
+
+        public virtual void Processing(List<Model> models)
+        {
+            ProcessModels(models);
+            ProcessBitmap();
+        }
+
+        public virtual void Processing(Model model)
+        {
+            ProcessModel(model);
+            ProcessBitmap();
+        }
+
+        protected virtual void ProcessBitmap()
+        {
+            BitmapData data = bitmap.LockBits(
+                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadWrite,
+                PixelFormat.Format32bppArgb
+                );
+
+            unsafe
             {
-                Point start = ViewPortPoint(edge.start);
-                Point end = ViewPortPoint(edge.end);
+                byte* ptr = (byte*)data.Scan0;
 
-                gr.DrawLine(new Pen(Color.Black), start, end);
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        int offset = (y * data.Stride) + (x * 4);
+
+                        ptr[offset] = colorBufferModels[y][x].B;
+                        ptr[offset + 1] = colorBufferModels[y][x].G;
+                        ptr[offset + 2] = colorBufferModels[y][x].R;
+                        ptr[offset + 3] = colorBufferModels[y][x].A;
+                    }
+                }
+            }
+
+            bitmap.UnlockBits(data);
+        }
+
+        public virtual void ProcessModels(List<Model> models)
+        {
+            foreach (Model model in models)
+            {
+                ProcessModel(model);
             }
         }
+
+        public virtual void ProcessModel(Model model)
+        {
+            //List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+
+            foreach (Polygon p in model.Polygons)
+            {
+                ProcessPolygon(p, model.Color);
+            }
+        }
+
+        protected virtual void ProcessPolygon(Polygon polygon, Color color)
+        {
+            foreach (Point3D point in polygon.InsidePoints)
+            {
+                Point viewPortPoint = ViewPortPoint(point);
+                ProcessPoint(point, viewPortPoint, color);
+            }
+        }
+
+        protected virtual void ProcessPoint(Point3D worldPoint, Point viewPortPoint, Color color)
+        {
+            if (worldPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
+            {
+                zBufferModels[viewPortPoint.Y, viewPortPoint.X] = (int)worldPoint.Z;
+                colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? Color.Black : color;
+            }
+        }
+
+        #endregion
     }
 }
