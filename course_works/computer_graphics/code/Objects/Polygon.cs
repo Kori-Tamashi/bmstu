@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -231,7 +232,7 @@ namespace code
             return inside;
         }
 
-        public List<Point3D> GetInsidePoints()
+        public List<Point3D> GetInsidePoints_()
         {
             List<Point3D> pointsInside = new List<Point3D>();
             BoundingBox bb = GetBoundingBox();
@@ -244,7 +245,7 @@ namespace code
             float y = bb.Min.Y;
             float z = bb.Min.Z;
 
-            float increment = 0.5f;
+            float increment = 0.3f;
 
             if (diffY != 0)
             {
@@ -294,6 +295,88 @@ namespace code
                     x += increment;
                 }
             }
+
+            return pointsInside;
+        }
+
+        public List<Point3D> GetInsidePoints(float accuracy = 0.3f)
+        {
+            List<Point3D> pointsInside = new List<Point3D>();
+            BoundingBox bb = GetBoundingBox();
+
+            float increment = accuracy;
+
+            float minX = bb.Min.X;
+            float minY = bb.Min.Y;
+            float minZ = bb.Min.Z;
+            float maxX = bb.Max.X;
+            float maxY = bb.Max.Y;
+            float maxZ = bb.Max.Z;
+
+            int numPointsX = (int)((maxX - minX) / increment) + 1;
+            int numPointsY = (int)((maxY - minY) / increment) + 1;
+            int numPointsZ = (int)((maxZ - minZ) / increment) + 1;
+
+            // Используем потокобезопасный список
+            ConcurrentBag<Point3D> pointsInsideConcurrent = new ConcurrentBag<Point3D>();
+
+            if (numPointsY > 1)
+            {
+                if (numPointsX > 1)
+                {
+                    Parallel.For(0, numPointsY, j =>
+                    {
+                        float y = minY + j * increment;
+
+                        for (int i = 0; i < numPointsX; i++)
+                        {
+                            float x = minX + i * increment;
+                            float zCoord = Z(x, y);
+                            if (IsInside(x, y, zCoord))
+                            {
+                                pointsInsideConcurrent.Add(new Point3D(x, y, zCoord));
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Parallel.For(0, numPointsZ, k =>
+                    {
+                        float z = minZ + k * increment;
+
+                        for (int j = 0; j < numPointsY; j++)
+                        {
+                            float y = minY + j * increment;
+                            float xCoord = X(y, z);
+                            if (IsInside(xCoord, y, z))
+                            {
+                                pointsInsideConcurrent.Add(new Point3D(xCoord, y, z));
+                            }
+                        }
+                    });
+                }
+            }
+            else
+            {
+                Parallel.For(0, numPointsX, i =>
+                {
+                    float x = minX + i * increment;
+
+                    for (int k = 0; k < numPointsZ; k++)
+                    {
+                        float z = minZ + k * increment;
+                        float yCoord = Y(x, z);
+                        if (IsInside(x, yCoord, z))
+                        {
+                            pointsInsideConcurrent.Add(new Point3D(x, yCoord, z));
+                        }
+                    }
+                });
+            }
+
+            // Преобразуем ConcurrentBag в List
+            pointsInside = pointsInsideConcurrent.ToList();
 
             return pointsInside;
         }

@@ -34,14 +34,16 @@ namespace code
         private void button2_Click(object sender, EventArgs e)
         {
             Model cube = new Cube();
-            ViewingFrustum_ZBuffer vf = new ViewingFrustum_ZBuffer(
+            ViewingFrustum_ParallelZBuffer vf = new ViewingFrustum_ParallelZBuffer(
                 picture.Width, 
                 picture.Height, 
                 100, 400, 
-                new Camera(new Vector3D(-1, 0, -1), 
+                new Camera(new Vector3D(0, 0, -1), 
                 new Point3D(85, -85, 200)));
 
             Graphics gr = picture.CreateGraphics();
+
+            cube.Rotate(new Rotate(90, 85, 0));
 
             vf.Processing(cube);
             Action updateImage = () => picture.Image = vf.Image;

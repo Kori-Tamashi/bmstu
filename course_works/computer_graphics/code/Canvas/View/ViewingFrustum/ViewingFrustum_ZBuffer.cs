@@ -96,15 +96,18 @@ namespace code
                 new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.ReadWrite,
                 PixelFormat.Format32bppArgb
-                );
+            );
 
             unsafe
             {
                 byte* ptr = (byte*)data.Scan0;
 
-                for (int y = 0; y < bitmap.Height; y++)
+                int width = bitmap.Width;
+                int height = bitmap.Height;
+
+                Parallel.For(0, height, y =>
                 {
-                    for (int x = 0; x < bitmap.Width; x++)
+                    for (int x = 0; x < width; x++)
                     {
                         int offset = (y * data.Stride) + (x * 4);
 
@@ -113,13 +116,13 @@ namespace code
                         ptr[offset + 2] = colorBufferModels[y][x].R;
                         ptr[offset + 3] = colorBufferModels[y][x].A;
                     }
-                }
+                });
             }
 
             bitmap.UnlockBits(data);
         }
 
-        public virtual void ProcessModels(List<Model> models)
+        protected virtual void ProcessModels(List<Model> models)
         {
             foreach (Model model in models)
             {
@@ -127,13 +130,13 @@ namespace code
             }
         }
 
-        public virtual void ProcessModel(Model model)
+        protected virtual void ProcessModel(Model model)
         {
-            //List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
 
-            foreach (Polygon p in model.Polygons)
+            foreach (Polygon polygon in visiblePolygons)
             {
-                ProcessPolygon(p, model.Color);
+                ProcessPolygon(polygon, model.Color);
             }
         }
 

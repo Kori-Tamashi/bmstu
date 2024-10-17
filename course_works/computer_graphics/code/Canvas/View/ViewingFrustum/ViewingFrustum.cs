@@ -277,11 +277,21 @@ namespace code
             return new Point(u, v);
         }
 
+        protected virtual Point ViewPortPoint(float x, float y, float z)
+        {
+            return ViewPortPoint(new Point3D(x, y, z));
+        }
+
         protected virtual Point3D ViewingFrustumPoint(Point3D worldPoint)
         {
             Matrix<float> mtr = ViewingFrustumPointMatrix(worldPoint);
 
             return new Point3D(mtr[0, 0], mtr[1, 0], mtr[2, 0]);
+        }
+
+        protected virtual Point3D ViewingFrustumPoint(float x, float y, float z)
+        {
+            return ViewingFrustumPoint(new Point3D(x, y, z));
         }
 
         protected virtual Matrix<float> ViewingFrustumPointMatrix(Point3D worldPoint)
