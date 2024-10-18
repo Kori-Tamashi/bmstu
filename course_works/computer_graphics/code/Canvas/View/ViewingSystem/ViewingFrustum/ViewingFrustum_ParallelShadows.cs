@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms.DataVisualization.Charting;
 
-namespace code
+namespace code.Canvas.View.ViewingSystem.ViewingFrustum
 {
-    class CameraSystem
+    internal class ViewingFrustum_ParallelShadows
     {
-
     }
 }

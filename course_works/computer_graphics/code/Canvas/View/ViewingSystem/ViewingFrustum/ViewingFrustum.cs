@@ -244,8 +244,6 @@ namespace code
 
         protected virtual void ProcessPolygon(Polygon polygon, Graphics gr)
         {
-            //Polygon clippedPolygon = Clipping.ClipPolygon(planes, polygon);
-
             foreach (Edge edge in polygon.Edges)
             {
                 Point start = ViewPortPoint(edge.start);
@@ -264,7 +262,7 @@ namespace code
                    ( mtr[2, 0] < 0 || Math.Abs(mtr[2, 0]) > mtr[3, 0] );
         }
 
-        protected virtual Point ViewPortPoint(Point3D worldPoint)
+        public virtual Point ViewPortPoint(Point3D worldPoint)
         {
             Point3D p = ViewingFrustumPoint(worldPoint);
 
@@ -282,7 +280,7 @@ namespace code
             return ViewPortPoint(new Point3D(x, y, z));
         }
 
-        protected virtual Point3D ViewingFrustumPoint(Point3D worldPoint)
+        public virtual Point3D ViewingFrustumPoint(Point3D worldPoint)
         {
             Matrix<float> mtr = ViewingFrustumPointMatrix(worldPoint);
 

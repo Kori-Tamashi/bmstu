@@ -11,22 +11,52 @@ namespace code
 {
     class Scene
     {
-        List<Model> models;
-        Point3D center;
+        Point3D startCenter = new Point3D(0, 0, 0);
+
         Size size;
+        Point3D center;
+        List<Model> models;
+        LightSystem lightSystem;
         
         public Scene(Size size) 
-        { 
-            models = new List<Model>();
-            //center = new Point3D(size.Width / 2, size.Height / 2, (size.Width + size.Height) / 4);
-            center = new Point3D(0, 0, 0);
+        {
             this.size = size;
+            
+            InitializeModels();
+            InitializeCenter();
+            InitializeLightSystem();
         }
+
+        #region Initialize
+
+        private void InitializeModels()
+        {
+            models = new List<Model>();
+        }
+
+        private void InitializeCenter()
+        {
+            center = startCenter;
+        }
+
+        private void InitializeLightSystem()
+        {
+            lightSystem = new LightSystem();
+        }
+
+        #endregion
+
+        #region Getters & Setters
 
         public List<Model> Models
         {
             get { return models; }
             set { models = value; }
+        }
+
+        public Light CurrentLight
+        {
+            get { return lightSystem.CurrentLight; }
         }
 
         public Model Model(int index)
@@ -51,6 +81,10 @@ namespace code
             set { size = value; }
         }
 
+        #endregion
+
+        #region Draw
+
         public void Draw(Graphics graphics)
         {
             foreach (Model model in models)
@@ -58,6 +92,10 @@ namespace code
                 model.Draw(graphics);
             }
         }
+
+        #endregion
+
+        #region Models
 
         public void AddModel(Model model)
         {
@@ -78,6 +116,24 @@ namespace code
         {
             models.Clear();
         }
+
+        #endregion
+
+        #region Lights
+
+        public void AddLight(Light light)
+        {
+            lightSystem.AddLight(light);
+        }
+
+        public void RemoveLight(int index)
+        {
+            lightSystem.DeleteLight(index);
+        }
+
+        #endregion
+
+        #region Transformation
 
         public void Move(Move move)
         {
@@ -133,5 +189,7 @@ namespace code
                 model.Centering(center, size);
             }
         }
+
+        #endregion
     }
 }

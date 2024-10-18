@@ -21,7 +21,7 @@ namespace code
             List<Polygon> visiblePolygons = new List<Polygon>();
             for (int i = 0; i < model.Polygons.Count; i++)
             {
-                if (sMultiplication[0, i] > 0)
+                if (sMultiplication[0, i] < 0)
                     visiblePolygons.Add(model.Polygons[i]);
             }
 

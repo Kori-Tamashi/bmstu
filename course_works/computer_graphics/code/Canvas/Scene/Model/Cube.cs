@@ -130,14 +130,14 @@ namespace code
 
         protected override Matrix<float> _Matrix()
         {
-            //Matrix<float> matrix = base._Matrix();
+            Matrix<float> matrix = base._Matrix();
 
-            //for (int i = 0; i < 4; i++)
-            //    matrix[i, 0] *= -1;
+            for (int i = 0; i < 4; i++)
+                matrix[i, 0] *= -1;
 
-            //return -1 * matrix;
+            return -1 * matrix;
 
-            return base._Matrix();
+            //return base._Matrix();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace code
 
         protected override void ProcessModel(Model model)
         {
-            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model);
+            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
 
             Parallel.ForEach(visiblePolygons, polygon =>
             {
@@ -37,15 +37,16 @@ namespace code
             Parallel.ForEach(polygon.InsidePoints, point =>
             {
                 Point viewPortPoint = ViewPortPoint(point);
-                ProcessPoint(point, viewPortPoint, color);
+                Point3D viewingFrustumPoint = ViewingFrustumPoint(point);
+                ProcessPoint(viewingFrustumPoint, viewPortPoint, color);
             });
         }
 
-        protected override void ProcessPoint(Point3D worldPoint, Point viewPortPoint, Color color)
+        protected override void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color)
         {
             lock (zBufferModels)
             {
-                base.ProcessPoint(worldPoint, viewPortPoint, color);
+                base.ProcessPoint(viewingFrustumPoint, viewPortPoint, color);
             }
         }
 

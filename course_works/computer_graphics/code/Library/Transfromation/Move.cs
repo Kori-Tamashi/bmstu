@@ -9,7 +9,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class Move : Transformation
+    public class Move : Transformation
     {
         public Move(float dx, float dy, float dz)
         {

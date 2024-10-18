@@ -8,14 +8,12 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class Camera
+    public class Camera
     {
         Point3D position;
         Vector3D direction;
         Vector3D right;
         Vector3D up;
-
-        const int moveStep = 15;
 
         public Camera(Vector3D direction, Point3D position)
         {
@@ -42,11 +40,6 @@ namespace code
         #endregion
 
         #region Getters & Setters
-
-        public int MoveStep
-        {
-            get { return moveStep; }
-        }
 
         public Point3D Position
         {

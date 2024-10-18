@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using System.Windows.Forms.DataVisualization.Charting;
 
-using IntBuffer = code.Matrix<int>;
+using FloatBuffer = code.Matrix<float>;
 using ColorBuffer = System.Drawing.Color[][];
 using System.Drawing.Imaging;
 
@@ -19,7 +19,7 @@ namespace code
 
         protected Bitmap bitmap;
         protected Size viewPortSize;
-        protected IntBuffer zBufferModels;
+        protected FloatBuffer zBufferModels;
         protected ColorBuffer colorBufferModels;
 
         public ViewingFrustum_ZBuffer(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance,
@@ -40,7 +40,7 @@ namespace code
 
         protected virtual void InitializeZbufferModels(Size size)
         {
-            zBufferModels = new IntBuffer(size.Height, size.Width, minLimitZ);
+            zBufferModels = new FloatBuffer(size.Height, size.Width, minLimitZ);
         }
 
         protected virtual void InitializeBitmap(Size size)
@@ -72,6 +72,11 @@ namespace code
         public Bitmap Image
         {
             get { return bitmap; }
+        }
+
+        public FloatBuffer ZBuffer
+        {
+            get { return zBufferModels; }
         }
 
         #endregion
@@ -145,15 +150,16 @@ namespace code
             foreach (Point3D point in polygon.InsidePoints)
             {
                 Point viewPortPoint = ViewPortPoint(point);
-                ProcessPoint(point, viewPortPoint, color);
+                Point3D viewingFrustumPoint = ViewingFrustumPoint(point);
+                ProcessPoint(viewingFrustumPoint, viewPortPoint, color);
             }
         }
 
-        protected virtual void ProcessPoint(Point3D worldPoint, Point viewPortPoint, Color color)
+        protected virtual void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color)
         {
-            if (worldPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
+            if (viewingFrustumPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
             {
-                zBufferModels[viewPortPoint.Y, viewPortPoint.X] = (int)worldPoint.Z;
+                zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;
                 colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? Color.Black : color;
             }
         }

@@ -7,7 +7,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 { 
-    class Rotate : Transformation
+    public class Rotate : Transformation
     {
         public Rotate(float angleX, float angleY, float angleZ) 
         { 

@@ -101,6 +101,16 @@ namespace code
             scene.RemoveModel(index);
         }
 
+        public void AddLight(Light light)
+        {
+            scene.AddLight(light);
+        }
+
+        public void RemoveLight(int index)
+        {
+            scene.RemoveLight(index);
+        }
+
         public void DeleteModels()
         {
             scene.Clear();

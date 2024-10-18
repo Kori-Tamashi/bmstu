@@ -25,8 +25,10 @@ namespace code
         {
             ListViewGroup listViewGroup = new ListViewGroup();
             listViewGroup.Header = "Модели";
+
             ListViewItem item = new ListViewItem(model.Name, listViewGroup);
             item.ImageIndex = ModelType.ModelImageIndex(model.Type);
+
             listView.Items.Add(item);
             listView.Refresh();
         }

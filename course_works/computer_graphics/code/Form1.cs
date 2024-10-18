@@ -33,23 +33,66 @@ namespace code
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Model cube = new Cube();
-            ViewingFrustum_ParallelZBuffer vf = new ViewingFrustum_ParallelZBuffer(
-                picture.Width, 
-                picture.Height, 
-                100, 400, 
-                new Camera(new Vector3D(0, 0, -1), 
-                new Point3D(85, -85, 200)));
+            //Model cube = new Cube();
+            //cube.Rotate(new Rotate(60, 40, 0));
+            //cube.Material = new Stone();
+            //cube.Color = Color.Red;
+
+            //ViewingFrustum_ZBuffer vf = new ViewingFrustum_ZBuffer(
+            //    picture.Width,
+            //    picture.Height,
+            //    100, 400,
+            //    new Camera(new Vector3D(0, 0, -1),
+            //    new Point3D(85, -85, 400)));
+
+            //vf.Processing(cube);
+            //Action updateImage = () => picture.Image = vf.Image;
+            //picture.Invoke(updateImage);
+            //picture.Refresh();
+
+
+            List<Model> models = new List<Model> { 
+                new Cube(),
+                new DirectPrism()
+            };
 
             Graphics gr = picture.CreateGraphics();
 
-            cube.Rotate(new Rotate(90, 85, 0));
+            models[1].Move(new Move(0, 0, 100));
+            models[1].Color = Color.Green;
+            models[1].Material = new Stone();
 
-            vf.Processing(cube);
+            models[0].Rotate(new Rotate(60, 40, 0));
+            models[0].Material = new Stone();
+            models[0].Color = Color.Red;
+
+            ViewingFrustum_Shadows vf = new ViewingFrustum_Shadows(
+                picture.Width,
+                picture.Height,
+                100, 400,
+                new Camera(new Vector3D(0, 0, -1),
+                new Point3D(85, -85, 400)));
+
+            ViewingFrustum_Shadows vf1 = new ViewingFrustum_Shadows(
+                picture.Width,
+                picture.Height,
+                100, 400,
+                new Camera(new Vector3D(1f, 0, -1),
+                new Point3D(200, -85, 400)));
+
+            vf.Processing(models, new Light(new Vector3D(0, 0, -1f), new Point3D(85, -85, 400), 10));
             Action updateImage = () => picture.Image = vf.Image;
             picture.Invoke(updateImage);
+            picture.Refresh();
 
-            //vf.ProcessModel(cube, gr);
+            Thread.Sleep(2000);
+
+            vf1.Processing(models, new Light(new Vector3D(0, 0, -1f), new Point3D(85, -85, 400), 10));
+            Action updateImage1 = () => picture.Image = vf1.Image;
+            picture.Invoke(updateImage1);
+            picture.Refresh();
+
+            //vf1.ProcessModel(cube, gr);
         }
 
         #region Initialize
@@ -332,7 +375,5 @@ namespace code
         }
 
         #endregion
-
-        
     }
 }
