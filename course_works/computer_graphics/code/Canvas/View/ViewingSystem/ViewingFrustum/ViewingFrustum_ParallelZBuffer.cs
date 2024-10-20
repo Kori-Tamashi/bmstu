@@ -36,18 +36,8 @@ namespace code
         {
             Parallel.ForEach(polygon.InsidePoints, point =>
             {
-                Point viewPortPoint = ViewPortPoint(point);
-                Point3D viewingFrustumPoint = ViewingFrustumPoint(point);
-                ProcessPoint(viewingFrustumPoint, viewPortPoint, color);
+                ProcessPoint(point, color);
             });
-        }
-
-        protected override void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color)
-        {
-            lock (zBufferModels)
-            {
-                base.ProcessPoint(viewingFrustumPoint, viewPortPoint, color);
-            }
         }
 
         #endregion

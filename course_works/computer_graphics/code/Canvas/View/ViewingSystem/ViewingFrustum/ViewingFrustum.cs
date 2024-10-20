@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.Logging;
+﻿using ManagedCuda;
+using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,9 +39,6 @@ namespace code
 
         private void InitializeViewFieldAngle(float view_field_height, float near_plane_distance)
         {
-            //view_field_angle = 2 * (float)Math.Atan(view_field_height / (2 * near_plane_distance));
-            //view_field_angle *= 180 / (float)Math.PI;
-
             view_field_angle = 90;
         }
 
@@ -75,7 +73,7 @@ namespace code
                 near_plane_right_top.ToPoint(),
                 near_plane_right_bottom.ToPoint(),
                 near_plane_left_bottom.ToPoint()
-                ).NormalizedCopy());
+                ));
         }
 
         private void InitializeFarPlane(float view_field_width, float view_field_height, float far_plane_distance, Camera camera)
@@ -99,7 +97,7 @@ namespace code
                 far_plane_right_top.ToPoint(),
                 far_plane_right_bottom.ToPoint(),
                 far_plane_left_bottom.ToPoint()
-                ).NormalizedCopy());
+                ));
         }
 
         private void InitializeOtherPlanes()
@@ -120,7 +118,7 @@ namespace code
                 far_plane_right_top,
                 near_plane_right_top,
                 near_plane_left_top
-                ).NormalizedCopy());
+                ));
 
             // bottom plane
             planes.Add(new Polygon(
@@ -128,7 +126,7 @@ namespace code
                 far_plane_right_bottom,
                 near_plane_right_bottom,
                 near_plane_left_bottom
-                ).NormalizedCopy());
+                ));
 
             //right plane
             planes.Add(new Polygon(
@@ -136,7 +134,7 @@ namespace code
                 far_plane_right_bottom,
                 near_plane_right_bottom,
                 near_plane_right_top
-                ).NormalizedCopy());
+                ));
 
             // left plane
             planes.Add(new Polygon(
@@ -144,12 +142,28 @@ namespace code
                 far_plane_left_bottom,
                 near_plane_left_bottom,
                 near_plane_left_top
-                ).NormalizedCopy());
+                ));
         }
 
         private void Update()
         {
             InitializePlanes(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera);
+        }
+
+        #endregion
+
+        #region Getters & Setters
+
+        public Camera Camera
+        {
+            get { return camera; }
+            set { SetCamera(value); }
+        }
+
+        private void SetCamera(Camera camera)
+        {
+            this.camera = camera;
+            Update();
         }
 
         #endregion
@@ -195,7 +209,7 @@ namespace code
             float N = near_plane_distance;
             float R = view_field_width / view_field_height;
 
-            float zoom_y = 1 / (float)Math.Tan( (view_field_angle / 2) * Math.PI / 180 );
+            float zoom_y = 1 / (float)Math.Tan((view_field_angle / 2) * Math.PI / 180);
             float zoom_x = zoom_y / R;
 
             projection[0, 0] = zoom_x;
@@ -226,7 +240,22 @@ namespace code
 
         #region Processing
 
-        public virtual void ProcessModels(List<Model> models, Graphics gr)
+        public virtual void Processing(Scene scene, Graphics gr)
+        {
+            ProcessModels(scene.Models, gr);
+        }
+
+        public virtual void Processing(List<Model> models, Graphics gr)
+        {
+            ProcessModels(models, gr);
+        }
+
+        public virtual void Processing(Model model, Graphics gr)
+        {
+            ProcessModel(model, gr);
+        }
+
+        protected virtual void ProcessModels(List<Model> models, Graphics gr)
         {
             foreach (Model model in models)
             {
@@ -234,7 +263,7 @@ namespace code
             }
         }
 
-        public virtual void ProcessModel(Model model, Graphics gr)
+        protected virtual void ProcessModel(Model model, Graphics gr)
         {
             foreach (Polygon p in model.Polygons)
             {
@@ -260,6 +289,17 @@ namespace code
             return ( Math.Abs(mtr[0, 0]) > mtr[3, 0] ) || 
                    ( Math.Abs(mtr[1, 0]) > mtr[3, 0] ) || 
                    ( mtr[2, 0] < 0 || Math.Abs(mtr[2, 0]) > mtr[3, 0] );
+        }
+
+        public virtual Point ViewPortPointByViewingFrustumPoint(Point3D viewingFrustumPoint)
+        {
+            int u = (int)((viewingFrustumPoint.X * 0.5 + 0.5) * view_field_width);
+            int v = (int)((viewingFrustumPoint.Y * 0.5 + 0.5) * view_field_height);
+
+            u = (int)Math.Max(0, Math.Min(u, view_field_width - 1));
+            v = (int)Math.Max(0, Math.Min(v, view_field_height - 1));
+            
+            return new Point(u, v);
         }
 
         public virtual Point ViewPortPoint(Point3D worldPoint)

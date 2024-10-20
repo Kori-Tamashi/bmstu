@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
+    <PackageReference Include="ManagedCuda-11" Version="11.4.47" />
   </ItemGroup>
 
   <ItemGroup>

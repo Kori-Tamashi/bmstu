@@ -14,18 +14,21 @@ namespace code
 
         public virtual void Processing(Scene scene)
         {
+            ClearView();
             ProcessScene(scene);
             ProcessBitmap();
         }
 
         public virtual void Processing(List<Model> models, Light light)
         {
+            ClearView();
             ProcessModels(models, light);
             ProcessBitmap();
         }
 
         public virtual void Processing(Model model, Light light)
         {
+            ClearView();
             ProcessModel(model, light);
             ProcessBitmap();
         }
@@ -59,14 +62,15 @@ namespace code
 
             foreach (Point3D point in polygon.InsidePoints)
             {
-                Point viewPortPoint = ViewPortPoint(point);
-                Point3D viewingFrustumPoint = ViewingFrustumPoint(point);
-                ProcessPoint(viewingFrustumPoint, viewPortPoint, color, intensity);
+                ProcessPoint(point, color, intensity);
             }
         }
 
-        protected virtual void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color, float intensity)
+        protected virtual void ProcessPoint(Point3D worldPoint, Color color, float intensity)
         {
+            Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
+            Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
+
             if (viewingFrustumPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
             {
                 zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;

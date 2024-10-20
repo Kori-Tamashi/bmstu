@@ -56,6 +56,11 @@ namespace code
             set { graphics = value; }
         }
 
+        public Bitmap Image
+        {
+            get { return viewingSystem.Image; }
+        }
+
         public List<Model> Models
         {
             get { return scene.Models; }
@@ -170,6 +175,11 @@ namespace code
             viewingSystem.Processing(scene, graphics);
         }
 
+        public void UpdateImage(ref PictureBox pb)
+        {
+            pb.Image = Image;
+        }
+
         public void GraphicsClear()
         {
             graphics.Clear(Color.White);
@@ -190,6 +200,11 @@ namespace code
         #endregion
 
         #region ViewingSystem
+
+        public void Render()
+        {
+            viewingSystem.Processing(scene);
+        }
 
         public void MoveCamera(Move move)
         {

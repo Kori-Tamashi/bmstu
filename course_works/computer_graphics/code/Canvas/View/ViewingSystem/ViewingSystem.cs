@@ -20,7 +20,7 @@ namespace code
 
         protected Size viewPortSize;
         protected int currentCameraIndex = 0;
-        protected List<ViewingFrustum> cameras;
+        protected List<ViewingFrustum_ParallelShadows> cameras;
 
         public ViewingSystem(Size viewPortSize)
         {
@@ -32,14 +32,14 @@ namespace code
 
         private void InitializeCameras(Size viewPortSize)
         {
-            cameras = new List<ViewingFrustum> {
+            cameras = new List<ViewingFrustum_ParallelShadows> {
                 StartViewingFrustum(viewPortSize)
             };
         }
 
-        private ViewingFrustum StartViewingFrustum(Size viewPortSize)
+        private ViewingFrustum_ParallelShadows StartViewingFrustum(Size viewPortSize)
         {
-            return new ViewingFrustum(
+            return new ViewingFrustum_ParallelShadows(
                     viewPortSize.Width,
                     viewPortSize.Height,
                     nearDistance,
@@ -56,6 +56,11 @@ namespace code
         #endregion
 
         #region Getters & Setters
+
+        public Bitmap Image
+        {
+            get { return cameras[currentCameraIndex].Image; }
+        }
 
         public int CurrentCameraIndex
         {
@@ -84,26 +89,38 @@ namespace code
 
         public void Processing(Scene scene, Graphics gr)
         {
-            Processing(scene.Models, gr);
+            cameras[currentCameraIndex].Processing(scene, gr);
+        }
+
+        public void Processing(Scene scene)
+        {
+            cameras[currentCameraIndex].Processing(scene);
         }
 
         public void Processing(List<Model> models, Graphics gr)
         {
-            foreach (Model model in models)
-            {
-                Processing(model, gr);
-            }
+            cameras[currentCameraIndex].Processing(models, gr);
+        }
+
+        public void Processing(List<Model> models)
+        {
+            cameras[currentCameraIndex].Processing(models);
         }
 
         public void Processing(Model model, Graphics gr)
         {
-            cameras[currentCameraIndex].ProcessModel(model, gr);
+            cameras[currentCameraIndex].Processing(model, gr);
+        }
+
+        public void Processing(Model model)
+        {
+            cameras[currentCameraIndex].Processing(model);
         }
 
         public void AddCamera(Vector3D direction, Point3D position)
         {
             cameras.Add(
-                new ViewingFrustum(
+                new ViewingFrustum_ParallelShadows(
                     viewPortSize.Width,
                     viewPortSize.Height,
                     nearDistance,

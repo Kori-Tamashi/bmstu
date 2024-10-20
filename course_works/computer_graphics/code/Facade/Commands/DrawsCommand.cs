@@ -26,6 +26,22 @@ namespace code
         }
     }
 
+    class ImageUpdateCommand : DrawsCommand
+    {
+        protected PictureBox pictureBox;
+
+        public ImageUpdateCommand(ref Canvas canvas, ref PictureBox pb) : base(ref canvas) 
+        {
+            pictureBox = pb;
+        }
+
+        public override void _execute()
+        {
+            canvas.Render();
+            canvas.UpdateImage(ref pictureBox);
+        }
+    }
+
     class ClearCommand: DrawsCommand
     {
         public ClearCommand(ref Canvas canvas) : base(ref canvas) { }

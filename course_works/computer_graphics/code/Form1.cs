@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using System.Windows.Forms.DataVisualization.Charting;
 
 /*
@@ -33,66 +34,7 @@ namespace code
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //Model cube = new Cube();
-            //cube.Rotate(new Rotate(60, 40, 0));
-            //cube.Material = new Stone();
-            //cube.Color = Color.Red;
 
-            //ViewingFrustum_ZBuffer vf = new ViewingFrustum_ZBuffer(
-            //    picture.Width,
-            //    picture.Height,
-            //    100, 400,
-            //    new Camera(new Vector3D(0, 0, -1),
-            //    new Point3D(85, -85, 400)));
-
-            //vf.Processing(cube);
-            //Action updateImage = () => picture.Image = vf.Image;
-            //picture.Invoke(updateImage);
-            //picture.Refresh();
-
-
-            List<Model> models = new List<Model> { 
-                new Cube(),
-                new DirectPrism()
-            };
-
-            Graphics gr = picture.CreateGraphics();
-
-            models[1].Move(new Move(0, 0, 100));
-            models[1].Color = Color.Green;
-            models[1].Material = new Stone();
-
-            models[0].Rotate(new Rotate(60, 40, 0));
-            models[0].Material = new Stone();
-            models[0].Color = Color.Red;
-
-            ViewingFrustum_Shadows vf = new ViewingFrustum_Shadows(
-                picture.Width,
-                picture.Height,
-                100, 400,
-                new Camera(new Vector3D(0, 0, -1),
-                new Point3D(85, -85, 400)));
-
-            ViewingFrustum_Shadows vf1 = new ViewingFrustum_Shadows(
-                picture.Width,
-                picture.Height,
-                100, 400,
-                new Camera(new Vector3D(1f, 0, -1),
-                new Point3D(200, -85, 400)));
-
-            vf.Processing(models, new Light(new Vector3D(0, 0, -1f), new Point3D(85, -85, 400), 10));
-            Action updateImage = () => picture.Image = vf.Image;
-            picture.Invoke(updateImage);
-            picture.Refresh();
-
-            Thread.Sleep(2000);
-
-            vf1.Processing(models, new Light(new Vector3D(0, 0, -1f), new Point3D(85, -85, 400), 10));
-            Action updateImage1 = () => picture.Image = vf1.Image;
-            picture.Invoke(updateImage1);
-            picture.Refresh();
-
-            //vf1.ProcessModel(cube, gr);
         }
 
         #region Initialize
@@ -185,12 +127,7 @@ namespace code
 
         private void button5_Click(object sender, EventArgs e)
         {
-            //facade._execute(new ParallelSolidShadingProcessCommand(ref canvas, ref picture));
-
-            List<Light> lights = new List<Light> { new Light(new Vector3D(-0.707f, 0, -0.707f), new Point3D(canvas.Size.Width / 2, canvas.Size.Height / 2, 150)) };
-            ZBufferShadows zBuffer = new ZBufferShadows(canvas.Size, canvas.Models, lights, new Vector3D(0, 0, -1));
-            Action updateImage = () => picture.Image = zBuffer.Image;
-            picture.Invoke(updateImage);
+            facade._execute(new ImageUpdateCommand(ref canvas, ref picture));
         }
 
         #endregion

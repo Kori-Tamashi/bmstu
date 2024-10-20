@@ -7,15 +7,24 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class ViewingFrustum_Shadows : ViewingFrustum_ParallelSolidShading
+    class ViewingFrustum_Shadows : ViewingFrustum_SolidShading
     {
         ViewingFrustum_ParallelZBuffer shadowsCamera;
 
         public ViewingFrustum_Shadows(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance,
             Camera camera) : base(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera) { }
 
+        public override void Processing(Scene scene)
+        {
+            ClearView();
+            ProcessShadows(scene.Models, scene.CurrentLight);
+            ProcessModels(scene.Models, scene.CurrentLight);
+            ProcessBitmap();
+        }
+
         public override void Processing(List<Model> models, Light light)
         {
+            ClearView();
             ProcessShadows(models, light);
             ProcessModels(models, light);
             ProcessBitmap();
@@ -23,41 +32,38 @@ namespace code
 
         protected virtual void ProcessShadows(List<Model> models, Light light)
         {
-            shadowsCamera = new ViewingFrustum_ParallelZBuffer(
-                view_field_width,
-                view_field_height,
-                near_plane_distance,
-                far_plane_distance,
-                light.Camera
-            );
+            if (shadowsCamera == null)
+            {
+                shadowsCamera = new ViewingFrustum_ParallelZBuffer(
+                    view_field_width,
+                    view_field_height,
+                    near_plane_distance,
+                    far_plane_distance,
+                    light.Camera
+                );
+            }
+            else
+            {
+                shadowsCamera.Camera = light.Camera;
+            }
 
             shadowsCamera.Processing(models);
         }
 
-        protected override void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
+        protected override void ProcessPoint(Point3D worldPoint, Color color, float intensity)
         {
-            float intensity = GetIntensity(polygon, material, light);
+            // DON'T. TOUCH. THIS.
 
-            foreach (Point3D point in polygon.InsidePoints)
-            {
-                Point viewPortPoint = ViewPortPoint(point);
-                Point3D viewingFrustumPoint = ViewingFrustumPoint(point);
-                ProcessPoint(point, viewingFrustumPoint, viewPortPoint, color, intensity);
-            }
-        }
-
-        protected virtual void ProcessPoint(Point3D worldPoint, Point3D viewingFrustumPoint, Point viewPortPoint, Color color, float intensity)
-        {
-            // Умоляю, не трогай эту часть кода...
+            Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
+            Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
 
             if (viewingFrustumPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
             {
-                Point lightViewPortPoint = shadowsCamera.ViewPortPoint(worldPoint);
                 Point3D lightViewPoint = shadowsCamera.ViewingFrustumPoint(worldPoint);
-
+                Point lightViewPortPoint = shadowsCamera.ViewPortPointByViewingFrustumPoint(lightViewPoint);
+                
                 if (lightViewPoint.Z > shadowsCamera.ZBuffer[lightViewPortPoint.Y, lightViewPortPoint.X])
                 {
-                    
                     zBufferModels[viewPortPoint.Y, viewPortPoint.X] = lightViewPoint.Z;
                     colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _ColorMix(Color.Black, Color.Gray, 0.4f) : _ColorMix(Color.Black, color, 0.4f);
                 }

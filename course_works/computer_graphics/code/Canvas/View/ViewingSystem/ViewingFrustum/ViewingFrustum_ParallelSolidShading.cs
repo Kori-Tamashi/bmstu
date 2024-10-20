@@ -36,23 +36,8 @@ namespace code
 
             Parallel.ForEach(polygon.InsidePoints, point =>
             {
-                Point viewPortPoint = ViewPortPoint(point);
-                Point3D viewingFrustumPoint = ViewingFrustumPoint(point);
-                ProcessPoint(viewingFrustumPoint, viewPortPoint, color, intensity);
+                ProcessPoint(point, color, intensity);
             });
-        }
-
-        protected override void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color, float intensity)
-        {
-            lock (zBufferModels)
-            {
-                base.ProcessPoint(viewingFrustumPoint, viewPortPoint, color, intensity);
-            }
-        }
-
-        private Vector3D CorrectCameraDirection(Vector3D direction)
-        {
-            return new Vector3D(-direction.X, direction.Y, -direction.Z).NormalizedCopy();
         }
     }
 }
