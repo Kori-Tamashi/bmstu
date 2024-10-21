@@ -1,4 +1,5 @@
-﻿using System;
+﻿using code;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,27 @@ namespace code
         public override void _execute()
         {
             canvas.MoveCamera(move);
+        }
+    }
+
+    class CameraRotateCommand : CameraCommand
+    {
+        protected float angle = 0;
+        protected Rotate rotate;
+
+        public CameraRotateCommand(ref Canvas canvas, ref Rotate rotate) : base(ref canvas)
+        {
+            this.rotate = rotate;
+        }
+
+        public CameraRotateCommand(ref Canvas canvas, float aX, float aY, float aZ) : base(ref canvas)
+        {
+            this.rotate = new Rotate(aX, aY, aZ);
+        }
+
+        public CameraRotateCommand(ref Canvas canvas, float angle) : base(ref canvas)
+        {
+            this.angle = angle;
         }
     }
 
@@ -88,7 +110,7 @@ namespace code
 
         public override void _execute()
         {
-            canvas.MoveDownRight(d);
+            canvas.MoveCameraDownRight(d);
         }
     }
 
@@ -98,7 +120,7 @@ namespace code
 
         public override void _execute()
         {
-            canvas.MoveDownLeft(d);
+            canvas.MoveCameraDownLeft(d);
         }
     }
 
@@ -108,7 +130,7 @@ namespace code
 
         public override void _execute()
         {
-            canvas.MoveUpRight(d);
+            canvas.MoveCameraUpRight(d);
         }
     }
 
@@ -118,7 +140,47 @@ namespace code
 
         public override void _execute()
         {
-            canvas.MoveUpLeft(d);
+            canvas.MoveCameraUpLeft(d);
         }
+    }
+}
+
+class CameraRightRotateCommand : CameraRotateCommand
+{
+    public CameraRightRotateCommand(ref Canvas canvas, float angle) : base(ref canvas, angle) { }
+
+    public override void _execute()
+    {
+        canvas.RotateCameraRight(angle);
+    }
+}
+
+class CameraLeftRotateCommand : CameraRotateCommand
+{
+    public CameraLeftRotateCommand(ref Canvas canvas, float angle) : base(ref canvas, angle) { }
+
+    public override void _execute()
+    {
+        canvas.RotateCameraLeft(angle);
+    }
+}
+
+class CameraUpRotateCommand : CameraRotateCommand
+{
+    public CameraUpRotateCommand(ref Canvas canvas, float angle) : base(ref canvas, angle) { }
+
+    public override void _execute()
+    {
+        canvas.RotateCameraUp(angle);
+    }
+}
+
+class CameraDownRotateCommand : CameraRotateCommand
+{
+    public CameraDownRotateCommand(ref Canvas canvas, float angle) : base(ref canvas, angle) { }
+
+    public override void _execute()
+    {
+        canvas.RotateCameraDown(angle);
     }
 }

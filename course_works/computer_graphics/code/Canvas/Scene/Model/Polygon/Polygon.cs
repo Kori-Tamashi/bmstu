@@ -19,9 +19,6 @@ namespace code
         List<Point3D> insidePoints;
         List<Polygon> triangles;
 
-        volatile bool insidePointsInitialized = false;
-        volatile bool trianglesInitialized = false;
-
         public Polygon(List<Point3D> points, bool asyncPart = true)
         {
             if (points.Count < 3)
@@ -114,13 +111,11 @@ namespace code
             }
 
             insidePoints = pointsInsideConcurrent.ToList();
-            insidePointsInitialized = true;
         }
 
         private void InitializeTriangles()
         {
             triangles = GetTriangles();
-            trianglesInitialized = true;
         }
 
         private void ConstructCoefficients_NewellMethod(List<Point3D> points)
@@ -200,7 +195,7 @@ namespace code
         {
             get
             {
-                if (!insidePointsInitialized)
+                if (insidePoints == null)
                 {
                     InitializeInsidePoints();
                 }
@@ -213,7 +208,7 @@ namespace code
         {
             get
             {
-                if (!trianglesInitialized)
+                if (triangles == null)
                 {
                     InitializeTriangles();
                 }

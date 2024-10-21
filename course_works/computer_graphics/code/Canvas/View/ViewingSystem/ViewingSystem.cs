@@ -20,7 +20,7 @@ namespace code
 
         protected Size viewPortSize;
         protected int currentCameraIndex = 0;
-        protected List<ViewingFrustum_ParallelShadows> cameras;
+        protected List<ViewingFrustumProcessor> cameras;
 
         public ViewingSystem(Size viewPortSize)
         {
@@ -32,14 +32,14 @@ namespace code
 
         private void InitializeCameras(Size viewPortSize)
         {
-            cameras = new List<ViewingFrustum_ParallelShadows> {
+            cameras = new List<ViewingFrustumProcessor> {
                 StartViewingFrustum(viewPortSize)
             };
         }
 
-        private ViewingFrustum_ParallelShadows StartViewingFrustum(Size viewPortSize)
+        private ViewingFrustumProcessor StartViewingFrustum(Size viewPortSize)
         {
-            return new ViewingFrustum_ParallelShadows(
+            return new ViewingFrustumProcessor(
                     viewPortSize.Width,
                     viewPortSize.Height,
                     nearDistance,
@@ -87,6 +87,11 @@ namespace code
 
         #region Methods
 
+        public void Processing(Scene scene, Graphics gr, RenderMode renderMode)
+        {
+            cameras[currentCameraIndex].Processing(scene, gr, renderMode);
+        }
+
         public void Processing(Scene scene, Graphics gr)
         {
             cameras[currentCameraIndex].Processing(scene, gr);
@@ -120,7 +125,7 @@ namespace code
         public void AddCamera(Vector3D direction, Point3D position)
         {
             cameras.Add(
-                new ViewingFrustum_ParallelShadows(
+                new ViewingFrustumProcessor(
                     viewPortSize.Width,
                     viewPortSize.Height,
                     nearDistance,
@@ -178,6 +183,26 @@ namespace code
         public void MoveDownLeft(float d)
         {
             cameras[currentCameraIndex].MoveDownLeft(d);
+        }
+
+        public void RotateRight(float angle)
+        {
+            cameras[currentCameraIndex].RotateRight(angle);
+        }
+
+        public void RotateLeft(float angle)
+        {
+            cameras[currentCameraIndex].RotateLeft(angle);
+        }
+
+        public void RotateDown(float angle)
+        {
+            cameras[currentCameraIndex].RotateDown(angle);
+        }
+
+        public void RotateUp(float angle)
+        {
+            cameras[currentCameraIndex].RotateUp(angle);
         }
 
         #endregion

@@ -136,10 +136,62 @@ namespace code
             MoveLeft(d);
         }
 
-        public void Rotate(Rotate rotate)
+        public void RotateRight(float angle)
         {
-            code.Rotate.Transform(rotate, position);
+            float radians = angle * (float)(Math.PI / 180.0);
+
+            float cos = (float)Math.Cos(radians);
+            float sin = (float)Math.Sin(radians);
+
+            Vector3D newDirection = new Vector3D(
+                direction.X* cos + up.X * sin,
+                direction.Y* cos + up.Y * sin,
+                direction.Z* cos + up.Z * sin
+            );
+
+            right = Vector3D.CrossProduct(newDirection, new Vector3D(0, 1, 0));
+            up = Vector3D.CrossProduct(newDirection, right);
+
+            newDirection.Normalize();
+            right.Normalize();
+            up.Normalize();
+
+            direction = newDirection;
         }
+
+        public void RotateLeft(float angle)
+        {
+            RotateRight(-angle);
+        }
+
+        public void RotateDown(float angle)
+        {
+            float radians = angle * (float)(Math.PI / 180.0);
+
+            float cos = (float)Math.Cos(radians);
+            float sin = (float)Math.Sin(radians);
+
+            Vector3D newDirection = new Vector3D(
+                direction.X * cos + up.X * sin,
+                direction.Y * cos + up.Y * sin,
+                direction.Z * cos + up.Z * sin
+            );
+
+            up = Vector3D.CrossProduct(newDirection, right);
+            right = Vector3D.CrossProduct(up, newDirection);
+
+            newDirection.Normalize();
+            right.Normalize();
+            up.Normalize();
+
+            direction = newDirection;
+        }
+
+        public void RotateUp(float angle)
+        {
+            RotateDown(-angle);
+        }
+
 
         #endregion
     }

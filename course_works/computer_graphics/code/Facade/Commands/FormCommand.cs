@@ -10,6 +10,21 @@ namespace code
     {
     }
 
+    class PictureRefreshCommand : FormCommand
+    {
+        PictureBox pictureBox;
+
+        public PictureRefreshCommand(ref PictureBox pictureBox)
+        {
+            this.pictureBox = pictureBox;
+        }
+
+        public override void _execute()
+        {
+            pictureBox.Refresh();
+        }
+    }
+
     class ListViewAddModelCommand : FormCommand
     {
         protected ListView listView;

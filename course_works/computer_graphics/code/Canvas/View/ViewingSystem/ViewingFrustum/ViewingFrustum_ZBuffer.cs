@@ -9,6 +9,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using FloatBuffer = code.Matrix<float>;
 using ColorBuffer = System.Drawing.Color[][];
 using System.Drawing.Imaging;
+using System.Reflection;
 
 
 namespace code
@@ -82,21 +83,37 @@ namespace code
 
         #region Processing
 
-        public virtual void Processing(List<Model> models)
+        public void ProcessingZBuffer(Scene scene)
+        {
+            Processing(scene);
+        }
+        public void ProcessingZBuffer(List<Model> models)
+        {
+            Processing(models);
+        }
+
+        public void Processing(Scene scene)
+        {
+            ClearView();
+            ProcessModels(scene.Models);
+            ProcessBitmap();
+        }
+
+        public void Processing(List<Model> models)
         {
             ClearView();
             ProcessModels(models);
             ProcessBitmap();
         }
 
-        public virtual void Processing(Model model)
+        public void Processing(Model model)
         {
             ClearView();
             ProcessModel(model);
             ProcessBitmap();
         }
 
-        protected virtual void ProcessBitmap()
+        protected void ProcessBitmap()
         {
             BitmapData data = bitmap.LockBits(
                 new Rectangle(0, 0, bitmap.Width, bitmap.Height),
@@ -128,7 +145,7 @@ namespace code
             bitmap.UnlockBits(data);
         }
 
-        protected virtual void ProcessModels(List<Model> models)
+        protected void ProcessModels(List<Model> models)
         {
             foreach (Model model in models)
             {
@@ -136,7 +153,7 @@ namespace code
             }
         }
 
-        protected virtual void ProcessModel(Model model)
+        protected void ProcessModel(Model model)
         {
             List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
 
@@ -146,7 +163,7 @@ namespace code
             }
         }
 
-        protected virtual void ProcessPolygon(Polygon polygon, Color color)
+        protected void ProcessPolygon(Polygon polygon, Color color)
         {
             foreach (Point3D point in polygon.InsidePoints)
             {
@@ -154,7 +171,7 @@ namespace code
             }
         }
 
-        protected virtual void ProcessPoint(Point3D worldPoint, Color color)
+        protected void ProcessPoint(Point3D worldPoint, Color color)
         {
             Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
             Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
@@ -166,7 +183,7 @@ namespace code
             }
         }
 
-        protected virtual void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color)
+        protected void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color)
         {
             if (viewingFrustumPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
             {

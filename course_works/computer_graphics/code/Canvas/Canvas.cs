@@ -172,7 +172,7 @@ namespace code
 
         public void Draw()
         {
-            viewingSystem.Processing(scene, graphics);
+            
         }
 
         public void UpdateImage(ref PictureBox pb)
@@ -201,9 +201,9 @@ namespace code
 
         #region ViewingSystem
 
-        public void Render()
+        public void Render(RenderMode renderMode)
         {
-            viewingSystem.Processing(scene);
+            viewingSystem.Processing(scene, graphics, renderMode);
         }
 
         public void MoveCamera(Move move)
@@ -236,24 +236,44 @@ namespace code
             viewingSystem.MoveDown(d);
         }
 
-        public void MoveUpRight(float d)
+        public void MoveCameraUpRight(float d)
         {
             viewingSystem.MoveUpRight(d);
         }
 
-        public void MoveUpLeft(float d)
+        public void MoveCameraUpLeft(float d)
         {
             viewingSystem.MoveUpLeft(d);
         }
 
-        public void MoveDownRight(float d)
+        public void MoveCameraDownRight(float d)
         {
             viewingSystem.MoveDownRight(d);
         }
 
-        public void MoveDownLeft(float d)
+        public void MoveCameraDownLeft(float d)
         {
             viewingSystem.MoveDownLeft(d);
+        }
+
+        public void RotateCameraRight(float angle)
+        {
+            viewingSystem.RotateRight(angle);
+        }
+
+        public void RotateCameraLeft(float angle)
+        {
+            viewingSystem.RotateLeft(angle);
+        }
+
+        public void RotateCameraDown(float angle)
+        {
+            viewingSystem.RotateDown(angle);
+        }
+
+        public void RotateCameraUp(float angle)
+        {
+            viewingSystem.RotateUp(angle);
         }
 
         #endregion

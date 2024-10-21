@@ -14,7 +14,37 @@ namespace code
 
         #region Processing
 
-        protected override void ProcessModels(List<Model> models)
+        public new void ProcessingZBuffer(Scene scene)
+        {
+            Processing(scene);
+        }
+        public new void ProcessingZBuffer(List<Model> models)
+        {
+            Processing(models);
+        }
+
+        public new void Processing(Scene scene)
+        {
+            ClearView();
+            ProcessModels(scene.Models);
+            ProcessBitmap();
+        }
+
+        public new void Processing(List<Model> models)
+        {
+            ClearView();
+            ProcessModels(models);
+            ProcessBitmap();
+        }
+
+        public new void Processing(Model model)
+        {
+            ClearView();
+            ProcessModel(model);
+            ProcessBitmap();
+        }
+
+        protected new void ProcessModels(List<Model> models)
         {
             Parallel.ForEach(models, model =>
             {
@@ -22,7 +52,7 @@ namespace code
             });
         }
 
-        protected override void ProcessModel(Model model)
+        protected new void ProcessModel(Model model)
         {
             List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
 
@@ -32,7 +62,7 @@ namespace code
             });
         }
 
-        protected override void ProcessPolygon(Polygon polygon, Color color)
+        protected new void ProcessPolygon(Polygon polygon, Color color)
         {
             Parallel.ForEach(polygon.InsidePoints, point =>
             {

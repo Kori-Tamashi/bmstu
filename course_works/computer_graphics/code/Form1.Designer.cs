@@ -33,7 +33,6 @@
             InteractionMenu_tabControl = new TabControl();
             Main_tabPage = new TabPage();
             button2 = new Button();
-            checkedBox_algorithm = new CheckedListBox();
             Primitives_groupBox = new GroupBox();
             flowLayoutPanel1 = new FlowLayoutPanel();
             Cube_button = new Button();
@@ -76,6 +75,15 @@
             label6 = new Label();
             label4 = new Label();
             View_tabPage = new TabPage();
+            groupBox9 = new GroupBox();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            button_cameraRotateUp = new Button();
+            button_cameraRotateDown = new Button();
+            button_cameraRotateLeft = new Button();
+            button_cameraRotateRight = new Button();
+            groupBox8 = new GroupBox();
+            checkedListBox_renderMode = new CheckedListBox();
+            listView1 = new ListView();
             groupBox7 = new GroupBox();
             tableLayoutPanel4 = new TableLayoutPanel();
             button_cameraRightDown = new Button();
@@ -123,6 +131,9 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveX).BeginInit();
             View_tabPage.SuspendLayout();
+            groupBox9.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            groupBox8.SuspendLayout();
             groupBox7.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             panel1.SuspendLayout();
@@ -153,7 +164,6 @@
             // 
             Main_tabPage.BackColor = Color.Transparent;
             Main_tabPage.Controls.Add(button2);
-            Main_tabPage.Controls.Add(checkedBox_algorithm);
             Main_tabPage.Controls.Add(Primitives_groupBox);
             Main_tabPage.Controls.Add(listView_modelsMain);
             Main_tabPage.Controls.Add(groupBox5);
@@ -177,18 +187,6 @@
             button2.Text = "button2";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
-            // 
-            // checkedBox_algorithm
-            // 
-            checkedBox_algorithm.BackColor = SystemColors.Control;
-            checkedBox_algorithm.BorderStyle = BorderStyle.None;
-            checkedBox_algorithm.FormattingEnabled = true;
-            checkedBox_algorithm.Items.AddRange(new object[] { "Каркасное отображение", "Реальное отображение" });
-            checkedBox_algorithm.Location = new Point(347, 12);
-            checkedBox_algorithm.Name = "checkedBox_algorithm";
-            checkedBox_algorithm.Size = new Size(261, 42);
-            checkedBox_algorithm.TabIndex = 9;
-            checkedBox_algorithm.UseWaitCursor = true;
             // 
             // Primitives_groupBox
             // 
@@ -316,6 +314,10 @@
             imageList.Images.SetKeyName(11, "arrow-rightDown.png");
             imageList.Images.SetKeyName(12, "arrow-rightUp.png");
             imageList.Images.SetKeyName(13, "arrow-up.png");
+            imageList.Images.SetKeyName(14, "rotate-left.png");
+            imageList.Images.SetKeyName(15, "rotate-right.png");
+            imageList.Images.SetKeyName(16, "rotate-down.png");
+            imageList.Images.SetKeyName(17, "rotate-up.png");
             // 
             // groupBox5
             // 
@@ -699,6 +701,9 @@
             // 
             // View_tabPage
             // 
+            View_tabPage.Controls.Add(groupBox9);
+            View_tabPage.Controls.Add(groupBox8);
+            View_tabPage.Controls.Add(listView1);
             View_tabPage.Controls.Add(groupBox7);
             View_tabPage.Cursor = Cursors.Hand;
             View_tabPage.ForeColor = SystemColors.ControlText;
@@ -710,13 +715,133 @@
             View_tabPage.Text = "Вид";
             View_tabPage.UseVisualStyleBackColor = true;
             // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(tableLayoutPanel5);
+            groupBox9.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            groupBox9.Location = new Point(234, 0);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(178, 204);
+            groupBox9.TabIndex = 13;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Вращение камеры";
+            // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+            tableLayoutPanel5.ColumnCount = 2;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.Controls.Add(button_cameraRotateUp, 1, 1);
+            tableLayoutPanel5.Controls.Add(button_cameraRotateDown, 1, 0);
+            tableLayoutPanel5.Controls.Add(button_cameraRotateLeft, 0, 1);
+            tableLayoutPanel5.Controls.Add(button_cameraRotateRight, 0, 0);
+            tableLayoutPanel5.Location = new Point(27, 54);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 2;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.Size = new Size(119, 117);
+            tableLayoutPanel5.TabIndex = 14;
+            // 
+            // button_cameraRotateUp
+            // 
+            button_cameraRotateUp.BackgroundImage = (Image)resources.GetObject("button_cameraRotateUp.BackgroundImage");
+            button_cameraRotateUp.BackgroundImageLayout = ImageLayout.Stretch;
+            button_cameraRotateUp.ImageAlign = ContentAlignment.TopLeft;
+            button_cameraRotateUp.ImageKey = "(нет)";
+            button_cameraRotateUp.ImageList = imageList;
+            button_cameraRotateUp.Location = new Point(63, 62);
+            button_cameraRotateUp.Name = "button_cameraRotateUp";
+            button_cameraRotateUp.Size = new Size(52, 51);
+            button_cameraRotateUp.TabIndex = 15;
+            button_cameraRotateUp.UseVisualStyleBackColor = true;
+            button_cameraRotateUp.Click += button_cameraRotateUp_Click;
+            // 
+            // button_cameraRotateDown
+            // 
+            button_cameraRotateDown.BackgroundImage = (Image)resources.GetObject("button_cameraRotateDown.BackgroundImage");
+            button_cameraRotateDown.BackgroundImageLayout = ImageLayout.Stretch;
+            button_cameraRotateDown.ImageAlign = ContentAlignment.TopLeft;
+            button_cameraRotateDown.ImageKey = "(нет)";
+            button_cameraRotateDown.ImageList = imageList;
+            button_cameraRotateDown.Location = new Point(63, 4);
+            button_cameraRotateDown.Name = "button_cameraRotateDown";
+            button_cameraRotateDown.Size = new Size(52, 51);
+            button_cameraRotateDown.TabIndex = 15;
+            button_cameraRotateDown.UseVisualStyleBackColor = true;
+            button_cameraRotateDown.Click += button_cameraRotateDown_Click;
+            // 
+            // button_cameraRotateLeft
+            // 
+            button_cameraRotateLeft.Anchor = AnchorStyles.Top;
+            button_cameraRotateLeft.BackgroundImage = (Image)resources.GetObject("button_cameraRotateLeft.BackgroundImage");
+            button_cameraRotateLeft.BackgroundImageLayout = ImageLayout.Stretch;
+            button_cameraRotateLeft.ImageAlign = ContentAlignment.TopLeft;
+            button_cameraRotateLeft.ImageKey = "(нет)";
+            button_cameraRotateLeft.ImageList = imageList;
+            button_cameraRotateLeft.Location = new Point(4, 62);
+            button_cameraRotateLeft.Name = "button_cameraRotateLeft";
+            button_cameraRotateLeft.Size = new Size(52, 51);
+            button_cameraRotateLeft.TabIndex = 15;
+            button_cameraRotateLeft.UseVisualStyleBackColor = true;
+            button_cameraRotateLeft.Click += button_cameraRotateLeft_Click;
+            // 
+            // button_cameraRotateRight
+            // 
+            button_cameraRotateRight.Anchor = AnchorStyles.Top;
+            button_cameraRotateRight.BackgroundImage = (Image)resources.GetObject("button_cameraRotateRight.BackgroundImage");
+            button_cameraRotateRight.BackgroundImageLayout = ImageLayout.Stretch;
+            button_cameraRotateRight.ImageAlign = ContentAlignment.TopLeft;
+            button_cameraRotateRight.ImageKey = "(нет)";
+            button_cameraRotateRight.ImageList = imageList;
+            button_cameraRotateRight.Location = new Point(4, 4);
+            button_cameraRotateRight.Name = "button_cameraRotateRight";
+            button_cameraRotateRight.Size = new Size(52, 51);
+            button_cameraRotateRight.TabIndex = 4;
+            button_cameraRotateRight.UseVisualStyleBackColor = true;
+            button_cameraRotateRight.Click += button_cameraRotateRight_Click;
+            // 
+            // groupBox8
+            // 
+            groupBox8.Controls.Add(checkedListBox_renderMode);
+            groupBox8.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            groupBox8.Location = new Point(1129, 6);
+            groupBox8.Name = "groupBox8";
+            groupBox8.Size = new Size(287, 132);
+            groupBox8.TabIndex = 12;
+            groupBox8.TabStop = false;
+            groupBox8.Text = "Изображение";
+            // 
+            // checkedListBox_renderMode
+            // 
+            checkedListBox_renderMode.BorderStyle = BorderStyle.None;
+            checkedListBox_renderMode.CausesValidation = false;
+            checkedListBox_renderMode.CheckOnClick = true;
+            checkedListBox_renderMode.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            checkedListBox_renderMode.FormattingEnabled = true;
+            checkedListBox_renderMode.Items.AddRange(new object[] { "Теневые эффекты", "Световые эффекты", "Реалистичное отображение", "Каркасное отображение" });
+            checkedListBox_renderMode.Location = new Point(6, 23);
+            checkedListBox_renderMode.Name = "checkedListBox_renderMode";
+            checkedListBox_renderMode.Size = new Size(271, 84);
+            checkedListBox_renderMode.TabIndex = 14;
+            checkedListBox_renderMode.ItemCheck += checkedListBox_renderMode_ItemCheck;
+            // 
+            // listView1
+            // 
+            listView1.Location = new Point(742, 6);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(261, 204);
+            listView1.TabIndex = 11;
+            listView1.UseCompatibleStateImageBehavior = false;
+            // 
             // groupBox7
             // 
             groupBox7.Controls.Add(tableLayoutPanel4);
-            groupBox7.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            groupBox7.Location = new Point(6, 2);
+            groupBox7.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            groupBox7.Location = new Point(6, 0);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(193, 208);
+            groupBox7.Size = new Size(211, 204);
             groupBox7.TabIndex = 3;
             groupBox7.TabStop = false;
             groupBox7.Text = "Перемещение камеры";
@@ -736,7 +861,7 @@
             tableLayoutPanel4.Controls.Add(button_cameraRightUp, 2, 0);
             tableLayoutPanel4.Controls.Add(button_cameraUp, 1, 0);
             tableLayoutPanel4.Controls.Add(button_cameraLeftUp, 0, 0);
-            tableLayoutPanel4.Location = new Point(6, 26);
+            tableLayoutPanel4.Location = new Point(15, 25);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 3;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
@@ -747,8 +872,10 @@
             // 
             // button_cameraRightDown
             // 
+            button_cameraRightDown.BackgroundImage = (Image)resources.GetObject("button_cameraRightDown.BackgroundImage");
+            button_cameraRightDown.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraRightDown.ImageAlign = ContentAlignment.BottomRight;
-            button_cameraRightDown.ImageKey = "arrow-rightDown.png";
+            button_cameraRightDown.ImageKey = "(нет)";
             button_cameraRightDown.ImageList = imageList;
             button_cameraRightDown.Location = new Point(122, 120);
             button_cameraRightDown.Name = "button_cameraRightDown";
@@ -759,8 +886,10 @@
             // 
             // button_cameraDown
             // 
+            button_cameraDown.BackgroundImage = (Image)resources.GetObject("button_cameraDown.BackgroundImage");
+            button_cameraDown.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraDown.ImageAlign = ContentAlignment.BottomCenter;
-            button_cameraDown.ImageKey = "arrow-down.png";
+            button_cameraDown.ImageKey = "(нет)";
             button_cameraDown.ImageList = imageList;
             button_cameraDown.Location = new Point(63, 120);
             button_cameraDown.Name = "button_cameraDown";
@@ -771,8 +900,10 @@
             // 
             // button_cameraLeftDown
             // 
+            button_cameraLeftDown.BackgroundImage = (Image)resources.GetObject("button_cameraLeftDown.BackgroundImage");
+            button_cameraLeftDown.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraLeftDown.ImageAlign = ContentAlignment.BottomLeft;
-            button_cameraLeftDown.ImageKey = "arrow-leftDown.png";
+            button_cameraLeftDown.ImageKey = "(нет)";
             button_cameraLeftDown.ImageList = imageList;
             button_cameraLeftDown.Location = new Point(4, 120);
             button_cameraLeftDown.Name = "button_cameraLeftDown";
@@ -783,8 +914,10 @@
             // 
             // button_cameraRight
             // 
+            button_cameraRight.BackgroundImage = (Image)resources.GetObject("button_cameraRight.BackgroundImage");
+            button_cameraRight.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraRight.ImageAlign = ContentAlignment.MiddleRight;
-            button_cameraRight.ImageKey = "arrow-right.png";
+            button_cameraRight.ImageKey = "(нет)";
             button_cameraRight.ImageList = imageList;
             button_cameraRight.Location = new Point(122, 62);
             button_cameraRight.Name = "button_cameraRight";
@@ -795,8 +928,10 @@
             // 
             // button_cameraLeft
             // 
+            button_cameraLeft.BackgroundImage = (Image)resources.GetObject("button_cameraLeft.BackgroundImage");
+            button_cameraLeft.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraLeft.ImageAlign = ContentAlignment.MiddleLeft;
-            button_cameraLeft.ImageKey = "arrow-left.png";
+            button_cameraLeft.ImageKey = "(нет)";
             button_cameraLeft.ImageList = imageList;
             button_cameraLeft.Location = new Point(4, 62);
             button_cameraLeft.Name = "button_cameraLeft";
@@ -807,8 +942,10 @@
             // 
             // button_cameraRightUp
             // 
+            button_cameraRightUp.BackgroundImage = (Image)resources.GetObject("button_cameraRightUp.BackgroundImage");
+            button_cameraRightUp.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraRightUp.ImageAlign = ContentAlignment.TopRight;
-            button_cameraRightUp.ImageKey = "arrow-rightUp.png";
+            button_cameraRightUp.ImageKey = "(нет)";
             button_cameraRightUp.ImageList = imageList;
             button_cameraRightUp.Location = new Point(122, 4);
             button_cameraRightUp.Name = "button_cameraRightUp";
@@ -819,8 +956,10 @@
             // 
             // button_cameraUp
             // 
+            button_cameraUp.BackgroundImage = (Image)resources.GetObject("button_cameraUp.BackgroundImage");
+            button_cameraUp.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraUp.ImageAlign = ContentAlignment.TopCenter;
-            button_cameraUp.ImageKey = "arrow-up.png";
+            button_cameraUp.ImageKey = "(нет)";
             button_cameraUp.ImageList = imageList;
             button_cameraUp.Location = new Point(63, 4);
             button_cameraUp.Name = "button_cameraUp";
@@ -832,8 +971,10 @@
             // 
             // button_cameraLeftUp
             // 
+            button_cameraLeftUp.Anchor = AnchorStyles.None;
+            button_cameraLeftUp.BackgroundImage = (Image)resources.GetObject("button_cameraLeftUp.BackgroundImage");
+            button_cameraLeftUp.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraLeftUp.ImageAlign = ContentAlignment.TopLeft;
-            button_cameraLeftUp.ImageKey = "arrow-leftUp.png";
             button_cameraLeftUp.ImageList = imageList;
             button_cameraLeftUp.Location = new Point(4, 4);
             button_cameraLeftUp.Name = "button_cameraLeftUp";
@@ -1022,6 +1163,9 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveY).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveX).EndInit();
             View_tabPage.ResumeLayout(false);
+            groupBox9.ResumeLayout(false);
+            tableLayoutPanel5.ResumeLayout(false);
+            groupBox8.ResumeLayout(false);
             groupBox7.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             panel1.ResumeLayout(false);
@@ -1063,7 +1207,6 @@
         private Button button_cameraRightDown;
         private Button button_cameraDown;
         private Button button_cameraLeftDown;
-        private Button button_cameraRight;
         private Button button_cameraLeft;
         private Button button_cameraRightUp;
         private Button button_cameraUp;
@@ -1109,9 +1252,18 @@
         private Button button5;
         private Button button_Clear;
         private Button button_dialogEdit;
-        private CheckedListBox checkedBox_algorithm;
         private ErrorProvider errorProvider1;
         private Button button2;
+        private GroupBox groupBox8;
+        private ListView listView1;
+        private GroupBox groupBox9;
+        private TableLayoutPanel tableLayoutPanel5;
+        private Button button_cameraRotateRight;
+        private Button button_cameraRotateUp;
+        private Button button_cameraRotateDown;
+        private Button button_cameraRotateLeft;
+        private CheckedListBox checkedListBox_renderMode;
+        private Button button_cameraRight;
     }
 }
 

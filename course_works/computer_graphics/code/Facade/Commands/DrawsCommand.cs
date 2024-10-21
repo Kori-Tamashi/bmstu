@@ -37,7 +37,6 @@ namespace code
 
         public override void _execute()
         {
-            canvas.Render();
             canvas.UpdateImage(ref pictureBox);
         }
     }
@@ -59,6 +58,32 @@ namespace code
         public override void _execute()
         {
             canvas.Refresh();
+        }
+    }
+
+    class RenderCommand : DrawsCommand
+    {
+        RenderMode renderMode;
+        PictureBox pictureBox;
+
+        public RenderCommand(ref Canvas canvas, ref PictureBox pictureBox, RenderMode renderMode) : base(ref canvas) 
+        {
+            this.renderMode = renderMode;
+            this.pictureBox = pictureBox;
+        }
+
+        public override void _execute()
+        {
+            if (renderMode != RenderMode.CarcassDisplay)
+            {
+                canvas.Render(renderMode);
+                canvas.UpdateImage(ref pictureBox);
+                pictureBox.Refresh();
+            }
+            else
+            {
+                canvas.Render(renderMode);
+            }
         }
     }
 

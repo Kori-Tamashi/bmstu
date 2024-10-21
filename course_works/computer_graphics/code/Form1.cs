@@ -11,13 +11,6 @@ using System.Windows.Forms;
 
 using System.Windows.Forms.DataVisualization.Charting;
 
-/*
- * Light system
- * Shadows
- * Camera rotate
- * Dialog edit clear
- */
-
 namespace code
 {
     public partial class Form1 : Form
@@ -34,6 +27,7 @@ namespace code
 
         private void button2_Click(object sender, EventArgs e)
         {
+
 
         }
 
@@ -60,7 +54,7 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -71,7 +65,7 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -82,7 +76,7 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -93,7 +87,7 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -104,7 +98,7 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -149,7 +143,7 @@ namespace code
 
             facade._execute(
                 new MoveModelCommand(ref canvas, ref move, currentIndex),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -168,7 +162,7 @@ namespace code
 
             facade._execute(
                 new RotateModelCommand(ref canvas, ref rotate, currentIndex),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -187,7 +181,7 @@ namespace code
 
             facade._execute(
                 new ScaleModelCommand(ref canvas, ref scale, currentIndex),
-                new RefreshCommand(ref canvas)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -198,72 +192,101 @@ namespace code
         private void button_cameraUp_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraUpMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraUpMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_cameraDown_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraDownMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_cameraRight_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraRightMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraRightMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_CmeraLeft_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraDownMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_cameraLeft_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraLeftMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraLeftMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_cameraRightUp_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraUpRightMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraUpRightMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_cameraRightDown_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownRightMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraDownRightMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_cameraLeftUp_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraUpLeftMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraUpLeftMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
         private void button_cameraLeftDown_Click(object sender, EventArgs e)
         {
             facade._execute(
-                new CameraDownLeftMoveCommand(ref canvas, 5),
-                new RefreshCommand(ref canvas)
+                new CameraDownLeftMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+            );
+        }
+
+        private void button_cameraRotateRight_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraRightRotateCommand(ref canvas, 10),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+            );
+        }
+
+        private void button_cameraRotateLeft_Click(object sender, EventArgs e)
+        {
+            facade._execute(new CameraLeftRotateCommand(ref canvas, 10),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+            );
+        }
+
+        private void button_cameraRotateDown_Click(object sender, EventArgs e)
+        {
+            facade._execute(new CameraDownRotateCommand(ref canvas, 10),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+            );
+        }
+
+        private void button_cameraRotateUp_Click(object sender, EventArgs e)
+        {
+            facade._execute(new CameraUpRotateCommand(ref canvas, 10),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
 
@@ -287,9 +310,40 @@ namespace code
             return currentIndex;
         }
 
+        private RenderMode GetCurrentRenderMode()
+        {
+            if (checkedListBox_renderMode.CheckedItems.Count == 0)
+            {
+                facade._execute(new ErrorMessageShowCommand("Режим вывода изображения не выбран. Установлен режим по умолчанию: \"Каркасное отображение\"."));
+                checkedListBox_renderMode.SetItemChecked(3, true);
+                return RenderMode.CarcassDisplay;
+            }
+
+            if (checkedListBox_renderMode.GetItemChecked(0))
+                return RenderMode.Shadows;
+            else if (checkedListBox_renderMode.GetItemChecked(1))
+                return RenderMode.Shading;
+            else if (checkedListBox_renderMode.GetItemChecked(2))
+                return RenderMode.RealDisplay;
+            else
+                return RenderMode.CarcassDisplay;
+        }
+
         #endregion
 
         #region Other
+
+        private void checkedListBox_renderMode_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue != CheckState.Checked)
+                return;
+
+            for (int i = 0; i < checkedListBox_renderMode.Items.Count; i++)
+            {
+                if (i != e.Index)
+                    checkedListBox_renderMode.SetItemChecked(i, false);
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -307,6 +361,11 @@ namespace code
         }
 
         private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void checkedBox_algorithm_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

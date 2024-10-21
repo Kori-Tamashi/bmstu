@@ -18,7 +18,7 @@ namespace code
 
             Matrix<float> sMultiplication = supervisorMatrix * modelMatrix;
 
-            List<Polygon> visiblePolygons = new List<Polygon>();
+            List<Polygon> visiblePolygons = new List<Polygon>(model.Polygons.Count);
             for (int i = 0; i < model.Polygons.Count; i++)
             {
                 if (sMultiplication[0, i] <= 0)

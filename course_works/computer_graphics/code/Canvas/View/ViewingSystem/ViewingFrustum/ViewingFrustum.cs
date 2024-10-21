@@ -14,6 +14,9 @@ namespace code
 {
     class ViewingFrustum
     {
+        private TransformationMatrix viewMatrix;
+        private TransformationMatrix projectionMatrix;
+
         protected Camera camera;
         protected List<Polygon> planes;
 
@@ -33,6 +36,8 @@ namespace code
 
             InitializeViewFieldAngle(view_field_height, near_plane_distance);
             InitializePlanes(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera);
+            InitializeViewMatrix();
+            InitializeProjectionMatrix();
         }
 
         #region Initialize
@@ -145,9 +150,21 @@ namespace code
                 ));
         }
 
+        private void InitializeProjectionMatrix()
+        {
+            projectionMatrix = ProjectionMatrix();
+        }
+
+        private void InitializeViewMatrix()
+        {
+            viewMatrix = ViewMatrix();
+        }
+
         private void Update()
         {
             InitializePlanes(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera);
+            InitializeProjectionMatrix();
+            InitializeViewMatrix();
         }
 
         #endregion
@@ -239,6 +256,21 @@ namespace code
         #endregion
 
         #region Processing
+
+        public void ProcessingGraphics(Scene scene, Graphics gr)
+        {
+            Processing(scene.Models, gr);
+        }
+
+        public void ProcessingGraphics(List<Model> models, Graphics gr)
+        {
+            Processing(models, gr);
+        }
+
+        public void ProcessingGraphics(Model model, Graphics gr)
+        {
+            Processing(model, gr);
+        }
 
         public virtual void Processing(Scene scene, Graphics gr)
         {
@@ -334,7 +366,7 @@ namespace code
 
         protected virtual Matrix<float> ViewingFrustumPointMatrix(Point3D worldPoint)
         {
-            Matrix<float> mtr = ProjectionMatrix() * (ViewMatrix() * (WorldMatrix(worldPoint).Transpose() * PointMatrix(worldPoint).Transpose()));
+            Matrix<float> mtr = projectionMatrix * (viewMatrix * (WorldMatrix(worldPoint).Transpose() * PointMatrix(worldPoint).Transpose()));
 
             for (int i = 0; i < 4; i++)
             {
@@ -399,6 +431,30 @@ namespace code
         public void MoveDownLeft(float d)
         {
             camera.MoveDownLeft(d);
+            Update();
+        }
+
+        public void RotateRight(float angle)
+        {
+            camera.RotateRight(angle);
+            Update();
+        }
+
+        public void RotateLeft(float angle)
+        {
+            camera.RotateLeft(angle);
+            Update();
+        }
+
+        public void RotateDown(float angle)
+        {
+            camera.RotateDown(angle);
+            Update();
+        }
+
+        public void RotateUp(float angle)
+        {
+            camera.RotateUp(angle);
             Update();
         }
 

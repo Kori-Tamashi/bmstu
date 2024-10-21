@@ -1,44 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class ViewingFrustum_SolidShading : ViewingFrustum_ZBuffer
+    class ViewingFrustum_SolidShading : ViewingFrustum_ParallelZBuffer
     {
         public ViewingFrustum_SolidShading(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance,
             Camera camera) : base(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera) { }
 
-        public virtual void Processing(Scene scene)
+        public void ProcessingShading(Scene scene)
+        {
+            Processing(scene);
+        }
+
+        public void ProcessingShading(List<Model> models, Light light)
+        {
+            Processing(models, light);
+        }
+
+        public void ProcessingShading(Model model, Light light)
+        {
+            Processing(model, light);
+        }
+
+        public new void Processing(Scene scene)
         {
             ClearView();
-            ProcessScene(scene);
+            ProcessModels(scene.Models, scene.CurrentLight);
             ProcessBitmap();
         }
 
-        public virtual void Processing(List<Model> models, Light light)
+        public void Processing(List<Model> models, Light light)
         {
             ClearView();
             ProcessModels(models, light);
             ProcessBitmap();
         }
 
-        public virtual void Processing(Model model, Light light)
+        public void Processing(Model model, Light light)
         {
             ClearView();
             ProcessModel(model, light);
             ProcessBitmap();
         }
 
-        protected virtual void ProcessScene(Scene scene)
-        {
-            ProcessModels(scene.Models, scene.CurrentLight);
-        }
-
-        protected virtual void ProcessModels(List<Model> models, Light light)
+        protected void ProcessModels(List<Model> models, Light light)
         {
             foreach (Model model in models)
             {
@@ -46,7 +57,7 @@ namespace code
             }
         }
 
-        protected virtual void ProcessModel(Model model, Light light)
+        protected void ProcessModel(Model model, Light light)
         {
             List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
 
@@ -56,7 +67,7 @@ namespace code
             }
         }
 
-        protected virtual void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
+        protected void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
         {
             float intensity = GetIntensity(polygon, material, light);
 
@@ -66,7 +77,7 @@ namespace code
             }
         }
 
-        protected virtual void ProcessPoint(Point3D worldPoint, Color color, float intensity)
+        protected void ProcessPoint(Point3D worldPoint, Color color, float intensity)
         {
             Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
             Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
@@ -87,7 +98,7 @@ namespace code
                     (int)(Math.Max(0, Math.Min(color.B * intensity, 255))));
         }
 
-        protected virtual float GetIntensity(Polygon polygon, Material material, Light light)
+        protected float GetIntensity(Polygon polygon, Material material, Light light)
         {
             Vector3D normal = polygon.Normal().NormalizedCopy();
 

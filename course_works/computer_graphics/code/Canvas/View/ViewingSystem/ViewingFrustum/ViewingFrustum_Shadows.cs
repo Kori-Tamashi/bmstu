@@ -7,14 +7,24 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class ViewingFrustum_Shadows : ViewingFrustum_SolidShading
+    class ViewingFrustum_Shadows : ViewingFrustum_ParallelSolidShading
     {
         ViewingFrustum_ParallelZBuffer shadowsCamera;
 
         public ViewingFrustum_Shadows(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance,
             Camera camera) : base(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera) { }
 
-        public override void Processing(Scene scene)
+        public void ProcessingShadows(Scene scene)
+        {
+            Processing(scene);
+        }
+
+        public void ProcessingShadows(List<Model> models, Light light)
+        {
+            Processing(models, light);
+        }
+
+        public new void Processing(Scene scene)
         {
             ClearView();
             ProcessShadows(scene.Models, scene.CurrentLight);
@@ -22,7 +32,7 @@ namespace code
             ProcessBitmap();
         }
 
-        public override void Processing(List<Model> models, Light light)
+        public new void Processing(List<Model> models, Light light)
         {
             ClearView();
             ProcessShadows(models, light);
@@ -30,7 +40,7 @@ namespace code
             ProcessBitmap();
         }
 
-        protected virtual void ProcessShadows(List<Model> models, Light light)
+        protected void ProcessShadows(List<Model> models, Light light)
         {
             if (shadowsCamera == null)
             {
@@ -50,7 +60,17 @@ namespace code
             shadowsCamera.Processing(models);
         }
 
-        protected override void ProcessPoint(Point3D worldPoint, Color color, float intensity)
+        protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
+        {
+            float intensity = GetIntensity(polygon, material, light);
+
+            Parallel.ForEach(polygon.InsidePoints, point =>
+            {
+                ProcessPoint(point, color, intensity);
+            });
+        }
+
+        protected new void ProcessPoint(Point3D worldPoint, Color color, float intensity)
         {
             // DON'T. TOUCH. THIS.
 
