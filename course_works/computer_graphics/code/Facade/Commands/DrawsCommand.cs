@@ -82,6 +82,7 @@ namespace code
             }
             else
             {
+                canvas.GraphicsClear();
                 canvas.Render(renderMode);
             }
         }

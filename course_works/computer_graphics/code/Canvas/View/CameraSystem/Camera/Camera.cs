@@ -10,6 +10,9 @@ namespace code
 {
     public class Camera
     {
+        float yaw = 0;
+        float pitch = 0;
+
         Point3D position;
         Vector3D direction;
         Vector3D right;
@@ -21,6 +24,7 @@ namespace code
             this.position = position;
 
             InitializeVectors();
+            InitializeYawPicth(direction);
         }
 
         #region Initialize
@@ -35,6 +39,23 @@ namespace code
             direction.Normalize();
             right.Normalize();
             up.Normalize();
+        }
+
+        public void InitializeYawPicth(Vector3D direction)
+        {
+            yaw = (float)(Math.Atan2(direction.Z, direction.X) * (180.0 / Math.PI));
+
+            if (direction.Length > 0)
+            {
+                pitch = (float)(Math.Asin(direction.Y / direction.Length) * (180.0 / Math.PI));
+            }
+            else
+            {
+                pitch = 0; 
+            }
+
+            yaw = NormalizeYaw(yaw);
+            pitch = NormalizePitch(pitch);
         }
 
         #endregion
@@ -59,6 +80,18 @@ namespace code
         public Vector3D Up
         {
             get { return up; }
+        }
+
+        public float Yaw
+        {
+            get { return yaw; }
+            set { SetYaw(value); }
+        }
+
+        public float Pitch
+        {
+            get { return pitch; }
+            set { SetPitch(value); }
         }
 
         #endregion
@@ -190,6 +223,57 @@ namespace code
         public void RotateUp(float angle)
         {
             RotateDown(-angle);
+        }
+
+        public void SetYaw(float newYaw)
+        {
+            yaw = NormalizeYaw(newYaw); 
+            UpdateDirection();
+        }
+
+        public void SetPitch(float newPitch)
+        {
+            pitch = NormalizePitch(newPitch); 
+            UpdateDirection();
+        }
+
+        private void UpdateDirection()
+        {
+            // Обновляем направление камеры на основе текущих yaw и pitch
+            float radiansYaw = yaw * (float)(Math.PI / 180.0);
+            float radiansPitch = pitch * (float)(Math.PI / 180.0);
+
+            // Вычисляем новое направление
+            Vector3D newDirection = new Vector3D(
+                (float)( Math.Cos(radiansYaw) * Math.Cos(radiansPitch) ),
+                (float)  Math.Sin(radiansPitch),
+                (float)( Math.Sin(radiansYaw) * Math.Cos(radiansPitch) )
+            );
+
+            direction = newDirection;
+            right = Vector3D.CrossProduct(direction, new Vector3D(0, 1, 0));
+            up = Vector3D.CrossProduct(right, direction);
+
+            direction.Normalize();
+            right.Normalize();
+            up.Normalize();
+
+            //right.Turn(); 
+            up.Turn();
+        }
+
+        private float NormalizeYaw(float angle)
+        {
+            if (angle > 180) return angle - 360;
+            if (angle < -180) return angle + 360;
+            return angle;
+        }
+
+        private float NormalizePitch(float angle)
+        {
+            if (angle > 90) return 90;
+            if (angle < -90) return -90;
+            return angle;
         }
 
 

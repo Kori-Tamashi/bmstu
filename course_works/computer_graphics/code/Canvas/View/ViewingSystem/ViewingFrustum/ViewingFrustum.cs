@@ -183,6 +183,18 @@ namespace code
             Update();
         }
 
+        public float Yaw
+        {
+            get { return camera.Yaw; }
+            set { SetYaw(value); }
+        }
+
+        public float Pitch
+        {
+            get { return camera.Pitch; }
+            set { SetPitch(value); }
+        }
+
         #endregion
 
         #region Matrix
@@ -455,6 +467,18 @@ namespace code
         public void RotateUp(float angle)
         {
             camera.RotateUp(angle);
+            Update();
+        }
+
+        public void SetYaw(float angle)
+        {
+            camera.Yaw = angle;
+            Update();
+        }
+
+        public void SetPitch(float angle)
+        {
+            camera.Pitch = angle;
             Update();
         }
 

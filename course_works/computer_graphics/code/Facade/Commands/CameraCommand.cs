@@ -184,3 +184,23 @@ class CameraDownRotateCommand : CameraRotateCommand
         canvas.RotateCameraDown(angle);
     }
 }
+
+class CameraYawCommand : CameraRotateCommand
+{
+    public CameraYawCommand(ref Canvas canvas, float angle) : base(ref canvas, angle) { }
+
+    public override void _execute()
+    {
+        canvas.Yaw = angle;
+    }
+}
+
+class CameraPitchCommand : CameraRotateCommand
+{
+    public CameraPitchCommand(ref Canvas canvas, float angle) : base(ref canvas, angle) { }
+
+    public override void _execute()
+    {
+        canvas.Pitch = angle;
+    }
+}

@@ -87,6 +87,18 @@ namespace code
             get { return size; }
         }
 
+        public float Yaw
+        {
+            get { return viewingSystem.Yaw; }
+            set { viewingSystem.Yaw = value; }
+        }
+
+        public float Pitch
+        {
+            get { return viewingSystem.Pitch; }
+            set { viewingSystem.Pitch = value; }
+        }
+
         #endregion
 
         #region Scene

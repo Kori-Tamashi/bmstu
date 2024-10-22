@@ -39,7 +39,7 @@ namespace code
 
         public new void ProcessingShadows(Scene scene)
         {
-            ProcessingShadows(scene);
+            base.ProcessingShadows(scene);
         }
 
         public new void ProcessingShading(Scene scene)

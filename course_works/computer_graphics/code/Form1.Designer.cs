@@ -75,12 +75,16 @@
             label6 = new Label();
             label4 = new Label();
             View_tabPage = new TabPage();
-            groupBox9 = new GroupBox();
-            tableLayoutPanel5 = new TableLayoutPanel();
-            button_cameraRotateUp = new Button();
-            button_cameraRotateDown = new Button();
-            button_cameraRotateLeft = new Button();
-            button_cameraRotateRight = new Button();
+            groupBox11 = new GroupBox();
+            numericUpDown_pitch = new NumericUpDown();
+            label_pitchMax = new Label();
+            label_pitchMin = new Label();
+            trackBar_pitch = new TrackBar();
+            groupBox10 = new GroupBox();
+            numericUpDown_yaw = new NumericUpDown();
+            label_yawMax = new Label();
+            label_yawMin = new Label();
+            trackBar_yaw = new TrackBar();
             groupBox8 = new GroupBox();
             checkedListBox_renderMode = new CheckedListBox();
             listView1 = new ListView();
@@ -131,8 +135,12 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveX).BeginInit();
             View_tabPage.SuspendLayout();
-            groupBox9.SuspendLayout();
-            tableLayoutPanel5.SuspendLayout();
+            groupBox11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_pitch).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar_pitch).BeginInit();
+            groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_yaw).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar_yaw).BeginInit();
             groupBox8.SuspendLayout();
             groupBox7.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
@@ -438,9 +446,9 @@
             groupBox6.Controls.Add(button_Clear);
             groupBox6.Controls.Add(button_dialogEdit);
             groupBox6.Font = new Font("Segoe UI", 10F);
-            groupBox6.Location = new Point(341, 60);
+            groupBox6.Location = new Point(347, 3);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(261, 154);
+            groupBox6.Size = new Size(261, 214);
             groupBox6.TabIndex = 8;
             groupBox6.TabStop = false;
             groupBox6.Text = "Действия";
@@ -461,7 +469,7 @@
             button_Clear.Name = "button_Clear";
             button_Clear.Size = new Size(252, 29);
             button_Clear.TabIndex = 1;
-            button_Clear.Text = "Очистка";
+            button_Clear.Text = "Очистка сцены";
             button_Clear.UseVisualStyleBackColor = true;
             button_Clear.Click += button_Clear_Click;
             // 
@@ -701,7 +709,8 @@
             // 
             // View_tabPage
             // 
-            View_tabPage.Controls.Add(groupBox9);
+            View_tabPage.Controls.Add(groupBox11);
+            View_tabPage.Controls.Add(groupBox10);
             View_tabPage.Controls.Add(groupBox8);
             View_tabPage.Controls.Add(listView1);
             View_tabPage.Controls.Add(groupBox7);
@@ -715,92 +724,117 @@
             View_tabPage.Text = "Вид";
             View_tabPage.UseVisualStyleBackColor = true;
             // 
-            // groupBox9
+            // groupBox11
             // 
-            groupBox9.Controls.Add(tableLayoutPanel5);
-            groupBox9.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            groupBox9.Location = new Point(234, 0);
-            groupBox9.Name = "groupBox9";
-            groupBox9.Size = new Size(178, 204);
-            groupBox9.TabIndex = 13;
-            groupBox9.TabStop = false;
-            groupBox9.Text = "Вращение камеры";
+            groupBox11.Controls.Add(numericUpDown_pitch);
+            groupBox11.Controls.Add(label_pitchMax);
+            groupBox11.Controls.Add(label_pitchMin);
+            groupBox11.Controls.Add(trackBar_pitch);
+            groupBox11.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            groupBox11.Location = new Point(223, 108);
+            groupBox11.Name = "groupBox11";
+            groupBox11.Size = new Size(269, 97);
+            groupBox11.TabIndex = 14;
+            groupBox11.TabStop = false;
+            groupBox11.Text = "Тангаж";
             // 
-            // tableLayoutPanel5
+            // numericUpDown_pitch
             // 
-            tableLayoutPanel5.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            tableLayoutPanel5.ColumnCount = 2;
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.Controls.Add(button_cameraRotateUp, 1, 1);
-            tableLayoutPanel5.Controls.Add(button_cameraRotateDown, 1, 0);
-            tableLayoutPanel5.Controls.Add(button_cameraRotateLeft, 0, 1);
-            tableLayoutPanel5.Controls.Add(button_cameraRotateRight, 0, 0);
-            tableLayoutPanel5.Location = new Point(27, 54);
-            tableLayoutPanel5.Name = "tableLayoutPanel5";
-            tableLayoutPanel5.RowCount = 2;
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.Size = new Size(119, 117);
-            tableLayoutPanel5.TabIndex = 14;
+            numericUpDown_pitch.Location = new Point(106, 63);
+            numericUpDown_pitch.Maximum = new decimal(new int[] { 90, 0, 0, 0 });
+            numericUpDown_pitch.Minimum = new decimal(new int[] { 90, 0, 0, int.MinValue });
+            numericUpDown_pitch.Name = "numericUpDown_pitch";
+            numericUpDown_pitch.Size = new Size(62, 26);
+            numericUpDown_pitch.TabIndex = 18;
+            numericUpDown_pitch.ValueChanged += numericUpDown_pitch_ValueChanged;
             // 
-            // button_cameraRotateUp
+            // label_pitchMax
             // 
-            button_cameraRotateUp.BackgroundImage = (Image)resources.GetObject("button_cameraRotateUp.BackgroundImage");
-            button_cameraRotateUp.BackgroundImageLayout = ImageLayout.Stretch;
-            button_cameraRotateUp.ImageAlign = ContentAlignment.TopLeft;
-            button_cameraRotateUp.ImageKey = "(нет)";
-            button_cameraRotateUp.ImageList = imageList;
-            button_cameraRotateUp.Location = new Point(63, 62);
-            button_cameraRotateUp.Name = "button_cameraRotateUp";
-            button_cameraRotateUp.Size = new Size(52, 51);
-            button_cameraRotateUp.TabIndex = 15;
-            button_cameraRotateUp.UseVisualStyleBackColor = true;
-            button_cameraRotateUp.Click += button_cameraRotateUp_Click;
+            label_pitchMax.AutoSize = true;
+            label_pitchMax.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label_pitchMax.Location = new Point(236, 65);
+            label_pitchMax.Name = "label_pitchMax";
+            label_pitchMax.Size = new Size(27, 20);
+            label_pitchMax.TabIndex = 16;
+            label_pitchMax.Text = "90";
             // 
-            // button_cameraRotateDown
+            // label_pitchMin
             // 
-            button_cameraRotateDown.BackgroundImage = (Image)resources.GetObject("button_cameraRotateDown.BackgroundImage");
-            button_cameraRotateDown.BackgroundImageLayout = ImageLayout.Stretch;
-            button_cameraRotateDown.ImageAlign = ContentAlignment.TopLeft;
-            button_cameraRotateDown.ImageKey = "(нет)";
-            button_cameraRotateDown.ImageList = imageList;
-            button_cameraRotateDown.Location = new Point(63, 4);
-            button_cameraRotateDown.Name = "button_cameraRotateDown";
-            button_cameraRotateDown.Size = new Size(52, 51);
-            button_cameraRotateDown.TabIndex = 15;
-            button_cameraRotateDown.UseVisualStyleBackColor = true;
-            button_cameraRotateDown.Click += button_cameraRotateDown_Click;
+            label_pitchMin.AutoSize = true;
+            label_pitchMin.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label_pitchMin.Location = new Point(14, 65);
+            label_pitchMin.Name = "label_pitchMin";
+            label_pitchMin.Size = new Size(33, 20);
+            label_pitchMin.TabIndex = 15;
+            label_pitchMin.Text = "-90";
             // 
-            // button_cameraRotateLeft
+            // trackBar_pitch
             // 
-            button_cameraRotateLeft.Anchor = AnchorStyles.Top;
-            button_cameraRotateLeft.BackgroundImage = (Image)resources.GetObject("button_cameraRotateLeft.BackgroundImage");
-            button_cameraRotateLeft.BackgroundImageLayout = ImageLayout.Stretch;
-            button_cameraRotateLeft.ImageAlign = ContentAlignment.TopLeft;
-            button_cameraRotateLeft.ImageKey = "(нет)";
-            button_cameraRotateLeft.ImageList = imageList;
-            button_cameraRotateLeft.Location = new Point(4, 62);
-            button_cameraRotateLeft.Name = "button_cameraRotateLeft";
-            button_cameraRotateLeft.Size = new Size(52, 51);
-            button_cameraRotateLeft.TabIndex = 15;
-            button_cameraRotateLeft.UseVisualStyleBackColor = true;
-            button_cameraRotateLeft.Click += button_cameraRotateLeft_Click;
+            trackBar_pitch.BackColor = SystemColors.ControlLightLight;
+            trackBar_pitch.Location = new Point(6, 26);
+            trackBar_pitch.Maximum = 90;
+            trackBar_pitch.Minimum = -90;
+            trackBar_pitch.Name = "trackBar_pitch";
+            trackBar_pitch.Size = new Size(257, 56);
+            trackBar_pitch.TabIndex = 14;
+            trackBar_pitch.TickFrequency = 10;
+            trackBar_pitch.ValueChanged += trackBar_pitch_ValueChanged;
             // 
-            // button_cameraRotateRight
+            // groupBox10
             // 
-            button_cameraRotateRight.Anchor = AnchorStyles.Top;
-            button_cameraRotateRight.BackgroundImage = (Image)resources.GetObject("button_cameraRotateRight.BackgroundImage");
-            button_cameraRotateRight.BackgroundImageLayout = ImageLayout.Stretch;
-            button_cameraRotateRight.ImageAlign = ContentAlignment.TopLeft;
-            button_cameraRotateRight.ImageKey = "(нет)";
-            button_cameraRotateRight.ImageList = imageList;
-            button_cameraRotateRight.Location = new Point(4, 4);
-            button_cameraRotateRight.Name = "button_cameraRotateRight";
-            button_cameraRotateRight.Size = new Size(52, 51);
-            button_cameraRotateRight.TabIndex = 4;
-            button_cameraRotateRight.UseVisualStyleBackColor = true;
-            button_cameraRotateRight.Click += button_cameraRotateRight_Click;
+            groupBox10.Controls.Add(numericUpDown_yaw);
+            groupBox10.Controls.Add(label_yawMax);
+            groupBox10.Controls.Add(label_yawMin);
+            groupBox10.Controls.Add(trackBar_yaw);
+            groupBox10.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            groupBox10.Location = new Point(223, 1);
+            groupBox10.Name = "groupBox10";
+            groupBox10.Size = new Size(269, 101);
+            groupBox10.TabIndex = 10;
+            groupBox10.TabStop = false;
+            groupBox10.Text = "Рыскание";
+            // 
+            // numericUpDown_yaw
+            // 
+            numericUpDown_yaw.Location = new Point(106, 63);
+            numericUpDown_yaw.Maximum = new decimal(new int[] { 180, 0, 0, 0 });
+            numericUpDown_yaw.Minimum = new decimal(new int[] { 180, 0, 0, int.MinValue });
+            numericUpDown_yaw.Name = "numericUpDown_yaw";
+            numericUpDown_yaw.Size = new Size(62, 26);
+            numericUpDown_yaw.TabIndex = 17;
+            numericUpDown_yaw.ValueChanged += numericUpDown_yaw_ValueChanged;
+            // 
+            // label_yawMax
+            // 
+            label_yawMax.AutoSize = true;
+            label_yawMax.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label_yawMax.Location = new Point(227, 65);
+            label_yawMax.Name = "label_yawMax";
+            label_yawMax.Size = new Size(36, 20);
+            label_yawMax.TabIndex = 16;
+            label_yawMax.Text = "180";
+            // 
+            // label_yawMin
+            // 
+            label_yawMin.AutoSize = true;
+            label_yawMin.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label_yawMin.Location = new Point(14, 65);
+            label_yawMin.Name = "label_yawMin";
+            label_yawMin.Size = new Size(42, 20);
+            label_yawMin.TabIndex = 15;
+            label_yawMin.Text = "-180";
+            // 
+            // trackBar_yaw
+            // 
+            trackBar_yaw.BackColor = SystemColors.ControlLightLight;
+            trackBar_yaw.Location = new Point(6, 26);
+            trackBar_yaw.Maximum = 180;
+            trackBar_yaw.Minimum = -180;
+            trackBar_yaw.Name = "trackBar_yaw";
+            trackBar_yaw.Size = new Size(257, 56);
+            trackBar_yaw.TabIndex = 14;
+            trackBar_yaw.TickFrequency = 10;
+            trackBar_yaw.ValueChanged += trackBar_yaw_ValueChanged;
             // 
             // groupBox8
             // 
@@ -1129,7 +1163,7 @@
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.Inherit;
-            ClientSize = new Size(1507, 830);
+            ClientSize = new Size(1853, 830);
             Controls.Add(panel1);
             Controls.Add(InteractionMenu_tabControl);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -1163,8 +1197,14 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveY).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_moveX).EndInit();
             View_tabPage.ResumeLayout(false);
-            groupBox9.ResumeLayout(false);
-            tableLayoutPanel5.ResumeLayout(false);
+            groupBox11.ResumeLayout(false);
+            groupBox11.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_pitch).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar_pitch).EndInit();
+            groupBox10.ResumeLayout(false);
+            groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_yaw).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trackBar_yaw).EndInit();
             groupBox8.ResumeLayout(false);
             groupBox7.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
@@ -1256,14 +1296,18 @@
         private Button button2;
         private GroupBox groupBox8;
         private ListView listView1;
-        private GroupBox groupBox9;
-        private TableLayoutPanel tableLayoutPanel5;
-        private Button button_cameraRotateRight;
-        private Button button_cameraRotateUp;
-        private Button button_cameraRotateDown;
-        private Button button_cameraRotateLeft;
         private CheckedListBox checkedListBox_renderMode;
         private Button button_cameraRight;
+        private TrackBar trackBar_yaw;
+        private GroupBox groupBox10;
+        private Label label_yawMax;
+        private Label label_yawMin;
+        private GroupBox groupBox11;
+        private Label label_pitchMax;
+        private Label label_pitchMin;
+        private TrackBar trackBar_pitch;
+        private NumericUpDown numericUpDown_pitch;
+        private NumericUpDown numericUpDown_yaw;
     }
 }
 

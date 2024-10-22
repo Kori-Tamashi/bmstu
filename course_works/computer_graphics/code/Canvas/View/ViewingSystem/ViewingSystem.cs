@@ -10,7 +10,7 @@ namespace code
 {
     class ViewingSystem
     {
-        protected const int maxCameras = 6;
+        protected const int maxCameras = 1;
         protected const int farDistance = 400;
         protected const int nearDistance = 100;
 
@@ -50,7 +50,8 @@ namespace code
 
         private Camera StartCamera()
         {
-            return new Camera(startCameraDirection, startCameraPosition);
+            Camera camera = new Camera(startCameraDirection, startCameraPosition);
+            return camera;
         }
 
         #endregion
@@ -81,6 +82,18 @@ namespace code
         public int FarDistance
         {
             get { return farDistance; }
+        }
+
+        public float Yaw
+        {
+            get { return cameras[currentCameraIndex].Yaw; }
+            set { cameras[currentCameraIndex].Yaw = value; }
+        }
+
+        public float Pitch
+        {
+            get { return cameras[currentCameraIndex].Pitch; }
+            set { cameras[currentCameraIndex].Pitch = value; }
         }
 
         #endregion
