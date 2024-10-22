@@ -64,6 +64,26 @@ namespace code
         }
     }
 
+    class CameraForwardMoveCommand : CameraMoveCommand
+    {
+        public CameraForwardMoveCommand(ref Canvas canvas, float d) : base(ref canvas, d) { }
+
+        public override void _execute()
+        {
+            canvas.MoveCameraForward(d);
+        }
+    }
+
+    class CameraBackMoveCommand : CameraMoveCommand
+    {
+        public CameraBackMoveCommand(ref Canvas canvas, float d) : base(ref canvas, d) { }
+
+        public override void _execute()
+        {
+            canvas.MoveCameraBack(d);
+        }
+    }
+
     class CameraRightMoveCommand : CameraMoveCommand
     {
         public CameraRightMoveCommand(ref Canvas canvas, float d) : base(ref canvas, d) { }

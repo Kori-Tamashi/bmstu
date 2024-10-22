@@ -14,8 +14,8 @@ namespace code
         protected const int farDistance = 400;
         protected const int nearDistance = 100;
 
-        protected Vector3D startCameraDirection = new Vector3D(0, 0, -1);
-        protected Point3D startCameraPosition = new Point3D(85, -85, 300);
+        protected Vector3D startCameraDirection = new Vector3D(0, 0, 1);
+        protected Point3D startCameraPosition = new Point3D(83, 83, -300);
 
 
         protected Size viewPortSize;
@@ -156,6 +156,16 @@ namespace code
         public void Move(Move move)
         {
             cameras[currentCameraIndex].Move(move);
+        }
+
+        public void MoveForward(float d)
+        {
+            cameras[currentCameraIndex].MoveForward(d);
+        }
+
+        public void MoveBack(float d)
+        {
+            cameras[currentCameraIndex].MoveBack(d);
         }
 
         public void MoveRight(float d)

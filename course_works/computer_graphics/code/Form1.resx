@@ -305,7 +305,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAEZTeXN0ZW0uV2luZG93cy5Gb3JtcywgQ3VsdHVyZT1uZXV0cmFs
         LCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5BQEAAAAmU3lzdGVtLldpbmRvd3MuRm9ybXMu
         SW1hZ2VMaXN0U3RyZWFtZXIBAAAABERhdGEHAgIAAAAJAwAAAA8DAAAAqp0AAAJNU0Z0AUkBTAIBARIB
-        AAHIARwByAEcATABAAEwAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABwAMAAfADAAEBAQABIAYAAdAB
+        AAEoAR4BKAEeATABAAEwAQAE/wEhAQAI/wFCAU0BNgcAATYDAAEoAwABwAMAAfADAAEBAQABIAYAAdAB
         AhEA//+B//8AgQBc/wPnAf8DzgH/A8QB/wPIAf8D2gH/A/3//w7//wCBAEz/A6AB/wNQAf8DBAH/AwAB
         /wMAAf8DAAH/AwAB/wMAAf8DAAH/AwAB/wMAAf8DKgH/A3gB/wPZjf8DAAH/AwAB/wMAAf8DAAH/AwAB
         /wMAAf8DAAH/AwAB/wMAAf8DAAH/AwAB/wOXQf//AIEAQP8DzQH/AzkB/wMAAf8DAAH/AwAB/wMAAf8D
@@ -978,6 +978,27 @@
         ////7/8BRgJHAf8BKwItAf8BKwItAf8BRgJH//////f/AwAB/wMA//////v/AYoCiwH/AYoCi///////
         /2D/AUIBTQE+BwABPgMAASgDAAHAAwAB8AMAAQEBAAEBBQABgAEWFgAD//8A/wD/AP8A/wD/AP8A/wD/
         AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AlwAL
+</value>
+  </data>
+  <data name="button_zoom_minus.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
+        cQAAEnEB89x6jgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAC+SURBVGhD7ZW5
+        DcUwDEOFTGN4iRxVZsgY2TydDRtQIP+j0gCUwQfQhdnwVRKdDAqhQyF0KIQOhdChEDoUQodC6FAIHQqh
+        QyF0/kL3feu2bbrvux7HESK21Tbb9h/Se1cRmSKtNZXzPN0yYobLsixuGTFfF78MHPczctzPuFnX1S8C
+        Zrg8z+OWETNc7BjVWvW6Lk0pac45VGyzbS+lfA7reCeCQuhQCB0KoUMhdCiEDoXQoRA6FEKHQuhQCBvV
+        F6u9a1lcbiS+AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="button_cameraForward.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
+        cQAAEnEB89x6jgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAD2SURBVGhD7Zgx
+        DoMwEAT9EPgvL6KAynzMuUPQrdYQXeFDO9KkuMTRDVWc0oKZ57mVUh45TdN1Ko7QoHVd4eJMPxNJaNC2
+        bXBppp+JREEMBZkK6qAghoJMBXVQEENBpoI6KIihIHPooForXJrpZyI5g/zW6E9q3/e/PY6jLcsCl2b6
+        GT+LvvOpvvt98y1v/gMY3asFv5lYOMwsHGYWDjMLh5mFw8zCYWbhMLNwmFk4zOvnfvp87sfp+RrEMNeH
+        KPxJoaWZfiYSBTEUZCqog4IYCjIV1EFBDAWZCuqgIIaCzKGD/NaIlmbeN80oQoOcN/9R+Gdjae0HS4y+
+        DmDaAFIAAAAASUVORK5CYII=
 </value>
   </data>
   <data name="button_cameraRightDown.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

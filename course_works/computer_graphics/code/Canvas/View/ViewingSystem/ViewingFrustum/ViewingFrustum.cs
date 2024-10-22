@@ -398,6 +398,18 @@ namespace code
             Update();
         }
 
+        public void MoveForward(float distance)
+        {
+            camera.MoveForward(distance);
+            Update();
+        }
+
+        public void MoveBack(float distance)
+        {
+            camera.MoveBack(distance);
+            Update();
+        }
+
         public void MoveRight(float d)
         { 
             camera.MoveRight(d);

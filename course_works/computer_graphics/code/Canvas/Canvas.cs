@@ -228,6 +228,16 @@ namespace code
             viewingSystem.Move( new Move(dX, dY, dZ) ); 
         }
 
+        public void MoveCameraForward(float d)
+        {
+            viewingSystem.MoveForward(d);
+        }
+
+        public void MoveCameraBack(float d)
+        {
+            viewingSystem.MoveBack(d);
+        }
+
         public void MoveCameraRight(float d)
         {
             viewingSystem.MoveRight(d);

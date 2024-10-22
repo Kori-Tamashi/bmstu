@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
+using Windows.Devices.Geolocation;
 
 namespace code
 {
@@ -101,6 +102,28 @@ namespace code
         public void Move(Move move)
         {
             code.Move.Transform(move, position);
+        }
+
+        public void MoveForward(float distance)
+        {
+            // Вычисляем новое положение, добавляя направление к текущей позиции
+            Point3D newPosition = new Point3D(
+                position.X + distance * direction.X,
+                position.Y + distance * direction.Y,
+                position.Z + distance * direction.Z
+            );
+
+            // Перемещаем камеру в новое положение
+            Move(new Move(
+                newPosition.X - position.X,
+                newPosition.Y - position.Y,
+                newPosition.Z - position.Z
+            ));
+        }
+
+        public void MoveBack(float distance)
+        {
+            MoveForward(-distance);
         }
 
         public void MoveRight(float d)
@@ -257,9 +280,6 @@ namespace code
             direction.Normalize();
             right.Normalize();
             up.Normalize();
-
-            //right.Turn(); 
-            up.Turn();
         }
 
         private float NormalizeYaw(float angle)

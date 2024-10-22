@@ -82,7 +82,7 @@ namespace code
             Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
             Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
 
-            if (viewingFrustumPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
+            if (viewingFrustumPoint.Z > zBufferModels[viewPortPoint.Y, viewPortPoint.X])
             {
                 zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;
                 colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _Color(Color.Black, intensity) : _Color(color, intensity);

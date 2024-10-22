@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.Windows.Forms.DataVisualization.Charting;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace code
 {
@@ -201,6 +202,22 @@ namespace code
 
         #region Camera
 
+        private void button_cameraForward_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraForwardMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+            );
+        }
+
+        private void button_cameraBack_Click(object sender, EventArgs e)
+        {
+            facade._execute(
+                new CameraBackMoveCommand(ref canvas, 15),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+            );
+        }
+
         private void button_cameraUp_Click(object sender, EventArgs e)
         {
             facade._execute(
@@ -357,6 +374,34 @@ namespace code
             }
         }
 
+        private void trackBar_yaw_ValueChanged(object sender, EventArgs e)
+        {
+            numericUpDown_yaw.Value = trackBar_yaw.Value;
+
+            facade._execute(new CameraYawCommand(ref canvas, trackBar_yaw.Value),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+                );
+        }
+
+        private void trackBar_pitch_ValueChanged(object sender, EventArgs e)
+        {
+            numericUpDown_pitch.Value = trackBar_pitch.Value;
+
+            facade._execute(new CameraPitchCommand(ref canvas, trackBar_pitch.Value),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
+                );
+        }
+
+        private void numericUpDown_yaw_ValueChanged(object sender, EventArgs e)
+        {
+            trackBar_yaw.Value = (int)numericUpDown_yaw.Value;
+        }
+
+        private void numericUpDown_pitch_ValueChanged(object sender, EventArgs e)
+        {
+            trackBar_pitch.Value = (int)numericUpDown_pitch.Value;
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -384,32 +429,14 @@ namespace code
 
         #endregion
 
-        private void trackBar_yaw_ValueChanged(object sender, EventArgs e)
+        private void label12_Click(object sender, EventArgs e)
         {
-            numericUpDown_yaw.Value = trackBar_yaw.Value;
 
-            facade._execute(new CameraYawCommand(ref canvas, trackBar_yaw.Value),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
-                );
         }
 
-        private void trackBar_pitch_ValueChanged(object sender, EventArgs e)
+        private void tableLayoutPanel5_Paint(object sender, PaintEventArgs e)
         {
-            numericUpDown_pitch.Value = trackBar_pitch.Value;
 
-            facade._execute(new CameraPitchCommand(ref canvas, trackBar_pitch.Value),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
-                );
-        }
-
-        private void numericUpDown_yaw_ValueChanged(object sender, EventArgs e)
-        {
-            trackBar_yaw.Value = (int)numericUpDown_yaw.Value;
-        }
-
-        private void numericUpDown_pitch_ValueChanged(object sender, EventArgs e)
-        {
-            trackBar_pitch.Value = (int)numericUpDown_pitch.Value;
         }
     }
 }

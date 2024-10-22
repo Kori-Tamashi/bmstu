@@ -32,7 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             InteractionMenu_tabControl = new TabControl();
             Main_tabPage = new TabPage();
-            button2 = new Button();
             Primitives_groupBox = new GroupBox();
             flowLayoutPanel1 = new FlowLayoutPanel();
             Cube_button = new Button();
@@ -53,6 +52,7 @@
             label10 = new Label();
             label11 = new Label();
             groupBox6 = new GroupBox();
+            button2 = new Button();
             button5 = new Button();
             button_Clear = new Button();
             button_dialogEdit = new Button();
@@ -89,6 +89,8 @@
             checkedListBox_renderMode = new CheckedListBox();
             listView1 = new ListView();
             groupBox7 = new GroupBox();
+            button_zoom_minus = new Button();
+            button_cameraForward = new Button();
             tableLayoutPanel4 = new TableLayoutPanel();
             button_cameraRightDown = new Button();
             button_cameraDown = new Button();
@@ -170,8 +172,8 @@
             // 
             // Main_tabPage
             // 
-            Main_tabPage.BackColor = Color.Transparent;
-            Main_tabPage.Controls.Add(button2);
+            Main_tabPage.BackColor = Color.White;
+            Main_tabPage.BorderStyle = BorderStyle.FixedSingle;
             Main_tabPage.Controls.Add(Primitives_groupBox);
             Main_tabPage.Controls.Add(listView_modelsMain);
             Main_tabPage.Controls.Add(groupBox5);
@@ -185,16 +187,6 @@
             Main_tabPage.Size = new Size(1473, 220);
             Main_tabPage.TabIndex = 0;
             Main_tabPage.Text = "Главная";
-            // 
-            // button2
-            // 
-            button2.Location = new Point(680, 98);
-            button2.Name = "button2";
-            button2.Size = new Size(94, 29);
-            button2.TabIndex = 10;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
             // 
             // Primitives_groupBox
             // 
@@ -333,7 +325,7 @@
             groupBox5.Controls.Add(button_scaleModel);
             groupBox5.Controls.Add(tableLayoutPanel3);
             groupBox5.Font = new Font("Segoe UI", 10F);
-            groupBox5.Location = new Point(1269, 12);
+            groupBox5.Location = new Point(1268, 11);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(196, 181);
             groupBox5.TabIndex = 7;
@@ -442,16 +434,27 @@
             // groupBox6
             // 
             groupBox6.Anchor = AnchorStyles.None;
+            groupBox6.Controls.Add(button2);
             groupBox6.Controls.Add(button5);
             groupBox6.Controls.Add(button_Clear);
             groupBox6.Controls.Add(button_dialogEdit);
             groupBox6.Font = new Font("Segoe UI", 10F);
-            groupBox6.Location = new Point(347, 3);
+            groupBox6.Location = new Point(346, 2);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(261, 214);
+            groupBox6.Size = new Size(259, 214);
             groupBox6.TabIndex = 8;
             groupBox6.TabStop = false;
             groupBox6.Text = "Действия";
+            // 
+            // button2
+            // 
+            button2.Location = new Point(68, 151);
+            button2.Name = "button2";
+            button2.Size = new Size(94, 29);
+            button2.TabIndex = 10;
+            button2.Text = "button2";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // button5
             // 
@@ -489,7 +492,7 @@
             groupBox4.Controls.Add(button_rotateModel);
             groupBox4.Controls.Add(tableLayoutPanel7);
             groupBox4.Font = new Font("Segoe UI", 10F);
-            groupBox4.Location = new Point(1067, 12);
+            groupBox4.Location = new Point(1066, 11);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(196, 180);
             groupBox4.TabIndex = 6;
@@ -601,7 +604,7 @@
             groupBox3.Controls.Add(button_moveModel);
             groupBox3.Controls.Add(tableLayoutPanel2);
             groupBox3.Font = new Font("Segoe UI", 10F);
-            groupBox3.Location = new Point(865, 12);
+            groupBox3.Location = new Point(864, 11);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(196, 181);
             groupBox3.TabIndex = 5;
@@ -709,6 +712,8 @@
             // 
             // View_tabPage
             // 
+            View_tabPage.BackColor = Color.White;
+            View_tabPage.BorderStyle = BorderStyle.FixedSingle;
             View_tabPage.Controls.Add(groupBox11);
             View_tabPage.Controls.Add(groupBox10);
             View_tabPage.Controls.Add(groupBox8);
@@ -722,7 +727,6 @@
             View_tabPage.Size = new Size(1473, 220);
             View_tabPage.TabIndex = 1;
             View_tabPage.Text = "Вид";
-            View_tabPage.UseVisualStyleBackColor = true;
             // 
             // groupBox11
             // 
@@ -731,7 +735,7 @@
             groupBox11.Controls.Add(label_pitchMin);
             groupBox11.Controls.Add(trackBar_pitch);
             groupBox11.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            groupBox11.Location = new Point(223, 108);
+            groupBox11.Location = new Point(295, 107);
             groupBox11.Name = "groupBox11";
             groupBox11.Size = new Size(269, 97);
             groupBox11.TabIndex = 14;
@@ -787,7 +791,7 @@
             groupBox10.Controls.Add(label_yawMin);
             groupBox10.Controls.Add(trackBar_yaw);
             groupBox10.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            groupBox10.Location = new Point(223, 1);
+            groupBox10.Location = new Point(295, 0);
             groupBox10.Name = "groupBox10";
             groupBox10.Size = new Size(269, 101);
             groupBox10.TabIndex = 10;
@@ -840,9 +844,9 @@
             // 
             groupBox8.Controls.Add(checkedListBox_renderMode);
             groupBox8.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            groupBox8.Location = new Point(1129, 6);
+            groupBox8.Location = new Point(570, 0);
             groupBox8.Name = "groupBox8";
-            groupBox8.Size = new Size(287, 132);
+            groupBox8.Size = new Size(287, 204);
             groupBox8.TabIndex = 12;
             groupBox8.TabStop = false;
             groupBox8.Text = "Изображение";
@@ -863,26 +867,55 @@
             // 
             // listView1
             // 
-            listView1.Location = new Point(742, 6);
+            listView1.Location = new Point(863, 9);
             listView1.Name = "listView1";
-            listView1.Size = new Size(261, 204);
+            listView1.Size = new Size(140, 195);
             listView1.TabIndex = 11;
             listView1.UseCompatibleStateImageBehavior = false;
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(button_zoom_minus);
+            groupBox7.Controls.Add(button_cameraForward);
             groupBox7.Controls.Add(tableLayoutPanel4);
             groupBox7.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
             groupBox7.Location = new Point(6, 0);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(211, 204);
+            groupBox7.Size = new Size(283, 204);
             groupBox7.TabIndex = 3;
             groupBox7.TabStop = false;
             groupBox7.Text = "Перемещение камеры";
             // 
+            // button_zoom_minus
+            // 
+            button_zoom_minus.BackgroundImage = (Image)resources.GetObject("button_zoom_minus.BackgroundImage");
+            button_zoom_minus.BackgroundImageLayout = ImageLayout.Stretch;
+            button_zoom_minus.ImageAlign = ContentAlignment.TopRight;
+            button_zoom_minus.ImageKey = "(нет)";
+            button_zoom_minus.ImageList = imageList;
+            button_zoom_minus.Location = new Point(211, 113);
+            button_zoom_minus.Name = "button_zoom_minus";
+            button_zoom_minus.Size = new Size(54, 51);
+            button_zoom_minus.TabIndex = 7;
+            button_zoom_minus.UseVisualStyleBackColor = true;
+            button_zoom_minus.Click += button_cameraBack_Click;
+            // 
+            // button_cameraForward
+            // 
+            button_cameraForward.BackgroundImage = (Image)resources.GetObject("button_cameraForward.BackgroundImage");
+            button_cameraForward.BackgroundImageLayout = ImageLayout.Stretch;
+            button_cameraForward.ImageAlign = ContentAlignment.TopRight;
+            button_cameraForward.ImageKey = "(нет)";
+            button_cameraForward.ImageList = imageList;
+            button_cameraForward.Location = new Point(211, 56);
+            button_cameraForward.Name = "button_cameraForward";
+            button_cameraForward.Size = new Size(54, 51);
+            button_cameraForward.TabIndex = 6;
+            button_cameraForward.UseVisualStyleBackColor = true;
+            button_cameraForward.Click += button_cameraForward_Click;
+            // 
             // tableLayoutPanel4
             // 
-            tableLayoutPanel4.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             tableLayoutPanel4.ColumnCount = 3;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
@@ -911,7 +944,7 @@
             button_cameraRightDown.ImageAlign = ContentAlignment.BottomRight;
             button_cameraRightDown.ImageKey = "(нет)";
             button_cameraRightDown.ImageList = imageList;
-            button_cameraRightDown.Location = new Point(122, 120);
+            button_cameraRightDown.Location = new Point(123, 119);
             button_cameraRightDown.Name = "button_cameraRightDown";
             button_cameraRightDown.Size = new Size(54, 51);
             button_cameraRightDown.TabIndex = 11;
@@ -925,7 +958,7 @@
             button_cameraDown.ImageAlign = ContentAlignment.BottomCenter;
             button_cameraDown.ImageKey = "(нет)";
             button_cameraDown.ImageList = imageList;
-            button_cameraDown.Location = new Point(63, 120);
+            button_cameraDown.Location = new Point(63, 119);
             button_cameraDown.Name = "button_cameraDown";
             button_cameraDown.Size = new Size(52, 51);
             button_cameraDown.TabIndex = 10;
@@ -939,7 +972,7 @@
             button_cameraLeftDown.ImageAlign = ContentAlignment.BottomLeft;
             button_cameraLeftDown.ImageKey = "(нет)";
             button_cameraLeftDown.ImageList = imageList;
-            button_cameraLeftDown.Location = new Point(4, 120);
+            button_cameraLeftDown.Location = new Point(3, 119);
             button_cameraLeftDown.Name = "button_cameraLeftDown";
             button_cameraLeftDown.Size = new Size(52, 51);
             button_cameraLeftDown.TabIndex = 9;
@@ -953,7 +986,7 @@
             button_cameraRight.ImageAlign = ContentAlignment.MiddleRight;
             button_cameraRight.ImageKey = "(нет)";
             button_cameraRight.ImageList = imageList;
-            button_cameraRight.Location = new Point(122, 62);
+            button_cameraRight.Location = new Point(123, 61);
             button_cameraRight.Name = "button_cameraRight";
             button_cameraRight.Size = new Size(54, 51);
             button_cameraRight.TabIndex = 8;
@@ -967,7 +1000,7 @@
             button_cameraLeft.ImageAlign = ContentAlignment.MiddleLeft;
             button_cameraLeft.ImageKey = "(нет)";
             button_cameraLeft.ImageList = imageList;
-            button_cameraLeft.Location = new Point(4, 62);
+            button_cameraLeft.Location = new Point(3, 61);
             button_cameraLeft.Name = "button_cameraLeft";
             button_cameraLeft.Size = new Size(52, 51);
             button_cameraLeft.TabIndex = 6;
@@ -981,7 +1014,7 @@
             button_cameraRightUp.ImageAlign = ContentAlignment.TopRight;
             button_cameraRightUp.ImageKey = "(нет)";
             button_cameraRightUp.ImageList = imageList;
-            button_cameraRightUp.Location = new Point(122, 4);
+            button_cameraRightUp.Location = new Point(123, 3);
             button_cameraRightUp.Name = "button_cameraRightUp";
             button_cameraRightUp.Size = new Size(54, 51);
             button_cameraRightUp.TabIndex = 5;
@@ -995,7 +1028,7 @@
             button_cameraUp.ImageAlign = ContentAlignment.TopCenter;
             button_cameraUp.ImageKey = "(нет)";
             button_cameraUp.ImageList = imageList;
-            button_cameraUp.Location = new Point(63, 4);
+            button_cameraUp.Location = new Point(63, 3);
             button_cameraUp.Name = "button_cameraUp";
             button_cameraUp.Size = new Size(52, 51);
             button_cameraUp.TabIndex = 4;
@@ -1010,7 +1043,7 @@
             button_cameraLeftUp.BackgroundImageLayout = ImageLayout.Stretch;
             button_cameraLeftUp.ImageAlign = ContentAlignment.TopLeft;
             button_cameraLeftUp.ImageList = imageList;
-            button_cameraLeftUp.Location = new Point(4, 4);
+            button_cameraLeftUp.Location = new Point(4, 3);
             button_cameraLeftUp.Name = "button_cameraLeftUp";
             button_cameraLeftUp.Size = new Size(52, 51);
             button_cameraLeftUp.TabIndex = 3;
@@ -1163,7 +1196,7 @@
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.Inherit;
-            ClientSize = new Size(1853, 830);
+            ClientSize = new Size(1796, 830);
             Controls.Add(panel1);
             Controls.Add(InteractionMenu_tabControl);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -1308,6 +1341,8 @@
         private TrackBar trackBar_pitch;
         private NumericUpDown numericUpDown_pitch;
         private NumericUpDown numericUpDown_yaw;
+        private Button button_zoom_minus;
+        private Button button_cameraForward;
     }
 }
 
