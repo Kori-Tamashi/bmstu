@@ -7,25 +7,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using WinRT;
 
 namespace code
 {
     partial class DialogEdit : Form
     {
+        PictureBox mainPicture;
         Canvas mainCanvas;
-        Canvas selfCanvas;
 
         Model currentMainModel;
         Model currentSelfModel;
         int currentModelIndex;
 
-        public DialogEdit(ref Canvas mainCanvas)
+        RenderMode renderMode;
+
+        public DialogEdit(ref Canvas mainCanvas, ref PictureBox mainPicture, RenderMode renderMode)
         {
+            this.renderMode = renderMode;
             this.mainCanvas = mainCanvas;
+            this.mainPicture = mainPicture;
 
             InitializeComponent();
-            InitializeCanvas();
             InitializeListModels();
         }
 
@@ -35,11 +39,6 @@ namespace code
         }
 
         #region Initialize
-
-        private void InitializeCanvas()
-        {
-            selfCanvas = new Canvas(new Size(pictureBox_editModel.Width, pictureBox_editModel.Height), pictureBox_editModel.CreateGraphics());
-        }
 
         private void InitializeListModels()
         {
@@ -74,24 +73,28 @@ namespace code
                 currentSelfModel = currentMainModel.Copy();
 
                 UpdateInformationTable(currentMainModel);
-                UpdateCanvas(currentSelfModel);
             }
         }
 
-        private void UpdateCanvas(Model model)
+        private void MainCanvasRender()
         {
-            selfCanvas.DeleteModels();
-            selfCanvas.AddModel(currentSelfModel);
-            selfCanvas.Centering(new Centering(currentSelfModel, selfCanvas.Center, selfCanvas.Size));
-            selfCanvas.Refresh();
+            if (renderMode != RenderMode.CarcassDisplay)
+            {
+                mainCanvas.Render(renderMode);
+                mainCanvas.UpdateImage(ref mainPicture);
+                mainPicture.Refresh();
+            }
+            else
+            {
+                mainCanvas.GraphicsClear();
+                mainCanvas.Render(renderMode);
+            }
         }
 
         private void UpdateInformationTable(Model model)
         {
             UpdateInformationTableSizes(model);
             UpdateInformationTableColor(model);
-            UpdateInfromationTableMaterial(model);
-            UpdateInformationTableCharacteristics(model);
         }
 
         private void UpdateInformationTableSizes(Model model)
@@ -107,14 +110,6 @@ namespace code
             // height
             numericUpDown_height.Value = model.Height != -1 ? (decimal)model.Height : (decimal)0;
             numericUpDown_height.Enabled = model.Height != -1;
-
-            // angle
-            numericUpDown_angle.Value = model.Angle != -1 ? (decimal)model.Angle : (decimal)0;
-            numericUpDown_angle.Enabled = model.Angle != -1;
-
-            // radius
-            numericUpDown_radius.Value = model.Radius != -1 ? (decimal)model.Radius : (decimal)0;
-            numericUpDown_radius.Enabled = model.Radius != -1;
         }
 
         private void UpdateInformationTableColor(Model model)
@@ -132,70 +127,13 @@ namespace code
             }
         }
 
-        private void UpdateInfromationTableMaterial(Model model)
-        {
-            // material
-            switch (model.MaterialType)
-            {
-                case MaterialType.None:
-                    button_material.BackColor = Color.Empty;
-                    button_material.Text = "<без материала>";
-                    break;
-                case MaterialType.Wood:
-                    button_material.BackColor = Color.BurlyWood;
-                    button_material.Text = "Дерево";
-                    break;
-                case MaterialType.Stone:
-                    button_material.BackColor = Color.DarkGray;
-                    button_material.Text = "Камень";
-                    break;
-                case MaterialType.Metal:
-                    button_material.BackColor = Color.Blue;
-                    button_material.Text = "Метал";
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void UpdateInformationTableCharacteristics(Model model)
-        {
-            // type
-            switch (model.Type)
-            {
-                case Modeltype.Cube:
-                    textBox_modelType.Text = "Куб";
-                    break;
-                case Modeltype.DirectPrism:
-                    textBox_modelType.Text = "Прямая призма";
-                    break;
-                case Modeltype.InclinedPrism:
-                    textBox_modelType.Text = "Наклонная призма";
-                    break;
-                case Modeltype.Pyramid:
-                    textBox_modelType.Text = "Пирамида";
-                    break;
-                case Modeltype.TruncatedPyramid:
-                    textBox_modelType.Text = "Усеченная пирамида";
-                    break;
-                case Modeltype.Icosahedron:
-                    textBox_modelType.Text = "Икосаэдр";
-                    break;
-                default:
-                    break;
-            }
-
-            //name
-            textBox_name.Text = model.Name;
-        }
-
         #endregion
 
         #region Buttons
 
         private void buttonColor_Click(object sender, EventArgs e)
         {
-            contextMenuStrip_buttonColor.Show(Cursor.Position);
+            contextMenuStrip_buttonColor.Show(System.Windows.Forms.Cursor.Position);
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
@@ -209,31 +147,6 @@ namespace code
             ChangeColorEvent(colorDialog1.Color);
         }
 
-        private void button_material_Click(object sender, EventArgs e)
-        {
-            contextMenuStrip_buttonMaterial.Show(Cursor.Position);
-        }
-
-        private void toolStripMenuItem_resetMaterial_Click(object sender, EventArgs e)
-        {
-            ChangeMaterialEvent(new Material());
-        }
-
-        private void Wood_Click(object sender, EventArgs e)
-        {
-            ChangeMaterialEvent(new Wood());
-        }
-
-        private void Stone_Click(object sender, EventArgs e)
-        {
-            ChangeMaterialEvent(new Stone());
-        }
-
-        private void Metal_Click(object sender, EventArgs e)
-        {
-            ChangeMaterialEvent(new Metal());
-        }
-
         private void ChangeColorEvent(Color newColor)
         {
             currentSelfModel.Color = newColor;
@@ -241,27 +154,6 @@ namespace code
             UpdateInformationTableColor(currentSelfModel);
 
             mainCanvas.Refresh();
-            selfCanvas.Refresh();
-        }
-
-        private void ChangeMaterialEvent(MaterialType newMaterialType)
-        {
-            currentSelfModel.MaterialType = newMaterialType;
-            mainCanvas.Model(currentModelIndex).MaterialType = newMaterialType;
-            UpdateInfromationTableMaterial(currentSelfModel);
-
-            mainCanvas.Refresh();
-            selfCanvas.Refresh();
-        }
-
-        private void ChangeMaterialEvent(Material material)
-        {
-            currentSelfModel.Material = material;
-            mainCanvas.Model(currentModelIndex).Material = material;
-            UpdateInfromationTableMaterial(currentSelfModel);
-
-            mainCanvas.Refresh();
-            selfCanvas.Refresh();
         }
 
         #endregion
@@ -309,11 +201,8 @@ namespace code
             currentSelfModel.Length *= newLength / modelLength;
             currentMainModel.Length = newLength;
 
-            selfCanvas.Centering();
             UpdateInformationTableSizes(currentMainModel);
-
-            mainCanvas.Refresh();
-            selfCanvas.Refresh();
+            MainCanvasRender();
         }
 
         private void numericUpDown_width_ValueChanged(object sender, EventArgs e)
@@ -327,11 +216,8 @@ namespace code
             currentSelfModel.Width *= newWidth / modelWidth;
             currentMainModel.Width = newWidth;
 
-            selfCanvas.Centering();
             UpdateInformationTableSizes(currentMainModel);
-
-            mainCanvas.Refresh();
-            selfCanvas.Refresh();
+            MainCanvasRender();
         }
 
         private void numericUpDown_height_ValueChanged(object sender, EventArgs e)
@@ -345,50 +231,16 @@ namespace code
             currentSelfModel.Height *= newHeight / modelHeight;
             currentMainModel.Height = newHeight;
 
-            selfCanvas.Centering();
             UpdateInformationTableSizes(currentMainModel);
-
-            mainCanvas.Refresh();
-            selfCanvas.Refresh();
-        }
-
-        private void numericUpDown_radius_ValueChanged(object sender, EventArgs e)
-        {
-            if (currentMainModel.Radius == -1)
-                return;
-
-            float newRadius = (float)numericUpDown_radius.Value;
-            float modelRadius = currentMainModel.Radius;
-
-            currentSelfModel.Radius *= newRadius / modelRadius;
-            currentMainModel.Radius = newRadius;
-
-            selfCanvas.Centering();
-            UpdateInformationTableSizes(currentMainModel);
-
-            mainCanvas.Refresh();
-            selfCanvas.Refresh();
-        }
-
-        private void numericUpDown_angle_ValueChanged(object sender, EventArgs e)
-        {
-            if (currentMainModel.Angle == -1)
-                return;
-
-            float newAngle = (float)numericUpDown_angle.Value;
-            float modelAngle = currentMainModel.Angle;
-
-            currentSelfModel.Angle = newAngle;
-            currentMainModel.Angle = newAngle;
-
-            selfCanvas.Centering();
-            UpdateInformationTableSizes(currentMainModel);
-
-            mainCanvas.Refresh();
-            selfCanvas.Refresh();
+            MainCanvasRender();
         }
 
         private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
         }

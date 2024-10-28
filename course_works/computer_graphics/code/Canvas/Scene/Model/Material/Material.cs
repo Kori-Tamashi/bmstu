@@ -9,6 +9,8 @@ namespace code
     class Material
     {
         protected MaterialType type;
+
+        // Solid Shading Coeffs
         public float I_a; // интенсивность рассеянного источника
         public float k_a; // коэффииент диффузного отражения рассеянного источника
         public float k_d; // коэффициент диффузного отражения
@@ -16,7 +18,10 @@ namespace code
         public float K; // произвольная постоянная
         public int n; // степень аппрокисмации зеркально отраженного света
         public int d; // приоритет освещения
-        // I_l - интенсивность точечного источника
+
+        // Phong Shading Coeffs
+        public float a = 56; // коэффициент блеска
+        public float k_m = 4; // коэффициент зеркального отражения
 
         public Material()
         {

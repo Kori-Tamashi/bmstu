@@ -3,29 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class ViewingFrustum_ParallelShadows : ViewingFrustum_Shadows
+    class ViewingFrustum_ParallelPhongShading : ViewingFrustum_PhongShading
     {
-        public ViewingFrustum_ParallelShadows(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance,
+        public ViewingFrustum_ParallelPhongShading(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance,
             Camera camera) : base(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera) { }
 
-        public new void ProcessingShadows(Scene scene)
+        public new void ProcessingShading(Scene scene)
         {
             Processing(scene);
         }
 
-        public new void ProcessingShadows(List<Model> models, Light light)
+        public new void ProcessingShading(List<Model> models, Light light)
         {
             Processing(models, light);
+        }
+
+        public new void ProcessingShading(Model model, Light light)
+        {
+            Processing(model, light);
         }
 
         public new void Processing(Scene scene)
         {
             ClearView();
-            ProcessShadows(scene.Models, scene.CurrentLight);
             ProcessModels(scene.Models, scene.CurrentLight);
             ProcessBitmap();
         }
@@ -33,8 +36,14 @@ namespace code
         public new void Processing(List<Model> models, Light light)
         {
             ClearView();
-            ProcessShadows(models, light);
             ProcessModels(models, light);
+            ProcessBitmap();
+        }
+
+        public new void Processing(Model model, Light light)
+        {
+            ClearView();
+            ProcessModel(model, light);
             ProcessBitmap();
         }
 
@@ -56,23 +65,13 @@ namespace code
             });
         }
 
-        //protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
-        //{
-        //    float intensity = GetIntensity(polygon, material, light);
-
-        //    Parallel.ForEach(polygon.InsidePoints, point =>
-        //    {
-        //        ProcessPoint__(point, color, intensity);
-        //    });
-        //}
-
         protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
         {
             Vector3D polygonNormal = polygon.Normal();
 
             Parallel.ForEach(polygon.InsidePoints, point =>
             {
-                ProcessPoint__(point, color, material, polygonNormal, light);
+                ProcessPoint(point, color, material, polygonNormal, light);
             });
         }
     }

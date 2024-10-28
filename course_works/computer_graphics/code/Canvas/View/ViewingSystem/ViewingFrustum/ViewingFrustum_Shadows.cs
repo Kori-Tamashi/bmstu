@@ -7,7 +7,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace code
 {
-    class ViewingFrustum_Shadows : ViewingFrustum_ParallelSolidShading
+    class ViewingFrustum_Shadows : ViewingFrustum_ParallelPhongShading
     {
         ViewingFrustum_ParallelZBuffer shadowsCamera;
 
@@ -78,13 +78,23 @@ namespace code
             }
         }
 
+        //protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
+        //{
+        //    float intensity = GetIntensity(polygon, material, light);
+
+        //    foreach (Point3D point in polygon.InsidePoints)
+        //    {
+        //        ProcessPoint__(point, color, intensity);
+        //    }
+        //}
+
         protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
         {
-            float intensity = GetIntensity(polygon, material, light);
+            Vector3D polygonNormal = polygon.Normal();
 
             foreach (Point3D point in polygon.InsidePoints)
             {
-                ProcessPoint__(point, color, intensity);
+                ProcessPoint__(point, color, material, polygonNormal, light);
             }
         }
 
@@ -113,7 +123,7 @@ namespace code
             }
         }
 
-        protected void ProcessPoint__(Point3D worldPoint, Color color, float intensity)
+        protected void ProcessPoint__(Point3D worldPoint, Color color, Material material, Vector3D polygonNormal, Light light)
         {
             // DON'T. TOUCH. THIS.
 
@@ -122,6 +132,7 @@ namespace code
 
             if (viewingFrustumPoint.Z > zBufferModels[viewPortPoint.Y, viewPortPoint.X])
             {
+                float intensity = GetIntensity(worldPoint, polygonNormal, material, light);
                 Point3D lightViewPoint = shadowsCamera.ViewingFrustumPoint(worldPoint);
                 Point lightViewPortPoint = shadowsCamera.ViewPortPointByViewingFrustumPoint(lightViewPoint);
 

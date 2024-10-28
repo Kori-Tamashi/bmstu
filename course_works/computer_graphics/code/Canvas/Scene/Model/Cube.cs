@@ -76,12 +76,12 @@ namespace code
         protected override void ConstructPolygons(List<Point3D> points)
         {
             polygons = new List<Polygon> {
-                new Polygon(points[0], points[1], points[5], points[4]),
-                new Polygon(points[3], points[2], points[6], points[7]),
-                new Polygon(points[0], points[1], points[2], points[3]),
-                new Polygon(points[1], points[5], points[6], points[2]),
-                new Polygon(points[5], points[4], points[7], points[6]),
-                new Polygon(points[4], points[0], points[3], points[7])
+                new Polygon(points[0], points[1], points[5], points[4]), // top
+                new Polygon(points[3], points[2], points[6], points[7]), // bottom
+                new Polygon(points[0], points[1], points[2], points[3]), // back
+                new Polygon(points[1], points[5], points[6], points[2]), // right
+                new Polygon(points[5], points[4], points[7], points[6]), // front
+                new Polygon(points[4], points[0], points[3], points[7])  // left
             };
         }
 

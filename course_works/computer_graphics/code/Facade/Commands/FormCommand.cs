@@ -67,17 +67,21 @@ namespace code
 
     class DialogEditShowCommand : FormCommand 
     {
+        protected PictureBox pictureBox;
+        protected RenderMode renderMode;
         protected Canvas mainCanvas;
 
-        public DialogEditShowCommand(ref Canvas mainCanvas) 
+        public DialogEditShowCommand(ref Canvas mainCanvas, ref PictureBox pictureBox, RenderMode renderMode) 
         { 
             this.mainCanvas = mainCanvas;
+            this.pictureBox = pictureBox;
+            this.renderMode = renderMode;
         }
 
         public override void _execute()
         {
-            DialogEdit dialogEdit = new DialogEdit(ref mainCanvas);
-            dialogEdit.Show();
+            DialogEdit dialogEdit = new DialogEdit(ref mainCanvas, ref pictureBox, renderMode);
+            dialogEdit.ShowDialog();
         }
     }
 

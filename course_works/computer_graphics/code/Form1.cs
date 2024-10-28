@@ -9,8 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using System.Windows.Forms.DataVisualization.Charting;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+/*
+ * Модель освещения Фонга
+ * Загрузка для теней
+ * Изменение количества вершин в основании
+ * Изменение радиусов оснований
+ * Устанока источника света на сцену
+ */
 
 namespace code
 {
@@ -121,7 +126,7 @@ namespace code
 
         private void button_dialogEdit_Click(object sender, EventArgs e)
         {
-            facade._execute(new DialogEditShowCommand(ref canvas));
+            facade._execute(new DialogEditShowCommand(ref canvas, ref picture, GetCurrentRenderMode()));
         }
 
         private void button_Clear_Click(object sender, EventArgs e)
@@ -175,25 +180,6 @@ namespace code
 
             facade._execute(
                 new RotateModelCommand(ref canvas, ref rotate, currentIndex),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
-            );
-        }
-
-        private void button_scaleModel_Click(object sender, EventArgs e)
-        {
-            int currentIndex = GetCurrentModelIndex();
-
-            if (currentIndex == -1)
-                return;
-
-            Scale scale = new Scale(
-                (float)numericUpDown_scaleX.Value,
-                (float)numericUpDown_scaleY.Value,
-                (float)numericUpDown_scaleZ.Value
-            );
-
-            facade._execute(
-                new ScaleModelCommand(ref canvas, ref scale, currentIndex),
                 new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode())
             );
         }
