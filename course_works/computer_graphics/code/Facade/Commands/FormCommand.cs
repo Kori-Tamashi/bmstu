@@ -38,9 +38,19 @@ namespace code
 
         public override void _execute()
         {
-            ListViewGroup listViewGroup = new ListViewGroup();
-            listViewGroup.Header = "Модели";
+            ListViewGroup listViewGroup;
 
+            if (listView.Groups.Count == 0)
+            {
+                listViewGroup = new ListViewGroup();
+                listViewGroup.Header = "Модели";
+                listView.Groups.Add(listViewGroup);
+            }
+            else
+            {
+                listViewGroup = listView.Groups[0];
+            }
+                
             ListViewItem item = new ListViewItem(model.Name, listViewGroup);
             item.ImageIndex = ModelType.ModelImageIndex(model.Type);
 

@@ -112,7 +112,7 @@ namespace code
             Vector3D V = new Vector3D(point, light.Position).NormalizedCopy(); // вектор от точки до источнкиа света
 
             float I_o = light.Intensity; // интенсивность источника света
-            float I_p = I_o / 7;         // интенсивность рассеянного освещения
+            float I_p = I_o / 10;         // интенсивность рассеянного освещения
             float K_p = 1;               // коэффициент рассеянного освещения
             float K_d = material.k_d;    // коэффициент диффузного освещения
             float K_m = material.k_m;    // коэффициент зеркального освещения
@@ -123,7 +123,7 @@ namespace code
 
             float intensity = (I_p * K_p) + (float)(I_o * K_d * Math.Cos(angleLN)) + (float)(I_o * K_m * Math.Pow(Math.Cos(angleRV), a));
 
-            return Math.Abs(intensity);
+            return Math.Clamp(intensity, 0, 255);
         }
     }
 }

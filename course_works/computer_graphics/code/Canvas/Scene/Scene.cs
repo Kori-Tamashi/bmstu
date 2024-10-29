@@ -81,6 +81,24 @@ namespace code
             set { size = value; }
         }
 
+        public float LightIntensity
+        {
+            get { return lightSystem.LightIntensity; }
+            set { lightSystem.LightIntensity = value; }
+        }
+
+        public Vector3D LightDirection
+        {
+            get { return lightSystem.LightDirection; }
+            set { lightSystem.LightDirection = value; }
+        }
+
+        public Point3D LightPosition
+        {
+            get { return lightSystem.LightPosition; }
+            set { lightSystem.LightPosition = value; }
+        }
+
         #endregion
 
         #region Draw
@@ -188,6 +206,11 @@ namespace code
             {
                 model.Centering(center, size);
             }
+        }
+
+        public void MoveLight(Move move)
+        {
+            lightSystem.MoveLight(move);
         }
 
         #endregion

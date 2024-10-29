@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using WinRT;
 
 namespace code
 {
@@ -22,6 +21,7 @@ namespace code
         int currentModelIndex;
 
         RenderMode renderMode;
+        bool modelInitialized = false;
 
         public DialogEdit(ref Canvas mainCanvas, ref PictureBox mainPicture, RenderMode renderMode)
         {
@@ -72,7 +72,9 @@ namespace code
                 currentMainModel = mainCanvas.Model(currentModelIndex);
                 currentSelfModel = currentMainModel.Copy();
 
+                modelInitialized = false;
                 UpdateInformationTable(currentMainModel);
+                modelInitialized = true;
             }
         }
 
@@ -95,6 +97,8 @@ namespace code
         {
             UpdateInformationTableSizes(model);
             UpdateInformationTableColor(model);
+            UpdateInformationTableMaterial(model);
+            UpdateInformationTableName(model);
         }
 
         private void UpdateInformationTableSizes(Model model)
@@ -127,33 +131,74 @@ namespace code
             }
         }
 
+        private void UpdateInformationTableMaterial(Model model)
+        {
+            numericUpDown_material_k_d.Value = (decimal)model.Material.k_d;
+            numericUpDown_material_k_m.Value = (decimal)model.Material.k_m;
+            numericUpDown_material_a.Value = (decimal)model.Material.a;
+        }
+
+        private void UpdateInformationTableName(Model model)
+        {
+            textBox_name.Text = model.Name;
+        }
+
         #endregion
 
         #region Buttons
 
         private void buttonColor_Click(object sender, EventArgs e)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
             contextMenuStrip_buttonColor.Show(System.Windows.Forms.Cursor.Position);
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+            }
+
             ChangeColorEvent(Color.Empty);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
             colorDialog1.ShowDialog();
             ChangeColorEvent(colorDialog1.Color);
         }
 
         private void ChangeColorEvent(Color newColor)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
             currentSelfModel.Color = newColor;
             mainCanvas.Model(currentModelIndex).Color = newColor;
+
             UpdateInformationTableColor(currentSelfModel);
 
-            mainCanvas.Refresh();
+            if (modelInitialized)
+                MainCanvasRender();
         }
 
         #endregion
@@ -185,6 +230,13 @@ namespace code
 
         private void textBox_name_TextChanged(object sender, EventArgs e)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
             currentSelfModel.Name = textBox_name.Text;
             mainCanvas.Model(currentModelIndex).Name = textBox_name.Text;
             listView_models.SelectedItems[0].Text = textBox_name.Text;
@@ -192,6 +244,13 @@ namespace code
 
         private void numericUpDown_length_ValueChanged(object sender, EventArgs e)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
             if (currentMainModel.Length == -1)
                 return;
 
@@ -202,11 +261,20 @@ namespace code
             currentMainModel.Length = newLength;
 
             UpdateInformationTableSizes(currentMainModel);
-            MainCanvasRender();
+
+            if (modelInitialized)
+                MainCanvasRender();
         }
 
         private void numericUpDown_width_ValueChanged(object sender, EventArgs e)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
             if (currentMainModel.Width == -1)
                 return;
 
@@ -217,11 +285,20 @@ namespace code
             currentMainModel.Width = newWidth;
 
             UpdateInformationTableSizes(currentMainModel);
-            MainCanvasRender();
+
+            if (modelInitialized)
+                MainCanvasRender();
         }
 
         private void numericUpDown_height_ValueChanged(object sender, EventArgs e)
         {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
             if (currentMainModel.Height == -1)
                 return;
 
@@ -232,7 +309,9 @@ namespace code
             currentMainModel.Height = newHeight;
 
             UpdateInformationTableSizes(currentMainModel);
-            MainCanvasRender();
+
+            if (modelInitialized)
+                MainCanvasRender();
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -243,6 +322,54 @@ namespace code
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void numericUpDown_material_k_d_ValueChanged(object sender, EventArgs e)
+        {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
+            currentSelfModel.Material.k_d = (float)numericUpDown_material_k_d.Value;
+            currentMainModel.Material.k_d = (float)numericUpDown_material_k_d.Value;
+
+            if (modelInitialized)
+                MainCanvasRender();
+        }
+
+        private void numericUpDown_material_a_ValueChanged(object sender, EventArgs e)
+        {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
+            currentSelfModel.Material.a = (float)numericUpDown_material_a.Value;
+            currentMainModel.Material.a = (float)numericUpDown_material_a.Value;
+
+            if (modelInitialized)
+                MainCanvasRender();
+        }
+
+        private void numericUpDown_material_k_m_ValueChanged(object sender, EventArgs e)
+        {
+            if (currentSelfModel == null)
+            {
+                ErrorMessage errorMessage = new ErrorMessage();
+                errorMessage.Show("Модель не выбрана.");
+                return;
+            }
+
+            currentSelfModel.Material.k_m = (float)numericUpDown_material_k_m.Value;
+            currentMainModel.Material.k_m = (float)numericUpDown_material_k_m.Value;
+
+            if (modelInitialized)
+                MainCanvasRender();
         }
     }
 }

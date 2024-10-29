@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,6 +66,8 @@ namespace code
     {
         RenderMode renderMode;
         PictureBox pictureBox;
+        ToolStripStatusLabel timeLabel;
+        ToolStripStatusLabel statusLabel;
 
         public RenderCommand(ref Canvas canvas, ref PictureBox pictureBox, RenderMode renderMode) : base(ref canvas) 
         {
@@ -72,8 +75,26 @@ namespace code
             this.pictureBox = pictureBox;
         }
 
+        public RenderCommand(ref Canvas canvas, ref PictureBox pictureBox, RenderMode renderMode, 
+            ref ToolStripStatusLabel timeLabel, ref ToolStripStatusLabel statusLabel) : base(ref canvas)
+        {
+            this.renderMode = renderMode;
+            this.pictureBox = pictureBox;
+            this.timeLabel = timeLabel;
+            this.statusLabel = statusLabel;
+        }
+
         public override void _execute()
         {
+            if (statusLabel != null)
+            {
+                statusLabel.ForeColor = Color.Red;
+                statusLabel.ToolTipText = "В процессе";
+            }
+                
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             if (renderMode != RenderMode.CarcassDisplay)
             {
                 canvas.Render(renderMode);
@@ -84,6 +105,18 @@ namespace code
             {
                 canvas.GraphicsClear();
                 canvas.Render(renderMode);
+            }
+
+            stopwatch.Stop();
+            canvas.LastRender = stopwatch.Elapsed.TotalSeconds;
+
+            if (timeLabel != null)
+                timeLabel.Text = canvas.LastRender.ToString("F2") + " секунд";
+
+            if (statusLabel != null)
+            {
+                statusLabel.ForeColor = Color.Green;
+                statusLabel.ToolTipText = "Завершен";
             }
         }
     }

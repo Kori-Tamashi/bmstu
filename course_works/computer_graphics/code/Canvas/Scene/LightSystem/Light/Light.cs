@@ -49,11 +49,13 @@ namespace code
         public Vector3D Direction
         {
             get { return camera.Direction; }
+            set { camera.Direction = value; }
         }
 
         public Point3D Position
         {
             get { return camera.Position; }
+            set { camera.Position = value; }
         }
 
         public float Intensity
@@ -65,6 +67,11 @@ namespace code
         #endregion
 
         #region Movement
+
+        public void Move(Move move)
+        {
+            camera.Move(move);
+        }
 
         public void MoveRight(float d)
         {

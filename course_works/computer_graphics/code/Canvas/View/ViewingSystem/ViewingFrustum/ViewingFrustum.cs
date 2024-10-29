@@ -311,18 +311,20 @@ namespace code
         {
             foreach (Polygon p in model.Polygons)
             {
-                ProcessPolygon(p, gr);
+                ProcessPolygon(p, model.Color, gr);
             }
         }
 
-        protected virtual void ProcessPolygon(Polygon polygon, Graphics gr)
+        protected virtual void ProcessPolygon(Polygon polygon, Color color, Graphics gr)
         {
+            Pen pen = (color == Color.Empty) ? new Pen(Color.Black) : new Pen(color);
+
             foreach (Edge edge in polygon.Edges)
             {
                 Point start = ViewPortPoint(edge.start);
                 Point end = ViewPortPoint(edge.end);
 
-                gr.DrawLine(new Pen(Color.Black), start, end);
+                gr.DrawLine(pen, start, end);
             }
         }
 

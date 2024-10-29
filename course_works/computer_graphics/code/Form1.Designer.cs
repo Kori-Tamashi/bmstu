@@ -61,11 +61,48 @@
             listView_modelsMain = new ListView();
             imageList = new ImageList(components);
             groupBox6 = new GroupBox();
-            button2 = new Button();
-            button5 = new Button();
             button_Clear = new Button();
             button_dialogEdit = new Button();
             View_tabPage = new TabPage();
+            groupBox9 = new GroupBox();
+            groupBox17 = new GroupBox();
+            tableLayoutPanel10 = new TableLayoutPanel();
+            label19 = new Label();
+            numericUpDown_lightDirectionZ = new NumericUpDown();
+            numericUpDown_lightDirectionY = new NumericUpDown();
+            numericUpDown_lightDirectionX = new NumericUpDown();
+            label20 = new Label();
+            label21 = new Label();
+            groupBox16 = new GroupBox();
+            tableLayoutPanel9 = new TableLayoutPanel();
+            label16 = new Label();
+            numericUpDown_lightPositionZ = new NumericUpDown();
+            numericUpDown_lightPositionY = new NumericUpDown();
+            numericUpDown_lightPositionX = new NumericUpDown();
+            label17 = new Label();
+            label18 = new Label();
+            groupBox15 = new GroupBox();
+            button_rotateLight = new Button();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            label13 = new Label();
+            numericUpDown_rotateZ = new NumericUpDown();
+            numericUpDown_rotateY = new NumericUpDown();
+            numericUpDown_rotateX = new NumericUpDown();
+            label14 = new Label();
+            label15 = new Label();
+            groupBox12 = new GroupBox();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            numericUpDown_lightIntensity = new NumericUpDown();
+            label3 = new Label();
+            groupBox14 = new GroupBox();
+            button_moveLight = new Button();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            label10 = new Label();
+            numericUpDown_moveLightZ = new NumericUpDown();
+            numericUpDown_moveLightY = new NumericUpDown();
+            numericUpDown_moveLightX = new NumericUpDown();
+            label11 = new Label();
+            label12 = new Label();
             groupBox11 = new GroupBox();
             numericUpDown_pitch = new NumericUpDown();
             label_pitchMax = new Label();
@@ -92,6 +129,11 @@
             colorDialog1 = new ColorDialog();
             toolTip = new ToolTip(components);
             panel1 = new Panel();
+            statusStrip1 = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripStatusLabel_statusLabel = new ToolStripStatusLabel();
+            toolStripStatusLabel2 = new ToolStripStatusLabel();
+            toolStripStatusLabel_lastRender = new ToolStripStatusLabel();
             picture = new PictureBox();
             groupBox1 = new GroupBox();
             button_move = new Button();
@@ -121,6 +163,30 @@
             flowLayoutPanel1.SuspendLayout();
             groupBox6.SuspendLayout();
             View_tabPage.SuspendLayout();
+            groupBox9.SuspendLayout();
+            groupBox17.SuspendLayout();
+            tableLayoutPanel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightDirectionZ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightDirectionY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightDirectionX).BeginInit();
+            groupBox16.SuspendLayout();
+            tableLayoutPanel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionZ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionX).BeginInit();
+            groupBox15.SuspendLayout();
+            tableLayoutPanel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateZ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateX).BeginInit();
+            groupBox12.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightIntensity).BeginInit();
+            groupBox14.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveLightZ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveLightY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveLightX).BeginInit();
             groupBox11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_pitch).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBar_pitch).BeginInit();
@@ -130,6 +196,7 @@
             groupBox7.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             panel1.SuspendLayout();
+            statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picture).BeginInit();
             groupBox1.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
@@ -148,7 +215,7 @@
             InteractionMenu_tabControl.Location = new Point(12, 12);
             InteractionMenu_tabControl.Name = "InteractionMenu_tabControl";
             InteractionMenu_tabControl.SelectedIndex = 0;
-            InteractionMenu_tabControl.Size = new Size(1332, 253);
+            InteractionMenu_tabControl.Size = new Size(1404, 253);
             InteractionMenu_tabControl.SizeMode = TabSizeMode.FillToRight;
             InteractionMenu_tabControl.TabIndex = 0;
             // 
@@ -165,7 +232,7 @@
             Main_tabPage.Location = new Point(4, 29);
             Main_tabPage.Name = "Main_tabPage";
             Main_tabPage.Padding = new Padding(3);
-            Main_tabPage.Size = new Size(1324, 220);
+            Main_tabPage.Size = new Size(1396, 220);
             Main_tabPage.TabIndex = 0;
             Main_tabPage.Text = "Главная";
             // 
@@ -173,9 +240,9 @@
             // 
             groupBox8.Controls.Add(checkedListBox_renderMode);
             groupBox8.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            groupBox8.Location = new Point(1030, 3);
+            groupBox8.Location = new Point(1049, 1);
             groupBox8.Name = "groupBox8";
-            groupBox8.Size = new Size(287, 206);
+            groupBox8.Size = new Size(339, 209);
             groupBox8.TabIndex = 13;
             groupBox8.TabStop = false;
             groupBox8.Text = "Изображение";
@@ -199,9 +266,9 @@
             groupBox5.Controls.Add(groupBox3);
             groupBox5.Controls.Add(groupBox4);
             groupBox5.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            groupBox5.Location = new Point(612, 3);
+            groupBox5.Location = new Point(634, 2);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(408, 206);
+            groupBox5.Size = new Size(408, 208);
             groupBox5.TabIndex = 9;
             groupBox5.TabStop = false;
             groupBox5.Text = "Изменение положения в пространстве";
@@ -212,7 +279,7 @@
             groupBox3.Controls.Add(button_moveModel);
             groupBox3.Controls.Add(tableLayoutPanel2);
             groupBox3.Font = new Font("Segoe UI", 10F);
-            groupBox3.Location = new Point(6, 21);
+            groupBox3.Location = new Point(6, 22);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(196, 181);
             groupBox3.TabIndex = 5;
@@ -324,7 +391,7 @@
             groupBox4.Controls.Add(button_rotateModel);
             groupBox4.Controls.Add(tableLayoutPanel7);
             groupBox4.Font = new Font("Segoe UI", 10F);
-            groupBox4.Location = new Point(206, 21);
+            groupBox4.Location = new Point(206, 22);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(196, 180);
             groupBox4.TabIndex = 6;
@@ -435,9 +502,9 @@
             Primitives_groupBox.AutoSize = true;
             Primitives_groupBox.Controls.Add(flowLayoutPanel1);
             Primitives_groupBox.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            Primitives_groupBox.Location = new Point(6, 3);
+            Primitives_groupBox.Location = new Point(6, -1);
             Primitives_groupBox.Name = "Primitives_groupBox";
-            Primitives_groupBox.Size = new Size(127, 206);
+            Primitives_groupBox.Size = new Size(127, 210);
             Primitives_groupBox.TabIndex = 1;
             Primitives_groupBox.TabStop = false;
             Primitives_groupBox.Text = "Примитивы";
@@ -491,10 +558,10 @@
             listView_modelsMain.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             listView_modelsMain.GridLines = true;
             listView_modelsMain.LargeImageList = imageList;
-            listView_modelsMain.Location = new Point(139, 12);
+            listView_modelsMain.Location = new Point(139, 10);
             listView_modelsMain.MultiSelect = false;
             listView_modelsMain.Name = "listView_modelsMain";
-            listView_modelsMain.Size = new Size(202, 197);
+            listView_modelsMain.Size = new Size(224, 199);
             listView_modelsMain.SmallImageList = imageList;
             listView_modelsMain.TabIndex = 4;
             listView_modelsMain.UseCompatibleStateImageBehavior = false;
@@ -526,37 +593,15 @@
             // groupBox6
             // 
             groupBox6.Anchor = AnchorStyles.None;
-            groupBox6.Controls.Add(button2);
-            groupBox6.Controls.Add(button5);
             groupBox6.Controls.Add(button_Clear);
             groupBox6.Controls.Add(button_dialogEdit);
             groupBox6.Font = new Font("Segoe UI", 10F);
-            groupBox6.Location = new Point(347, 2);
+            groupBox6.Location = new Point(369, 0);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(259, 207);
+            groupBox6.Size = new Size(259, 210);
             groupBox6.TabIndex = 8;
             groupBox6.TabStop = false;
             groupBox6.Text = "Действия";
-            // 
-            // button2
-            // 
-            button2.Location = new Point(68, 151);
-            button2.Name = "button2";
-            button2.Size = new Size(94, 29);
-            button2.TabIndex = 10;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
-            // 
-            // button5
-            // 
-            button5.Location = new Point(3, 94);
-            button5.Name = "button5";
-            button5.Size = new Size(252, 29);
-            button5.TabIndex = 2;
-            button5.Text = "Обработать полотно";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
             // 
             // button_Clear
             // 
@@ -582,6 +627,7 @@
             // 
             View_tabPage.BackColor = Color.White;
             View_tabPage.BorderStyle = BorderStyle.FixedSingle;
+            View_tabPage.Controls.Add(groupBox9);
             View_tabPage.Controls.Add(groupBox11);
             View_tabPage.Controls.Add(groupBox10);
             View_tabPage.Controls.Add(groupBox7);
@@ -590,9 +636,509 @@
             View_tabPage.Location = new Point(4, 29);
             View_tabPage.Name = "View_tabPage";
             View_tabPage.Padding = new Padding(3);
-            View_tabPage.Size = new Size(1324, 220);
+            View_tabPage.Size = new Size(1396, 220);
             View_tabPage.TabIndex = 1;
             View_tabPage.Text = "Вид";
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(groupBox17);
+            groupBox9.Controls.Add(groupBox16);
+            groupBox9.Controls.Add(groupBox15);
+            groupBox9.Controls.Add(groupBox12);
+            groupBox9.Controls.Add(groupBox14);
+            groupBox9.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            groupBox9.Location = new Point(570, 0);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(817, 204);
+            groupBox9.TabIndex = 15;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Источник света";
+            // 
+            // groupBox17
+            // 
+            groupBox17.Anchor = AnchorStyles.None;
+            groupBox17.Controls.Add(tableLayoutPanel10);
+            groupBox17.Font = new Font("Segoe UI", 10F);
+            groupBox17.Location = new Point(243, 20);
+            groupBox17.Name = "groupBox17";
+            groupBox17.Size = new Size(139, 180);
+            groupBox17.TabIndex = 7;
+            groupBox17.TabStop = false;
+            groupBox17.Text = "Направление";
+            // 
+            // tableLayoutPanel10
+            // 
+            tableLayoutPanel10.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel10.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel10.ColumnCount = 2;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 28F));
+            tableLayoutPanel10.Controls.Add(label19, 0, 2);
+            tableLayoutPanel10.Controls.Add(numericUpDown_lightDirectionZ, 1, 2);
+            tableLayoutPanel10.Controls.Add(numericUpDown_lightDirectionY, 1, 1);
+            tableLayoutPanel10.Controls.Add(numericUpDown_lightDirectionX, 1, 0);
+            tableLayoutPanel10.Controls.Add(label20, 0, 1);
+            tableLayoutPanel10.Controls.Add(label21, 0, 0);
+            tableLayoutPanel10.Location = new Point(6, 26);
+            tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.RowCount = 3;
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel10.Size = new Size(127, 111);
+            tableLayoutPanel10.TabIndex = 3;
+            // 
+            // label19
+            // 
+            label19.Anchor = AnchorStyles.None;
+            label19.AutoSize = true;
+            label19.Font = new Font("Segoe UI", 10F);
+            label19.Location = new Point(12, 80);
+            label19.Name = "label19";
+            label19.Size = new Size(20, 23);
+            label19.TabIndex = 7;
+            label19.Text = "Z";
+            // 
+            // numericUpDown_lightDirectionZ
+            // 
+            numericUpDown_lightDirectionZ.DecimalPlaces = 2;
+            numericUpDown_lightDirectionZ.Font = new Font("Segoe UI", 10F);
+            numericUpDown_lightDirectionZ.Location = new Point(47, 77);
+            numericUpDown_lightDirectionZ.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_lightDirectionZ.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_lightDirectionZ.Name = "numericUpDown_lightDirectionZ";
+            numericUpDown_lightDirectionZ.Size = new Size(75, 30);
+            numericUpDown_lightDirectionZ.TabIndex = 8;
+            numericUpDown_lightDirectionZ.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            numericUpDown_lightDirectionZ.ValueChanged += numericUpDown_lightDirectionZ_ValueChanged;
+            // 
+            // numericUpDown_lightDirectionY
+            // 
+            numericUpDown_lightDirectionY.DecimalPlaces = 2;
+            numericUpDown_lightDirectionY.Font = new Font("Segoe UI", 10F);
+            numericUpDown_lightDirectionY.Location = new Point(47, 41);
+            numericUpDown_lightDirectionY.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_lightDirectionY.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_lightDirectionY.Name = "numericUpDown_lightDirectionY";
+            numericUpDown_lightDirectionY.Size = new Size(75, 30);
+            numericUpDown_lightDirectionY.TabIndex = 7;
+            numericUpDown_lightDirectionY.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            numericUpDown_lightDirectionY.ValueChanged += numericUpDown_lightDirectionY_ValueChanged;
+            // 
+            // numericUpDown_lightDirectionX
+            // 
+            numericUpDown_lightDirectionX.DecimalPlaces = 2;
+            numericUpDown_lightDirectionX.Font = new Font("Segoe UI", 10F);
+            numericUpDown_lightDirectionX.Location = new Point(47, 5);
+            numericUpDown_lightDirectionX.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_lightDirectionX.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_lightDirectionX.Name = "numericUpDown_lightDirectionX";
+            numericUpDown_lightDirectionX.Size = new Size(75, 30);
+            numericUpDown_lightDirectionX.TabIndex = 6;
+            numericUpDown_lightDirectionX.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            numericUpDown_lightDirectionX.ValueChanged += numericUpDown_lightDirectionX_ValueChanged;
+            // 
+            // label20
+            // 
+            label20.Anchor = AnchorStyles.None;
+            label20.AutoSize = true;
+            label20.Font = new Font("Segoe UI", 10F);
+            label20.Location = new Point(12, 43);
+            label20.Name = "label20";
+            label20.Size = new Size(19, 23);
+            label20.TabIndex = 6;
+            label20.Text = "Y";
+            // 
+            // label21
+            // 
+            label21.Anchor = AnchorStyles.None;
+            label21.AutoSize = true;
+            label21.Font = new Font("Segoe UI", 10F);
+            label21.Location = new Point(12, 7);
+            label21.Name = "label21";
+            label21.Size = new Size(20, 23);
+            label21.TabIndex = 4;
+            label21.Text = "X";
+            // 
+            // groupBox16
+            // 
+            groupBox16.Anchor = AnchorStyles.None;
+            groupBox16.Controls.Add(tableLayoutPanel9);
+            groupBox16.Font = new Font("Segoe UI", 10F);
+            groupBox16.Location = new Point(388, 20);
+            groupBox16.Name = "groupBox16";
+            groupBox16.Size = new Size(139, 180);
+            groupBox16.TabIndex = 6;
+            groupBox16.TabStop = false;
+            groupBox16.Text = "Позиция";
+            // 
+            // tableLayoutPanel9
+            // 
+            tableLayoutPanel9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel9.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel9.ColumnCount = 2;
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 28F));
+            tableLayoutPanel9.Controls.Add(label16, 0, 2);
+            tableLayoutPanel9.Controls.Add(numericUpDown_lightPositionZ, 1, 2);
+            tableLayoutPanel9.Controls.Add(numericUpDown_lightPositionY, 1, 1);
+            tableLayoutPanel9.Controls.Add(numericUpDown_lightPositionX, 1, 0);
+            tableLayoutPanel9.Controls.Add(label17, 0, 1);
+            tableLayoutPanel9.Controls.Add(label18, 0, 0);
+            tableLayoutPanel9.Location = new Point(6, 26);
+            tableLayoutPanel9.Name = "tableLayoutPanel9";
+            tableLayoutPanel9.RowCount = 3;
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel9.Size = new Size(127, 111);
+            tableLayoutPanel9.TabIndex = 3;
+            // 
+            // label16
+            // 
+            label16.Anchor = AnchorStyles.None;
+            label16.AutoSize = true;
+            label16.Font = new Font("Segoe UI", 10F);
+            label16.Location = new Point(12, 80);
+            label16.Name = "label16";
+            label16.Size = new Size(20, 23);
+            label16.TabIndex = 7;
+            label16.Text = "Z";
+            // 
+            // numericUpDown_lightPositionZ
+            // 
+            numericUpDown_lightPositionZ.Font = new Font("Segoe UI", 10F);
+            numericUpDown_lightPositionZ.Location = new Point(47, 77);
+            numericUpDown_lightPositionZ.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_lightPositionZ.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_lightPositionZ.Name = "numericUpDown_lightPositionZ";
+            numericUpDown_lightPositionZ.Size = new Size(75, 30);
+            numericUpDown_lightPositionZ.TabIndex = 8;
+            numericUpDown_lightPositionZ.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            numericUpDown_lightPositionZ.ValueChanged += numericUpDown_lightPositionZ_ValueChanged;
+            // 
+            // numericUpDown_lightPositionY
+            // 
+            numericUpDown_lightPositionY.Font = new Font("Segoe UI", 10F);
+            numericUpDown_lightPositionY.Location = new Point(47, 39);
+            numericUpDown_lightPositionY.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_lightPositionY.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_lightPositionY.Name = "numericUpDown_lightPositionY";
+            numericUpDown_lightPositionY.Size = new Size(75, 30);
+            numericUpDown_lightPositionY.TabIndex = 7;
+            numericUpDown_lightPositionY.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            numericUpDown_lightPositionY.ValueChanged += numericUpDown_lightPositionY_ValueChanged;
+            // 
+            // numericUpDown_lightPositionX
+            // 
+            numericUpDown_lightPositionX.Font = new Font("Segoe UI", 10F);
+            numericUpDown_lightPositionX.Location = new Point(47, 5);
+            numericUpDown_lightPositionX.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_lightPositionX.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_lightPositionX.Name = "numericUpDown_lightPositionX";
+            numericUpDown_lightPositionX.Size = new Size(75, 30);
+            numericUpDown_lightPositionX.TabIndex = 6;
+            numericUpDown_lightPositionX.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            numericUpDown_lightPositionX.ValueChanged += numericUpDown_lightPositionX_ValueChanged;
+            // 
+            // label17
+            // 
+            label17.Anchor = AnchorStyles.None;
+            label17.AutoSize = true;
+            label17.Font = new Font("Segoe UI", 10F);
+            label17.Location = new Point(12, 42);
+            label17.Name = "label17";
+            label17.Size = new Size(19, 23);
+            label17.TabIndex = 6;
+            label17.Text = "Y";
+            // 
+            // label18
+            // 
+            label18.Anchor = AnchorStyles.None;
+            label18.AutoSize = true;
+            label18.Font = new Font("Segoe UI", 10F);
+            label18.Location = new Point(12, 6);
+            label18.Name = "label18";
+            label18.Size = new Size(20, 23);
+            label18.TabIndex = 4;
+            label18.Text = "X";
+            // 
+            // groupBox15
+            // 
+            groupBox15.Anchor = AnchorStyles.None;
+            groupBox15.Controls.Add(button_rotateLight);
+            groupBox15.Controls.Add(tableLayoutPanel8);
+            groupBox15.Font = new Font("Segoe UI", 10F);
+            groupBox15.Location = new Point(678, 20);
+            groupBox15.Name = "groupBox15";
+            groupBox15.Size = new Size(131, 180);
+            groupBox15.TabIndex = 6;
+            groupBox15.TabStop = false;
+            groupBox15.Text = "Поворот";
+            // 
+            // button_rotateLight
+            // 
+            button_rotateLight.Font = new Font("Segoe UI", 9F);
+            button_rotateLight.Location = new Point(6, 143);
+            button_rotateLight.Name = "button_rotateLight";
+            button_rotateLight.Size = new Size(119, 29);
+            button_rotateLight.TabIndex = 5;
+            button_rotateLight.Text = "Повернуть";
+            button_rotateLight.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel8.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel8.ColumnCount = 2;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 52F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 24F));
+            tableLayoutPanel8.Controls.Add(label13, 0, 2);
+            tableLayoutPanel8.Controls.Add(numericUpDown_rotateZ, 1, 2);
+            tableLayoutPanel8.Controls.Add(numericUpDown_rotateY, 1, 1);
+            tableLayoutPanel8.Controls.Add(numericUpDown_rotateX, 1, 0);
+            tableLayoutPanel8.Controls.Add(label14, 0, 1);
+            tableLayoutPanel8.Controls.Add(label15, 0, 0);
+            tableLayoutPanel8.Location = new Point(6, 26);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 3;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel8.Size = new Size(118, 111);
+            tableLayoutPanel8.TabIndex = 3;
+            // 
+            // label13
+            // 
+            label13.Anchor = AnchorStyles.Left;
+            label13.AutoSize = true;
+            label13.Font = new Font("Segoe UI", 10F);
+            label13.Location = new Point(5, 80);
+            label13.Name = "label13";
+            label13.Size = new Size(45, 23);
+            label13.TabIndex = 7;
+            label13.Text = "∠OZ";
+            // 
+            // numericUpDown_rotateZ
+            // 
+            numericUpDown_rotateZ.Font = new Font("Segoe UI", 10F);
+            numericUpDown_rotateZ.Location = new Point(59, 77);
+            numericUpDown_rotateZ.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_rotateZ.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_rotateZ.Name = "numericUpDown_rotateZ";
+            numericUpDown_rotateZ.Size = new Size(54, 30);
+            numericUpDown_rotateZ.TabIndex = 8;
+            numericUpDown_rotateZ.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // numericUpDown_rotateY
+            // 
+            numericUpDown_rotateY.Font = new Font("Segoe UI", 10F);
+            numericUpDown_rotateY.Location = new Point(59, 41);
+            numericUpDown_rotateY.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_rotateY.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_rotateY.Name = "numericUpDown_rotateY";
+            numericUpDown_rotateY.Size = new Size(54, 30);
+            numericUpDown_rotateY.TabIndex = 7;
+            numericUpDown_rotateY.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // numericUpDown_rotateX
+            // 
+            numericUpDown_rotateX.Font = new Font("Segoe UI", 10F);
+            numericUpDown_rotateX.Location = new Point(59, 5);
+            numericUpDown_rotateX.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_rotateX.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_rotateX.Name = "numericUpDown_rotateX";
+            numericUpDown_rotateX.Size = new Size(54, 30);
+            numericUpDown_rotateX.TabIndex = 6;
+            numericUpDown_rotateX.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // label14
+            // 
+            label14.Anchor = AnchorStyles.Left;
+            label14.AutoSize = true;
+            label14.Font = new Font("Segoe UI", 10F);
+            label14.Location = new Point(5, 43);
+            label14.Name = "label14";
+            label14.Size = new Size(44, 23);
+            label14.TabIndex = 6;
+            label14.Text = "∠OY";
+            // 
+            // label15
+            // 
+            label15.Anchor = AnchorStyles.Left;
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI", 10F);
+            label15.Location = new Point(5, 7);
+            label15.Name = "label15";
+            label15.Size = new Size(45, 23);
+            label15.TabIndex = 4;
+            label15.Text = "∠OX";
+            // 
+            // groupBox12
+            // 
+            groupBox12.Controls.Add(tableLayoutPanel3);
+            groupBox12.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            groupBox12.Location = new Point(6, 22);
+            groupBox12.Name = "groupBox12";
+            groupBox12.Size = new Size(234, 178);
+            groupBox12.TabIndex = 16;
+            groupBox12.TabStop = false;
+            groupBox12.Text = "Спектральные характеристики";
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.Anchor = AnchorStyles.None;
+            tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel3.ColumnCount = 2;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 68.37209F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 31.6279068F));
+            tableLayoutPanel3.Controls.Add(numericUpDown_lightIntensity, 1, 0);
+            tableLayoutPanel3.Controls.Add(label3, 0, 0);
+            tableLayoutPanel3.Location = new Point(6, 45);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 1;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Size = new Size(222, 43);
+            tableLayoutPanel3.TabIndex = 17;
+            // 
+            // numericUpDown_lightIntensity
+            // 
+            numericUpDown_lightIntensity.Anchor = AnchorStyles.None;
+            numericUpDown_lightIntensity.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            numericUpDown_lightIntensity.Location = new Point(155, 8);
+            numericUpDown_lightIntensity.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
+            numericUpDown_lightIntensity.Name = "numericUpDown_lightIntensity";
+            numericUpDown_lightIntensity.Size = new Size(61, 26);
+            numericUpDown_lightIntensity.TabIndex = 18;
+            numericUpDown_lightIntensity.Value = new decimal(new int[] { 1, 0, 0, 65536 });
+            numericUpDown_lightIntensity.ValueChanged += numericUpDown_lightIntensity_ValueChanged;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Left;
+            label3.AutoSize = true;
+            label3.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label3.ForeColor = SystemColors.ControlText;
+            label3.Location = new Point(5, 11);
+            label3.Name = "label3";
+            label3.Size = new Size(138, 20);
+            label3.TabIndex = 0;
+            label3.Text = "Интенсивность";
+            label3.Click += label3_Click;
+            // 
+            // groupBox14
+            // 
+            groupBox14.Anchor = AnchorStyles.None;
+            groupBox14.Controls.Add(button_moveLight);
+            groupBox14.Controls.Add(tableLayoutPanel5);
+            groupBox14.Font = new Font("Segoe UI", 10F);
+            groupBox14.Location = new Point(533, 20);
+            groupBox14.Name = "groupBox14";
+            groupBox14.Size = new Size(139, 180);
+            groupBox14.TabIndex = 5;
+            groupBox14.TabStop = false;
+            groupBox14.Text = "Перемещение";
+            // 
+            // button_moveLight
+            // 
+            button_moveLight.Font = new Font("Segoe UI", 10F);
+            button_moveLight.Location = new Point(6, 143);
+            button_moveLight.Name = "button_moveLight";
+            button_moveLight.Size = new Size(127, 29);
+            button_moveLight.TabIndex = 5;
+            button_moveLight.Text = "Переместить";
+            button_moveLight.UseVisualStyleBackColor = true;
+            button_moveLight.Click += button_moveLight_Click;
+            // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel5.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel5.ColumnCount = 2;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 28F));
+            tableLayoutPanel5.Controls.Add(label10, 0, 2);
+            tableLayoutPanel5.Controls.Add(numericUpDown_moveLightZ, 1, 2);
+            tableLayoutPanel5.Controls.Add(numericUpDown_moveLightY, 1, 1);
+            tableLayoutPanel5.Controls.Add(numericUpDown_moveLightX, 1, 0);
+            tableLayoutPanel5.Controls.Add(label11, 0, 1);
+            tableLayoutPanel5.Controls.Add(label12, 0, 0);
+            tableLayoutPanel5.Location = new Point(6, 26);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 3;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
+            tableLayoutPanel5.Size = new Size(127, 111);
+            tableLayoutPanel5.TabIndex = 3;
+            // 
+            // label10
+            // 
+            label10.Anchor = AnchorStyles.None;
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 10F);
+            label10.Location = new Point(6, 80);
+            label10.Name = "label10";
+            label10.Size = new Size(31, 23);
+            label10.TabIndex = 7;
+            label10.Text = "ΔZ";
+            // 
+            // numericUpDown_moveLightZ
+            // 
+            numericUpDown_moveLightZ.Font = new Font("Segoe UI", 10F);
+            numericUpDown_moveLightZ.Location = new Point(47, 77);
+            numericUpDown_moveLightZ.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_moveLightZ.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_moveLightZ.Name = "numericUpDown_moveLightZ";
+            numericUpDown_moveLightZ.Size = new Size(75, 30);
+            numericUpDown_moveLightZ.TabIndex = 8;
+            numericUpDown_moveLightZ.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // numericUpDown_moveLightY
+            // 
+            numericUpDown_moveLightY.Font = new Font("Segoe UI", 10F);
+            numericUpDown_moveLightY.Location = new Point(47, 41);
+            numericUpDown_moveLightY.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_moveLightY.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_moveLightY.Name = "numericUpDown_moveLightY";
+            numericUpDown_moveLightY.Size = new Size(75, 30);
+            numericUpDown_moveLightY.TabIndex = 7;
+            numericUpDown_moveLightY.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // numericUpDown_moveLightX
+            // 
+            numericUpDown_moveLightX.Font = new Font("Segoe UI", 10F);
+            numericUpDown_moveLightX.Location = new Point(47, 5);
+            numericUpDown_moveLightX.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
+            numericUpDown_moveLightX.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
+            numericUpDown_moveLightX.Name = "numericUpDown_moveLightX";
+            numericUpDown_moveLightX.Size = new Size(75, 30);
+            numericUpDown_moveLightX.TabIndex = 6;
+            numericUpDown_moveLightX.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // label11
+            // 
+            label11.Anchor = AnchorStyles.None;
+            label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 10F);
+            label11.Location = new Point(7, 43);
+            label11.Name = "label11";
+            label11.Size = new Size(30, 23);
+            label11.TabIndex = 6;
+            label11.Text = "ΔY";
+            // 
+            // label12
+            // 
+            label12.Anchor = AnchorStyles.None;
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI", 10F);
+            label12.Location = new Point(6, 7);
+            label12.Name = "label12";
+            label12.Size = new Size(31, 23);
+            label12.TabIndex = 4;
+            label12.Text = "ΔX";
             // 
             // groupBox11
             // 
@@ -606,7 +1152,7 @@
             groupBox11.Size = new Size(269, 97);
             groupBox11.TabIndex = 14;
             groupBox11.TabStop = false;
-            groupBox11.Text = "Тангаж";
+            groupBox11.Text = "Тангаж камеры";
             // 
             // numericUpDown_pitch
             // 
@@ -662,7 +1208,7 @@
             groupBox10.Size = new Size(269, 101);
             groupBox10.TabIndex = 10;
             groupBox10.TabStop = false;
-            groupBox10.Text = "Рыскание";
+            groupBox10.Text = "Рыскание камеры";
             // 
             // numericUpDown_yaw
             // 
@@ -890,25 +1436,76 @@
             File_tabPage.ForeColor = SystemColors.ControlText;
             File_tabPage.Location = new Point(4, 29);
             File_tabPage.Name = "File_tabPage";
-            File_tabPage.Size = new Size(1324, 220);
+            File_tabPage.Size = new Size(1396, 220);
             File_tabPage.TabIndex = 2;
             File_tabPage.Text = "Файл";
             // 
+            // toolTip
+            // 
+            toolTip.AutoPopDelay = 5000;
+            toolTip.InitialDelay = 200;
+            toolTip.ReshowDelay = 100;
+            // 
             // panel1
             // 
+            panel1.AutoSize = true;
             panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Controls.Add(statusStrip1);
             panel1.Controls.Add(picture);
             panel1.Location = new Point(12, 267);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1332, 551);
+            panel1.Size = new Size(1404, 554);
             panel1.TabIndex = 1;
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.ImageScalingSize = new Size(20, 20);
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel_statusLabel, toolStripStatusLabel2, toolStripStatusLabel_lastRender });
+            statusStrip1.Location = new Point(0, 518);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.ShowItemToolTips = true;
+            statusStrip1.Size = new Size(1402, 34);
+            statusStrip1.TabIndex = 1;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(86, 28);
+            toolStripStatusLabel1.Text = "Рендеринг:";
+            // 
+            // toolStripStatusLabel_statusLabel
+            // 
+            toolStripStatusLabel_statusLabel.ActiveLinkColor = Color.Red;
+            toolStripStatusLabel_statusLabel.AutoToolTip = true;
+            toolStripStatusLabel_statusLabel.BorderStyle = Border3DStyle.Bump;
+            toolStripStatusLabel_statusLabel.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripStatusLabel_statusLabel.Font = new Font("Segoe UI", 12F);
+            toolStripStatusLabel_statusLabel.ForeColor = Color.Lime;
+            toolStripStatusLabel_statusLabel.Name = "toolStripStatusLabel_statusLabel";
+            toolStripStatusLabel_statusLabel.Size = new Size(39, 28);
+            toolStripStatusLabel_statusLabel.Text = "⚫";
+            toolStripStatusLabel_statusLabel.ToolTipText = "Завершен";
+            // 
+            // toolStripStatusLabel2
+            // 
+            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            toolStripStatusLabel2.Size = new Size(229, 28);
+            toolStripStatusLabel2.Text = "Время последнего рендеринга:";
+            // 
+            // toolStripStatusLabel_lastRender
+            // 
+            toolStripStatusLabel_lastRender.Name = "toolStripStatusLabel_lastRender";
+            toolStripStatusLabel_lastRender.Size = new Size(37, 28);
+            toolStripStatusLabel_lastRender.Text = "0 нс";
             // 
             // picture
             // 
+            picture.BorderStyle = BorderStyle.Fixed3D;
             picture.Cursor = Cursors.Cross;
             picture.Location = new Point(3, 3);
             picture.Name = "picture";
-            picture.Size = new Size(1324, 543);
+            picture.Size = new Size(1396, 512);
             picture.TabIndex = 0;
             picture.TabStop = false;
             // 
@@ -1025,7 +1622,7 @@
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.Inherit;
-            ClientSize = new Size(1348, 830);
+            ClientSize = new Size(1420, 827);
             Controls.Add(panel1);
             Controls.Add(InteractionMenu_tabControl);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -1054,6 +1651,35 @@
             flowLayoutPanel1.ResumeLayout(false);
             groupBox6.ResumeLayout(false);
             View_tabPage.ResumeLayout(false);
+            groupBox9.ResumeLayout(false);
+            groupBox17.ResumeLayout(false);
+            tableLayoutPanel10.ResumeLayout(false);
+            tableLayoutPanel10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightDirectionZ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightDirectionY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightDirectionX).EndInit();
+            groupBox16.ResumeLayout(false);
+            tableLayoutPanel9.ResumeLayout(false);
+            tableLayoutPanel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionZ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionX).EndInit();
+            groupBox15.ResumeLayout(false);
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateZ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateX).EndInit();
+            groupBox12.ResumeLayout(false);
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_lightIntensity).EndInit();
+            groupBox14.ResumeLayout(false);
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveLightZ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveLightY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_moveLightX).EndInit();
             groupBox11.ResumeLayout(false);
             groupBox11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_pitch).EndInit();
@@ -1065,6 +1691,9 @@
             groupBox7.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picture).EndInit();
             groupBox1.ResumeLayout(false);
             tableLayoutPanel6.ResumeLayout(false);
@@ -1075,6 +1704,7 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             groupBox2.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -1132,10 +1762,8 @@
         private Label label6;
         private Label label4;
         private GroupBox groupBox6;
-        private Button button5;
         private Button button_Clear;
         private Button button_dialogEdit;
-        private Button button2;
         private Button button_cameraRight;
         private TrackBar trackBar_yaw;
         private GroupBox groupBox10;
@@ -1152,6 +1780,50 @@
         private GroupBox groupBox5;
         private GroupBox groupBox8;
         private CheckedListBox checkedListBox_renderMode;
+        private GroupBox groupBox9;
+        private TableLayoutPanel tableLayoutPanel3;
+        private NumericUpDown numericUpDown_lightIntensity;
+        private Label label3;
+        private GroupBox groupBox12;
+        private GroupBox groupBox15;
+        private Button button_rotateLight;
+        private TableLayoutPanel tableLayoutPanel8;
+        private Label label13;
+        private NumericUpDown numericUpDown_rotateZ;
+        private NumericUpDown numericUpDown_rotateY;
+        private NumericUpDown numericUpDown_rotateX;
+        private Label label14;
+        private Label label15;
+        private GroupBox groupBox14;
+        private Button button_moveLight;
+        private TableLayoutPanel tableLayoutPanel5;
+        private Label label10;
+        private NumericUpDown numericUpDown_moveLightZ;
+        private NumericUpDown numericUpDown_moveLightY;
+        private NumericUpDown numericUpDown_moveLightX;
+        private Label label11;
+        private Label label12;
+        private GroupBox groupBox16;
+        private TableLayoutPanel tableLayoutPanel9;
+        private Label label16;
+        private NumericUpDown numericUpDown_lightPositionZ;
+        private NumericUpDown numericUpDown_lightPositionY;
+        private NumericUpDown numericUpDown_lightPositionX;
+        private Label label17;
+        private Label label18;
+        private GroupBox groupBox17;
+        private TableLayoutPanel tableLayoutPanel10;
+        private Label label19;
+        private NumericUpDown numericUpDown_lightDirectionZ;
+        private NumericUpDown numericUpDown_lightDirectionY;
+        private NumericUpDown numericUpDown_lightDirectionX;
+        private Label label20;
+        private Label label21;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel toolStripStatusLabel2;
+        private ToolStripStatusLabel toolStripStatusLabel_lastRender;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel toolStripStatusLabel_statusLabel;
     }
 }
 

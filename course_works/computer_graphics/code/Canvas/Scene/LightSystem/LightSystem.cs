@@ -56,6 +56,24 @@ namespace code
             get { return maxLights; }
         }
 
+        public float LightIntensity
+        {
+            get { return lights[currentLightIndex].Intensity; }
+            set { lights[currentLightIndex].Intensity = value; }
+        }
+
+        public Vector3D LightDirection
+        {
+            get { return lights[currentLightIndex].Direction; }
+            set { lights[currentLightIndex].Direction = value; }
+        }
+
+        public Point3D LightPosition
+        {
+            get { return lights[currentLightIndex].Position; }
+            set { lights[currentLightIndex].Position = value; }
+        }
+
         #endregion
 
         #region Methods
@@ -73,6 +91,11 @@ namespace code
         public void DeleteLight(int index)
         {
             lights.RemoveAt(index);
+        }
+
+        public void MoveLight(Move move)
+        {
+            lights[currentLightIndex].Move(move);
         }
 
         public void MoveRight(float d)

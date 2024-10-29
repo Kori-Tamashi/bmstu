@@ -11,27 +11,20 @@ namespace code
         protected MaterialType type;
 
         // Solid Shading Coeffs
-        public float I_a; // интенсивность рассеянного источника
-        public float k_a; // коэффииент диффузного отражения рассеянного источника
-        public float k_d; // коэффициент диффузного отражения
-        public float k_s; // аналог функции w_i
-        public float K; // произвольная постоянная
-        public int n; // степень аппрокисмации зеркально отраженного света
-        public int d; // приоритет освещения
+        public float I_a = 0.5f; // интенсивность рассеянного источника
+        public float k_a = 0.2f; // коэффииент диффузного отражения рассеянного источника
+        public float k_d = 0.3f; // коэффициент диффузного отражения
+        public float k_s = 0.2f; // аналог функции w_i
+        public float K = 1;      // произвольная постоянная
+        public int n = 3;        // степень аппрокисмации зеркально отраженного света
+        public int d = 1;        // приоритет освещения
 
         // Phong Shading Coeffs
-        public float a = 56; // коэффициент блеска
+        public float a = 56;  // коэффициент блеска
         public float k_m = 4; // коэффициент зеркального отражения
 
         public Material()
         {
-            I_a = 1;
-            k_a = 1;
-            k_d = 1;
-            k_s = 1;
-            K = 1;
-            n = 1;
-            d = 1;
             type = MaterialType.None;
         }
 

@@ -33,7 +33,7 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
             textBox12 = new TextBox();
-            numericUpDown2 = new NumericUpDown();
+            numericUpDown_material_k_m = new NumericUpDown();
             textBox4 = new TextBox();
             button_color = new Button();
             contextMenuStrip_buttonColor = new ContextMenuStrip(components);
@@ -41,19 +41,20 @@
             toolStripMenuItem_resetColor = new ToolStripMenuItem();
             textBox8 = new TextBox();
             textBox9 = new TextBox();
-            numericUpDown1 = new NumericUpDown();
-            numericUpDown3 = new NumericUpDown();
+            numericUpDown_material_k_d = new NumericUpDown();
+            numericUpDown_material_a = new NumericUpDown();
             tableLayoutPanel5 = new TableLayoutPanel();
             textBox_name = new TextBox();
             textBox11 = new TextBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             numericUpDown4 = new NumericUpDown();
-            textBox6 = new TextBox();
             numericUpDown_height = new NumericUpDown();
             numericUpDown_width = new NumericUpDown();
             textBox3 = new TextBox();
             textBox1 = new TextBox();
             numericUpDown_length = new NumericUpDown();
+            textBox6 = new TextBox();
+            textBox5 = new TextBox();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -63,13 +64,12 @@
             imageList = new ImageList(components);
             colorDialog1 = new ColorDialog();
             tableLayoutPanel8 = new TableLayoutPanel();
-            textBox5 = new TextBox();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_material_k_m).BeginInit();
             contextMenuStrip_buttonColor.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_material_k_d).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_material_a).BeginInit();
             tableLayoutPanel5.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
@@ -111,13 +111,13 @@
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40.87193F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 59.128067F));
             tableLayoutPanel4.Controls.Add(textBox12, 0, 3);
-            tableLayoutPanel4.Controls.Add(numericUpDown2, 1, 2);
+            tableLayoutPanel4.Controls.Add(numericUpDown_material_k_m, 1, 2);
             tableLayoutPanel4.Controls.Add(textBox4, 0, 1);
             tableLayoutPanel4.Controls.Add(button_color, 1, 0);
             tableLayoutPanel4.Controls.Add(textBox8, 0, 0);
             tableLayoutPanel4.Controls.Add(textBox9, 0, 2);
-            tableLayoutPanel4.Controls.Add(numericUpDown1, 1, 1);
-            tableLayoutPanel4.Controls.Add(numericUpDown3, 1, 3);
+            tableLayoutPanel4.Controls.Add(numericUpDown_material_k_d, 1, 1);
+            tableLayoutPanel4.Controls.Add(numericUpDown_material_a, 1, 3);
             tableLayoutPanel4.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             tableLayoutPanel4.Location = new Point(4, 259);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -143,16 +143,16 @@
             textBox12.Text = "Коэффициент \r\nблеска";
             toolTip.SetToolTip(textBox12, "Задает материал ");
             // 
-            // numericUpDown2
+            // numericUpDown_material_k_m
             // 
-            numericUpDown2.DecimalPlaces = 2;
-            numericUpDown2.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            numericUpDown2.Location = new Point(136, 110);
-            numericUpDown2.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown2.Name = "numericUpDown2";
-            numericUpDown2.Size = new Size(184, 27);
-            numericUpDown2.TabIndex = 14;
-            numericUpDown2.Value = new decimal(new int[] { 5, 0, 0, 65536 });
+            numericUpDown_material_k_m.DecimalPlaces = 2;
+            numericUpDown_material_k_m.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            numericUpDown_material_k_m.Location = new Point(136, 110);
+            numericUpDown_material_k_m.Name = "numericUpDown_material_k_m";
+            numericUpDown_material_k_m.Size = new Size(184, 27);
+            numericUpDown_material_k_m.TabIndex = 14;
+            numericUpDown_material_k_m.Value = new decimal(new int[] { 5, 0, 0, 65536 });
+            numericUpDown_material_k_m.ValueChanged += numericUpDown_material_k_m_ValueChanged;
             // 
             // textBox4
             // 
@@ -225,24 +225,27 @@
             textBox9.Text = "Коэффициент \r\nзеркального освещения";
             toolTip.SetToolTip(textBox9, "Задает материал ");
             // 
-            // numericUpDown1
+            // numericUpDown_material_k_d
             // 
-            numericUpDown1.DecimalPlaces = 2;
-            numericUpDown1.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            numericUpDown1.Location = new Point(136, 39);
-            numericUpDown1.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(184, 27);
-            numericUpDown1.TabIndex = 13;
-            numericUpDown1.Value = new decimal(new int[] { 5, 0, 0, 65536 });
+            numericUpDown_material_k_d.DecimalPlaces = 2;
+            numericUpDown_material_k_d.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            numericUpDown_material_k_d.Location = new Point(136, 39);
+            numericUpDown_material_k_d.Name = "numericUpDown_material_k_d";
+            numericUpDown_material_k_d.Size = new Size(184, 27);
+            numericUpDown_material_k_d.TabIndex = 13;
+            numericUpDown_material_k_d.Value = new decimal(new int[] { 5, 0, 0, 65536 });
+            numericUpDown_material_k_d.ValueChanged += numericUpDown_material_k_d_ValueChanged;
             // 
-            // numericUpDown3
+            // numericUpDown_material_a
             // 
-            numericUpDown3.Location = new Point(136, 183);
-            numericUpDown3.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            numericUpDown3.Name = "numericUpDown3";
-            numericUpDown3.Size = new Size(184, 27);
-            numericUpDown3.TabIndex = 16;
+            numericUpDown_material_a.Location = new Point(136, 183);
+            numericUpDown_material_a.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            numericUpDown_material_a.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown_material_a.Name = "numericUpDown_material_a";
+            numericUpDown_material_a.Size = new Size(184, 27);
+            numericUpDown_material_a.TabIndex = 16;
+            numericUpDown_material_a.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown_material_a.ValueChanged += numericUpDown_material_a_ValueChanged;
             // 
             // tableLayoutPanel5
             // 
@@ -319,19 +322,6 @@
             numericUpDown4.TabIndex = 21;
             numericUpDown4.ThousandsSeparator = true;
             // 
-            // textBox6
-            // 
-            textBox6.BorderStyle = BorderStyle.None;
-            textBox6.Cursor = Cursors.Help;
-            textBox6.Location = new Point(4, 137);
-            textBox6.Multiline = true;
-            textBox6.Name = "textBox6";
-            textBox6.ReadOnly = true;
-            textBox6.Size = new Size(125, 43);
-            textBox6.TabIndex = 20;
-            textBox6.Text = "Количество боковых граней";
-            toolTip.SetToolTip(textBox6, "Задает радиус фигуры (только для икосаэдра)");
-            // 
             // numericUpDown_height
             // 
             numericUpDown_height.Location = new Point(136, 102);
@@ -389,6 +379,33 @@
             numericUpDown_length.TabIndex = 14;
             numericUpDown_length.ThousandsSeparator = true;
             numericUpDown_length.ValueChanged += numericUpDown_length_ValueChanged;
+            // 
+            // textBox6
+            // 
+            textBox6.BorderStyle = BorderStyle.None;
+            textBox6.Cursor = Cursors.Help;
+            textBox6.Location = new Point(4, 137);
+            textBox6.Multiline = true;
+            textBox6.Name = "textBox6";
+            textBox6.ReadOnly = true;
+            textBox6.Size = new Size(125, 43);
+            textBox6.TabIndex = 20;
+            textBox6.Text = "Количество боковых граней";
+            toolTip.SetToolTip(textBox6, "Задает радиус фигуры (только для икосаэдра)");
+            // 
+            // textBox5
+            // 
+            textBox5.BorderStyle = BorderStyle.None;
+            textBox5.Cursor = Cursors.Help;
+            textBox5.Location = new Point(4, 102);
+            textBox5.Multiline = true;
+            textBox5.Name = "textBox5";
+            textBox5.ReadOnly = true;
+            textBox5.Size = new Size(76, 27);
+            textBox5.TabIndex = 11;
+            textBox5.Text = "Высота";
+            toolTip.SetToolTip(textBox5, "Задает высоту ");
+            textBox5.TextChanged += textBox5_TextChanged;
             // 
             // label1
             // 
@@ -478,20 +495,6 @@
             tableLayoutPanel8.Size = new Size(200, 100);
             tableLayoutPanel8.TabIndex = 0;
             // 
-            // textBox5
-            // 
-            textBox5.BorderStyle = BorderStyle.None;
-            textBox5.Cursor = Cursors.Help;
-            textBox5.Location = new Point(4, 102);
-            textBox5.Multiline = true;
-            textBox5.Name = "textBox5";
-            textBox5.ReadOnly = true;
-            textBox5.Size = new Size(76, 27);
-            textBox5.TabIndex = 11;
-            textBox5.Text = "Высота";
-            toolTip.SetToolTip(textBox5, "Задает высоту ");
-            textBox5.TextChanged += textBox5_TextChanged;
-            // 
             // DialogEdit
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -507,10 +510,10 @@
             tableLayoutPanel1.PerformLayout();
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_material_k_m).EndInit();
             contextMenuStrip_buttonColor.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_material_k_d).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown_material_a).EndInit();
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
@@ -554,10 +557,10 @@
         private TableLayoutPanel tableLayoutPanel8;
         private TextBox textBox4;
         private TextBox textBox9;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown numericUpDown_material_k_d;
         private TextBox textBox12;
-        private NumericUpDown numericUpDown2;
-        private NumericUpDown numericUpDown3;
+        private NumericUpDown numericUpDown_material_k_m;
+        private NumericUpDown numericUpDown_material_a;
         private TextBox textBox6;
         private NumericUpDown numericUpDown4;
         private TextBox textBox5;

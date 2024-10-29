@@ -19,6 +19,8 @@ namespace code
         Graphics graphics;
         ViewingSystem viewingSystem;
 
+        double lastRender = 0;
+
         public Canvas(Size viewPortSize, Graphics pictureBoxGraphics)
         { 
             size = viewPortSize;
@@ -99,6 +101,30 @@ namespace code
             set { viewingSystem.Pitch = value; }
         }
 
+        public float LightIntensity
+        {
+            get { return scene.LightIntensity; }
+            set { scene.LightIntensity = value; }
+        }
+
+        public Vector3D LightDirection
+        {
+            get { return scene.LightDirection; }
+            set { scene.LightDirection = value; }
+        }
+
+        public Point3D LightPosition
+        {
+            get { return scene.LightPosition; }
+            set { scene.LightPosition = value; }
+        }
+
+        public double LastRender
+        {
+            get { return lastRender; }
+            set { lastRender = value; }
+        }
+
         #endregion
 
         #region Scene
@@ -176,6 +202,11 @@ namespace code
         public void Centering(Model model)
         {
             scene.Centering(new Centering(model, Center, Size));
+        }
+
+        public void MoveLight(Move move)
+        {
+            scene.MoveLight(move);
         }
 
         #endregion

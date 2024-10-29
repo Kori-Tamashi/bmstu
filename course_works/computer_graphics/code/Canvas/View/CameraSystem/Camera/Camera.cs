@@ -25,7 +25,7 @@ namespace code
             this.position = position;
 
             InitializeVectors();
-            InitializeYawPicth(direction);
+            InitializeYawPitch(direction);
         }
 
         #region Initialize
@@ -42,7 +42,7 @@ namespace code
             up.Normalize();
         }
 
-        public void InitializeYawPicth(Vector3D direction)
+        public void InitializeYawPitch(Vector3D direction)
         {
             yaw = (float)(Math.Atan2(direction.Z, direction.X) * (180.0 / Math.PI));
 
@@ -66,11 +66,19 @@ namespace code
         public Point3D Position
         {
             get { return position; }
+            set { position = value; }
         }
 
         public Vector3D Direction
         {
             get { return direction; }
+            set { SetDirection(value); }
+        }
+
+        private void SetDirection(Vector3D direction)
+        {
+            this.direction = direction;
+            InitializeYawPitch(direction);
         }
 
         public Vector3D Right
