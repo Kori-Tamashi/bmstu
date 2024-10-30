@@ -41,11 +41,17 @@ namespace code
             name = "Прямая призма";
             type = Modeltype.DirectPrism;
             color = Color.Empty;
+            material = new Material();
+
             length = -1;
             width = -1;
             height = -1;
             angle = -1;
             radius = -1;
+
+            upperBaseRadius = -1;
+            lowerBaseRadius = -1;
+            facesCount = 4;
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);
@@ -91,9 +97,11 @@ namespace code
             UpdateWidth();
             UpdateHeight();
             UpdatePolygons();
+            UpdateLowerBaseRadius();
+            UpdateUpperBaseRadius();
         }
 
-        private void UpdateLength()
+        protected override void UpdateLength()
         {
             length = (float)Math.Sqrt(
                 Math.Pow(points[2].X - points[1].X, 2) +
@@ -102,7 +110,7 @@ namespace code
                 );
         }
 
-        private void UpdateWidth()
+        protected virtual void UpdateWidth()
         {
             width = (float)Math.Sqrt(
                 Math.Pow(points[1].X - points[0].X, 2) +
@@ -111,7 +119,7 @@ namespace code
                 );
         }
 
-        private void UpdateHeight()
+        protected override void UpdateHeight()
         {
             height = (float)Math.Sqrt(
                 Math.Pow(points[4].X - points[0].X, 2) +
@@ -143,7 +151,25 @@ namespace code
             set { SetHeight(value); Update(); height = value; }
         }
 
-        private void SetLength(float newLength)
+        public override int FacesCount
+        {
+            get { return facesCount; }
+            set {  }
+        }
+
+        public override float UpperBaseRadius
+        {
+            get { return upperBaseRadius; }
+            set { }
+        }
+
+        public override float LowerBaseRadius
+        {
+            get { return lowerBaseRadius; }
+            set { }
+        }
+
+        protected virtual void SetLength(float newLength)
         {
             float k = newLength / length;
             Scale scale = new Scale(k, k, k);
@@ -154,7 +180,7 @@ namespace code
             code.Scale.Transform(scale, points[6], points[5]);
         }
 
-        private void SetWidth(float newWidth)
+        protected virtual void SetWidth(float newWidth)
         {
             float k = newWidth / width;
             Scale scale = new Scale(k, k, k);
@@ -165,7 +191,7 @@ namespace code
             code.Scale.Transform(scale, points[7], points[6]);
         }
 
-        private void SetHeight(float newHeight)
+        protected override void SetHeight(float newHeight)
         {
             float k = newHeight / height;
             Scale scale = new Scale(k, k, k);

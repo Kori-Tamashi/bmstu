@@ -42,11 +42,17 @@ namespace code
             name = "Куб";
             type = Modeltype.Cube;
             color = Color.Empty;
+            material = new Material();
+
             length = -1;
             width = -1;
             height = -1;
             angle = -1;
             radius = -1;
+
+            upperBaseRadius = -1;
+            lowerBaseRadius = -1;
+            facesCount = 4;
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);
@@ -90,9 +96,11 @@ namespace code
             UpdateCenter();
             UpdateLength();
             UpdatePolygons();
+            UpdateLowerBaseRadius();
+            UpdateUpperBaseRadius();
         }
 
-        private void UpdateLength()
+        protected override void UpdateLength()
         {
             length = (float) Math.Sqrt(
                 Math.Pow(points[1].X - points[0].X, 2) + 
@@ -109,7 +117,31 @@ namespace code
         public override float Length
         {
             get { return length; }
-            set { SetLength(value); Update();  length = value; }
+            set { SetLength(value); Update(); }
+        }
+
+        public override int FacesCount
+        {
+            get { return facesCount; }
+            set {  }
+        }
+
+        public override float Height
+        {
+            get { return height; }
+            set { }
+        }
+
+        public override float UpperBaseRadius
+        {
+            get { return upperBaseRadius; }
+            set { }
+        }
+
+        public override float LowerBaseRadius
+        {
+            get { return lowerBaseRadius; }
+            set { }
         }
 
         private void SetLength(float newLength)
@@ -121,6 +153,8 @@ namespace code
             {
                 code.Scale.Transform(scale, point, center);
             }
+
+            length = newLength;
         }
 
         public override Model Copy()

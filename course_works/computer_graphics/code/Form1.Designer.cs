@@ -55,12 +55,14 @@
             label9 = new Label();
             Primitives_groupBox = new GroupBox();
             flowLayoutPanel1 = new FlowLayoutPanel();
+            model_button = new Button();
             Cube_button = new Button();
             triangularPyramid_button = new Button();
             directPrism_button = new Button();
             listView_modelsMain = new ListView();
             imageList = new ImageList(components);
             groupBox6 = new GroupBox();
+            button2 = new Button();
             button_Clear = new Button();
             button_dialogEdit = new Button();
             View_tabPage = new TabPage();
@@ -511,6 +513,7 @@
             // 
             // flowLayoutPanel1
             // 
+            flowLayoutPanel1.Controls.Add(model_button);
             flowLayoutPanel1.Controls.Add(Cube_button);
             flowLayoutPanel1.Controls.Add(triangularPyramid_button);
             flowLayoutPanel1.Controls.Add(directPrism_button);
@@ -519,10 +522,22 @@
             flowLayoutPanel1.Size = new Size(115, 126);
             flowLayoutPanel1.TabIndex = 2;
             // 
+            // model_button
+            // 
+            model_button.BackgroundImage = (Image)resources.GetObject("model_button.BackgroundImage");
+            model_button.BackgroundImageLayout = ImageLayout.Stretch;
+            model_button.Location = new Point(3, 3);
+            model_button.Name = "model_button";
+            model_button.Size = new Size(50, 50);
+            model_button.TabIndex = 5;
+            toolTip.SetToolTip(model_button, "Многогранник");
+            model_button.UseVisualStyleBackColor = true;
+            model_button.Click += model_button_Click;
+            // 
             // Cube_button
             // 
             Cube_button.BackgroundImage = (Image)resources.GetObject("Cube_button.BackgroundImage");
-            Cube_button.Location = new Point(3, 3);
+            Cube_button.Location = new Point(59, 3);
             Cube_button.Name = "Cube_button";
             Cube_button.Size = new Size(50, 50);
             Cube_button.TabIndex = 3;
@@ -534,7 +549,7 @@
             // 
             triangularPyramid_button.BackgroundImage = (Image)resources.GetObject("triangularPyramid_button.BackgroundImage");
             triangularPyramid_button.BackgroundImageLayout = ImageLayout.Stretch;
-            triangularPyramid_button.Location = new Point(59, 3);
+            triangularPyramid_button.Location = new Point(3, 59);
             triangularPyramid_button.Name = "triangularPyramid_button";
             triangularPyramid_button.Size = new Size(50, 50);
             triangularPyramid_button.TabIndex = 4;
@@ -545,7 +560,7 @@
             // directPrism_button
             // 
             directPrism_button.BackgroundImage = (Image)resources.GetObject("directPrism_button.BackgroundImage");
-            directPrism_button.Location = new Point(3, 59);
+            directPrism_button.Location = new Point(59, 59);
             directPrism_button.Name = "directPrism_button";
             directPrism_button.Size = new Size(50, 50);
             directPrism_button.TabIndex = 2;
@@ -593,6 +608,7 @@
             // groupBox6
             // 
             groupBox6.Anchor = AnchorStyles.None;
+            groupBox6.Controls.Add(button2);
             groupBox6.Controls.Add(button_Clear);
             groupBox6.Controls.Add(button_dialogEdit);
             groupBox6.Font = new Font("Segoe UI", 10F);
@@ -602,6 +618,16 @@
             groupBox6.TabIndex = 8;
             groupBox6.TabStop = false;
             groupBox6.Text = "Действия";
+            // 
+            // button2
+            // 
+            button2.Location = new Point(75, 122);
+            button2.Name = "button2";
+            button2.Size = new Size(94, 29);
+            button2.TabIndex = 2;
+            button2.Text = "button2";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click_1;
             // 
             // button_Clear
             // 
@@ -1496,8 +1522,8 @@
             // toolStripStatusLabel_lastRender
             // 
             toolStripStatusLabel_lastRender.Name = "toolStripStatusLabel_lastRender";
-            toolStripStatusLabel_lastRender.Size = new Size(37, 28);
-            toolStripStatusLabel_lastRender.Text = "0 нс";
+            toolStripStatusLabel_lastRender.Size = new Size(67, 28);
+            toolStripStatusLabel_lastRender.Text = "0 секунд";
             // 
             // picture
             // 
@@ -1824,6 +1850,8 @@
         private ToolStripStatusLabel toolStripStatusLabel_lastRender;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel toolStripStatusLabel_statusLabel;
+        private Button button2;
+        private Button model_button;
     }
 }
 

@@ -15,6 +15,7 @@ using System.Windows.Forms;
  * Изменение количества вершин в основании
  * Изменение радиусов оснований
  * Устанока источника света на сцену
+ * Разобраться с блеском в свете
  */
 
 namespace code
@@ -33,10 +34,27 @@ namespace code
             InitializeLight();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click_1(object sender, EventArgs e)
         {
+            Model model = new Model();
 
+            //for (int i = 3; i < 50; i++)
+            //{
+            //    model.FacesCount = i;
+            //    canvas.Clear();
+            //    canvas.AddModel(model);
+            //    facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+            //            ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+            //    Thread.Sleep(3000);
+            //}
 
+            model.FacesCount = 5;
+            model.UpperBaseRadius = 50;
+            model.FacesCount = 6;
+            canvas.Clear();
+            canvas.AddModel(model);
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
         }
 
         #region Initialize
@@ -79,6 +97,18 @@ namespace code
 
         #region ModelsButtons
 
+        private void model_button_Click(object sender, EventArgs e)
+        {
+            Model model = new Model();
+
+            facade._execute(
+                new ListViewAddModelCommand(ref listView_modelsMain, ref model),
+                new AddModelCommand(ref canvas, ref model),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+            );
+        }
+
         private void Cube_button_Click(object sender, EventArgs e)
         {
             Model model = new Cube();
@@ -86,8 +116,8 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -98,8 +128,8 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -110,8 +140,8 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -122,8 +152,8 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -134,8 +164,8 @@ namespace code
             facade._execute(
                 new ListViewAddModelCommand(ref listView_modelsMain, ref model),
                 new AddModelCommand(ref canvas, ref model),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -154,11 +184,6 @@ namespace code
                 new ClearCommand(ref canvas),
                 new ListViewClearCommand(ref listView_modelsMain)
             );
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            facade._execute(new ImageUpdateCommand(ref canvas, ref picture));
         }
 
         #endregion
@@ -180,8 +205,8 @@ namespace code
 
             facade._execute(
                 new MoveModelCommand(ref canvas, ref move, currentIndex),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -200,8 +225,8 @@ namespace code
 
             facade._execute(
                 new RotateModelCommand(ref canvas, ref rotate, currentIndex),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -214,7 +239,7 @@ namespace code
             facade._execute(
                 new CameraForwardMoveCommand(ref canvas, 15),
                 new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -222,8 +247,8 @@ namespace code
         {
             facade._execute(
                 new CameraBackMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -231,8 +256,8 @@ namespace code
         {
             facade._execute(
                 new CameraUpMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -240,8 +265,8 @@ namespace code
         {
             facade._execute(
                 new CameraDownMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -249,8 +274,8 @@ namespace code
         {
             facade._execute(
                 new CameraRightMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -259,7 +284,7 @@ namespace code
             facade._execute(
                 new CameraDownMoveCommand(ref canvas, 15),
                 new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -267,8 +292,8 @@ namespace code
         {
             facade._execute(
                 new CameraLeftMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -276,8 +301,8 @@ namespace code
         {
             facade._execute(
                 new CameraUpRightMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -285,8 +310,8 @@ namespace code
         {
             facade._execute(
                 new CameraDownRightMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -294,8 +319,8 @@ namespace code
         {
             facade._execute(
                 new CameraUpLeftMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -303,8 +328,8 @@ namespace code
         {
             facade._execute(
                 new CameraDownLeftMoveCommand(ref canvas, 15),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -312,32 +337,32 @@ namespace code
         {
             facade._execute(
                 new CameraRightRotateCommand(ref canvas, 10),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
         private void button_cameraRotateLeft_Click(object sender, EventArgs e)
         {
             facade._execute(new CameraLeftRotateCommand(ref canvas, 10),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
         private void button_cameraRotateDown_Click(object sender, EventArgs e)
         {
             facade._execute(new CameraDownRotateCommand(ref canvas, 10),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
         private void button_cameraRotateUp_Click(object sender, EventArgs e)
         {
             facade._execute(new CameraUpRotateCommand(ref canvas, 10),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
             );
         }
 
@@ -346,9 +371,9 @@ namespace code
             numericUpDown_yaw.Value = trackBar_yaw.Value;
 
             facade._execute(new CameraYawCommand(ref canvas, trackBar_yaw.Value),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
-                );
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+            );
         }
 
         private void trackBar_pitch_ValueChanged(object sender, EventArgs e)
@@ -356,9 +381,9 @@ namespace code
             numericUpDown_pitch.Value = trackBar_pitch.Value;
 
             facade._execute(new CameraPitchCommand(ref canvas, trackBar_pitch.Value),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
-                );
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+            );
         }
 
         private void numericUpDown_yaw_ValueChanged(object sender, EventArgs e)
@@ -428,23 +453,96 @@ namespace code
             switch (e.Index)
             {
                 case 0:
-                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.Shadows, 
+                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.Shadows,
                         ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
                     break;
                 case 1:
-                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.Shading, 
+                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.Shading,
                         ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
                     break;
                 case 2:
-                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.RealDisplay, 
+                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.RealDisplay,
                         ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
                     break;
                 default:
-                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.CarcassDisplay, 
+                    facade._execute(new RenderCommand(ref canvas, ref picture, RenderMode.CarcassDisplay,
                         ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
                     break;
             }
         }
+
+        private void numericUpDown_lightIntensity_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.LightIntensity = (float)numericUpDown_lightIntensity.Value;
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void numericUpDown_lightDirectionX_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.LightDirection.X = (int)numericUpDown_lightDirectionX.Value;
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void numericUpDown_lightDirectionY_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.LightDirection.Y = (int)numericUpDown_lightDirectionY.Value;
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void numericUpDown_lightDirectionZ_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.LightDirection.Z = (int)numericUpDown_lightDirectionZ.Value;
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void numericUpDown_lightPositionX_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.LightPosition.X = (int)numericUpDown_lightPositionX.Value;
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void numericUpDown_lightPositionY_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.LightPosition.Y = (int)numericUpDown_lightPositionY.Value;
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void numericUpDown_lightPositionZ_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.LightPosition.Z = (int)numericUpDown_lightPositionZ.Value;
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void button_moveLight_Click(object sender, EventArgs e)
+        {
+            Move move = new Move(
+                (float)numericUpDown_moveLightX.Value,
+                (float)numericUpDown_moveLightY.Value,
+                (float)numericUpDown_moveLightZ.Value
+            );
+
+            canvas.MoveLight(move);
+
+            numericUpDown_lightPositionX.Value = (decimal)canvas.LightPosition.X;
+            numericUpDown_lightPositionY.Value = (decimal)canvas.LightPosition.Y;
+            numericUpDown_lightPositionZ.Value = (decimal)canvas.LightPosition.Z;
+
+            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -471,8 +569,6 @@ namespace code
 
         }
 
-        #endregion
-
         private void label12_Click(object sender, EventArgs e)
         {
 
@@ -488,76 +584,9 @@ namespace code
 
         }
 
-        private void numericUpDown_lightIntensity_ValueChanged(object sender, EventArgs e)
-        {
-            canvas.LightIntensity = (float)numericUpDown_lightIntensity.Value;
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
+        #endregion
 
-        private void numericUpDown_lightDirectionX_ValueChanged(object sender, EventArgs e)
-        {
-            canvas.LightDirection.X = (int)numericUpDown_lightDirectionX.Value;
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
 
-        private void numericUpDown_lightDirectionY_ValueChanged(object sender, EventArgs e)
-        {
-            canvas.LightDirection.Y = (int)numericUpDown_lightDirectionY.Value;
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
-
-        private void numericUpDown_lightDirectionZ_ValueChanged(object sender, EventArgs e)
-        {
-            canvas.LightDirection.Z = (int)numericUpDown_lightDirectionZ.Value;
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
-
-        private void numericUpDown_lightPositionX_ValueChanged(object sender, EventArgs e)
-        {
-            canvas.LightPosition.X = (int)numericUpDown_lightPositionX.Value;
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
-
-        private void numericUpDown_lightPositionY_ValueChanged(object sender, EventArgs e)
-        {
-            canvas.LightPosition.Y = (int)numericUpDown_lightPositionY.Value;
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
-
-        private void numericUpDown_lightPositionZ_ValueChanged(object sender, EventArgs e)
-        {
-            canvas.LightPosition.Z = (int)numericUpDown_lightPositionZ.Value;
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
-
-        private void button_moveLight_Click(object sender, EventArgs e)
-        {
-            Move move = new Move(
-                (float)numericUpDown_moveLightX.Value,
-                (float)numericUpDown_moveLightY.Value,
-                (float)numericUpDown_moveLightZ.Value
-            );
-
-            canvas.MoveLight(move);
-
-            numericUpDown_lightPositionX.Value = (decimal)canvas.LightPosition.X;
-            numericUpDown_lightPositionY.Value = (decimal)canvas.LightPosition.Y;
-            numericUpDown_lightPositionZ.Value = (decimal)canvas.LightPosition.Z;
-
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(), 
-                ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
+        
     }
 }

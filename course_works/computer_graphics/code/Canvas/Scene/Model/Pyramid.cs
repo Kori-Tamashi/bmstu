@@ -24,6 +24,7 @@ namespace code
                 0, 1,
                 1, 2,
                 2, 0,
+
                 0, 3,
                 1, 3,
                 2, 3
@@ -32,11 +33,17 @@ namespace code
             name = "Пирамида";
             type = Modeltype.Pyramid;
             color = Color.Empty;
+            material = new Material();
+
             length = -1;
             height = -1;
             width = -1;
             radius = -1;
             angle = -1;
+
+            upperBaseRadius = -1;
+            lowerBaseRadius = -1;
+            facesCount = 3;
 
             ConstructCenter(points);
             ConstructEdges(points, indexes);
@@ -78,10 +85,11 @@ namespace code
             UpdateCenter();
             UpdateLength();
             UpdateHeight();
+            UpdateLowerBaseRadius();
             UpdatePolygons();
         }
 
-        private void UpdateLength()
+        protected override void UpdateLength()
         {
             length = (float)Math.Sqrt(
                 Math.Pow(points[1].X - points[0].X, 2) +
@@ -90,16 +98,24 @@ namespace code
                 );
         }
 
-        private void UpdateHeight()
+        protected override void UpdateHeight()
         {
-            Vector3D vector1 = new Vector3D(points[0], points[1]);
-            Vector3D vector2 = new Vector3D(points[0], points[2]);
-            Vector3D baseNormal = Vector3D.CrossProduct(vector1, vector2);
-            baseNormal.Normalize();
+            //Vector3D vector1 = new Vector3D(points[0], points[1]);
+            //Vector3D vector2 = new Vector3D(points[0], points[2]);
+            //Vector3D baseNormal = Vector3D.CrossProduct(vector1, vector2);
+            //baseNormal.Normalize();
 
-            Vector3D vector3 = new Vector3D(points[0], points[3]);
-            height = Vector3D.DotProduct(vector3, baseNormal);
-            height = Math.Abs(height);
+            //Vector3D vector3 = new Vector3D(points[0], points[3]);
+            //height = Vector3D.DotProduct(vector3, baseNormal);
+            //height = Math.Abs(height);
+
+            Point3D lowerBaseCenter = GetLowerBaseCenter();
+
+            height = (float)Math.Sqrt(
+                Math.Pow(lowerBaseCenter.X - points[3].X, 2) +
+                Math.Pow(lowerBaseCenter.Y - points[3].Y, 2) +
+                Math.Pow(lowerBaseCenter.Z - points[3].Z, 2)
+                );
         }
 
         private void UpdatePolygons()
@@ -107,16 +123,33 @@ namespace code
             ConstructPolygons(points);
         }
 
+        public override int FacesCount
+        {
+            get { return facesCount; }
+        }
+
         public override float Length
         {
             get { return length; }
-            set { SetLength(value); Update(); length = value; }
+            set { SetLength(value); Update(); }
         }
 
         public override float Height
         {
             get { return height; }
-            set { SetHeight(value); Update(); height = value; }
+            set { SetHeight(value); Update(); }
+        }
+
+        public override float UpperBaseRadius
+        {
+            get { return upperBaseRadius; }
+            set {  }
+        }
+
+        public override float LowerBaseRadius
+        {
+            get { return lowerBaseRadius; }
+            set {  }
         }
 
         private void SetLength(float newLength)
@@ -134,9 +167,11 @@ namespace code
             {
                 code.Scale.Transform(scale, points[i], baseCenter);
             }
+
+            length = newLength;
         }
 
-        private void SetHeight(float newHeight)
+        protected override void SetHeight(float newHeight)
         {
             float k = newHeight / height;
             Scale scale = new Scale(k, k, k);
@@ -148,6 +183,8 @@ namespace code
                 );
 
             code.Scale.Transform(scale, points[3], baseCenter);
+
+            height = newHeight;
         }
 
         public override Model Copy()

@@ -1,5 +1,6 @@
 ﻿using Azure;
 using code;
+using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -26,6 +27,10 @@ namespace code
         protected float radius;
         protected float angle;
 
+        protected float upperBaseRadius;
+        protected float lowerBaseRadius;
+        protected int facesCount;
+
         protected Color color;
         protected Material material;
 
@@ -37,34 +42,72 @@ namespace code
 
         public Model()
         {
-            center = new Point3D();
-            points = new List<Point3D>();
-            indexes = new List<int>();
-            edges = new List<Edge>();
+            points = new List<Point3D> {
+                new Point3D(0, 0, 0), // 0
+                new Point3D(100, 0, 0), // 1
+                new Point3D(100, 0, 100), // 2
+                new Point3D(0, 0, 100), // 3
+                new Point3D(0, 100, 0), // 0
+                new Point3D(100, 100, 0), // 1
+                new Point3D(100, 100, 100), // 2
+                new Point3D(0, 100, 100), // 3
+            };
 
-            length = 0;
-            width = 0;
-            height = 0;
-            radius = 0;
-            angle = 0;
+            indexes = new List<int> {
+                0, 1,
+                1, 2,
+                2, 3,
+                3, 0,
 
-            color = Color.Empty;
+                4, 5,
+                5, 6,
+                6, 7,
+                7, 4,
+
+                0, 4,
+                1, 5,
+                2, 6,
+                3, 7
+            };
+
+            name = "Многогранник";
             type = Modeltype.Model;
             material = new Material();
+            color = Color.Empty;
+
+            length = -1;
+            width = -1;
+            height = -1;
+            angle = -1;
+            radius = -1;
+
+            upperBaseRadius = -1;
+            lowerBaseRadius = -1;
+            facesCount = 4;
+
+            ConstructCenter(points);
+            ConstructEdges(points, indexes);
+            ConstructPolygons(points);
+            Update();
         }
 
         public Model(Model other)
         {
             type = other.type;
             name = other.name;
-            center = other.center;
+            material = other.material;
+            color = other.color;
+
             length = other.length;
             width = other.width;
             height = other.height;
             radius = other.radius;
             angle = other.angle;
-            color = other.color;
-            material = other.material;
+            center = other.center;
+
+            upperBaseRadius = other.upperBaseRadius;
+            lowerBaseRadius = other.lowerBaseRadius;
+            facesCount = other.facesCount;
 
             CopyPoints(other);
             CopyIndexes(other);
@@ -146,7 +189,24 @@ namespace code
 
         protected virtual void ConstructPolygons(List<Point3D> points)
         {
+            List<Point3D> lowerBasePoints = new List<Point3D>(facesCount);
+            List<Point3D> upperBasePoints = new List<Point3D>(facesCount);
 
+            for (int i = 0; i < facesCount; i++)
+            {
+                lowerBasePoints.Add(points[i]);
+                upperBasePoints.Add(points[i + facesCount]);
+            }
+
+            polygons = new List<Polygon>(facesCount + 2);
+            polygons.Add(new Polygon(lowerBasePoints));
+            polygons.Add(new Polygon(upperBasePoints));
+
+            for (int i = 0; i < facesCount; i++)
+            {
+                Polygon polygon = new Polygon(points[i], points[(i + 1) % facesCount], points[facesCount + (i + 1) % facesCount], points[facesCount + i]);
+                polygons.Add(polygon);
+            }
         }
 
         protected void CopyPoints(Model other)
@@ -175,12 +235,71 @@ namespace code
 
         protected virtual void Update()
         {
-
+            UpdateCenter();
+            UpdateHeight();
+            UpdateLength();
+            UpdateLowerBaseRadius();
+            UpdateUpperBaseRadius();
+            UpdatePolygons();
+            UpdateEdges();
         }
 
         protected void UpdateCenter()
         {
             ConstructCenter(points);
+        }
+
+        private void UpdatePolygons()
+        {
+            ConstructPolygons(points);
+        }
+
+        private void UpdateEdges()
+        {
+            ConstructEdges(points, indexes);
+        }
+
+        protected virtual void UpdateLength()
+        {
+            length = (float)Math.Sqrt(
+                Math.Pow(points[0].X - points[1].X, 2) +
+                Math.Pow(points[0].Y - points[1].Y, 2) +
+                Math.Pow(points[0].Z - points[1].Z, 2)
+                );
+        }
+
+        protected virtual void UpdateHeight()
+        {
+            Point3D lowerBaseCenter = GetLowerBaseCenter();
+            Point3D upperBaseCenter = GetUpperBaseCenter();
+
+            height = (float)Math.Sqrt(
+                Math.Pow(upperBaseCenter.X - lowerBaseCenter.X, 2) +
+                Math.Pow(upperBaseCenter.Y - lowerBaseCenter.Y, 2) +
+                Math.Pow(upperBaseCenter.Z - lowerBaseCenter.Z, 2)
+                );
+        }
+
+        protected virtual void UpdateLowerBaseRadius()
+        {
+            Point3D lowerBaseCenter = GetLowerBaseCenter();
+
+            lowerBaseRadius = (float)Math.Sqrt(
+                Math.Pow(lowerBaseCenter.X - points[0].X, 2) +
+                Math.Pow(lowerBaseCenter.Y - points[0].Y, 2) +
+                Math.Pow(lowerBaseCenter.Z - points[0].Z, 2)
+                );
+        }
+
+        protected virtual void UpdateUpperBaseRadius()
+        {
+            Point3D upperBaseCenter = GetUpperBaseCenter();
+
+            upperBaseRadius = (float)Math.Sqrt(
+                Math.Pow(upperBaseCenter.X - points[facesCount].X, 2) +
+                Math.Pow(upperBaseCenter.Y - points[facesCount].Y, 2) +
+                Math.Pow(upperBaseCenter.Z - points[facesCount].Z, 2)
+                );
         }
 
         #endregion
@@ -212,7 +331,7 @@ namespace code
         public virtual float Height
         {
             get { return height; }
-            set { height = value; }
+            set { SetHeight(value); Update(); }
         }
 
         public virtual float Radius
@@ -242,7 +361,6 @@ namespace code
         public Point3D Center
         {
             get { return center; }
-            set { center = value; }
         }
 
         public Modeltype Type
@@ -271,6 +389,158 @@ namespace code
         public virtual Matrix<float> Matrix
         {
             get { return _Matrix(); }
+        }
+
+        public virtual int FacesCount
+        {
+            get { return facesCount; }
+            set { SetFacesCount(value); Update(); }
+        }
+
+        public virtual float UpperBaseRadius
+        {
+            get { return upperBaseRadius; }
+            set { SetUpperBaseRadius(value); Update(); }
+        }
+
+        public virtual float LowerBaseRadius
+        {
+            get { return lowerBaseRadius; }
+            set { SetLowerBaseRadius(value); Update(); }
+        }
+
+        private void SetFacesCount(int newFacesCount)
+        {
+            // получение центров нижнего и верхнего оснований
+            Point3D lowerBaseCenter = GetLowerBaseCenter();
+            Point3D upperBaseCenter = GetUpperBaseCenter();
+            
+            points.Clear();
+            indexes.Clear();
+
+            facesCount = newFacesCount;
+            float angleStep = 2 * (float)Math.PI / facesCount;
+
+            // получение нижнего основания
+            for (int i = 0; i < facesCount; i++)
+            {
+                float angle = i * angleStep;
+                float x = (float)(Math.Cos(angle) * lowerBaseRadius); 
+                float z = (float)(Math.Sin(angle) * lowerBaseRadius);
+
+                points.Add(new Point3D(x + lowerBaseCenter.X, lowerBaseCenter.Y, z + lowerBaseCenter.Z));
+                indexes.Add(i);
+                indexes.Add((i + 1) % facesCount);
+            }
+
+            // получение верхнего основания
+            for (int i = 0; i < facesCount; i++)
+            {
+                float angle = i * angleStep;
+                float x = (float)(Math.Cos(angle) * upperBaseRadius);
+                float z = (float)(Math.Sin(angle) * upperBaseRadius);
+
+                points.Add(new Point3D(x + upperBaseCenter.X, upperBaseCenter.Y, z + upperBaseCenter.Z));
+                indexes.Add(facesCount + i);
+                indexes.Add(facesCount + (i + 1) % facesCount);
+            }
+
+            // получение боковых граней
+            for (int i = 0; i < facesCount; i++)
+            {
+                indexes.Add(i);
+                indexes.Add(i + facesCount);
+            }
+        }
+
+        protected void SetUpperBaseRadius(float newUpperBaseRadius)
+        {
+            Point3D upperBaseCenter = GetUpperBaseCenter();
+            float angleStep = 2 * (float)Math.PI / facesCount;
+
+            for (int i = 0; i < facesCount; i++)
+            {
+                float angle = i * angleStep;
+                float x = (float)(Math.Cos(angle) * newUpperBaseRadius);
+                float z = (float)(Math.Sin(angle) * newUpperBaseRadius);
+
+                points.Add(new Point3D(x + upperBaseCenter.X, upperBaseCenter.Y, z + upperBaseCenter.Z));
+
+                points[facesCount + i].X = x + upperBaseCenter.X;
+                points[facesCount + i].Y = upperBaseCenter.Y;
+                points[facesCount + i].Z = z + upperBaseCenter.Z;
+            }
+
+            upperBaseRadius = newUpperBaseRadius;
+        }
+
+        protected void SetLowerBaseRadius(float newLowerBaseRadius)
+        {
+            Point3D lowerBaseCenter = GetLowerBaseCenter();
+            float angleStep = 2 * (float)Math.PI / facesCount;
+
+            for (int i = 0; i < facesCount; i++)
+            {
+                float angle = i * angleStep;
+                float x = (float)(Math.Cos(angle) * newLowerBaseRadius);
+                float z = (float)(Math.Sin(angle) * newLowerBaseRadius);
+
+                points.Add(new Point3D(x + lowerBaseCenter.X, lowerBaseCenter.Y, z + lowerBaseCenter.Z));
+
+                points[i].X = x + lowerBaseCenter.X;
+                points[i].Y = lowerBaseCenter.Y;
+                points[i].Z = z + lowerBaseCenter.Z;
+            }
+
+            lowerBaseRadius = newLowerBaseRadius;
+        }
+
+        protected virtual void SetHeight(float newHeight)
+        {
+            float heightDifference = newHeight - height;
+
+            for (int i = 0; i < facesCount; i++)
+            {
+                points[i + facesCount].Y += heightDifference; 
+            }
+
+            height = newHeight;
+        }
+
+        protected Point3D GetUpperBaseCenter()
+        {
+            Point3D upperBaseCenter = new Point3D(0, 0, 0);
+
+            for (int i = 0; i < facesCount; i++)
+            {
+                upperBaseCenter.X += points[i + facesCount].X;
+                upperBaseCenter.Y += points[i + facesCount].Y;
+                upperBaseCenter.Z += points[i + facesCount].Z;
+            }
+
+            upperBaseCenter.X /= facesCount;
+            upperBaseCenter.Y /= facesCount;
+            upperBaseCenter.Z /= facesCount;
+
+            return upperBaseCenter;
+        }
+
+        protected Point3D GetLowerBaseCenter()
+        {
+            Point3D lowerBaseCenter = new Point3D(0, 0, 0);
+
+            for (int i = 0; i < facesCount; i++)
+            {
+                lowerBaseCenter.X += points[i].X;
+                lowerBaseCenter.Y += points[i].Y;
+                lowerBaseCenter.Z += points[i].Z;
+            }
+
+            lowerBaseCenter.X /= facesCount;
+            lowerBaseCenter.Y /= facesCount;
+            lowerBaseCenter.Z /= facesCount;
+
+            return lowerBaseCenter;
         }
 
         #endregion
