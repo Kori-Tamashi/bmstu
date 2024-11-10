@@ -20,7 +20,7 @@ namespace code
         public int d = 1;        // приоритет освещения
 
         // Phong Shading Coeffs
-        public float a = 20;  // коэффициент блеска
+        public float a = 21;  // коэффициент блеска
         public float k_m = 0.3f; // коэффициент зеркального отражения
 
         public Material()

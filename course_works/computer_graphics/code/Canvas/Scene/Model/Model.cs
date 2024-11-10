@@ -698,7 +698,7 @@ namespace code
                 modelMatrix[3, i] = polygons[i].D;
             }
 
-            return modelMatrix;
+            return -1 * modelMatrix;
         }
         
     }

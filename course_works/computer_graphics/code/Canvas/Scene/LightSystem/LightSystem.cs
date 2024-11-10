@@ -12,7 +12,7 @@ namespace code
         const int maxLights = 1;
 
         Vector3D startLightDirection = new Vector3D(0, 0, 1);
-        Point3D startLightPosition = new Point3D(83, 83, -300);
+        Point3D startLightPosition = new Point3D(85, -85, -300);
 
         List<Light> lights;
         int currentLightIndex = 0;

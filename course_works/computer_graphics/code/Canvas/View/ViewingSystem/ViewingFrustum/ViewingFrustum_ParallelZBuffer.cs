@@ -54,9 +54,9 @@ namespace code
 
         protected new void ProcessModel(Model model)
         {
-            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera); 
 
-            Parallel.ForEach(visiblePolygons, polygon =>
+            Parallel.ForEach(model.Polygons, polygon =>
             {
                 ProcessPolygon(polygon, model.Color);
             });

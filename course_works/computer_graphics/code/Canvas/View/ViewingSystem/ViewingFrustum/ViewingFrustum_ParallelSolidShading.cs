@@ -12,15 +12,15 @@ namespace code
         public ViewingFrustum_ParallelSolidShading(float view_field_width, float view_field_height, float near_plane_distance, float far_plane_distance,
             Camera camera) : base(view_field_width, view_field_height, near_plane_distance, far_plane_distance, camera) { }
 
-        public new void ProcessingShading(Scene scene)
-        {
-            Processing(scene);
-        }
+        //public new void ProcessingShading(Scene scene)
+        //{
+        //    Processing(scene);
+        //}
 
-        public new void ProcessingShading(List<Model> models, Light light)
-        {
-            Processing(models, light);
-        }
+        //public new void ProcessingShading(List<Model> models, Light light)
+        //{
+        //    Processing(models, light);
+        //}
 
         public new void ProcessingShading(Model model, Light light)
         {
@@ -58,7 +58,7 @@ namespace code
 
         protected new void ProcessModel(Model model, Light light)
         {
-            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera);
 
             Parallel.ForEach(clippedPolygons, polygon =>
             {

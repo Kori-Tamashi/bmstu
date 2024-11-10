@@ -20,6 +20,13 @@ namespace code
             Z = z;
         }
 
+        public Vector3D(Vector3D v)
+        {
+            X = v.X;
+            Y = v.Y;
+            Z = v.Z;
+        }
+
         public Vector3D(Point3D point)
         {
             X = point.X;
@@ -117,6 +124,16 @@ namespace code
             X /= length;
             Y /= length;
             Z /= length;
+        }
+
+        public void Rotate(Rotate rotate)
+        {
+            Point3D vEnd = ToPoint();
+            code.Rotate.Transform(rotate, vEnd);
+
+            X = vEnd.X;
+            Y = vEnd.Y;
+            Z = vEnd.Z;
         }
 
         public void PlaneRotate(bool clockwise = true)

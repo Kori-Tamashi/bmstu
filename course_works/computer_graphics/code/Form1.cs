@@ -34,29 +34,6 @@ namespace code
             InitializeLight();
         }
 
-        private void button2_Click_1(object sender, EventArgs e)
-        {
-            Model model = new Model();
-
-            //for (int i = 3; i < 50; i++)
-            //{
-            //    model.FacesCount = i;
-            //    canvas.Clear();
-            //    canvas.AddModel(model);
-            //    facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
-            //            ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-            //    Thread.Sleep(3000);
-            //}
-
-            model.FacesCount = 5;
-            model.UpperBaseRadius = 50;
-            model.FacesCount = 6;
-            canvas.Clear();
-            canvas.AddModel(model);
-            facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
-                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
-        }
-
         #region Initialize
 
         private void InitializeCanvas()
@@ -480,21 +457,30 @@ namespace code
 
         private void numericUpDown_lightDirectionX_ValueChanged(object sender, EventArgs e)
         {
-            canvas.LightDirection.X = (int)numericUpDown_lightDirectionX.Value;
+            Vector3D newDirection = new Vector3D(canvas.LightDirection);
+            newDirection.X = (float)numericUpDown_lightDirectionX.Value;
+
+            canvas.LightDirection = newDirection;
             facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
                 ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
         }
 
         private void numericUpDown_lightDirectionY_ValueChanged(object sender, EventArgs e)
         {
-            canvas.LightDirection.Y = (int)numericUpDown_lightDirectionY.Value;
+            Vector3D newDirection = new Vector3D(canvas.LightDirection);
+            newDirection.Y = (float)numericUpDown_lightDirectionY.Value;
+
+            canvas.LightDirection = newDirection;
             facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
                 ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
         }
 
         private void numericUpDown_lightDirectionZ_ValueChanged(object sender, EventArgs e)
         {
-            canvas.LightDirection.Z = (int)numericUpDown_lightDirectionZ.Value;
+            Vector3D newDirection = new Vector3D(canvas.LightDirection);
+            newDirection.Z = (float)numericUpDown_lightDirectionZ.Value;
+
+            canvas.LightDirection = newDirection;
             facade._execute(new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
                 ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel));
         }

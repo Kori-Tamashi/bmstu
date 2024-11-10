@@ -155,7 +155,7 @@ namespace code
 
         protected void ProcessModel(Model model)
         {
-            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+            List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera);
 
             foreach (Polygon polygon in visiblePolygons)
             {
@@ -176,15 +176,6 @@ namespace code
             Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
             Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
 
-            if (viewingFrustumPoint.Z > zBufferModels[viewPortPoint.Y, viewPortPoint.X])
-            {
-                zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;
-                colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? Color.Black : color;
-            }
-        }
-
-        protected void ProcessPoint(Point3D viewingFrustumPoint, Point viewPortPoint, Color color)
-        {
             if (viewingFrustumPoint.Z > zBufferModels[viewPortPoint.Y, viewPortPoint.X])
             {
                 zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;

@@ -137,6 +137,7 @@ namespace code
             Vector3D vector1 = new Vector3D(points[1], points[0]);
             Vector3D vector2 = new Vector3D(points[1], points[2]);
             Vector3D baseNormal = Vector3D.CrossProduct(vector1, vector2);
+            baseNormal.Normalize();
 
             a = baseNormal.X;
             b = baseNormal.Y;
@@ -259,6 +260,7 @@ namespace code
             a = vec.X;
             b = vec.Y;
             c = vec.Z;
+            d = -(a * points[0].X + b * points[0].Y + c * points[0].Z);
         }
 
         public Vector3D Normal()

@@ -100,11 +100,13 @@ namespace code
                 canvas.Render(renderMode);
                 canvas.UpdateImage(ref pictureBox);
                 pictureBox.Refresh();
+                canvas.DrawCoordinateSystem();
             }
             else
             {
                 canvas.GraphicsClear();
                 canvas.Render(renderMode);
+                canvas.DrawCoordinateSystem();
             }
 
             stopwatch.Stop();

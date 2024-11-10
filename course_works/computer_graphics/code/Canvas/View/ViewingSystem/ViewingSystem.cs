@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
+using Windows.Devices.Input;
 
 namespace code
 {
@@ -15,8 +16,7 @@ namespace code
         protected const int nearDistance = 100;
 
         protected Vector3D startCameraDirection = new Vector3D(0, 0, 1);
-        protected Point3D startCameraPosition = new Point3D(83, 83, -300);
-
+        protected Point3D startCameraPosition = new Point3D(85, -85, -300);
 
         protected Size viewPortSize;
         protected int currentCameraIndex = 0;
@@ -133,6 +133,107 @@ namespace code
         public void Processing(Model model)
         {
             cameras[currentCameraIndex].Processing(model);
+        }
+
+        public void DrawCoordinateSystem(Graphics gr)
+        {
+            float penWidth = 7;
+            float axisLength = 90;
+            
+            Point center = new Point(110, viewPortSize.Height - 50);
+            Rotate rotate = new Rotate(cameras[currentCameraIndex].Pitch, cameras[currentCameraIndex].Yaw, 0);
+
+            Vector3D Z = new Vector3D(axisLength, 0, 0);
+            Vector3D Y = new Vector3D(0, axisLength, 0);
+            Vector3D X = new Vector3D(0, 0, -axisLength);
+
+            X.Rotate(rotate);
+            Y.Rotate(rotate);
+            Z.Rotate(rotate);
+
+            Point3D xEnd = new Point3D(center.X + (int)X.X, center.Y - (int)X.Y, X.Z);
+            Point3D yEnd = new Point3D(center.X + (int)Y.X, center.Y - (int)Y.Y, Y.Z);
+            Point3D zEnd = new Point3D(center.X - (int)Z.X, center.Y - (int)Z.Y, Z.Z);
+
+            Point xEndp = new Point((int)xEnd.X, (int)xEnd.Y);
+            Point yEndp = new Point((int)yEnd.X, (int)yEnd.Y);
+            Point zEndp = new Point((int)zEnd.X, (int)zEnd.Y);
+
+            Pen xPen = new Pen(Color.Red, penWidth);
+            Pen yPen = new Pen(Color.Green, penWidth);
+            Pen zPen = new Pen(Color.Blue, penWidth);
+
+            gr.DrawLine(xPen, center, xEndp);
+            gr.DrawLine(yPen, center, yEndp);
+            gr.DrawLine(zPen, center, zEndp);
+
+            Font labelFont = new Font("Microsoft Sans Serif", 14);
+
+            if (xEnd.Z > yEnd.Z)
+            {
+                if (xEnd.Z > zEnd.Z)
+                {
+                    gr.DrawLine(xPen, center, xEndp);
+                    gr.DrawString("X", labelFont, Brushes.Red, xEndp);
+
+                    if (yEnd.Z > zEnd.Z)
+                    {
+                        gr.DrawLine(yPen, center, yEndp);
+                        gr.DrawString("Y", labelFont, Brushes.Green, yEndp);
+                        gr.DrawLine(zPen, center, zEndp);
+                        gr.DrawString("Z", labelFont, Brushes.Blue, zEndp);
+                    }
+                    else
+                    {
+                        gr.DrawLine(zPen, center, zEndp);
+                        gr.DrawString("Z", labelFont, Brushes.Blue, zEndp);
+                        gr.DrawLine(yPen, center, yEndp);
+                        gr.DrawString("Y", labelFont, Brushes.Green, yEndp);
+                    } 
+                }
+                else
+                {
+                    gr.DrawLine(zPen, center, zEndp);
+                    gr.DrawString("Z", labelFont, Brushes.Blue, zEndp);
+                    gr.DrawLine(xPen, center, xEndp);
+                    gr.DrawString("X", labelFont, Brushes.Red, xEndp);
+                    gr.DrawLine(yPen, center, yEndp);
+                    gr.DrawString("Y", labelFont, Brushes.Green, yEndp);
+                }
+            }
+            else
+            {
+                if (yEnd.Z > zEnd.Z)
+                {
+                    gr.DrawLine(yPen, center, yEndp);
+                    gr.DrawString("Y", labelFont, Brushes.Green, yEndp);
+
+                    if (xEnd.Z > zEnd.Z)
+                    {
+                        gr.DrawLine(xPen, center, xEndp);
+                        gr.DrawString("X", labelFont, Brushes.Red, xEndp);
+                        gr.DrawLine(zPen, center, zEndp);
+                        gr.DrawString("Z", labelFont, Brushes.Blue, zEndp);
+                    }
+                    else
+                    {
+                        gr.DrawLine(zPen, center, zEndp);
+                        gr.DrawString("Z", labelFont, Brushes.Blue, zEndp);
+                        gr.DrawLine(xPen, center, xEndp);
+                        gr.DrawString("X", labelFont, Brushes.Red, xEndp);
+                    }
+                }
+                else
+                {
+                    gr.DrawLine(zPen, center, zEndp);
+                    gr.DrawString("Z", labelFont, Brushes.Blue, zEndp);
+                    gr.DrawLine(yPen, center, yEndp);
+                    gr.DrawString("Y", labelFont, Brushes.Green, yEndp);
+                    gr.DrawLine(xPen, center, xEndp);
+                    gr.DrawString("X", labelFont, Brushes.Red, xEndp);
+                }
+            }
+
         }
 
         public void AddCamera(Vector3D direction, Point3D position)

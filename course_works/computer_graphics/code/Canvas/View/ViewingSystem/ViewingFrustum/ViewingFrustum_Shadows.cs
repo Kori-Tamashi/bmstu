@@ -42,20 +42,13 @@ namespace code
 
         protected void ProcessShadows(List<Model> models, Light light)
         {
-            if (shadowsCamera == null)
-            {
-                shadowsCamera = new ViewingFrustum_ParallelZBuffer(
-                    view_field_width,
-                    view_field_height,
-                    near_plane_distance,
-                    far_plane_distance,
-                    light.Camera
-                );
-            }
-            else
-            {
-                shadowsCamera.Camera = light.Camera;
-            }
+            shadowsCamera = new ViewingFrustum_ParallelZBuffer(
+                view_field_width,
+                view_field_height,
+                near_plane_distance,
+                far_plane_distance,
+                light.Camera
+            );
 
             shadowsCamera.Processing(models);
         }
@@ -70,23 +63,13 @@ namespace code
 
         protected new void ProcessModel(Model model, Light light)
         {
-            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera);
 
-            foreach (Polygon polygon in clippedPolygons)
+            foreach (Polygon polygon in model.Polygons)
             {
                 ProcessPolygon(polygon, model.Material, model.Color, light);
             }
         }
-
-        //protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
-        //{
-        //    float intensity = GetIntensity(polygon, material, light);
-
-        //    foreach (Point3D point in polygon.InsidePoints)
-        //    {
-        //        ProcessPoint__(point, color, intensity);
-        //    }
-        //}
 
         protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
         {
@@ -94,11 +77,37 @@ namespace code
 
             foreach (Point3D point in polygon.InsidePoints)
             {
-                ProcessPoint__(point, color, material, polygonNormal, light);
+                ProcessPoint(point, color, material, polygonNormal, light);
             }
         }
 
-        protected new void ProcessPoint(Point3D worldPoint, Color color, float intensity)
+        protected new void ProcessPoint(Point3D worldPoint, Color color, Material material, Vector3D polygonNormal, Light light)
+        {
+            // DON'T. TOUCH. THIS.
+
+            Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
+            Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
+
+            if (viewingFrustumPoint.Z > zBufferModels[viewPortPoint.Y, viewPortPoint.X])
+            {
+                float intensity = GetIntensity(worldPoint, polygonNormal, material, light);
+                Point3D lightViewPoint = shadowsCamera.ViewingFrustumPoint(worldPoint);
+                Point lightViewPortPoint = shadowsCamera.ViewPortPointByViewingFrustumPoint(lightViewPoint);
+
+                if (lightViewPoint.Z > shadowsCamera.ZBuffer[lightViewPortPoint.Y, lightViewPortPoint.X])
+                {
+                    zBufferModels[viewPortPoint.Y, viewPortPoint.X] = lightViewPoint.Z;
+                    colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _ColorMix(Color.Black, Color.Gray, 0.4f) : _ColorMix(Color.Black, color, 0.4f);
+                }
+                else
+                {
+                    zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;
+                    colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _Color(Color.Black, intensity) : _Color(color, intensity);
+                }
+            }
+        }
+
+        protected new void ProcessPoint___(Point3D worldPoint, Color color, float intensity)
         {
             // DON'T. TOUCH. THIS.
 

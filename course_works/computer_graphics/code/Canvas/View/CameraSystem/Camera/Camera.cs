@@ -37,6 +37,9 @@ namespace code
             right = Vector3D.CrossProduct(direction, top);
             up = Vector3D.CrossProduct(direction, right);
 
+            right.Turn();
+            up.Turn();
+
             direction.Normalize();
             right.Normalize();
             up.Normalize();
@@ -44,14 +47,14 @@ namespace code
 
         public void InitializeYawPitch(Vector3D direction)
         {
-            yaw = (float)(Math.Atan2(direction.Z, direction.X) * (180.0 / Math.PI));
-
             if (direction.Length > 0)
             {
+                yaw = (float)(Math.Atan2(direction.Z, direction.X) * (180.0 / Math.PI));
                 pitch = (float)(Math.Asin(direction.Y / direction.Length) * (180.0 / Math.PI));
             }
             else
             {
+                yaw = 0; 
                 pitch = 0; 
             }
 
@@ -78,6 +81,9 @@ namespace code
         private void SetDirection(Vector3D direction)
         {
             this.direction = direction;
+            this.direction.Normalize();
+
+            InitializeVectors();
             InitializeYawPitch(direction);
         }
 
@@ -281,6 +287,10 @@ namespace code
                 (float)( Math.Sin(radiansYaw) * Math.Cos(radiansPitch) )
             );
 
+            newDirection.X = (Math.Abs(newDirection.X) < 1e-7f) ? 0 : newDirection.X;
+            newDirection.Y = (Math.Abs(newDirection.Y) < 1e-7f) ? 0 : newDirection.Y;
+            newDirection.Z = (Math.Abs(newDirection.Z) < 1e-7f) ? 0 : newDirection.Z;
+
             direction = newDirection;
             right = Vector3D.CrossProduct(direction, new Vector3D(0, 1, 0));
             up = Vector3D.CrossProduct(right, direction);
@@ -288,6 +298,8 @@ namespace code
             direction.Normalize();
             right.Normalize();
             up.Normalize();
+
+            right.Turn();
         }
 
         private float NormalizeYaw(float angle)

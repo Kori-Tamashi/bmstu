@@ -59,7 +59,7 @@ namespace code
 
         protected void ProcessModel(Model model, Light light)
         {
-            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera);
 
             foreach (Polygon polygon in clippedPolygons)
             {

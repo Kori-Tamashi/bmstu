@@ -62,7 +62,6 @@
             listView_modelsMain = new ListView();
             imageList = new ImageList(components);
             groupBox6 = new GroupBox();
-            button2 = new Button();
             button_Clear = new Button();
             button_dialogEdit = new Button();
             View_tabPage = new TabPage();
@@ -83,15 +82,6 @@
             numericUpDown_lightPositionX = new NumericUpDown();
             label17 = new Label();
             label18 = new Label();
-            groupBox15 = new GroupBox();
-            button_rotateLight = new Button();
-            tableLayoutPanel8 = new TableLayoutPanel();
-            label13 = new Label();
-            numericUpDown_rotateZ = new NumericUpDown();
-            numericUpDown_rotateY = new NumericUpDown();
-            numericUpDown_rotateX = new NumericUpDown();
-            label14 = new Label();
-            label15 = new Label();
             groupBox12 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             numericUpDown_lightIntensity = new NumericUpDown();
@@ -176,11 +166,6 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionX).BeginInit();
-            groupBox15.SuspendLayout();
-            tableLayoutPanel8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateZ).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateY).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateX).BeginInit();
             groupBox12.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_lightIntensity).BeginInit();
@@ -608,7 +593,6 @@
             // groupBox6
             // 
             groupBox6.Anchor = AnchorStyles.None;
-            groupBox6.Controls.Add(button2);
             groupBox6.Controls.Add(button_Clear);
             groupBox6.Controls.Add(button_dialogEdit);
             groupBox6.Font = new Font("Segoe UI", 10F);
@@ -618,16 +602,6 @@
             groupBox6.TabIndex = 8;
             groupBox6.TabStop = false;
             groupBox6.Text = "Действия";
-            // 
-            // button2
-            // 
-            button2.Location = new Point(75, 122);
-            button2.Name = "button2";
-            button2.Size = new Size(94, 29);
-            button2.TabIndex = 2;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click_1;
             // 
             // button_Clear
             // 
@@ -670,7 +644,6 @@
             // 
             groupBox9.Controls.Add(groupBox17);
             groupBox9.Controls.Add(groupBox16);
-            groupBox9.Controls.Add(groupBox15);
             groupBox9.Controls.Add(groupBox12);
             groupBox9.Controls.Add(groupBox14);
             groupBox9.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
@@ -889,117 +862,6 @@
             label18.Size = new Size(20, 23);
             label18.TabIndex = 4;
             label18.Text = "X";
-            // 
-            // groupBox15
-            // 
-            groupBox15.Anchor = AnchorStyles.None;
-            groupBox15.Controls.Add(button_rotateLight);
-            groupBox15.Controls.Add(tableLayoutPanel8);
-            groupBox15.Font = new Font("Segoe UI", 10F);
-            groupBox15.Location = new Point(678, 20);
-            groupBox15.Name = "groupBox15";
-            groupBox15.Size = new Size(131, 180);
-            groupBox15.TabIndex = 6;
-            groupBox15.TabStop = false;
-            groupBox15.Text = "Поворот";
-            // 
-            // button_rotateLight
-            // 
-            button_rotateLight.Font = new Font("Segoe UI", 9F);
-            button_rotateLight.Location = new Point(6, 143);
-            button_rotateLight.Name = "button_rotateLight";
-            button_rotateLight.Size = new Size(119, 29);
-            button_rotateLight.TabIndex = 5;
-            button_rotateLight.Text = "Повернуть";
-            button_rotateLight.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel8
-            // 
-            tableLayoutPanel8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel8.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
-            tableLayoutPanel8.ColumnCount = 2;
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 52F));
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 24F));
-            tableLayoutPanel8.Controls.Add(label13, 0, 2);
-            tableLayoutPanel8.Controls.Add(numericUpDown_rotateZ, 1, 2);
-            tableLayoutPanel8.Controls.Add(numericUpDown_rotateY, 1, 1);
-            tableLayoutPanel8.Controls.Add(numericUpDown_rotateX, 1, 0);
-            tableLayoutPanel8.Controls.Add(label14, 0, 1);
-            tableLayoutPanel8.Controls.Add(label15, 0, 0);
-            tableLayoutPanel8.Location = new Point(6, 26);
-            tableLayoutPanel8.Name = "tableLayoutPanel8";
-            tableLayoutPanel8.RowCount = 3;
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            tableLayoutPanel8.Size = new Size(118, 111);
-            tableLayoutPanel8.TabIndex = 3;
-            // 
-            // label13
-            // 
-            label13.Anchor = AnchorStyles.Left;
-            label13.AutoSize = true;
-            label13.Font = new Font("Segoe UI", 10F);
-            label13.Location = new Point(5, 80);
-            label13.Name = "label13";
-            label13.Size = new Size(45, 23);
-            label13.TabIndex = 7;
-            label13.Text = "∠OZ";
-            // 
-            // numericUpDown_rotateZ
-            // 
-            numericUpDown_rotateZ.Font = new Font("Segoe UI", 10F);
-            numericUpDown_rotateZ.Location = new Point(59, 77);
-            numericUpDown_rotateZ.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
-            numericUpDown_rotateZ.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
-            numericUpDown_rotateZ.Name = "numericUpDown_rotateZ";
-            numericUpDown_rotateZ.Size = new Size(54, 30);
-            numericUpDown_rotateZ.TabIndex = 8;
-            numericUpDown_rotateZ.Value = new decimal(new int[] { 15, 0, 0, 0 });
-            // 
-            // numericUpDown_rotateY
-            // 
-            numericUpDown_rotateY.Font = new Font("Segoe UI", 10F);
-            numericUpDown_rotateY.Location = new Point(59, 41);
-            numericUpDown_rotateY.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
-            numericUpDown_rotateY.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
-            numericUpDown_rotateY.Name = "numericUpDown_rotateY";
-            numericUpDown_rotateY.Size = new Size(54, 30);
-            numericUpDown_rotateY.TabIndex = 7;
-            numericUpDown_rotateY.Value = new decimal(new int[] { 15, 0, 0, 0 });
-            // 
-            // numericUpDown_rotateX
-            // 
-            numericUpDown_rotateX.Font = new Font("Segoe UI", 10F);
-            numericUpDown_rotateX.Location = new Point(59, 5);
-            numericUpDown_rotateX.Maximum = new decimal(new int[] { 99999999, 0, 0, 0 });
-            numericUpDown_rotateX.Minimum = new decimal(new int[] { 99999999, 0, 0, int.MinValue });
-            numericUpDown_rotateX.Name = "numericUpDown_rotateX";
-            numericUpDown_rotateX.Size = new Size(54, 30);
-            numericUpDown_rotateX.TabIndex = 6;
-            numericUpDown_rotateX.Value = new decimal(new int[] { 15, 0, 0, 0 });
-            // 
-            // label14
-            // 
-            label14.Anchor = AnchorStyles.Left;
-            label14.AutoSize = true;
-            label14.Font = new Font("Segoe UI", 10F);
-            label14.Location = new Point(5, 43);
-            label14.Name = "label14";
-            label14.Size = new Size(44, 23);
-            label14.TabIndex = 6;
-            label14.Text = "∠OY";
-            // 
-            // label15
-            // 
-            label15.Anchor = AnchorStyles.Left;
-            label15.AutoSize = true;
-            label15.Font = new Font("Segoe UI", 10F);
-            label15.Location = new Point(5, 7);
-            label15.Name = "label15";
-            label15.Size = new Size(45, 23);
-            label15.TabIndex = 4;
-            label15.Text = "∠OX";
             // 
             // groupBox12
             // 
@@ -1690,12 +1552,6 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionZ).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionY).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown_lightPositionX).EndInit();
-            groupBox15.ResumeLayout(false);
-            tableLayoutPanel8.ResumeLayout(false);
-            tableLayoutPanel8.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateZ).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateY).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown_rotateX).EndInit();
             groupBox12.ResumeLayout(false);
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
@@ -1811,15 +1667,6 @@
         private NumericUpDown numericUpDown_lightIntensity;
         private Label label3;
         private GroupBox groupBox12;
-        private GroupBox groupBox15;
-        private Button button_rotateLight;
-        private TableLayoutPanel tableLayoutPanel8;
-        private Label label13;
-        private NumericUpDown numericUpDown_rotateZ;
-        private NumericUpDown numericUpDown_rotateY;
-        private NumericUpDown numericUpDown_rotateX;
-        private Label label14;
-        private Label label15;
         private GroupBox groupBox14;
         private Button button_moveLight;
         private TableLayoutPanel tableLayoutPanel5;
@@ -1850,7 +1697,6 @@
         private ToolStripStatusLabel toolStripStatusLabel_lastRender;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel toolStripStatusLabel_statusLabel;
-        private Button button2;
         private Button model_button;
     }
 }

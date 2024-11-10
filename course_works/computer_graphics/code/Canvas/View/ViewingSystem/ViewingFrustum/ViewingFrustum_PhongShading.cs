@@ -58,9 +58,9 @@ namespace code
 
         protected void ProcessModel(Model model, Light light)
         {
-            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera.Direction);
+            List<Polygon> clippedPolygons = InvisibleFaceDeletor.ProcessModel(model, camera);
 
-            foreach (Polygon polygon in clippedPolygons)
+            foreach (Polygon polygon in model.Polygons)
             {
                 ProcessPolygon(polygon, model.Material, model.Color, light);
             }
@@ -93,27 +93,29 @@ namespace code
         protected Color _Color(Color color, float intensity)
         {
             return Color.FromArgb(
-                    (int)(Math.Max(0, Math.Min(color.A * intensity, 255))),
-                    (int)(Math.Max(0, Math.Min(color.R * intensity, 255))),
-                    (int)(Math.Max(0, Math.Min(color.G * intensity, 255))),
-                    (int)(Math.Max(0, Math.Min(color.B * intensity, 255))));
+                (int)Math.Clamp(color.A * intensity, 0, 255), // Альфа
+                (int)Math.Clamp(color.R * intensity, 0, 255), // Красный
+                (int)Math.Clamp(color.G * intensity, 0, 255), // Зеленый
+                (int)Math.Clamp(color.B * intensity, 0, 255)  // Синий
+            );
         }
 
         protected float GetIntensity(Point3D point, Vector3D polygonNormal, Material material, Light light)
         {
             Vector3D N = polygonNormal; // вектор нормали к поверхности
 
-            float R_z = 2 * N.Z * N.Z - 1;
-            float R_x = 2 * N.Z * N.X;
-            float R_y = 2 * N.Z * N.Y;
+            Vector3D L = light.Direction;     // вектор направления света
+            Vector3D R = 2 * Vector3D.DotProduct(N, L) * N - L;  // вектор отраженного луча
+            Vector3D V = new Vector3D(point, light.Position);   // вектор от точки до зрителя
 
-            Vector3D R = new Vector3D(R_x, R_y, R_z).NormalizedCopy();         // вектор отраженного луча
-            Vector3D L = light.Direction;                                      // вектор направления света
-            Vector3D V = new Vector3D(point, light.Position).NormalizedCopy(); // вектор от точки до источнкиа света
+            N.Normalize();
+            L.Normalize();
+            R.Normalize();
+            V.Normalize();
 
             float I_o = light.Intensity; // интенсивность источника света
-            float I_p = I_o / 10;         // интенсивность рассеянного освещения
-            float K_p = 1;               // коэффициент рассеянного освещения
+            float I_p = I_o / 10;        // интенсивность рассеянного освещения
+            float K_p = 0.9f;            // коэффициент рассеянного освещения      !!!!!!!
             float K_d = material.k_d;    // коэффициент диффузного освещения
             float K_m = material.k_m;    // коэффициент зеркального освещения
             float a = material.a;        // коэффициент блеска
@@ -121,9 +123,13 @@ namespace code
             float angleLN = (float)(Vector3D.Angle(L, N) * Math.PI / 180);
             float angleRV = (float)(Vector3D.Angle(R, V) * Math.PI / 180);
 
-            float intensity = (I_p * K_p) + (float)(I_o * K_d * Math.Cos(angleLN)) + (float)(I_o * K_m * Math.Pow(Math.Cos(angleRV), a));
+            float ambient = (I_p * K_p);
+            float diffuse = (float)(I_o * K_d * Vector3D.DotProduct(L, N));
+            float specular = (float)(I_o * K_m * Math.Pow(Vector3D.DotProduct(R, V), a));
 
-            return Math.Clamp(intensity, 0, 255);
+            float intensity = ambient + diffuse + specular;
+
+            return intensity;
         }
     }
 }

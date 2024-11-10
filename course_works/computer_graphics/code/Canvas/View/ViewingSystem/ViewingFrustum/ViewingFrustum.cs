@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Windows.Forms.VisualStyles;
 
 namespace code
 {
@@ -59,7 +58,6 @@ namespace code
         private void InitializeNearPlane(float view_field_width, float view_field_height, float near_plane_distance, Camera camera)
         {
             Vector3D near_plane_normal = camera.Direction;
-
 
             float near_plane_distance_from_camera = near_plane_distance;
 

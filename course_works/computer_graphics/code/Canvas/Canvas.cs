@@ -218,6 +218,11 @@ namespace code
             
         }
 
+        public void DrawCoordinateSystem()
+        {
+            viewingSystem.DrawCoordinateSystem(graphics);
+        }
+
         public void UpdateImage(ref PictureBox pb)
         {
             pb.Image = Image;

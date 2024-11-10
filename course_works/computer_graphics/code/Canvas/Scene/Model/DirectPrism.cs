@@ -214,7 +214,7 @@ namespace code
             for (int i = 0; i < 4; i++)
                 matrix[i, 0] *= -1;
 
-            return -1 * matrix;
+            return matrix;
         }
     }
 }

@@ -126,6 +126,7 @@ namespace code
         public override int FacesCount
         {
             get { return facesCount; }
+            set { }
         }
 
         public override float Length
