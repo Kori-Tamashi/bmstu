@@ -94,7 +94,7 @@ namespace code
                 Point3D lightViewPoint = shadowsCamera.ViewingFrustumPoint(worldPoint);
                 Point lightViewPortPoint = shadowsCamera.ViewPortPointByViewingFrustumPoint(lightViewPoint);
 
-                if (lightViewPoint.Z > shadowsCamera.ZBuffer[lightViewPortPoint.Y, lightViewPortPoint.X])
+                if (lightViewPoint.Z < shadowsCamera.ZBuffer[lightViewPortPoint.Y, lightViewPortPoint.X])
                 {
                     zBufferModels[viewPortPoint.Y, viewPortPoint.X] = lightViewPoint.Z;
                     colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _ColorMix(Color.Black, Color.Gray, 0.4f) : _ColorMix(Color.Black, color, 0.4f);

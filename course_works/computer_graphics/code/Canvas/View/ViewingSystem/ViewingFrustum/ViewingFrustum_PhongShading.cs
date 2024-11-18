@@ -129,7 +129,7 @@ namespace code
 
             float intensity = ambient + diffuse + specular;
 
-            return intensity;
+            return Math.Clamp(intensity, -1, 1);
         }
     }
 }

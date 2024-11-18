@@ -298,8 +298,6 @@ namespace code
             direction.Normalize();
             right.Normalize();
             up.Normalize();
-
-            right.Turn();
         }
 
         private float NormalizeYaw(float angle)
