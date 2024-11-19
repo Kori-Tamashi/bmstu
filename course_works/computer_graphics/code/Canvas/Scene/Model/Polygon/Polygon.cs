@@ -76,7 +76,7 @@ namespace code
             ConstructEdges(points);
         }
 
-        private void InitializeInsidePoints(float accuracy = 0.3f)
+        private void InitializeInsidePoints(float accuracy = 0.25f)
         {
             BoundingBox bb = GetBoundingBox();
 
@@ -405,11 +405,11 @@ namespace code
             }
             else
             {
-                List<Point3D> ftr = new List<Point3D> { points[0], points[1], points[2] };
-                List<Point3D> str = new List<Point3D> { points[0], points[2], points[3] };
+                List<Point3D> ftr = new List<Point3D> { points[0], points[2], points[3] };
+                List<Point3D> str = new List<Point3D> { points[0], points[1], points[3] };
 
-                triangles.Add(new Polygon(ftr, false));
-                triangles.Add(new Polygon(str, false));
+                triangles.Add(new Polygon(ftr));
+                triangles.Add(new Polygon(str));
             }
 
             return triangles;
@@ -451,18 +451,23 @@ namespace code
 
         public Point3D Barycentric(Point point)
         {
+            float alpha = 0, beta = 0, gamma = 0;
+
             if (Points.Count != 3)
             {
                 foreach (Polygon p in Triangles)
                 {
-                    (float alpha, float beta, float gamma) = BarycentricCoeffs(p, point);
-
+                    (alpha, beta, gamma) = BarycentricCoeffs(p, point);
                     if (BarycentricIsInside(alpha, beta, gamma))
-                        return new Point3D(point.X, point.Y, BarycentricZ(p, alpha, beta, gamma));
+                        break;
                 }
             }
+            else
+            {
+                (alpha, beta, gamma) = BarycentricCoeffs(this, point);
+            }
 
-            return new Point3D(point.X, point.Y, BarycentricZ(this, point));
+            return new Point3D(alpha, beta, gamma);
         }
 
         private (float alpha, float beta, float gamma) BarycentricCoeffs(Polygon triangle, Point point)
@@ -471,13 +476,38 @@ namespace code
             Point3D B = triangle.Points[1];
             Point3D C = triangle.Points[2];
 
-            float square_ = triangle.Square;
-            float square = (A.Y - C.Y - point.Y) * (B.X - C.X) + (B.Y - C.Y) * (C.X - A.X);
+            float square = triangle.Square;
             float alpha = ((point.Y - C.Y) * (B.X - C.X) + (B.Y - C.Y) * (C.X - point.X)) / square;
             float beta = ((point.Y - A.Y) * (C.X - A.X) + (C.Y - A.Y) * (A.X - point.X)) / square;
             float gamma = 1 - alpha - beta;
 
             return (alpha, beta, gamma);
+        }
+
+        public float BarycentricZ(int x, int y)
+        {
+            return BarycentricZ(new Point(x, y));
+        }
+
+        public float BarycentricZ(Point point)
+        {
+            float alpha = 0, beta = 0, gamma = 0;
+
+            if (Points.Count != 3)
+            {
+                foreach (Polygon p in Triangles)
+                {
+                    (alpha, beta, gamma) = BarycentricCoeffs(p, point);
+                    if (BarycentricIsInside(alpha, beta, gamma))
+                        return BarycentricZ(p, alpha, beta, gamma);
+                }
+            }
+            else
+            {
+                (alpha, beta, gamma) = BarycentricCoeffs(this, point);
+            }
+
+            return BarycentricZ(this, alpha, beta, gamma);
         }
 
         private float BarycentricZ(Polygon triangle, float alpha, float beta, float gamma)

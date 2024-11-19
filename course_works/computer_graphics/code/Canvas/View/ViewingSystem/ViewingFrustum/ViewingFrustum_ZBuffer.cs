@@ -9,7 +9,6 @@ using System.Windows.Forms.DataVisualization.Charting;
 using FloatBuffer = code.Matrix<float>;
 using ColorBuffer = System.Drawing.Color[][];
 using System.Drawing.Imaging;
-using System.Reflection;
 
 
 namespace code
@@ -157,7 +156,7 @@ namespace code
         {
             List<Polygon> visiblePolygons = InvisibleFaceDeletor.ProcessModel(model, camera);
 
-            foreach (Polygon polygon in visiblePolygons)
+            foreach (Polygon polygon in model.Polygons)
             {
                 ProcessPolygon(polygon, model.Color);
             }

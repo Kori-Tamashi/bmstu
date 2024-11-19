@@ -104,7 +104,8 @@ namespace code
         {
             Vector3D N = polygonNormal; // вектор нормали к поверхности
 
-            Vector3D L = light.Direction;     // вектор направления света
+            //Vector3D L = light.Direction;     // вектор направления света
+            Vector3D L = new Vector3D(point, light.Position);     // вектор направления света
             Vector3D R = 2 * Vector3D.DotProduct(N, L) * N - L;  // вектор отраженного луча
             Vector3D V = new Vector3D(point, light.Position);   // вектор от точки до зрителя
 
@@ -115,13 +116,10 @@ namespace code
 
             float I_o = light.Intensity; // интенсивность источника света
             float I_p = I_o / 10;        // интенсивность рассеянного освещения
-            float K_p = 0.9f;            // коэффициент рассеянного освещения      !!!!!!!
+            float K_p = 0.9f;            // коэффициент рассеянного освещения   
             float K_d = material.k_d;    // коэффициент диффузного освещения
             float K_m = material.k_m;    // коэффициент зеркального освещения
             float a = material.a;        // коэффициент блеска
-
-            float angleLN = (float)(Vector3D.Angle(L, N) * Math.PI / 180);
-            float angleRV = (float)(Vector3D.Angle(R, V) * Math.PI / 180);
 
             float ambient = (I_p * K_p);
             float diffuse = (float)(I_o * K_d * Vector3D.DotProduct(L, N));
@@ -129,7 +127,7 @@ namespace code
 
             float intensity = ambient + diffuse + specular;
 
-            return Math.Clamp(intensity, -1, 1);
+            return Math.Clamp(intensity, 0, 1);
         }
     }
 }

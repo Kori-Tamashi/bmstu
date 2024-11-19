@@ -17,7 +17,7 @@ namespace code
                 new Point3D(0, (float) Math.Sqrt(6) * 100 / 3, 0),                          // 0
                 new Point3D(50, (float) Math.Sqrt(6) * 100 / 3, (float)Math.Sqrt(3) * 50),  // 1
                 new Point3D(100, (float) Math.Sqrt(6) * 100 / 3, 0),                        // 2
-                new Point3D(50, 0, (float)Math.Sqrt(3) / 3 * 50)                            // 3
+                new Point3D(50, 250, (float)Math.Sqrt(3) / 3 * 50)                            // 3
             };
 
             indexes = new List<int>() {
