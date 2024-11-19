@@ -104,8 +104,7 @@ namespace code
         {
             Vector3D N = polygonNormal; // вектор нормали к поверхности
 
-            //Vector3D L = light.Direction;     // вектор направления света
-            Vector3D L = new Vector3D(point, light.Position);     // вектор направления света
+            Vector3D L = light.Direction;     // вектор направления света
             Vector3D R = 2 * Vector3D.DotProduct(N, L) * N - L;  // вектор отраженного луча
             Vector3D V = new Vector3D(point, light.Position);   // вектор от точки до зрителя
 

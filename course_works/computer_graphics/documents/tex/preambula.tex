@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt,oneside,openany]{extreport}
+\documentclass[a4paper, 14pt,oneside,openany]{extreport}
 
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -86,22 +86,23 @@
 
 \newcommand{\floor}[1]{\lfloor #1 \rfloor}
 
+% Настройки для листингов
 \lstset{ %
 	language=caml,                 % выбор языка для подсветки (здесь это С)
-	basicstyle=\small\ttfamily, % размер и начертание шрифта для подсветки кода
-	numbers=none,               % где поставить нумерацию строк (слева\справа)
-	numberstyle=\tiny,           % размер шрифта для номеров строк
-	stepnumber=1,                   % размер шага между двумя номерами строк
-%	numbersep=5pt,                % как далеко отстоят номера строк от подсвечиваемого кода
-	showspaces=false,            % показывать или нет пробелы специальными отступами
-	showstringspaces=false,      % показывать или нет пробелы в строках
-	showtabs=false,             % показывать или нет табуляцию в строках
-	frame=single,              % рисовать рамку вокруг кода
-	tabsize=2,                 % размер табуляции по умолчанию равен 2 пробелам
-	captionpos=t,              % позиция заголовка вверху [t] или внизу [b] 
-	breaklines=true,           % автоматически переносить строки (да\нет)
-	breakatwhitespace=false, % переносить строки только если есть пробел
-	escapeinside={\#*}{*)},   % если нужно добавить комментарии в коде
+	basicstyle=\small\ttfamily,    % размер и начертание шрифта для подсветки кода
+	numbers=left,                  % где поставить нумерацию строк (слева)
+	numberstyle=\tiny,             % размер шрифта для номеров строк
+	stepnumber=1,                  % размер шага между двумя номерами строк
+	numbersep=5pt,                 % как далеко отстоят номера строк от подсвечиваемого кода
+	showspaces=false,              % показывать или нет пробелы специальными отступами
+	showstringspaces=false,        % показывать или нет пробелы в строках
+	showtabs=false,                % показывать или нет табуляцию в строках
+	frame=single,                  % рисовать рамку вокруг кода
+	tabsize=2,                     % размер табуляции по умолчанию равен 2 пробелам
+	captionpos=t,                  % позиция заголовка вверху [t] или внизу [b]
+	breaklines=true,               % автоматически переносить строки (да\нет)
+	breakatwhitespace=false,       % переносить строки только если есть пробел
+	escapeinside={\#*}{*)},        % если нужно добавить комментарии в коде
 	abovecaptionskip=-5pt
 }
 
