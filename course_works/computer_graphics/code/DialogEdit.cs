@@ -101,11 +101,11 @@ namespace code
         private void UpdateInformationTableSizes(Model model)
         {
             // length
-            numericUpDown_length.Value = model.Length != -1 ? (decimal)model.Length : (decimal)numericUpDown_length.Minimum;
+            numericUpDown_length.Value = model.Length != -1 && model.Length >= (float)numericUpDown_length.Minimum ? (decimal)model.Length : (decimal)numericUpDown_length.Minimum;
             numericUpDown_length.Enabled = (model.Type != Modeltype.Model);
 
             // width
-            numericUpDown_width.Value = model.Width != -1 ? (decimal)model.Width : (decimal)model.Length;
+            numericUpDown_width.Value = model.Width != -1 && model.Width >= (float)model.Width ? (decimal)model.Width : (decimal)numericUpDown_length.Value;
             numericUpDown_width.Enabled = model.Width != -1;
 
             // height
