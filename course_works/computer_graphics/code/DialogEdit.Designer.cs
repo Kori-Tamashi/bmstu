@@ -574,7 +574,7 @@
             MaximumSize = new Size(5630, 4560);
             MinimumSize = new Size(563, 456);
             Name = "DialogEdit";
-            Text = "Редактор моделей";
+            Text = "Редактор примитивов";
             Load += Form2_Load;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();

@@ -43,7 +43,7 @@ namespace code
             if (listView.Groups.Count == 0)
             {
                 listViewGroup = new ListViewGroup();
-                listViewGroup.Header = "Модели";
+                listViewGroup.Header = "Примитивы";
                 listView.Groups.Add(listViewGroup);
             }
             else

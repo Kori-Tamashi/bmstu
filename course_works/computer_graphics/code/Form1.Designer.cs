@@ -1231,7 +1231,7 @@
             button_dialogEdit.Name = "button_dialogEdit";
             button_dialogEdit.Size = new Size(252, 29);
             button_dialogEdit.TabIndex = 0;
-            button_dialogEdit.Text = "Редактор моделей";
+            button_dialogEdit.Text = "Редактор примитивов";
             button_dialogEdit.UseVisualStyleBackColor = true;
             button_dialogEdit.Click += button_dialogEdit_Click;
             // 
