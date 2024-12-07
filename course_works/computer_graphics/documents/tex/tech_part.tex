@@ -15,7 +15,7 @@
 
 Разработанная программа состоит из следующих классов:
 \begin{enumerate}
-	\item управляющий классы:
+	\item управляющий класс:
 	\begin{itemize}[label=--]
 		\item \textit{Program} -- точка входа в программу.
 	\end{itemize}
@@ -158,14 +158,14 @@
 \begin{figure}[h] 
 	\centering
 	\includegraphics[width=1\textwidth]{images/main-interface.png}
-	\caption{Интерфейс программы во вкладке <<Главная>>} 
+	\caption{Интерфейс главного окна программы во вкладке <<Главная>>} 
 	\label{fig:main-interface} 
 \end{figure}
 
 \begin{figure}[h] 
 	\centering
 	\includegraphics[width=1\textwidth]{images/view-interface.png}
-	\caption{Интерфейс программы во вкладке <<Вид>>} 
+	\caption{Интерфейс главного окна программы во вкладке <<Вид>>} 
 	\label{fig:view-interface} 
 \end{figure}
 
@@ -175,12 +175,77 @@
 	\item вкладка <<Главная>> содержит:
 	\begin{itemize}[label=--]
 		\item группу <<Примитивы>>, содержащую 4 кнопки, отвечающие за добавление на сцену многогранника, куба, прямой призмы и треугольной пирамиды соответственно;
+		\begin{figure}[h] 
+			\centering
+			\includegraphics[width=0.15\textwidth]{images/primitives-buttons.png}
+			\caption{Группа <<Примитивы>>} 
+			\label{fig:primitives-buttons} 
+		\end{figure}
 		\item коллекцию <<Примитивы>>, отображающую присутствующие примитивы на сцене и позволяющую выбирать изменяемый примитив;
-		\item группу <<Действия>>, содержащую две кнопки: <<Очистить>>, очищающую сцену от добавленных примитивов, <<Редактор примитивов>>, открывающую окно редактирования примитивов на сцене. 
-		\item группу <<Изменение положения в пространстве>>, содержащую группу <<Перемещение>>, позволяющую задавать параметры перемещения примитива и перемещать нажатием кнопки;
-		\item группу <<Изображение>>, содержащую список с возможностью выбора текущего режима отображения сцены между <<Теневыми эффектами>>, <<Световыми эффектами>>, <<Реалистичным отображением>>, <<Каркасным отображением>>.
+		\begin{figure}[h] 
+			\centering
+			\includegraphics[width=0.25\textwidth]{images/primitives-list.png}
+			\caption{Коллекция <<Примитивы>>} 
+			\label{fig:primitives-list} 
+		\end{figure}
+		\item группу <<Действия>>, содержащую две кнопки: <<Очистить>>, очищающую сцену от добавленных примитивов, <<Редактор примитивов>>, открывающую окно редактирования примитивов на сцене;
+		\begin{figure}[h] 
+			\centering
+			\includegraphics[width=0.3\textwidth]{images/actions.png}
+			\caption{Группа <<Действия>>} 
+			\label{fig:actions} 
+		\end{figure}
+		\item группу <<Изменение положения в пространстве>>, содержащую группу <<Перемещение>>, позволяющую задавать параметры перемещения примитива и перемещать его нажатием кнопки <<Переместить>>;
+		\begin{figure}[h] 
+			\centering
+			\includegraphics[width=0.45\textwidth]{images/move.png}
+			\caption{Группа <<Изменение положения в пространстве>>} 
+			\label{fig:move} 
+		\end{figure}
+		\item группу <<Изображение>>, содержащую список с возможностью выбора текущего режима отображения сцены между <<Теневыми эффектами>>, <<Световыми эффектами>>, <<Реалистичным отображением>> и <<Каркасным отображением>>.
+		\begin{figure}[h] 
+			\centering
+			\includegraphics[width=0.45\textwidth]{images/mods.png}
+			\caption{Группа <<Изображение>>} 
+			\label{fig:mods} 
+		\end{figure}
+	\end{itemize}
+	\item вкладка <<Вид>> содержит:
+	\begin{itemize}[label=--]
+		\item группу <<Перемещение камеры>>, содержащую 10 кнопок и позволяющую переместить камеру нажатием на соответствующую кнопку;
+		\clearpage
+		\begin{figure}[h] 
+			\centering
+			\includegraphics[width=0.35\textwidth]{images/camera-move.png}
+			\caption{Группа <<Перемещение камеры>>} 
+			\label{fig:camera-move} 
+		\end{figure}
+		\item группу <<Источник света>>, которая содержит группы <<Спектральные характеристики>>, <<Позиция>> и <<Перемещение>>, позволяющие задавать интенсивность потока света, испускаемого источником, изменять его позицию на сцене, определять параметры перемещения и перемещать нажатием кнопки <<Переместить>> соответственно.
+		\begin{figure}[h] 
+			\centering
+			\includegraphics[width=0.65\textwidth]{images/light.png}
+			\caption{Группа <<Источник света>>} 
+			\label{fig:light} 
+		\end{figure}
 	\end{itemize}
 \end{enumerate}
+
+При нажатии на кнопку <<Редактор примитивов>>, расположенной в группе <<Действия>> вкладки <<Главная>> будет открыто окно редактирования примитивов, в котором можно изменять его геометрические, спектральные, цветовые и информационные параметры. Для каждого из примитивов определен свой набор изменяемых геометрических параметров, потому некоторые параметы могут быть недоступны для изменения.
+\clearpage
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width=0.65\textwidth]{images/model-editor1.png}
+	\caption{Интерфейс окна редактирования примитивов (часть 1)} 
+	\label{fig:model-editor1} 
+\end{figure}
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width=0.65\textwidth]{images/model-editor2.png}
+	\caption{Интерфейс окна редактирования примитивов (часть 2)} 
+	\label{fig:model-editor2} 
+\end{figure}
+
+
 
 \section*{Вывод}
 
