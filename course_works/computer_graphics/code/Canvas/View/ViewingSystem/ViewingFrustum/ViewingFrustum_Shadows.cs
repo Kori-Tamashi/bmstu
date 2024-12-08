@@ -81,61 +81,8 @@ namespace code
             }
         }
 
-        protected new void ProcessPoint(Point3D worldPoint, Color color, Material material, Vector3D polygonNormal, Light light)
+        protected void ProcessPoint(Point3D worldPoint, Color color, Material material, Vector3D polygonNormal, Light light)
         {
-            // DON'T. TOUCH. THIS.
-
-            Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
-            Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
-
-            if (viewingFrustumPoint.Z > zBufferModels[viewPortPoint.Y, viewPortPoint.X])
-            {
-                float intensity = GetIntensity(worldPoint, polygonNormal, material, light);
-                Point3D lightViewPoint = shadowsCamera.ViewingFrustumPoint(worldPoint);
-                Point lightViewPortPoint = shadowsCamera.ViewPortPointByViewingFrustumPoint(lightViewPoint);
-
-                if (lightViewPoint.Z < shadowsCamera.ZBuffer[lightViewPortPoint.Y, lightViewPortPoint.X])
-                {
-                    zBufferModels[viewPortPoint.Y, viewPortPoint.X] = lightViewPoint.Z;
-                    colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _ColorMix(Color.Black, Color.Gray, 0.4f) : _ColorMix(Color.Black, color, 0.4f);
-                }
-                else
-                {
-                    zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;
-                    colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _Color(Color.Black, intensity) : _Color(color, intensity);
-                }
-            }
-        }
-
-        protected new void ProcessPoint___(Point3D worldPoint, Color color, float intensity)
-        {
-            // DON'T. TOUCH. THIS.
-
-            Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
-            Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
-
-            if (viewingFrustumPoint.Z < zBufferModels[viewPortPoint.Y, viewPortPoint.X])
-            {
-                Point3D lightViewPoint = shadowsCamera.ViewingFrustumPoint(worldPoint);
-                Point lightViewPortPoint = shadowsCamera.ViewPortPointByViewingFrustumPoint(lightViewPoint);
-                
-                if (lightViewPoint.Z > shadowsCamera.ZBuffer[lightViewPortPoint.Y, lightViewPortPoint.X])
-                {
-                    zBufferModels[viewPortPoint.Y, viewPortPoint.X] = lightViewPoint.Z;
-                    colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _ColorMix(Color.Black, Color.Gray, 0.4f) : _ColorMix(Color.Black, color, 0.4f);
-                }
-                else
-                {
-                    zBufferModels[viewPortPoint.Y, viewPortPoint.X] = viewingFrustumPoint.Z;
-                    colorBufferModels[viewPortPoint.Y][viewPortPoint.X] = (color == Color.Empty) ? _Color(Color.Black, intensity) : _Color(color, intensity);
-                }
-            }
-        }
-
-        protected void ProcessPoint__(Point3D worldPoint, Color color, Material material, Vector3D polygonNormal, Light light)
-        {
-            // DON'T. TOUCH. THIS.
-
             Point3D viewingFrustumPoint = ViewingFrustumPoint(worldPoint);
             Point viewPortPoint = ViewPortPointByViewingFrustumPoint(viewingFrustumPoint);
 

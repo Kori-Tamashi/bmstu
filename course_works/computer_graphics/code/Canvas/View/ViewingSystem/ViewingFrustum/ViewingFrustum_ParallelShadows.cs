@@ -56,23 +56,13 @@ namespace code
             });
         }
 
-        //protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
-        //{
-        //    float intensity = GetIntensity(polygon, material, light);
-
-        //    Parallel.ForEach(polygon.InsidePoints, point =>
-        //    {
-        //        ProcessPoint__(point, color, intensity);
-        //    });
-        //}
-
         protected new void ProcessPolygon(Polygon polygon, Material material, Color color, Light light)
         {
             Vector3D polygonNormal = polygon.Normal();
 
             Parallel.ForEach(polygon.InsidePoints, point =>
             {
-                ProcessPoint__(point, color, material, polygonNormal, light);
+                ProcessPoint(point, color, material, polygonNormal, light);
             });
         }
     }

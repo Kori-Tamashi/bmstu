@@ -9,15 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-/*
- * Модель освещения Фонга
- * Загрузка для теней
- * Изменение количества вершин в основании
- * Изменение радиусов оснований
- * Устанока источника света на сцену
- * Разобраться с блеском в свете
- */
-
 namespace code
 {
     public partial class Form1 : Form
@@ -48,13 +39,10 @@ namespace code
 
         private void InitializeYawPitch()
         {
-            label_yawMin.Text = trackBar_yaw.Minimum.ToString();
-            label_yawMax.Text = trackBar_yaw.Maximum.ToString();
-            label_pitchMin.Text = trackBar_pitch.Minimum.ToString();
-            label_pitchMax.Text = trackBar_pitch.Maximum.ToString();
-
-            trackBar_yaw.Value = (int)canvas.Yaw;
-            trackBar_pitch.Value = (int)canvas.Pitch;
+            facade._execute(new CameraYawCommand(ref canvas, 90),
+                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
+                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
+            );
         }
 
         private void InitializeLight()
@@ -319,36 +307,6 @@ namespace code
             );
         }
 
-        private void trackBar_yaw_ValueChanged(object sender, EventArgs e)
-        {
-            numericUpDown_yaw.Value = trackBar_yaw.Value;
-
-            facade._execute(new CameraYawCommand(ref canvas, trackBar_yaw.Value),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
-                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
-            );
-        }
-
-        private void trackBar_pitch_ValueChanged(object sender, EventArgs e)
-        {
-            numericUpDown_pitch.Value = trackBar_pitch.Value;
-
-            facade._execute(new CameraPitchCommand(ref canvas, trackBar_pitch.Value),
-                new RenderCommand(ref canvas, ref picture, GetCurrentRenderMode(),
-                    ref toolStripStatusLabel_lastRender, ref toolStripStatusLabel_statusLabel)
-            );
-        }
-
-        private void numericUpDown_yaw_ValueChanged(object sender, EventArgs e)
-        {
-            trackBar_yaw.Value = (int)numericUpDown_yaw.Value;
-        }
-
-        private void numericUpDown_pitch_ValueChanged(object sender, EventArgs e)
-        {
-            trackBar_pitch.Value = (int)numericUpDown_pitch.Value;
-        }
-
         #endregion
 
         #region Functions
@@ -516,9 +474,19 @@ namespace code
 
         }
 
+        private void checkedListBox_renderMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
         #endregion
 
 
-        
+
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            TimeResearch.ResearchTimeByPolygons();
+        }
     }
 }
