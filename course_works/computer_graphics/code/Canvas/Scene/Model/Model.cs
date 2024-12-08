@@ -111,6 +111,7 @@ namespace code
 
             CopyPoints(other);
             CopyIndexes(other);
+            CopyPolygons(other);
             ConstructEdges(points, indexes);
         }
 
@@ -221,6 +222,11 @@ namespace code
         protected void CopyIndexes(Model other)
         {
             indexes = new List<int>(other.indexes);
+        }
+
+        protected void CopyPolygons(Model other)
+        {
+            polygons = new List<Polygon>(other.polygons);
         }
 
         public virtual Model Copy()

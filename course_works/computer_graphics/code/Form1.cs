@@ -486,7 +486,7 @@ namespace code
 
         private void button2_Click(object sender, EventArgs e)
         {
-            TimeResearch.ResearchTimeByPolygons();
+            TimeResearch.ResearchTimeBySize();
         }
     }
 }
