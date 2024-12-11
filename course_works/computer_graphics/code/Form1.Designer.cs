@@ -71,7 +71,6 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             listView_modelsMain = new ListView();
             groupBox6 = new GroupBox();
-            button2 = new Button();
             button_Clear = new Button();
             button_dialogEdit = new Button();
             InteractionMenu_tabControl = new TabControl();
@@ -604,7 +603,6 @@
             // groupBox6
             // 
             groupBox6.Anchor = AnchorStyles.None;
-            groupBox6.Controls.Add(button2);
             groupBox6.Controls.Add(button_Clear);
             groupBox6.Controls.Add(button_dialogEdit);
             groupBox6.Font = new Font("Segoe UI", 10F);
@@ -614,16 +612,6 @@
             groupBox6.TabIndex = 8;
             groupBox6.TabStop = false;
             groupBox6.Text = "Действия";
-            // 
-            // button2
-            // 
-            button2.Location = new Point(79, 142);
-            button2.Name = "button2";
-            button2.Size = new Size(94, 29);
-            button2.TabIndex = 2;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
             // 
             // button_Clear
             // 
@@ -1272,7 +1260,6 @@
         private Button button_cameraRightUp;
         private Button button_cameraUp;
         private Button button_cameraLeftUp;
-        private Button button2;
     }
 }
 
