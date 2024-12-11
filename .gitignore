@@ -1,5 +1,6 @@
 *.tmp
 ~$*.docx
+~$*.pptx
 *.bkp
 *.dtmp
 .vs/
