@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="code.Transformation">
+    <Position X="5.75" Y="3.75" Width="2.75" />
+    <Members>
+      <Method Name="MovePointsToCenter" Hidden="true" />
+      <Method Name="MovePointsToOrigin" Hidden="true" />
+      <Property Name="this" Hidden="true" />
+      <Method Name="ToIdentity" Hidden="true" />
+      <Method Name="Transformation" Hidden="true" />
+      <Method Name="TransformPoints" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAKAAAACQAAAABAAAAQAAAAACAQAA=</HashCode>
+      <FileName>Library\Transfromation\Transformation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="code.Move" HideInheritanceLine="true">
+    <Position X="2.75" Y="2.5" Width="2.75" />
+    <Members>
+      <Method Name="Move" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Library\Transfromation\Move.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="code.Rotate" HideInheritanceLine="true">
+    <Position X="5.75" Y="2.5" Width="2.75" />
+    <Members>
+      <Method Name="Rotate" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Library\Transfromation\Rotate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="code.Scale" HideInheritanceLine="true">
+    <Position X="2.75" Y="4" Width="2.75" />
+    <Members>
+      <Method Name="Scale" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Library\Transfromation\Scale.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

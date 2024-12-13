@@ -1,0 +1,16 @@
+*.tmp
+~$*.docx
+~$*.pptx
+*.bkp
+*.dtmp
+.vs/
+bin/
+obj/
+
+*.aux
+*.out
+*.toc
+*.log
+*.synctex*
+
+/.vscode
