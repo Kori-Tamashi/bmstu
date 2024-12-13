@@ -23,6 +23,8 @@
 >   - [**Facade**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code/Facade) — класс организации единого интерфейса управления.
 >   - [**Library**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code/Library) — вспомогательные классы.
 >   - [**Pictures**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code/Pictures) — библиотека изображений интерфейса.
+>   - [**Form1**](https://github.com/Kori-Tamashi/bmstu/blob/main/course_works/computer_graphics/code/Form1.cs) — главное окно интерфейса.
+>   - [**DialogEdit**](https://github.com/Kori-Tamashi/bmstu/blob/main/course_works/computer_graphics/code/DialogEdit.cs) — окно редактирования примитивов.
 > - [**designing**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/designing) — папка, содержащая этап проектирования приложения.
 > - [**documents**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/documents) — папка, содержащая документы и отчеты касательно курсовой работы.
 > - [**presentation**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/presentation) — папка, содержащая презентацию.
