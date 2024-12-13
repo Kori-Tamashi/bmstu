@@ -19,6 +19,10 @@
 ## Оглавление
 
 > - [**code**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code) — папка, содержащая исходный код программы.
+>   - [**Canvas**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code/Canvas) — класс отображения изображения, получаемого камерой, на экран.
+>   - [**Facade**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code/Facade) — класс организации единого интерфейса управления.
+>   - [**Library**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code/Library) — вспомогательные классы.
+>   - [**Pictures**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/code/Pictures) — библиотека изображений интерфейса.
 > - [**designing**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/designing) — папка, содержащая этап проектирования приложения.
 > - [**documents**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/documents) — папка, содержащая документы и отчеты касательно курсовой работы.
 > - [**presentation**](https://github.com/Kori-Tamashi/bmstu/tree/main/course_works/computer_graphics/presentation) — папка, содержащая презентацию.
