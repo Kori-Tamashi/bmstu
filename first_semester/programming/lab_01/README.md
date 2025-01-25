@@ -8,8 +8,8 @@
 > - **Среда разработки:** Pycharm Community Edition
 
 ## Описание работы
-> - [main.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_01/main.py) — файл программы
-> - [lab_01.pdf](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_01/lab_01.pdf) — файл с заданием лабораторной работы
+> - [main.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_01/code/main.py) — файл программы
+> - [lab_01.pdf](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_01/documents/lab_01.pdf) — файл с заданием лабораторной работы
 
 ### Последовательность выполнения
 
