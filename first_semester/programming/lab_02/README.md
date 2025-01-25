@@ -8,7 +8,9 @@
 > - **Среда разработки:** Pycharm Community Edition
 
 ## Описание работы
-> - [main.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_02/main.py) — файл программы
+> - [main.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_02/code/main.py) — файл программы
+> - [solving_algorithm.png](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_02/design/solving_algorithm.png) — схема алгоритма решения квадратного уравнения
+> - [solving_algorithm.drawio](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_02/design/solving_algorithm.drawio) — исходный файл Draw.io схемы алгоритма решения квадратного уравнения
 
 ### Последовательность выполнения
 
