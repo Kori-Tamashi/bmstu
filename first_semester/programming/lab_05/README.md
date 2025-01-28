@@ -29,7 +29,7 @@
 
 > - [*flt_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_05/code/main.py#L5) является сокращением от *float_input_error_message* (англ. сообщение об ошибке при вводе вещественного числа)
 > - [*pint_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_05/code/main.py#L6) является сокращением от *positive_int_input_error_message* (англ. сообщение об ошибке при вводе натурального числа)
-
+> - [*pflt_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_05/code/main.py#L7) является сокращением от *positive_float_input_error_message* (англ. сообщение об ошибке при вводе положительного вещественного числа)
 
 ### Примеры работы
 

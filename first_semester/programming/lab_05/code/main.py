@@ -4,6 +4,7 @@
 table_width = 75    # ширина таблицы значений
 flt_inpt_err_msg = 'Ошибка: введите вещественное числовое значение'
 pint_inpt_err_msg = 'Ошибка: введите натуральное числовое значение'
+pflt_inpt_err_msg = 'Ошибка: введите положительное вещественное числовое значение'
 
 # Ввод входных значений
 while True:
@@ -16,21 +17,30 @@ while True:
 while True:
     try:
         eps = float(input('Введите точность, с которой требуется вычислить сумму: '))
-        break
+        if eps > 0:
+            break
+        else:
+            print(pflt_inpt_err_msg)
     except ValueError:
-        print(flt_inpt_err_msg)
+        print(pflt_inpt_err_msg)
 
 while True:
     try:
         n = int(input('Введите количество итераций, за которое требуется вычислить сумму: '))
-        break
+        if n > 0:
+            break
+        else:
+            print(pint_inpt_err_msg)
     except ValueError:
         print(pint_inpt_err_msg)
 
 while True:
     try:
         h = int(input('Введите значение шага печати: '))
-        break
+        if h > 0:
+            break
+        else:
+            print(pint_inpt_err_msg)
     except ValueError:
         print(pint_inpt_err_msg)
 
@@ -38,8 +48,8 @@ while True:
 # Вывод таблицы
 full_column_width = table_width - 10
 column_width = full_column_width // 3
-header_format = f"| {'№ итерации':^{column_width}} | {'t':^{column_width}} | {'s':^{column_width}} |"
 separator = '-' * (table_width - (full_column_width % 3))
+header_format = f"| {'№ итерации':^{column_width}} | {'t':^{column_width}} | {'s':^{column_width}} |"
 
 print(separator)
 print(header_format)
