@@ -25,6 +25,11 @@
 
 > В коде используются [f-строки](https://sky.pro/wiki/python/formatirovanie-strok-v-python-f-string/) для форматирования вывода значений корней квадратного уравнения. Это позволяет удобно и наглядно вставлять значения переменных в строки, обеспечивая читаемость и легкость в использовании. F-строки поддерживают форматирование, что позволяет задать количество знаков после запятой, что делает вывод более аккуратным и понятным для пользователя.
 
+#### Названия переменных
+
+> - [*flt_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_04/code/main.py#L9) является сокращением от *float_input_error_message* (англ. сообщение об ошибке при вводе вещественного числа)
+> - [*pint_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_04/code/main.py#L10) является сокращением от *positive_int_input_error_message* (англ. сообщение об ошибке при вводе натурального числа)
+
 ### Примеры работы
 
 |         Вывод таблицы         |      Отображение графика      |
