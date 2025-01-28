@@ -3,6 +3,8 @@
 # наибольшего угла, проверки является ли данный треугольник прямоугольным, а также
 # для определения принадлежности произвольной точки к этому треугольнику
 
+flt_inpt_err_msg = 'Ошибка: введите вещественное числовое значение'
+
 EPS = 1e-8
 
 # Ввод координат точки треугольника A
@@ -11,21 +13,21 @@ while True:
         x_A = float(input('Введите значение координаты X точки треугольника A: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         y_A = float(input('Введите значение координаты Y точки треугольника A: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         z_A = float(input('Введите значение координаты Z точки треугольника A: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 print('\n')
 
@@ -36,21 +38,21 @@ while True:
         x_B = float(input('Введите значение координаты X точки треугольника B: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         y_B = float(input('Введите значение координаты Y точки треугольника B: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         z_B = float(input('Введите значение координаты Z точки треугольника B: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 print('\n')
 
@@ -61,21 +63,21 @@ while True:
         x_C = float(input('Введите значение координаты X точки треугольника C: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         y_C = float(input('Введите значение координаты Y точки треугольника C: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         z_C = float(input('Введите значение координаты Z точки треугольника C: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 print('\n')
 
@@ -137,21 +139,21 @@ while True:
         x_K = float(input('Введите значение координаты X произвольной точки K: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         y_K = float(input('Введите значение координаты Y произвольной точки K: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         z_K = float(input('Введите значение координаты Z произвольной точки K: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 print('\n')
 

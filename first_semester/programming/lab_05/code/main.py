@@ -1,6 +1,8 @@
 # <имя> <фамилия> <группа>
 # Программа поиска суммы бесконечного ряда с заданной точностью за определенное количество итераций
 
+flt_inpt_err_msg = 'Ошибка: введите вещественное числовое значение'
+
 table_width = 75    # ширина таблицы значений
 
 # Ввод входных значений
@@ -9,28 +11,28 @@ while True:
         x = float(input('Введите значение аргумента X: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         eps = float(input('Введите точность, с которой требуется вычислить сумму: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         n = int(input('Введите количество итераций, за которое требуется вычислить сумму: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         h = int(input('Введите значение шага печати: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 
 # Вывод таблицы

@@ -4,6 +4,8 @@
 
 from math import log1p
 
+flt_inpt_err_msg = 'Ошибка: введите вещественное числовое значение'
+
 table_width = 75    # ширина таблицы значений
 graph_width = 150   # ширина графика функции q1
 
@@ -13,21 +15,21 @@ while True:
         r_0 = float(input('Введите начальное значение координаты X: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         r_n = float(input('Введите конечное значение координаты X: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 while True:
     try:
         h = float(input('Введите значение шага координаты X: '))
         break
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print(flt_inpt_err_msg)
 
 
 # Вывод таблицы значений функций q1, q2 и q3
@@ -83,7 +85,7 @@ while True:
         else:
             print('Ошибка: количество засечек должно быть от 4-х до 8-ми')
     except ValueError:
-        print('Ошибка: введите вещественное числовое значение')
+        print('Ошибка: введите натуральное числовое значение')
 
 
 # Вывод графика функции q1

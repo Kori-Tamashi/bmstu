@@ -18,7 +18,7 @@ while True:
             break
         else:
             print(uint_err_msg)
-    except Exception:
+    except ValueError:
         print(uint_err_msg)
 
 
@@ -37,7 +37,7 @@ if is_manual_input:
             try:
                 arr[i] = int(input(f"Введите {i}-й элемент массива: "))
                 break
-            except Exception:
+            except ValueError:
                 print(int_err_msg)
 else:
     for i in range(n):
@@ -53,7 +53,7 @@ while True:
     try:
         m = int(input('Введите элемент для добавления: '))
         break
-    except Exception:
+    except ValueError:
         print(int_err_msg)
 
 
@@ -65,7 +65,7 @@ while True:
             break
         else:
             print(pint_err_msg)
-    except Exception:
+    except ValueError:
         print(pint_err_msg)
 
 
