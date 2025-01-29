@@ -1,13 +1,8 @@
 # <имя> <фамилия> <группа>
-# Программа создания списка и добавления в него элемента по индексу
+# Программа создания массива и удаления элемента из него по индексу с помощью средств Python
 
 import random
-
-min_element = -100      # минимальное значение элементов массива при его автоматическом заполнении
-max_element = 100       # максимальное значение элементов массива при его автоматическом заполнении
-int_err_msg = "Ошибка: введите целое числовое значение"
-uint_err_msg = "Ошибка: введите натуральное числовое значение"
-pint_err_msg = "Ошибка: введите неотрицальное целое числовое значение"
+from config import *
 
 # Ввод количества элементов массива
 while True:
@@ -16,9 +11,9 @@ while True:
         if n > 0:
             break
         else:
-            print(uint_err_msg)
+            print(pint_inpt_err_msg)
     except ValueError:
-        print(uint_err_msg)
+        print(pint_inpt_err_msg)
 
 
 # Создание массива
@@ -37,40 +32,30 @@ if is_manual_input:
                 arr[i] = int(input(f"Введите {i}-й элемент массива: "))
                 break
             except ValueError:
-                print(int_err_msg)
+                print(int_inpt_err_msg)
 else:
-    for i in range(n):
-        arr[i] = random.randint(min_element, max_element)
+    arr = [random.randint(min_element, max_element) for _ in range(n)]
 
 
 # Вывод созданного массива
 print(f"Созданный массив: {arr}")
 
 
-# Ввод элемента для добавления
+# Ввод индекса для удаления элемента
 while True:
     try:
-        m = int(input('Введите элемент для добавления: '))
-        break
-    except ValueError:
-        print(int_err_msg)
-
-
-# Ввод индекса для добавления элемента
-while True:
-    try:
-        index = int(input('Введите индекс добавляемого элемента: '))
-        if index >= 0:
+        index = int(input(f'Введите индекс удаляемого элемента (от 0 до {n - 1}): '))
+        if 0 <= index <= n - 1:
             break
         else:
-            print(pint_err_msg)
+            print(uint_inpt_err_msg + f' (от 0 до {n - 1})')
     except ValueError:
-        print(pint_err_msg)
+        print(uint_inpt_err_msg)
 
 
 # Обработка массива
-arr.insert(index, m)
+del arr[index]
 
 
 # Вывод обработанного массива
-print(f"Обработанный массив: {arr}")
+print(f'Обработанный массив: {arr}')
