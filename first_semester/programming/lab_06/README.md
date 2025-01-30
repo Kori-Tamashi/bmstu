@@ -18,16 +18,17 @@
 
 ## Описание работы
 
-| Файл                                                                                                                        | Описание                   |
-|:----------------------------------------------------------------------------------------------------------------------------|:---------------------------|
-| [insert_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_a.py) | Программа 1a               |
-| [insert_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_b.py) | Программа 1b               |
-| [del_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_a.py)       | Программа 2a               |
-| [del_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_b.py)       | Программа 2b               |
-| [extremum.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/extremum.py) | Программа 3                |
-| [sequence.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/sequence.py) | Программа 4                |
-| [swap.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/swap.py)         | Программа 5                |
-| [config.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py)     | Файл, содержащий константы |
+| Файл                                                                                                                           | Описание                            |
+|:-------------------------------------------------------------------------------------------------------------------------------|:------------------------------------|
+| [insert_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_a.py)    | Программа 1a                        |
+| [insert_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_b.py)    | Программа 1b                        |
+| [del_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_a.py)          | Программа 2a                        |
+| [del_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_b.py)          | Программа 2b                        |
+| [extremum.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/extremum.py)    | Программа 3                         |
+| [sequence.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/sequence.py)    | Программа 4                         |
+| [swap.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/swap.py)            | Программа 5                         |
+| [config.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py)        | Файл, содержащий константы          |
+| [lab_06.pdf](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/documents/lab_06.pdf) | Файл c заданием лабораторной работы |
 
 ### Последовательность выполнения
 
