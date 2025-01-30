@@ -75,4 +75,4 @@
 
 |           Программа 1a           |           Программа 1b           |           Программа 2a           |           Программа 2b           |           Программа 3           |           Программа 4           |           Программа 5           |
 |:--------------------------------:|:--------------------------------:|:--------------------------------:|:--------------------------------:|:-------------------------------:|:-------------------------------:|:-------------------------------:|
-| ![program_1a](images/image1.jpg) | ![program_1b](images/image2.jpg) | ![program_2a](images/image3.jpg) | ![program_2b](images/image4.jpg) | ![program_3](images/image5.jpg) | ![program_4](images/image6.jpg) | ![program_5](images/image7.jpg) |
+| ![program_1a](images/image1.png) | ![program_1b](images/image2.png) | ![program_2a](images/image3.png) | ![program_2b](images/image4.png) | ![program_3](images/image5.png) | ![program_4](images/image6.png) | ![program_5](images/image7.png) |
