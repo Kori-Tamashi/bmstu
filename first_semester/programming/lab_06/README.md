@@ -67,9 +67,9 @@
 
 #### Названия переменных
 
-> - [*int_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/сonfig.py#L3) является сокращением от *int_input_error_message* (англ. сообщение об ошибке при вводе целого числа)
-> - [*pint_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/сonfig.py#L4) является сокращением от *positive_int_input_error_message* (англ. сообщение об ошибке при вводе натурального числа)
-> - [*uint_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/сonfig.py#L5) является сокращением от *unsigned_int_input_error_message* (англ. сообщение об ошибке при вводе неотрицательного целого числа)
+> - [*int_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py#L3) является сокращением от *int_input_error_message* (англ. сообщение об ошибке при вводе целого числа)
+> - [*pint_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py#L4) является сокращением от *positive_int_input_error_message* (англ. сообщение об ошибке при вводе натурального числа)
+> - [*uint_inpt_err_msg*](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py#L5) является сокращением от *unsigned_int_input_error_message* (англ. сообщение об ошибке при вводе неотрицательного целого числа)
 
 ### Примеры работы
 
