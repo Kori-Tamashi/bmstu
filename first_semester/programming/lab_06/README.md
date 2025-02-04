@@ -1,34 +1,34 @@
 # Лабораторная работа №6. Списки (часть I)
 
 > Написать 7 независимых программ (различных модулей - файлов исходного кода) для работы с целочисленными списками, каждая из которых будет реализовывать ввод, соответствующее задание и вывод изменённого списка (кроме пп. 3, 4):
-> - 1a. Добавить элемент в заданное место списка (по индексу) с использованием любых средств Python
-> - 1b. Добавить элемент в заданное место списка (по индексу) алгоритмически
-> - 2a. Удалить элемент с заданным индексом с использованием любых средств Python
-> - 2b. Удалить элемент с заданным индексом алгоритмически
-> - 3a. Найти значение K-го экстремума в списке
-> - 4a. Найти наиболее длинную непрерывную последовательность по варианту
-> - 5a. Поменять местами элементы с характеристиками по варианту
+> - (1a). Добавить элемент в заданное место списка (по индексу) с использованием любых средств Python
+> - (1b). Добавить элемент в заданное место списка (по индексу) алгоритмически
+> - (2a). Удалить элемент с заданным индексом с использованием любых средств Python
+> - (2b). Удалить элемент с заданным индексом алгоритмически
+> - (3). Найти значение K-го экстремума в списке
+> - (4). Найти наиболее длинную непрерывную последовательность по варианту
+> - (5). Поменять местами элементы с характеристиками по варианту
 
 ## Информация о работе
 > - **Вариант:** 
->   - 4a. Поиск в массиве самой длинной непрерывной последовательности простых чисел
->   - 5a. Cмена местами последнего нулевого и максимального отрицательного элементов массива
+>   - (4). Поиск в массиве самой длинной непрерывной последовательности простых чисел
+>   - (5). Cмена местами последнего нулевого и максимального отрицательного элементов массива
 > - **Язык программирования:** Python
 > - **Среда разработки:** Pycharm Community Edition
 
 ## Описание работы
 
-| Файл                                                                                                                           | Описание                            |
-|:-------------------------------------------------------------------------------------------------------------------------------|:------------------------------------|
-| [insert_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_a.py)    | Программа 1a                        |
-| [insert_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_b.py)    | Программа 1b                        |
-| [del_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_a.py)          | Программа 2a                        |
-| [del_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_b.py)          | Программа 2b                        |
-| [extremum.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/extremum.py)    | Программа 3                         |
-| [sequence.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/sequence.py)    | Программа 4                         |
-| [swap.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/swap.py)            | Программа 5                         |
-| [config.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py)        | Файл, содержащий константы          |
-| [lab_06.pdf](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/documents/lab_06.pdf) | Файл c заданием лабораторной работы |
+| Файл                                                                                                                           | Описание                       |
+|:-------------------------------------------------------------------------------------------------------------------------------|:-------------------------------|
+| [insert_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_a.py)    | Программа 1a                   |
+| [insert_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/insert_b.py)    | Программа 1b                   |
+| [del_a.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_a.py)          | Программа 2a                   |
+| [del_b.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/del_b.py)          | Программа 2b                   |
+| [extremum.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/extremum.py)    | Программа 3                    |
+| [sequence.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/sequence.py)    | Программа 4                    |
+| [swap.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/swap.py)            | Программа 5                    |
+| [config.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py)        | Файл, содержащий константы     |
+
 
 ### Последовательность выполнения
 
