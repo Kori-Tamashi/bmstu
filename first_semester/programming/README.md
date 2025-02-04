@@ -16,3 +16,4 @@
 | 4 |          [График](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_04)           |    ✅    |
 | 5 |  [Сумма бесконечного ряда](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_05)  |    ✅    |
 | 6 |  [Cписки (часть I)](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_06)         |    ✅    |
+| 7 |  [Cписки (часть II)](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_07)        |    ✅    |
