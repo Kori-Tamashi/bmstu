@@ -28,7 +28,7 @@
 | [sequence.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/sequence.py)    | Программа 4                    |
 | [swap.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/swap.py)            | Программа 5                    |
 | [config.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_06/code/config.py)        | Файл, содержащий константы     |
-
+| [lab_06.pdf](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_07/documents/lab_06.pdf) | Файл c заданием лабораторной работы |
 
 ### Последовательность выполнения
 
