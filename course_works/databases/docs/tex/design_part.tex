@@ -371,7 +371,7 @@
 
 \textit{Функция текущих комбинаций дней} обозначается как $H: E \rightarrow 2^D$ и определяется как множество текущих комбинаций дней $c \in 2^D$, выбранных участниками $P$:
 \begin{equation}
-	H(E) = \{c: p \in P \ \exists c: (p, c) \in PD\}
+	H(E) = \{c: p \in P \ \exists! c: (p, c) \in PD\}
 \end{equation}
 
 \textit{Функция количества человек конкретного дня первого порядка} обозначается как $N_D: D \rightarrow \mathbb{N}$ и определяется как мощность множества участников конкретного дня:
@@ -384,9 +384,9 @@
 	N(d_1, \dots, d_n) = |\{p: (p, \{d_1, \dots, d_n\}) \in PD\}|
 \end{equation}
 
-\textit{Функцией количества человек мероприятия} обозначается как \newline $N_E: E \rightarrow \mathbb{N}$ и определяется как сумма количества человек на каждой из текущих комбинаций дней:
+\textit{Функцией количества человек мероприятия} обозначается как \newline $N_E: E \rightarrow \mathbb{N}$ и определяется как мощность множества участников:
 \begin{equation}
-	N_E(E) = \sum_{c_i \in H(E)}{N_D(c_i)}
+	N_E(E) = |P|
 \end{equation}
 
 \textit{Функция коэффициента дня первого порядка} обозначается как \newline $A: D \rightarrow \mathbb{R}_{\ge 0}$ и определяется как отношение стоимости дня к минимальной стоимости:
@@ -433,7 +433,7 @@
 
 \subsection{Фундаментальная цена}
 
-Фундаментальная цена -- это константная базовая цена, которая используется для расчета цены посещения каждого дня мероприятия. Она определяется таким образом, чтобы общая выручка от участников покрывала все затраты на проведение мероприятия. Цена посещения дня выражается через фундаментальную цену $P_0$ и коэффициент дня:
+Фундаментальная цена -- это базовая цена, которая используется для расчета цены посещения каждого дня мероприятия. Она определяется таким образом, чтобы общая выручка от участников покрывала все затраты на проведение мероприятия. Цена посещения дня выражается через фундаментальную цену $P_0$ и коэффициент дня:
 \begin{itemize}[label=--]
 	\item для одномерного случая:
 	\begin{equation}
@@ -485,6 +485,246 @@
 \begin{equation}
 	P_0 = \frac{C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)}}
 	\label{eq:fundamental-price-2}
+\end{equation}
+
+\subsection{Получение прибыли}
+
+Прибыль -- это финансовый результат, при котором доходы от мероприятия превышают его затраты. В рамках уравнения баланса наличие прибыли можно обозначить как:
+\begin{equation}
+	C_E(E) < \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} \Leftrightarrow \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} - C_E(E) > 0
+\end{equation}
+\begin{equation}
+	\Pi = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} - C_E(E)
+\end{equation}
+
+Прибыль может быть реализована через процентную наценку на фундаментальную цену. Пусть $\alpha \ge 0$ -- коэффициент, увеличивающий фундаментальную цену $P_0$. Тогда функция цены посещения конкретного дня примет вид:
+\begin{equation}
+	P_D'(c_i) = (1 + \alpha) \cdot A(c_i) \cdot P_0
+\end{equation}
+
+Прибыль в этом случае будет равна:
+\begin{equation}
+	\Pi = \sum_{c_i \in H(E)}{P_D'(c_i) \cdot N(c_i)} - C_E(E) 
+\end{equation}
+\begin{equation}
+	\Pi = (1 + \alpha) \cdot \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} - C_E(E)
+\end{equation}
+\begin{equation}
+	\Pi = (1 + \alpha) \cdot C_E(E) - C_E(E) = \alpha \cdot C_E(E)
+\end{equation}
+
+\subsection{Известные теоремы}
+
+\subsubsection{Теорема о самом дешевом дне}
+
+Если участники концентрируются на дне с минимальной стоимостью $C_D(d)$, то фундаментальная цена $P_0$ возрастает.
+
+\textit{Доказательство:} пусть $d' \in D$ -- день с минимальной стоимостью, то есть $C_D(d') = \min_{d_i \in D}{C_D(d_i)}$. Тогда имеем по определению коэффициента дня:
+\begin{equation}
+	A(d') = \frac{C_D(d')}{\min_{d_i \in D}{C_D(d_i)}} = \frac{\min_{d_i \in D}{C_D(d_i)}}{\min_{d_i \in D}{C_D(d_i)}} = 1
+\end{equation}
+
+Если $N(d')$ увеличивается при $N(E) = const$, тогда существует день \newline $d \in D, d \ne d'$ такой, что $N(d)$ уменьшается. Следовательно, $\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)}$ будет уменьшаться, так как $\forall d \in D: A(d') \le A(d)$, и $P_0$ будет возрастать.
+
+\subsubsection{Теорема об условии существования решения}
+
+Уравнение баланса для общего $n$-мерного случая имеет решение, только если:
+\begin{equation}
+	\begin{cases}
+		\forall d \in D: C_D(d) > 0 \\
+		PD \ne \emptyset
+	\end{cases}
+\end{equation}
+
+\textit{Доказательство:} для существования решения уравнения баланса необходимо и достаточно, чтобы существовала фундаментальная цена. Из формулы~\ref{eq:fundamental-price-2} имеем, что для существования фундаментальной цены требуется:
+\begin{equation}
+	\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)} > 0
+	\label{eq:exist-cond}
+\end{equation}
+
+Условие~\ref{eq:exist-cond} не выполняется, если:
+\begin{itemize}[label=--]
+	\item $\exists c_i \in H(E): A(c_i) \ \text{не определено, то есть} \ \min_{d_i \in D}{C_D(d_i)} = 0$;
+	\item $\exists c_i \in H(E): N(c_i) = 0, \text{то есть} \ H(E) = \emptyset \Leftrightarrow PD = \emptyset$.
+\end{itemize}
+
+Следовательно, для выполнения условия~\ref{eq:exist-cond} необходимо и достаточно:
+\begin{equation}
+	\begin{cases}
+		\forall d \in D: C_D(d) > 0 \\
+		PD \ne \emptyset
+	\end{cases}
+\end{equation}
+
+\subsubsection{Теорема об инвариантности к масштабу}
+
+Если все стоимости $C_D(d)$ возрастут в $k$ раз, то фундаментальная цена $P_0$ так же возрастет в $k$ раз, при этом:
+\begin{equation}
+	\frac{P_D(d)}{P_D'(d)} = \frac{1}{k}
+\end{equation}
+где $P_D'(d)$ -- изменённая функция цены.
+
+\textit{Доказательство:} пусть $C_D'(d) = k \cdot C_D(d)$, тогда:
+\begin{itemize}[label=--]
+	\item $A'(d) = \frac{C_D'(d)}{\min_{d_i \in D}{C_D'(d_i)}} = \frac{k \cdot C_D(d)}{k \cdot \min_{d_i \in D}{C_D(d)}} = A(d)$;
+	\item $C_E'(E) = \sum_{d_i \in D}{C_D'(d_i)} = k \cdot \sum_{d_i \in D}{C_D(d_i)} = k \cdot C_E(E)$.
+\end{itemize}
+
+Следовательно, имеем:
+\begin{equation}
+	P_0' = \frac{C_E'(E)}{\sum_{c_i \in H(E)}{A'(c_i) \cdot N(c_i)}} = \frac{k \cdot C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)}} = k \cdot P_0
+\end{equation}
+
+При этом $P_D'(d) = A'(d) \cdot P_0' = A(d) \cdot k \cdot P_0 = k \cdot P_D(d)$, то есть:
+\begin{equation}
+	\frac{P_D(d)}{P_D'(d)} = \frac{1}{k}
+\end{equation}
+
+\subsubsection{Теорема о равномерном распределении}
+
+При общем одномерном случае, если участники распределены по дням равномерно и все их стоимости одинаковы, то и цены их посещения равны.
+
+\textit{Доказательство:} по условию имеем
+\begin{equation}
+	\forall d \in D:
+	\begin{cases}
+		N(d) = N \\
+		C_D(d) = C
+	\end{cases}
+\end{equation}
+
+Следовательно:
+\begin{equation}
+	\forall d \in D: A(d) = \frac{C_D(d)}{min_{d_i \in D}{C_D(d_i)}} = \frac{C}{C} = 1
+\end{equation}
+
+Тогда при условии $|D| = n$:
+\begin{equation}
+	P_0 = \frac{C_E(E)}{\sum_{d_i \in D}{A(d_i) \cdot N(d_i)}} = \frac{n \cdot C}{\sum_{d_i \in D}{N(d_i)}} = \frac{n \cdot C}{n \cdot N} = \frac{C}{N}
+\end{equation}
+
+Имеем:
+\begin{equation}
+	\forall d \in D: P_D(d) = A(d) \cdot P_0 = 1 \cdot \frac{C}{N} = \frac{C}{N}
+\end{equation}
+
+\subsubsection{Теорема о количестве участников}
+
+Мощность множества участников равна сумме количеств участников каждой текущей комбинации:
+\begin{equation}
+	|P| = \sum_{c_i \in H(E)}{N_D(c_i)}
+\end{equation}
+
+\textit{Доказательство:} из определения $PD$ следует, что каждый участник $p \in P$ выбирает ровно одну комбинацию дней $c \subseteq D$. То есть:
+\begin{equation}
+	\forall p \in P \ \exists! c H(E): (p, c) \in PD
+\end{equation}
+
+Множество участников $P$ можно разбить на непересекающиеся множества $P_{c_i}$, где каждое $P_{c_i}$ содержит участников, выбравших комбинацию $c_i$:
+\begin{equation}
+	P = \bigcup_{c_i \in H(E)}{P_{c_i}}, \text{где} \ P_{c_i} = \{p: (p, c_i) \in PD\}
+\end{equation}
+
+Поскольку все $P_{c_i}$ попарно не пересекаются, то мощность их объединения равна сумме их мощности:
+\begin{equation}
+	|P| = \sum_{c_i \in H(E)}{|P_{c_i}|}
+\end{equation}
+
+Из определения имеем $N_D(c_i) = |P_{c_i}|$. Следовательно:
+\begin{equation}
+	|P| = \sum_{c_i \in H(E)}{N_D(c_i)}
+\end{equation}
+
+\subsubsection{Теорема о критическом количестве участников}
+
+Для покрытия расходов мероприятия с стоимостью $C_E(E)$ и максимальной ценой посещения $P_{max}$ необходимо:
+\begin{equation}
+	|P| \ge \frac{C_E(E)}{P_{max}}
+\end{equation}
+
+\textit{Доказательство:} из условия имеем:
+\begin{equation}
+	P_{max} = max_{c_i \in H(E)}{P_D(c_i)}
+\end{equation}
+
+Рассмотрим уравнение баланса:
+\begin{equation}
+	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} \le max_{c_i \in H(E)}{P_D(c_i)} \cdot \sum_{c_i \in H(E)}{N_D(c_i)}
+	\label{ineq:cost-event}
+\end{equation}
+
+Применив теорему о количестве участников, неравенство~\ref{ineq:cost-event} можно переписать следующим образом:
+\begin{equation}
+	C_E(E) \le P_{max} \cdot |P| \Leftrightarrow |P| \ge \frac{C_E(E)}{P_{max}}
+\end{equation}
+
+\subsubsection{Теорема об интервале фундаментальной цены}
+
+Для фундаментальной цены $P_0$ справедливо неравенство:
+\begin{equation}
+	\frac{C_{min}}{N_{max}} \le P_0 \le \frac{C_{max}}{N_{min}}
+\end{equation}
+
+\textit{Доказательство:} оценим значение знаменателя формулы фундаментальной цены сверху:
+\begin{equation}
+	\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)} \ge \sum_{c_i \in H(E)}{N(c_i)} = N(E)
+\end{equation}
+
+Оценим значение числителя формулы фундаментальной цены:
+\begin{equation}
+	C_E(E) \ge |D| \cdot C_{min} \ge C_{min}
+\end{equation}
+
+Следовательно имеем:
+\begin{equation}
+	P_0 \ge \frac{C_{min}}{N_{max}}
+\end{equation}
+
+Рассмотрим комбинацию дней $c'$, для которой $N(c') = N_{min}$. Для этой комбинации:
+\begin{equation}
+	C_D(c') = \sum_{d \in c'}{C_D(d)} \le |c'| \cdot C_{max}
+\end{equation}
+
+Из уравнения баланса:
+\begin{equation}
+	C_D(c') = A(c') \cdot P_0 \cdot N_{min}
+\end{equation}
+
+Коэффициент дня $c'$ равен:
+\begin{equation}
+	A(c') = \frac{C_D(c')}{C_{min}} \le \frac{C_{max}}{C_{min}}|c'|
+\end{equation}
+
+Подставив коэффициент дня в уравнение баланса, имеем:
+\begin{equation}
+	|c'| \cdot C_{max} \ge P_0 \cdot \frac{C_{max}}{C_{min}}|c'| \cdot N_{min} \Leftrightarrow P_0 \le \frac{C_{min}}{N_{min}} \le \frac{C_{max}}{N_{min}}
+\end{equation}
+
+Следовательно имеем:
+\begin{equation}
+	\frac{C_{min}}{N_{max}} \le P_0 \le \frac{C_{max}}{N_{min}}
+\end{equation}
+
+\subsubsection{Теорема об ограничении наценки}
+
+Коэффициент наценки $\alpha$ при условии $P_D(c_i) \le P_{max}$ для всех комбинаций дней $c_i \in H(E)$ ограничен сверху:
+\begin{equation}
+	\alpha \le \min_{c_i \in H(E)}{\Big(\frac{P_{max}}{A(c_i) \cdot P_0} - 1\Big)}
+\end{equation}
+
+\textit{Доказательство:} по определению цены комбинации дней с наценкой:
+\begin{equation}
+	P_D(c_i) = (1 + \alpha) \cdot A(c_i) \cdot P_0
+\end{equation}
+
+Условие $\forall c_i \in H(E): P_D(c_i) \le P_{max}$ может быть записано следующим образом:
+\begin{equation}
+	(1 + \alpha) \cdot A(c_i) \cdot P_0 \le P_{max} \Leftrightarrow \alpha \le \frac{P_{max}}{A_(c_i) \cdot P_0} - 1
+\end{equation}
+
+Чтобы неравенство выполнялось для всех $c_i$, выберем минимальное значение правой части:
+\begin{equation}
+	\alpha \le \min_{c_i \in H(E)}{\Big(\frac{P_{max}}{A_(c_i) \cdot P_0} - 1\Big)}
 \end{equation}
 
 \section{Используемые триггеры}
