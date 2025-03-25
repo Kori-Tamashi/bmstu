@@ -3,7 +3,7 @@
 ~$*.pptx
 *.bkp
 *.dtmp
-*.csproj
+*.csproj*
 .vs/
 bin/
 obj/
