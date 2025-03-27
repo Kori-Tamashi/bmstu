@@ -1,36 +1,40 @@
-﻿namespace Eventor.Common.Core;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+namespace Eventor.Database.Models;
 
 /// <summary>
 /// Меню конкретного дня мероприятия
 /// </summary>
-public class Menu
+[Table("menu")]
+public class MenuDBModel
 {
     /// <summary>
     /// Идентификатор меню
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
+    [Key]
+    [Column("menu_id", TypeName = "uuid")]
     public Guid Id { get; set; }
 
     /// <summary>
     /// Название
     /// </summary>
     /// <example>Основное меню</example>
+    [Column("name", TypeName = "varchar(255)")]
     public string Name { get; set; }
 
     /// <summary>
     /// Стоимость
     /// </summary>
     /// <example>1000</example>
+    [Column("cost", TypeName = "numeric")]
     public double Cost { get; set; }
 
-    public override bool Equals(object? obj)
+    public MenuDBModel(Guid id, string name, double cost)
     {
-        if (obj == null || GetType() != obj.GetType())
-            return false;
-
-        var other = (Menu)obj;
-        return Id == other.Id
-               && Name.Equals(other.Name)
-               && Cost == other.Cost;
+        Id = id;
+        Name = name;
+        Cost = cost;
     }
 }
+
