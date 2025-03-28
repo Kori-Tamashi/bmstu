@@ -1,11 +1,12 @@
-﻿using Eventor.Common.Core;
+﻿using Eventor.Common.Converter;
+using Eventor.Common.Core;
 using Eventor.Database.Context;
 using Eventor.Database.Core;
-
+using Microsoft.EntityFrameworkCore;
 namespace Eventor.Database.Repositories;
 
 /// <summary>
-/// Репозиторий мероприятия
+/// Репозиторий мероприятий
 /// </summary>
 public class EventRepository : BaseRepository, IEventRepository
 {
@@ -20,53 +21,95 @@ public class EventRepository : BaseRepository, IEventRepository
     /// Получить все мероприятия
     /// </summary>
     /// <returns>Список всех мероприятий</returns>
-    public Task<List<Event>> GetAllEventsAsync()
+    public async Task<List<Event>> GetAllEventsAsync()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Events
+            .OrderBy(e => e.Date)
+            .Select(e => EventConverter.ConvertDBToCore(e))
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     /// <summary>
     /// Получить все мероприятия пользователя
     /// </summary>
     /// <returns>Список всех мероприятий пользователя</returns>
-    public Task<List<Event>> GetAllEventsByUserAsync(Guid userId)
+    public async Task<List<Event>> GetAllEventsByUserAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        return await _dbContext.UsersEvents
+                .Where(ue => ue.UserId == userId)
+                .Include(ue => ue.Event)
+                    .ThenInclude(e => e.Location)
+                .Include(ue => ue.Event)
+                    .ThenInclude(e => e.EventDays)
+                        .ThenInclude(ed => ed.Day)
+                .OrderBy(ue => ue.Event.Date)
+                .Select(ue => EventConverter.ConvertDBToCore(ue.Event))
+                .AsNoTracking()
+                .ToListAsync();
     }
 
     /// <summary>
     /// Получить мероприятие по его идентификатору
     /// </summary>
     /// <returns>Мероприятие</returns>
-    public Task<Event> GetEventByIdAsync(Guid eventId)
+    public async Task<Event> GetEventByIdAsync(Guid eventId)
     {
-        throw new NotImplementedException();
+        var eventEntity = await _dbContext.Events
+                .Include(e => e.Location)
+                .Include(e => e.EventDays)
+                    .ThenInclude(ed => ed.Day)
+                .Include(e => e.UserEvents)
+                    .ThenInclude(ue => ue.User)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        return EventConverter.ConvertDBToCore(eventEntity);
     }
 
     /// <summary>
     /// Создать мероприятие
     /// </summary>
     /// <returns></returns>
-    public Task InsertEventAsync(Event _event)
+    public async Task InsertEventAsync(Event _event)
     {
-        throw new NotImplementedException();
+        var eventEntity = EventConverter.ConvertCoreToDB(_event);
+        await _dbContext.Events.AddAsync(eventEntity);
+        await _dbContext.SaveChangesAsync();
     }
 
     /// <summary>
     /// Обновить мероприятие
     /// </summary>
     /// <returns></returns>
-    public Task UpdateEventAsync(Event updateEvent)
+    public async Task UpdateEventAsync(Event updateEvent)
     {
-        throw new NotImplementedException();
+        var existingEvent = await _dbContext.Events
+                .FirstOrDefaultAsync(e => e.Id == updateEvent.Id);
+
+        existingEvent.Name = updateEvent.Name;
+        existingEvent.Description = updateEvent.Description;
+        existingEvent.Date = updateEvent.Date;
+        existingEvent.LocationId = updateEvent.LocationId;
+        existingEvent.PersonCount = updateEvent.PersonCount;
+        existingEvent.DaysCount = updateEvent.DaysCount;
+        existingEvent.Percent = updateEvent.Percent;
+        existingEvent.Rating = updateEvent.Rating;
+
+        _dbContext.Events.Update(existingEvent);
+        await _dbContext.SaveChangesAsync();
     }
 
     /// <summary>
     /// Удалить мероприятие
     /// </summary>
     /// <returns></returns>
-    public Task DeleteEventAsync(Guid eventId)
+    public async Task DeleteEventAsync(Guid eventId)
     {
-        throw new NotImplementedException();
+        var eventToDelete = await _dbContext.Events
+                .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        _dbContext.Events.Remove(eventToDelete);
+        await _dbContext.SaveChangesAsync();
     }
 }

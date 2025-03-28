@@ -14,7 +14,7 @@ public class ItemDBModel
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Key]
-    [Column("day_id", TypeName = "uuid")]
+    [Column("item_id", TypeName = "uuid")]
     public Guid Id { get; set; }
 
     /// <summary>

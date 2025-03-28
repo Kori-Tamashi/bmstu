@@ -30,6 +30,11 @@ public class MenuDBModel
     [Column("cost", TypeName = "numeric")]
     public double Cost { get; set; }
 
+    /// <summary>
+    /// Предметы меню
+    /// </summary>
+    public List<MenuItemsDBModel> MenuItems { get; set; } = new();
+
     public MenuDBModel(Guid id, string name, double cost)
     {
         Id = id;

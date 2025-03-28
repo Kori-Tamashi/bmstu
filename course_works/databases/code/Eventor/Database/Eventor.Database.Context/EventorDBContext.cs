@@ -48,7 +48,42 @@ public class EventorDBContext : DbContext
     /// </summary>
     public DbSet<FeedbackDBModel> Feedbacks { get; set; }
 
+    /// <summary>
+    /// Таблица связи мероприятий и дней
+    /// </summary>
+    public DbSet<EventDayDBModel> EventsDays { get; set; }
+
+    /// <summary>
+    /// Таблица связи меню и предметов
+    /// </summary>
+    public DbSet<MenuItemsDBModel> MenuItems { get; set; }
+
+    /// <summary>
+    /// Таблица связи участников и дней
+    /// </summary>
+    public DbSet<PersonDayDBModel> PersonsDays { get; set; }
+
+    /// <summary>
+    /// Таблица связи пользователей и мероприятий
+    /// </summary>
+    public DbSet<UserEventDBModel> UsersEvents { get; set; }
+
     public EventorDBContext(DbContextOptions<EventorDBContext> options) : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<EventDayDBModel>()
+            .HasKey(ed => new { ed.EventId, ed.DayId });
+
+        modelBuilder.Entity<MenuItemsDBModel>()
+            .HasKey(mi => new { mi.MenuId, mi.ItemId });
+
+        modelBuilder.Entity<PersonDayDBModel>()
+            .HasKey(pd => new { pd.PersonId, pd.DayId });
+
+        modelBuilder.Entity<UserEventDBModel>()
+            .HasKey(ue => new { ue.UserId, ue.EventId });
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

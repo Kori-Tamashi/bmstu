@@ -12,10 +12,10 @@ public class Day
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Идентификатор мероприятия
+    /// Идентификатор меню
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
-    public Guid EventId { get; set; }
+    public Guid MenuId { get; set; }
 
     /// <summary>
     /// Название
@@ -41,10 +41,10 @@ public class Day
     /// <example>1000</example>
     public double Price { get; set; }
 
-    public Day(Guid id, Guid eventId, string name, int sequenceNumber, string description, double price)
+    public Day(Guid id, Guid menuId, string name, int sequenceNumber, string description, double price)
     {
         Id = id;
-        EventId = eventId;
+        MenuId = menuId;
         Name = name;
         SequenceNumber = sequenceNumber;
         Description = description;
@@ -58,7 +58,7 @@ public class Day
 
         var other = (Day)obj;
         return Id == other.Id
-               && EventId == other.EventId
+               && MenuId == other.MenuId
                && Name.Equals(other.Name)
                && SequenceNumber == other.SequenceNumber
                && Description.Equals(other.Description)

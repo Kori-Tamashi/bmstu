@@ -15,11 +15,11 @@ public class DayDTOModel
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Идентификатор мероприятия
+    /// Идентификатор меню
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Required]
-    public Guid EventId { get; set; }
+    public Guid MenuId { get; set; }
 
     /// <summary>
     /// Название
@@ -49,10 +49,10 @@ public class DayDTOModel
     [Required]
     public double Price { get; set; }
 
-    public DayDTOModel(Guid id, Guid eventId, string name, int sequenceNumber, string description, double price)
+    public DayDTOModel(Guid id, Guid menuId, string name, int sequenceNumber, string description, double price)
     {
         Id = id;
-        EventId = eventId;
+        MenuId = menuId;
         Name = name;
         SequenceNumber = sequenceNumber;
         Description = description;

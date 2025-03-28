@@ -17,12 +17,12 @@ public class DayDBModel
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Идентификатор мероприятия
+    /// Идентификатор меню
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
-    [ForeignKey("Event")]
-    [Column("event_id", TypeName = "uuid")]
-    public Guid EventId { get; set; }
+    [ForeignKey("Menu")]
+    [Column("menu_id", TypeName = "uuid")]
+    public Guid MenuId { get; set; }
 
     /// <summary>
     /// Название
@@ -52,11 +52,21 @@ public class DayDBModel
     [Column("price", TypeName = "numeric")]
     public double Price { get; set; }
 
-    public DayDBModel(Guid id, Guid eventId, string name, int sequenceNumber, 
+    /// <summary>
+    /// Дни мероприятия
+    /// </summary>
+    public List<EventDayDBModel> EventDays { get; set; } = new();
+
+    /// <summary>
+    /// Участники дня
+    /// </summary>
+    public List<PersonDayDBModel> PersonDays { get; set; } = new();
+
+    public DayDBModel(Guid id, Guid menuId, string name, int sequenceNumber, 
         string description, double price)
     {
         Id = id;
-        EventId = eventId;
+        MenuId = menuId;
         Name = name;
         SequenceNumber = sequenceNumber;
         Description = description;

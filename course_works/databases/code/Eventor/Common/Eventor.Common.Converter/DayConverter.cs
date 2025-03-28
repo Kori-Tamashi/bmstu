@@ -16,7 +16,7 @@ public class DayConverter
     public static DayCore ConvertDBToCore(DayDB dayDBModel)
     {
         return new DayCore(id: dayDBModel.Id,
-                           eventId: dayDBModel.EventId,
+                           menuId: dayDBModel.MenuId,
                            name: dayDBModel.Name,
                            sequenceNumber: dayDBModel.SequenceNumber,
                            description: dayDBModel.Description,
@@ -30,7 +30,7 @@ public class DayConverter
     public static DayDB ConvertCoreToDB(DayCore dayCoreModel)
     {
         return new DayDB(id: dayCoreModel.Id,
-                         eventId: dayCoreModel.EventId,
+                         menuId: dayCoreModel.MenuId,
                          name: dayCoreModel.Name,
                          sequenceNumber: dayCoreModel.SequenceNumber,
                          description: dayCoreModel.Description,
@@ -44,7 +44,7 @@ public class DayConverter
     public static DayDTO ConvertCoreToDTO(DayCore dayCoreModel)
     {
         return new DayDTO(id: dayCoreModel.Id,
-                          eventId: dayCoreModel.EventId,
+                          menuId: dayCoreModel.MenuId,
                           name: dayCoreModel.Name,
                           sequenceNumber: dayCoreModel.SequenceNumber,
                           description: dayCoreModel.Description,

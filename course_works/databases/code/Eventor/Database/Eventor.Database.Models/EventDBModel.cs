@@ -25,6 +25,11 @@ public class EventDBModel
     public Guid LocationId { get; set; }
 
     /// <summary>
+    /// Локация
+    /// </summary>
+    public LocationDBModel Location { get; set; }
+
+    /// <summary>
     /// Название
     /// </summary>
     /// <example>Фестиваль</example>
@@ -72,6 +77,16 @@ public class EventDBModel
     /// <example>7</example>
     [Column("rating", TypeName = "numeric")]
     public double Rating { get; set; }
+
+    /// <summary>
+    /// Дни мероприятия
+    /// </summary>
+    public List<EventDayDBModel> EventDays { get; set; } = new();
+
+    /// <summary>
+    /// Мероприятия пользователя
+    /// </summary>
+    public List<UserEventDBModel> UserEvents { get; set; } = new();
 
     public EventDBModel(Guid id, Guid locationId, string name, string description, DateOnly date,
         int personCount, int daysCount, double percent, double rating)
