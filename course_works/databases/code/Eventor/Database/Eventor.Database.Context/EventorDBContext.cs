@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Eventor.Database.Context;
 
 /// <summary>
-/// Контекст база данных
+/// Контекст базы данных
 /// </summary>
 public class EventorDBContext : DbContext
 {

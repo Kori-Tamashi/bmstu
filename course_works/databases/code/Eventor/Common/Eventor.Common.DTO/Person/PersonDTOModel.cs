@@ -1,52 +1,47 @@
 ﻿using Eventor.Common.Enums;
-namespace Eventor.Common.Core;
+using System.ComponentModel.DataAnnotations;
+
+namespace Eventor.Common.DTO;
 
 /// <summary>
-/// Участник мероприятия
+/// Модель DTO участника мероприятия
 /// </summary>
-public class Person
+public class PersonDTOModel
 {
     /// <summary>
     /// Идентификатор участника
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
+    [Required]
     public Guid Id { get; set; }
 
     /// <summary>
     /// Имя
     /// </summary>
     /// <example>Иван Иванов</example>
+    [Required]
     public string Name { get; set; }
 
     /// <summary>
     /// Тип
     /// </summary>
     /// <example>VIP</example>
+    [Required]
     public PersonType Type { get; set; }
 
     /// <summary>
     /// Факт оплаты
     /// </summary>
     /// <example>Заезд</example>
+    [Required]
     public bool Paid { get; set; }
 
-    public Person(Guid id, string name, PersonType type, bool paid)
+    public PersonDTOModel(Guid id, string name, PersonType type, bool paid)
     {
         Id = id;
         Name = name;
         Type = type;
         Paid = paid;
     }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj == null || GetType() != obj.GetType())
-            return false;
-
-        var other = (Person)obj;
-        return Id == other.Id
-               && Name.Equals(other.Name)
-               && Type == other.Type
-               && Paid == other.Paid;
-    }
 }
+

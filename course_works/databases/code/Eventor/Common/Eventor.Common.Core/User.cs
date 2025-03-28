@@ -41,6 +41,17 @@ public class User
     /// <example>Пользователь</example>
     public UserRole Role { get; set; }
 
+    public User(Guid id, string name, string phone, Gender gender, string passwordHash, UserRole role)
+    {
+        Id = id;
+        Name = name;
+        Phone = phone;
+        Gender = gender;
+        PasswordHash = passwordHash;
+        Role = role;
+    }
+
+
     /// <summary>
     /// Изменяет роль пользователя
     /// </summary>

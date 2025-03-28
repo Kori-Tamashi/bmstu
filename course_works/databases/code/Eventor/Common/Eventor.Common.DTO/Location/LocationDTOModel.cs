@@ -1,53 +1,45 @@
-﻿using System.Security.Policy;
-
-namespace Eventor.Common.Core;
+﻿using System.ComponentModel.DataAnnotations;
+namespace Eventor.Common.DTO;
 
 /// <summary>
-/// Локация
+/// Модель DTO локации
 /// </summary>
-public class Location
+public class LocationDTOModel
 {
     /// <summary>
     /// Идентификатор локации
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
+    [Required]
     public Guid Id { get; set; }
 
     /// <summary>
     /// Название
     /// </summary>
     /// <example>Коттедж</example>
+    [Required]
     public string Name { get; set; }
 
     /// <summary>
     /// Описание
     /// </summary>
     /// <example>Домик у озера</example>
+    [Required]
     public string Description { get; set; }
 
     /// <summary>
     /// Цена аренды на 1 день
     /// </summary>
     /// <example>1000</example>
+    [Required]
     public double Price { get; set; }
 
-    public Location(Guid id, string name, string description, double price)
+    public LocationDTOModel(Guid id, string name, string description, double price)
     {
         Id = id;
         Name = name;
         Description = description;
         Price = price;
     }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj == null || GetType() != obj.GetType())
-            return false;
-
-        var other = (Location)obj;
-        return Id == other.Id
-               && Name.Equals(other.Name)
-               && Description.Equals(other.Description)
-               && Price == other.Price;
-    }
 }
+
