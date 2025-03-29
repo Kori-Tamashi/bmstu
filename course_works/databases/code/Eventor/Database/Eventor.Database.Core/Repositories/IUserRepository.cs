@@ -22,17 +22,17 @@ public interface IUserRepository
     /// Создать пользователя
     /// </summary>
     /// <returns></returns>
-    Task InsertEventAsync(Event _event);
+    Task InsertUserAsync(User user);
 
     /// <summary>
     /// Обновить пользователя
     /// </summary>
     /// <returns></returns>
-    Task UpdateEventAsync(Event updateEvent);
+    Task UpdateUserAsync(User updateUser);
 
     /// <summary>
     /// Удалить пользователя
     /// </summary>
     /// <returns></returns>
-    Task DeleteEventAsync(Guid eventId);
+    Task DeleteUserAsync(Guid userId);
 }

@@ -89,6 +89,12 @@ public class DayRepository : BaseRepository, IDayRepository
     public async Task DeleteDayAsync(Guid dayId)
     {
         var day = await _dbContext.Days.FindAsync(dayId);
+
+        if (day == null)
+        {
+            throw new ArgumentException($"День с ID {dayId} не найден.");
+        }
+
         _dbContext.Days.Remove(day);
         await _dbContext.SaveChangesAsync();
     }

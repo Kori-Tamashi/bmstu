@@ -11,62 +11,64 @@ public class EventorDBContext : DbContext
     /// <summary>
     /// Таблица пользователй
     /// </summary>
-    public DbSet<UserDBModel> Users { get; set; }
+    public virtual DbSet<UserDBModel> Users { get; set; }
 
     /// <summary>
     /// Таблица мероприятий
     /// </summary>
-    public DbSet<EventDBModel> Events { get; set; }
+    public virtual DbSet<EventDBModel> Events { get; set; }
 
     /// <summary>
     /// Таблица дней мероприятий
     /// </summary>
-    public DbSet<DayDBModel> Days { get; set; }
+    public virtual DbSet<DayDBModel> Days { get; set; }
 
     /// <summary>
     /// Таблица участников
     /// </summary>
-    public DbSet<PersonDBModel> Persons { get; set; }
+    public virtual DbSet<PersonDBModel> Persons { get; set; }
 
     /// <summary>
     /// Таблица меню
     /// </summary>
-    public DbSet<MenuDBModel> Menu { get; set; }
+    public virtual DbSet<MenuDBModel> Menu { get; set; }
 
     /// <summary>
     /// Таблица предметов
     /// </summary>
-    public DbSet<ItemDBModel> Items { get; set; }
+    public virtual DbSet<ItemDBModel> Items { get; set; }
 
     /// <summary>
     /// Таблица локаций
     /// </summary>
-    public DbSet<LocationDBModel> Locations { get; set; }
+    public virtual DbSet<LocationDBModel> Locations { get; set; }
 
     /// <summary>
     /// Таблица отзывов
     /// </summary>
-    public DbSet<FeedbackDBModel> Feedbacks { get; set; }
+    public virtual DbSet<FeedbackDBModel> Feedbacks { get; set; }
 
     /// <summary>
     /// Таблица связи мероприятий и дней
     /// </summary>
-    public DbSet<EventDayDBModel> EventsDays { get; set; }
+    public virtual DbSet<EventDayDBModel> EventsDays { get; set; }
 
     /// <summary>
     /// Таблица связи меню и предметов
     /// </summary>
-    public DbSet<MenuItemsDBModel> MenuItems { get; set; }
+    public virtual DbSet<MenuItemsDBModel> MenuItems { get; set; }
 
     /// <summary>
     /// Таблица связи участников и дней
     /// </summary>
-    public DbSet<PersonDayDBModel> PersonsDays { get; set; }
+    public virtual DbSet<PersonDayDBModel> PersonsDays { get; set; }
 
     /// <summary>
     /// Таблица связи пользователей и мероприятий
     /// </summary>
-    public DbSet<UserEventDBModel> UsersEvents { get; set; }
+    public virtual DbSet<UserEventDBModel> UsersEvents { get; set; }
+
+    public EventorDBContext() { }
 
     public EventorDBContext(DbContextOptions<EventorDBContext> options) : base(options) { }
 
@@ -89,7 +91,7 @@ public class EventorDBContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "dbsettings.env"));
+            Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "virtual DbSettings.env"));
 
             var connectionString =
                 $"Host={Env.GetString("DB_HOST")};" +

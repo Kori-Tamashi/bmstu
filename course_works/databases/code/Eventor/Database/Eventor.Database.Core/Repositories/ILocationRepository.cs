@@ -28,7 +28,7 @@ public interface ILocationRepository
     /// Обновить локацию
     /// </summary>
     /// <returns></returns>
-    Task UpdateLocationAsync(Event updateLocation);
+    Task UpdateLocationAsync(Location updateLocation);
 
     /// <summary>
     /// Удалить локацию

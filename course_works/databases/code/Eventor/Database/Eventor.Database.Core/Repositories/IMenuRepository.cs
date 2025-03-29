@@ -34,7 +34,7 @@ public interface IMenuRepository
     /// Добавить предмет в меню
     /// </summary>
     /// <returns></returns>
-    Task InsertItemAsync(Guid menuId, Item item);
+    Task InsertItemAsync(Guid menuId, Guid itemId, int amount);
 
     /// <summary>
     /// Обновить меню
@@ -52,6 +52,6 @@ public interface IMenuRepository
     /// Удалить предмет из меню
     /// </summary>
     /// <returns></returns>
-    Task DeleteItemAsync(Guid menuId, Item item);
+    Task DeleteItemAsync(Guid menuId, Guid itemId);
 }
 

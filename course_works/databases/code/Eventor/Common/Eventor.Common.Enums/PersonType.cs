@@ -11,7 +11,7 @@ public enum PersonType
     /// Участник без привилегий
     /// </summary>
     [EnumMember(Value = "Обычный участник")]
-    Simple = 0,
+    Standart = 0,
 
     /// <summary>
     /// Участник с привилегиями

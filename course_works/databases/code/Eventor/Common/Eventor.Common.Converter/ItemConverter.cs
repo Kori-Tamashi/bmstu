@@ -1,10 +1,10 @@
 ﻿using ItemCore = Eventor.Common.Core.Item;
 using ItemDTO = Eventor.Common.DTO.ItemDTOModel;
 using ItemDB = Eventor.Database.Models.ItemDBModel;
-namespace Itemor.Common.Converter;
+namespace Eventor.Common.Converter;
 
 /// <summary>
-/// Конвертатор модели мероприятия
+/// Конвертатор модели предмета
 /// </summary>
 public class ItemConverter
 {

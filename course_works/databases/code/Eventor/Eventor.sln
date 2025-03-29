@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventor", "Eventor.csproj", "{FFF5B192-8EB2-4D6B-9594-977F7BD1899D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventor.Tests", "UnitTests\Eventor.Tests.csproj", "{A0179BEC-2FA1-452E-9C86-A6E9E37DD99F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FFF5B192-8EB2-4D6B-9594-977F7BD1899D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFF5B192-8EB2-4D6B-9594-977F7BD1899D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFF5B192-8EB2-4D6B-9594-977F7BD1899D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0179BEC-2FA1-452E-9C86-A6E9E37DD99F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0179BEC-2FA1-452E-9C86-A6E9E37DD99F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0179BEC-2FA1-452E-9C86-A6E9E37DD99F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0179BEC-2FA1-452E-9C86-A6E9E37DD99F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

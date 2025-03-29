@@ -26,12 +26,22 @@ public class FeedbackDBModel
     public Guid EventId { get; set; }
 
     /// <summary>
+    /// Идентификатор мероприятия
+    /// </summary>
+    public EventDBModel Event { get; set; }
+
+    /// <summary>
     /// Идентификатор участника
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [ForeignKey("Person")]
     [Column("person_id", TypeName = "uuid")]
     public Guid PersonId { get; set; }
+
+    /// <summary>
+    /// Идентификатор мероприятия
+    /// </summary>
+    public PersonDBModel Person { get; set; }
 
     /// <summary>
     /// Комментарий

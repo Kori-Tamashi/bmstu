@@ -25,6 +25,11 @@ public class DayDBModel
     public Guid MenuId { get; set; }
 
     /// <summary>
+    /// Меню
+    /// </summary>
+    public MenuDBModel Menu { get; set; }
+
+    /// <summary>
     /// Название
     /// </summary>
     /// <example>Заезд</example>
