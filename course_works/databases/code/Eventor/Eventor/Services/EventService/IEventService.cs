@@ -1,10 +1,11 @@
 ﻿using Eventor.Common.Core;
-namespace Eventor.Database.Core;
+
+namespace Eventor.Services;
 
 /// <summary>
-/// Интерфейс репозитория мероприятия
+/// Интерфейс сервиса мероприятия
 /// </summary>
-public interface IEventRepository
+public interface IEventService
 {
     /// <summary>
     /// Получить все мероприятия
@@ -25,16 +26,10 @@ public interface IEventRepository
     Task<Event> GetEventByIdAsync(Guid eventId);
 
     /// <summary>
-    /// Получить мероприятие по его дню
-    /// </summary>
-    /// <returns>Мероприятие</returns>
-    Task<Event> GetEventByDayAsync(Guid dayId);
-
-    /// <summary>
     /// Создать мероприятие
     /// </summary>
     /// <returns></returns>
-    Task InsertEventAsync(Event _event);
+    Task AddEventAsync(Event _event);
 
     /// <summary>
     /// Обновить мероприятие

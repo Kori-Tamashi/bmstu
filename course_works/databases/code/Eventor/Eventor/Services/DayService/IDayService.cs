@@ -1,40 +1,39 @@
-﻿using Eventor.Common.Core;
-using Day = Eventor.Common.Core.Day;
-namespace Eventor.Database.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Eventor.Services;
 
 /// <summary>
-/// Интерфейс репозитория дня мероприятия
+/// Интерфейс сервиса дня мероприятия
 /// </summary>
-public interface IDayRepository
+public interface IDayService
 {
     /// <summary>
     /// Получить все дни
     /// </summary>
     /// <returns>Список всех дней</returns>
-    Task<List<Day>> GetAllDaysAsync();
+    Task<List<Common.Core.Day>> GetAllDaysAsync();
 
     /// <summary>
     /// Получить все дни мероприятия
     /// </summary>
     /// <returns>Список всех дней мероприятия</returns>
-    Task<List<Day>> GetAllDaysByEventAsync(Guid eventId);
-
-    /// <summary>
-    /// Получить все дни участника
-    /// </summary>
-    Task<List<Day>> GetAllDaysByPersonAsync(Guid personId);
+    Task<List<Common.Core.Day>> GetAllDaysByEventAsync(Guid eventId);
 
     /// <summary>
     /// Получить день по его идентификатору
     /// </summary>
     /// <returns>День</returns>
-    Task<Day> GetDayByIdAsync(Guid eventId);
+    Task<Common.Core.Day> GetDayByIdAsync(Guid eventId);
 
     /// <summary>
     /// Создать день
     /// </summary>
     /// <returns></returns>
-    Task InsertDayAsync(Common.Core.Day day);
+    Task AddDayAsync(Common.Core.Day day);
 
     /// <summary>
     /// Обновить день
@@ -48,4 +47,3 @@ public interface IDayRepository
     /// <returns></returns>
     Task DeleteDayAsync(Guid dayId);
 }
-

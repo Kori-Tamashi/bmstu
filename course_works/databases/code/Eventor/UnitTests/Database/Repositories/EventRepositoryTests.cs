@@ -223,6 +223,92 @@ public class EventRepositoryTests
         _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
     }
 
+    [Fact]
+    public async Task GetEventByDayAsync_ExistingDay_ReturnsEvent()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<EventorDBContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var eventId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+        var locationId = Guid.NewGuid();
+
+        // Создаем тестовые данные в InMemoryDatabase
+        using (var context = new EventorDBContext(options))
+        {
+            var testEvent = new EventDBModel(
+                id: eventId,
+                locationId: locationId,
+                name: "Test Event",
+                description: "Test Description",
+                date: DateOnly.FromDateTime(DateTime.Now),
+                personCount: 20,
+                daysCount: 3,
+                percent: 15,
+                rating: 4.8)
+            {
+                Location = new LocationDBModel(locationId, "Test Location", "Desc", 1000),
+                EventDays = new List<EventDayDBModel>
+            {
+                new EventDayDBModel(eventId, dayId)
+            }
+            };
+
+            context.Events.Add(testEvent);
+            await context.SaveChangesAsync();
+        }
+
+        using (var context = new EventorDBContext(options))
+        {
+            var repository = new EventRepository(context);
+
+            // Act
+            var result = await repository.GetEventByDayAsync(dayId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(eventId, result.Id);
+        }
+    }
+
+    [Fact]
+    public async Task GetEventByDayAsync_NonExistingDay_ReturnsNull()
+    {
+        // Arrange
+        var nonExistingDayId = Guid.NewGuid();
+        var mockEventsDaysSet = SetupMockDbSet(new List<EventDayDBModel>().AsQueryable());
+        _mockContext.Setup(c => c.EventsDays).Returns(mockEventsDaysSet.Object);
+
+        // Act
+        var result = await _repository.GetEventByDayAsync(nonExistingDayId);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetEventByDayAsync_OrphanedDay_ReturnsNull()
+    {
+        // Arrange
+        var dayId = Guid.NewGuid();
+        var eventDayLink = new EventDayDBModel(Guid.NewGuid(), dayId);
+
+        // Связь есть, но мероприятия не существует
+        var mockEventsDaysSet = SetupMockDbSet(new List<EventDayDBModel> { eventDayLink }.AsQueryable());
+        _mockContext.Setup(c => c.EventsDays).Returns(mockEventsDaysSet.Object);
+
+        var mockEventsSet = SetupMockDbSet(new List<EventDBModel>().AsQueryable());
+        _mockContext.Setup(c => c.Events).Returns(mockEventsSet.Object);
+
+        // Act
+        var result = await _repository.GetEventByDayAsync(dayId);
+
+        // Assert
+        Assert.Null(result);
+    }
+
     /// <summary>
     /// Проверяет, что метод DeleteEventAsync корректно удаляет мероприятие
     /// </summary>
@@ -262,26 +348,48 @@ public class EventRepositoryTests
     }
 
     /// <summary>
-    /// Проверяет конвертацию из EventDBModel в Event
+    /// Проверяет, что метод InsertEventAsync добавляет мероприятие в контекст
     /// </summary>
     [Fact]
-    public void EventConverter_ConvertsDBModelToCoreCorrectly()
+    public async Task InsertEventAsync_AddsEventToContext()
     {
         // Arrange
-        var dbModel = CreateTestEventDBModel(DateTime.Now);
+        var newEvent = new Event(
+            id: Guid.NewGuid(),
+            locationId: Guid.NewGuid(),
+            name: "New Event",
+            description: "New Description",
+            date: DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
+            personCount: 50,
+            daysCount: 2,
+            percent: 20,
+            rating: 4.9
+        );
+
+        var mockSet = new Mock<DbSet<EventDBModel>>();
+        _mockContext.Setup(c => c.Events).Returns(mockSet.Object);
+        _mockContext.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
 
         // Act
-        var result = EventConverter.ConvertDBToCore(dbModel);
+        await _repository.InsertEventAsync(newEvent);
 
         // Assert
-        Assert.Equal(dbModel.Id, result.Id);
-        Assert.Equal(dbModel.Name, result.Name);
+        mockSet.Verify(m => m.AddAsync(
+            It.Is<EventDBModel>(e =>
+                e.Id == newEvent.Id &&
+                e.Name == newEvent.Name &&
+                e.Description == newEvent.Description
+            ),
+            default
+        ), Times.Once);
+
+        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
     }
 
     private EventDBModel CreateTestEventDBModel(DateTime date)
     {
         var locationId = Guid.NewGuid();
-        return new EventDBModel(
+        var eventModel = new EventDBModel(
             id: Guid.NewGuid(),
             locationId: locationId,
             name: "Test Event",
@@ -291,9 +399,12 @@ public class EventRepositoryTests
             daysCount: 3,
             percent: 15,
             rating: 4.8)
-            {
-                Location = new LocationDBModel(locationId, "Test Location", "Test Location Description", 1000)
-            };
+        {
+            Location = new LocationDBModel(locationId, "Test Location", "Test Location Description", 1000),
+            EventDays = new List<EventDayDBModel>() 
+        };
+
+        return eventModel;
     }
 
     private Mock<DbSet<T>> SetupMockDbSet<T>(IQueryable<T> data) where T : class

@@ -1,10 +1,10 @@
 ﻿using Eventor.Common.Core;
-namespace Eventor.Database.Core;
+namespace Eventor.Services;
 
 /// <summary>
-/// Интерфейс репозитория меню
+/// Интерфейс сервиса меню
 /// </summary>
-public interface IMenuRepository
+public interface IMenuService
 {
     /// <summary>
     /// Получить все меню
@@ -25,22 +25,16 @@ public interface IMenuRepository
     Task<Menu> GetMenuByDayAsync(Guid dayId);
 
     /// <summary>
-    /// Получить количество предмета в меню
-    /// </summary>
-    /// <returns>Количество предмета в меню</returns>
-    Task<int> GetAmountItemAsync(Guid menu_id, Guid itemId);
-
-    /// <summary>
     /// Создать меню
     /// </summary>
     /// <returns></returns>
-    Task InsertMenuAsync(Menu menu);
+    Task AddMenuAsync(Menu menu);
 
     /// <summary>
     /// Добавить предмет в меню
     /// </summary>
     /// <returns></returns>
-    Task InsertItemAsync(Guid menuId, Guid itemId, int amount);
+    Task AddItemAsync(Guid menuId, Guid itemId, int amount);
 
     /// <summary>
     /// Обновить меню
@@ -60,4 +54,3 @@ public interface IMenuRepository
     /// <returns></returns>
     Task DeleteItemAsync(Guid menuId, Guid itemId);
 }
-

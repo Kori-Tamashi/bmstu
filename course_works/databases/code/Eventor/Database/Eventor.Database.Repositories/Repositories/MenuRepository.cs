@@ -73,6 +73,22 @@ public class MenuRepository : BaseRepository, IMenuRepository
     }
 
     /// <summary>
+    /// Получить количество предмета в меню
+    /// </summary>
+    /// <returns>Количество предмета в меню</returns>
+    public async Task<int> GetAmountItemAsync(Guid menuId, Guid itemId)
+    {
+        var menuItem = await _dbContext.MenuItems
+            .AsNoTracking()
+            .FirstOrDefaultAsync(mi => mi.MenuId == menuId && mi.ItemId == itemId);
+
+        if (menuItem == null)
+            return 0;
+
+        return menuItem.Amount;
+    }
+
+    /// <summary>
     /// Создать новое меню
     /// </summary>
     /// <param name="menu">Модель меню для создания</param>
@@ -91,7 +107,6 @@ public class MenuRepository : BaseRepository, IMenuRepository
     public async Task InsertItemAsync(Guid menuId, Guid itemId, int amount)
     {
         var menuItem = new MenuItemsDBModel(menuId, itemId, amount);
-
         await _dbContext.MenuItems.AddAsync(menuItem);
         await _dbContext.SaveChangesAsync();
     }

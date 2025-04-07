@@ -2,6 +2,7 @@
 using Eventor.Database.Context;
 using Eventor.Database.Core;
 using Microsoft.EntityFrameworkCore;
+using Day = Eventor.Common.Core.Day;
 namespace Eventor.Database.Repositories;
 
 /// <summary>
@@ -24,7 +25,7 @@ public class DayRepository : BaseRepository, IDayRepository
     /// Получить все дни мероприятий
     /// </summary>
     /// <returns>Список всех дней</returns>
-    public async Task<List<Common.Core.Day>> GetAllDaysAsync()
+    public async Task<List<Day>> GetAllDaysAsync()
     {
         return await _dbContext.Days
             .Select(d => DayConverter.ConvertDBToCore(d))
@@ -37,7 +38,7 @@ public class DayRepository : BaseRepository, IDayRepository
     /// </summary>
     /// <param name="eventId">Идентификатор мероприятия</param>
     /// <returns>Список дней мероприятия</returns>
-    public async Task<List<Common.Core.Day>> GetAllDaysByEventAsync(Guid eventId)
+    public async Task<List<Day>> GetAllDaysByEventAsync(Guid eventId)
     {
         return await _dbContext.EventsDays
             .Where(ed => ed.EventId == eventId)
@@ -48,11 +49,24 @@ public class DayRepository : BaseRepository, IDayRepository
     }
 
     /// <summary>
+    /// Получить дни конкретного участника мероприятия
+    /// </summary>
+    public async Task<List<Day>> GetAllDaysByPersonAsync(Guid personId)
+    {
+        return await _dbContext.PersonsDays
+            .Where(pd => pd.PersonId == personId)
+            .Include(pd => pd.Day)
+            .Select(pd => DayConverter.ConvertDBToCore(pd.Day))
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    /// <summary>
     /// Получить день по идентификатору
     /// </summary>
     /// <param name="dayId">Идентификатор дня</param>
     /// <returns>Объект дня</returns>
-    public async Task<Common.Core.Day> GetDayByIdAsync(Guid dayId)
+    public async Task<Day> GetDayByIdAsync(Guid dayId)
     {
         var day = await _dbContext.Days
             .FirstOrDefaultAsync(d => d.Id == dayId);
@@ -64,7 +78,7 @@ public class DayRepository : BaseRepository, IDayRepository
     /// Создать новый день
     /// </summary>
     /// <param name="day">Объект дня для создания</param>
-    public async Task InsertDayAsync(Common.Core.Day day)
+    public async Task InsertDayAsync(Day day)
     {
         var dayDb = DayConverter.ConvertCoreToDB(day);
         await _dbContext.Days.AddAsync(dayDb);
@@ -75,7 +89,7 @@ public class DayRepository : BaseRepository, IDayRepository
     /// Обновить существующий день
     /// </summary>
     /// <param name="updateDay">Обновленный объект дня</param>
-    public async Task UpdateDayAsync(Common.Core.Day updateDay)
+    public async Task UpdateDayAsync(Day updateDay)
     {
         var dayDb = DayConverter.ConvertCoreToDB(updateDay);
         _dbContext.Days.Update(dayDb);

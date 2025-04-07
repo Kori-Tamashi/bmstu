@@ -46,10 +46,10 @@ public class DayRepositoryTests
     {
         // Arrange
         var testData = new List<DayDBModel>
-    {
-        new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 1", 1, "Desc", 100),
-        new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 2", 2, "Desc", 200)
-    }.AsQueryable();
+        {
+            new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 1", 1, "Desc", 100),
+            new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 2", 2, "Desc", 200)
+        }.AsQueryable();
 
         // Настройка мока DbSet
         var mockSet = new Mock<DbSet<DayDBModel>>();
@@ -123,6 +123,65 @@ public class DayRepositoryTests
             Assert.Equal(dayId, day.Id);
             Assert.Equal("Event Day", day.Description);
             Assert.Equal(100, day.Price);
+        }
+    }
+
+    [Fact]
+    public async Task GetAllDaysByPersonAsync_ReturnsCorrectDays()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<EventorDBContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var personId = Guid.NewGuid();
+        var day1 = new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 1", 1, "Desc", 100);
+        var day2 = new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 2", 2, "Desc", 200);
+
+        using (var context = new EventorDBContext(options))
+        {
+            context.PersonsDays.AddRange(
+                new PersonDayDBModel(personId, day1.Id) { Day = day1 },
+                new PersonDayDBModel(personId, day2.Id) { Day = day2 },
+                new PersonDayDBModel(Guid.NewGuid(), day1.Id) { Day = day1 }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        // Act
+        using (var context = new EventorDBContext(options))
+        {
+            var repository = new DayRepository(context);
+            var result = await repository.GetAllDaysByPersonAsync(personId);
+
+            // Assert
+            Assert.Equal(2, result.Count);
+            Assert.Collection(result,
+                d => Assert.Equal("Day 1", d.Name),
+                d => Assert.Equal("Day 2", d.Name));
+        }
+    }
+
+    [Fact]
+    public async Task GetSelectedDaysAsync_ReturnsEmptyList_WhenNoDaysSelected()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<EventorDBContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        var personId = Guid.NewGuid();
+
+        // Используем реальный контекст с in-memory базой
+        using (var context = new EventorDBContext(options))
+        {
+            var repository = new DayRepository(context);
+
+            // Act
+            var result = await repository.GetAllDaysByPersonAsync(personId);
+
+            // Assert
+            Assert.Empty(result);
         }
     }
 

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Eventor\Services\" />
+    <Folder Include="Eventor\Controllers\" />
   </ItemGroup>
 
 </Project>

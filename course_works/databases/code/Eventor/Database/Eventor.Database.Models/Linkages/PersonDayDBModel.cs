@@ -19,6 +19,7 @@ public class PersonDayDBModel
     /// <summary>
     /// Участник
     /// </summary>
+    [ForeignKey("PersonId")]
     public PersonDBModel? Person { get; set; }
 
     /// <summary>
@@ -30,9 +31,10 @@ public class PersonDayDBModel
     public Guid DayId { get; set; }
 
     /// <summary>
-    /// Участники дня
+    /// День
     /// </summary>
-    public List<PersonDayDBModel> PersonDays { get; set; } = new();
+    [ForeignKey("DayId")]
+    public DayDBModel? Day { get; set; }
 
     public PersonDayDBModel(Guid personId, Guid dayId)
     {

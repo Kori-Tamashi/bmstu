@@ -25,7 +25,7 @@ public class Item
     public ItemType Type { get; set; }
 
     /// <summary>
-    /// Цена поездки
+    /// Стоимость
     /// </summary>
     /// <example>1000</example>
     public double Price { get; set; }

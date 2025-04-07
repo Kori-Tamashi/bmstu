@@ -4,7 +4,7 @@ namespace Eventor.Database.Core;
 /// <summary>
 /// Интерфейс репозитория пользователя
 /// </summary>
-public interface IUserRepository
+public interface IUserService
 {
     /// <summary>
     /// Получить всех пользователей
@@ -28,7 +28,7 @@ public interface IUserRepository
     /// Создать пользователя
     /// </summary>
     /// <returns></returns>
-    Task InsertUserAsync(User user);
+    Task AddUserAsync(User user);
 
     /// <summary>
     /// Обновить пользователя

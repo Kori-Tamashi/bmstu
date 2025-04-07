@@ -38,6 +38,11 @@ public class PersonDBModel
     [Column("paid", TypeName = "bool")]
     public bool Paid { get; set; }
 
+    /// <summary>
+    /// Выбранные дни
+    /// </summary>
+    public List<PersonDayDBModel> SelectedDays { get; set; }
+
     public PersonDBModel(Guid id, string name, PersonType type, bool paid)
     {
         Id = id;

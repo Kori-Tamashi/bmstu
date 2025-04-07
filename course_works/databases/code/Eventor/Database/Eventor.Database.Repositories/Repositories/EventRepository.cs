@@ -68,6 +68,22 @@ public class EventRepository : BaseRepository, IEventRepository
     }
 
     /// <summary>
+    /// Получить мероприятие по его дню
+    /// </summary>
+    /// <returns>Мероприятие</returns>
+    public async Task<Event> GetEventByDayAsync(Guid dayId)
+    {
+        var eventDay = await _dbContext.EventsDays
+            .Include(ed => ed.Event)
+            .FirstOrDefaultAsync(ed => ed.DayId == dayId);
+
+        if (eventDay?.Event == null)
+            return null;
+
+        return await GetEventByIdAsync(eventDay.Event.Id);
+    }
+
+    /// <summary>
     /// Создать мероприятие
     /// </summary>
     /// <returns></returns>
