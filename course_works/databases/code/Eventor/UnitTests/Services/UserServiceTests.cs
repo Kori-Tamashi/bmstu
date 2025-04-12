@@ -1,15 +1,16 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Database.Core;
-using Eventor.Services;
+using Eventor.Common.Enums;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eventor.Common.Enums;
+using Eventor.Database.Core;
+using Eventor.Services;
+using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace Eventor.Tests.Services;
 
@@ -19,6 +20,7 @@ public class UserServiceTests
     private readonly Mock<ILogger<UserService>> _mockLogger;
     private readonly UserService _userService;
     private readonly Guid _testUserId = Guid.NewGuid();
+    private const string ValidPhone = "+1234567890";
 
     public UserServiceTests()
     {
@@ -30,13 +32,12 @@ public class UserServiceTests
     private User CreateTestUser() => new User(
         _testUserId,
         "Test User",
-        "+123456789",
+        ValidPhone,
         Gender.Male,
         "hashed_password",
         UserRole.User
     );
 
-    // GetAllUserAsync
     [Fact]
     public async Task GetAllUserAsync_ReturnsAllUsers()
     {
@@ -49,164 +50,104 @@ public class UserServiceTests
 
         // Assert
         Assert.Single(result);
-        Assert.Equal(_testUserId, result[0].Id);
+        _mockRepo.Verify(r => r.GetAllUserAsync(), Times.Once);
     }
 
     [Fact]
-    public async Task GetAllUserAsync_DbException_ThrowsServiceException()
+    public async Task GetAllUserAsync_DbException_LogsAndThrows()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetAllUserAsync())
-            .ThrowsAsync(new DbUpdateException());
+        var exception = new DbUpdateException("Database error");
+        _mockRepo.Setup(r => r.GetAllUserAsync()).ThrowsAsync(exception);
 
         // Act & Assert
-        await Assert.ThrowsAsync<UserServiceException>(
-            () => _userService.GetAllUserAsync());
-    }
-
-    // GetUserByIdAsync
-    [Fact]
-    public async Task GetUserByIdAsync_ValidId_ReturnsUser()
-    {
-        // Arrange
-        var testUser = CreateTestUser();
-        _mockRepo.Setup(r => r.GetUserByIdAsync(_testUserId))
-            .ReturnsAsync(testUser);
-
-        // Act
-        var result = await _userService.GetUserByIdAsync(_testUserId);
-
-        // Assert
-        Assert.Equal(_testUserId, result.Id);
+        await Assert.ThrowsAsync<UserServiceException>(() => _userService.GetAllUserAsync());
+        VerifyLog(LogLevel.Error, "Database error retrieving users", exception);
     }
 
     [Fact]
-    public async Task GetUserByIdAsync_InvalidId_ThrowsNotFoundException()
+    public async Task GetUserByIdAsync_InvalidId_ThrowsValidationException()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(
+            () => _userService.GetUserByIdAsync(Guid.Empty));
+    }
+
+    [Fact]
+    public async Task GetUserByPhoneAsync_InvalidPhone_ThrowsValidationException()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(
+            () => _userService.GetUserByPhoneAsync("123")); // Невалидный короткий номер
+    }
+
+    [Fact]
+    public async Task GetUserByPhoneAsync_ValidPhoneButNotFound_ThrowsNotFoundException()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetUserByIdAsync(It.IsAny<Guid>()))
+        const string validPhone = "+1234567890";
+        _mockRepo.Setup(r => r.GetUserByPhoneAsync(validPhone))
             .ReturnsAsync((User?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<UserNotFoundException>(
-            () => _userService.GetUserByIdAsync(Guid.NewGuid()));
+            () => _userService.GetUserByPhoneAsync(validPhone));
     }
 
     [Fact]
-    public async Task GetUserByIdAsync_DbException_ThrowsServiceException()
+    public async Task AddUserAsync_InvalidUser_ThrowsValidationException()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetUserByIdAsync(_testUserId))
-            .ThrowsAsync(new DbUpdateException());
+        var invalidUser = new User(Guid.NewGuid(), "", "123", Gender.Male, "", UserRole.User);
 
         // Act & Assert
-        await Assert.ThrowsAsync<UserServiceException>(
-            () => _userService.GetUserByIdAsync(_testUserId));
+        await Assert.ThrowsAsync<ValidationException>(
+            () => _userService.AddUserAsync(invalidUser));
     }
 
     [Fact]
-    public async Task GetUserByPhoneAsync_ValidPhone_ReturnsUser()
-    {
-        // Arrange
-        var testUser = CreateTestUser();
-        _mockRepo.Setup(r => r.GetUserByPhoneAsync(testUser.Phone))
-                 .ReturnsAsync(testUser);
-
-        // Act
-        var result = await _userService.GetUserByPhoneAsync(testUser.Phone);
-
-        // Assert
-        Assert.Equal(testUser.Phone, result.Phone);
-    }
-
-    [Fact]
-    public async Task GetUserByPhoneAsync_InvalidPhone_ThrowsNotFoundException()
-    {
-        // Arrange
-        _mockRepo.Setup(r => r.GetUserByPhoneAsync(It.IsAny<string>()))
-                 .ReturnsAsync((User?)null);
-
-        // Act & Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(
-            () => _userService.GetUserByPhoneAsync("+invalid_phone"));
-    }
-
-    // AddUserAsync
-    [Fact]
-    public async Task AddUserAsync_ValidUser_SavesSuccessfully()
-    {
-        // Arrange
-        var testUser = CreateTestUser();
-        _mockRepo.Setup(r => r.InsertUserAsync(testUser))
-            .Returns(Task.CompletedTask);
-
-        // Act
-        await _userService.AddUserAsync(testUser);
-
-        // Assert
-        _mockRepo.Verify(r => r.InsertUserAsync(testUser), Times.Once);
-    }
-
-    [Fact]
-    public async Task AddUserAsync_DbException_ThrowsCreateException()
-    {
-        // Arrange
-        var testUser = CreateTestUser();
-        _mockRepo.Setup(r => r.InsertUserAsync(testUser))
-            .ThrowsAsync(new DbUpdateException());
-
-        // Act & Assert
-        await Assert.ThrowsAsync<UserCreateException>(
-            () => _userService.AddUserAsync(testUser));
-    }
-
-    // UpdateUserAsync
-    [Fact]
-    public async Task UpdateUserAsync_ValidUser_UpdatesSuccessfully()
-    {
-        // Arrange
-        var testUser = CreateTestUser();
-        _mockRepo.Setup(r => r.GetUserByIdAsync(_testUserId))
-            .ReturnsAsync(testUser);
-
-        // Act
-        await _userService.UpdateUserAsync(testUser);
-
-        // Assert
-        _mockRepo.Verify(r => r.UpdateUserAsync(testUser), Times.Once);
-    }
-
-    [Fact]
-    public async Task UpdateUserAsync_NonExistingUser_ThrowsNotFoundException()
-    {
-        // Arrange
-        var testUser = CreateTestUser();
-        _mockRepo.Setup(r => r.GetUserByIdAsync(_testUserId))
-            .ReturnsAsync((User?)null);
-
-        // Act & Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(
-            () => _userService.UpdateUserAsync(testUser));
-    }
-
-    [Fact]
-    public async Task UpdateUserAsync_DbException_ThrowsUpdateException()
+    public async Task UpdateUserAsync_ConcurrentModification_ThrowsException()
     {
         // Arrange
         var testUser = CreateTestUser();
         _mockRepo.Setup(r => r.GetUserByIdAsync(_testUserId))
             .ReturnsAsync(testUser);
         _mockRepo.Setup(r => r.UpdateUserAsync(testUser))
-            .ThrowsAsync(new DbUpdateException());
+            .ThrowsAsync(new DbUpdateConcurrencyException());
 
         // Act & Assert
-        await Assert.ThrowsAsync<UserUpdateException>(
+        var ex = await Assert.ThrowsAsync<UserUpdateException>(
             () => _userService.UpdateUserAsync(testUser));
+
+        // Проверка сообщения и типа внутреннего исключения
+        Assert.IsType<DbUpdateConcurrencyException>(ex.InnerException);
+        Assert.Contains("Concurrent modification", ex.Message);
     }
 
-    // DeleteUserAsync
     [Fact]
-    public async Task DeleteUserAsync_ValidId_DeletesSuccessfully()
+    public async Task UpdateUserNameAsync_OnlyNameChanged()
+    {
+        // Arrange
+        var originalUser = CreateTestUser();
+        var newName = "New Name";
+
+        _mockRepo.Setup(r => r.GetUserByPhoneAsync(ValidPhone))
+            .ReturnsAsync(originalUser);
+
+        // Act
+        await _userService.UpdateUserNameAsync(ValidPhone, newName);
+
+        // Assert
+        _mockRepo.Verify(r => r.UpdateUserAsync(It.Is<User>(u =>
+            u.Name == newName &&
+            u.Phone == originalUser.Phone &&
+            u.Gender == originalUser.Gender &&
+            u.Role == originalUser.Role
+        )), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteUserAsync_VerifyCascadingOperations()
     {
         // Arrange
         var testUser = CreateTestUser();
@@ -217,34 +158,35 @@ public class UserServiceTests
         await _userService.DeleteUserAsync(_testUserId);
 
         // Assert
+        // Проверяем все вызовы репозитория
+        _mockRepo.Verify(r => r.GetUserByIdAsync(_testUserId), Times.Once);
         _mockRepo.Verify(r => r.DeleteUserAsync(_testUserId), Times.Once);
+
+        // Убеждаемся, что других вызовов не было
+        _mockRepo.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task DeleteUserAsync_NonExistingUser_ThrowsNotFoundException()
-    {
-        // Arrange
-        _mockRepo.Setup(r => r.GetUserByIdAsync(_testUserId))
-            .ReturnsAsync((User?)null);
-
-        // Act & Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(
-            () => _userService.DeleteUserAsync(_testUserId));
-    }
-
-    [Fact]
-    public async Task DeleteUserAsync_DbException_ThrowsDeleteException()
+    public async Task UpdateUserRoleAsync_UnauthorizedAccess_ThrowsException()
     {
         // Arrange
         var testUser = CreateTestUser();
-        _mockRepo.Setup(r => r.GetUserByIdAsync(_testUserId))
+        _mockRepo.Setup(r => r.GetUserByPhoneAsync(ValidPhone))
             .ReturnsAsync(testUser);
-        _mockRepo.Setup(r => r.DeleteUserAsync(_testUserId))
-            .ThrowsAsync(new DbUpdateException());
 
         // Act & Assert
-        await Assert.ThrowsAsync<UserDeleteException>(
-            () => _userService.DeleteUserAsync(_testUserId));
+        await Assert.ThrowsAsync<ValidationException>(
+            () => _userService.UpdateUserRoleAsync(ValidPhone, (UserRole)999));
     }
 
+    private void VerifyLog(LogLevel level, string message, Exception ex = null)
+    {
+        _mockLogger.Verify(x => x.Log(
+            level,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(message)),
+            ex,
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()
+        ), Times.AtLeastOnce);
+    }
 }

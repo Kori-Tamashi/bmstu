@@ -1,9 +1,12 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Database.Core;
-using Eventor.Database.Repositories;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Eventor.Services;
 
@@ -26,7 +29,17 @@ public class FeedbackService : IFeedbackService
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving all feedback");
+            _logger.LogError(ex, "Database error while retrieving feedback");
+            throw new FeedbackServiceException("Failed to retrieve feedback due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data inconsistency error while retrieving feedback");
+            throw new FeedbackServiceException("Failed to retrieve feedback due to data inconsistency", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving feedback");
             throw new FeedbackServiceException("Failed to retrieve feedback", ex);
         }
     }
@@ -36,15 +49,27 @@ public class FeedbackService : IFeedbackService
         try
         {
             var feedbacks = await _feedbackRepository.GetAllFeedbacksByEventAsync(eventId);
+
             if (feedbacks == null || !feedbacks.Any())
             {
                 _logger.LogInformation("No feedback found for event {EventId}", eventId);
+                return new List<Feedback>(); // Возвращаем пустой список вместо null
             }
             return feedbacks;
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid event ID: {EventId}", eventId);
+            throw new FeedbackServiceException($"Invalid event ID: {eventId}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving feedback for event {EventId}", eventId);
+            _logger.LogError(ex, "Database error while retrieving feedback for event {EventId}", eventId);
+            throw new FeedbackServiceException($"Failed to retrieve feedback for event {eventId} due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving feedback for event {EventId}", eventId);
             throw new FeedbackServiceException($"Failed to retrieve feedback for event {eventId}", ex);
         }
     }
@@ -54,15 +79,27 @@ public class FeedbackService : IFeedbackService
         try
         {
             var feedbacks = await _feedbackRepository.GetAllFeedbacksByUserAsync(userId);
+
             if (feedbacks == null || !feedbacks.Any())
             {
                 _logger.LogInformation("No feedback found for user {UserId}", userId);
+                return new List<Feedback>(); // Возвращаем пустой список вместо null
             }
             return feedbacks;
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid user ID: {UserId}", userId);
+            throw new FeedbackServiceException($"Invalid user ID: {userId}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving feedback for user {UserId}", userId);
+            _logger.LogError(ex, "Database error while retrieving feedback for user {UserId}", userId);
+            throw new FeedbackServiceException($"Failed to retrieve feedback for user {userId} due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving feedback for user {UserId}", userId);
             throw new FeedbackServiceException($"Failed to retrieve feedback for user {userId}", ex);
         }
     }
@@ -72,15 +109,31 @@ public class FeedbackService : IFeedbackService
         try
         {
             var feedback = await _feedbackRepository.GetFeedbackByIdAsync(feedbackId);
+
             if (feedback == null)
             {
+                _logger.LogWarning("Feedback {FeedbackId} not found", feedbackId);
                 throw new FeedbackNotFoundException($"Feedback {feedbackId} not found");
             }
             return feedback;
         }
+        catch (FeedbackNotFoundException) // Позволяем пройти собственным исключениям
+        {
+            throw;
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid feedback ID: {FeedbackId}", feedbackId);
+            throw new FeedbackServiceException($"Invalid feedback ID: {feedbackId}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving feedback {FeedbackId}", feedbackId);
+            _logger.LogError(ex, "Database error while retrieving feedback {FeedbackId}", feedbackId);
+            throw new FeedbackServiceException($"Failed to retrieve feedback {feedbackId} due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving feedback {FeedbackId}", feedbackId);
             throw new FeedbackServiceException($"Failed to retrieve feedback {feedbackId}", ex);
         }
     }
@@ -91,9 +144,24 @@ public class FeedbackService : IFeedbackService
         {
             await _feedbackRepository.InsertFeedbackAsync(feedback);
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Validation error while creating feedback");
+            throw new FeedbackCreateException($"Failed to create feedback: {ex.Message}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error creating feedback");
+            _logger.LogError(ex, "Database error while creating feedback");
+            throw new FeedbackCreateException("Failed to create feedback due to database constraints", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data conflict while creating feedback");
+            throw new FeedbackCreateException("Failed to create feedback due to data conflict", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while creating feedback");
             throw new FeedbackCreateException("Failed to create feedback", ex);
         }
     }
@@ -103,16 +171,37 @@ public class FeedbackService : IFeedbackService
         try
         {
             var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(updateFeedback.Id);
+
             if (existingFeedback == null)
             {
+                _logger.LogWarning("Feedback {FeedbackId} not found for update", updateFeedback.Id);
                 throw new FeedbackNotFoundException($"Feedback {updateFeedback.Id} not found");
             }
 
             await _feedbackRepository.UpdateFeedbackAsync(updateFeedback);
         }
+        catch (FeedbackNotFoundException)
+        {
+            throw; // Пробрасываем исключение без изменений
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid data while updating feedback {FeedbackId}", updateFeedback.Id);
+            throw new FeedbackUpdateException($"Failed to update feedback {updateFeedback.Id}: {ex.Message}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error updating feedback {FeedbackId}", updateFeedback.Id);
+            _logger.LogError(ex, "Database error while updating feedback {FeedbackId}", updateFeedback.Id);
+            throw new FeedbackUpdateException($"Failed to update feedback {updateFeedback.Id} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while updating feedback {FeedbackId}", updateFeedback.Id);
+            throw new FeedbackUpdateException($"Concurrency conflict while updating feedback {updateFeedback.Id}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while updating feedback {FeedbackId}", updateFeedback.Id);
             throw new FeedbackUpdateException($"Failed to update feedback {updateFeedback.Id}", ex);
         }
     }
@@ -122,16 +211,33 @@ public class FeedbackService : IFeedbackService
         try
         {
             var existingFeedback = await _feedbackRepository.GetFeedbackByIdAsync(feedbackId);
+
             if (existingFeedback == null)
             {
+                _logger.LogWarning("Feedback {FeedbackId} not found for deletion", feedbackId);
                 throw new FeedbackNotFoundException($"Feedback {feedbackId} not found");
             }
 
             await _feedbackRepository.DeleteFeedbackAsync(feedbackId);
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid feedback ID: {FeedbackId}", feedbackId);
+            throw new FeedbackDeleteException($"Invalid feedback ID: {feedbackId}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error deleting feedback {FeedbackId}", feedbackId);
+            _logger.LogError(ex, "Database error while deleting feedback {FeedbackId}", feedbackId);
+            throw new FeedbackDeleteException($"Failed to delete feedback {feedbackId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while deleting feedback {FeedbackId}", feedbackId);
+            throw new FeedbackDeleteException($"Concurrency conflict while deleting feedback {feedbackId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while deleting feedback {FeedbackId}", feedbackId);
             throw new FeedbackDeleteException($"Failed to delete feedback {feedbackId}", ex);
         }
     }

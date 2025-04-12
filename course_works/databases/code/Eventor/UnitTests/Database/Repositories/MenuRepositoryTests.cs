@@ -2,189 +2,187 @@
 using Eventor.Database.Context;
 using Eventor.Database.Models;
 using Eventor.Database.Repositories;
-using Eventor.Tests.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Eventor.Tests.Database.Repositories;
 
-public class MenuRepositoryTests
+public class MenuRepositoryTests : IDisposable
 {
-    private readonly Mock<EventorDBContext> _mockContext;
+    private readonly EventorDBContext _context;
+    private readonly ILogger<MenuRepository> _logger;
     private readonly MenuRepository _repository;
-    private readonly Mock<DbSet<MenuDBModel>> _mockMenuDbSet;
-    private readonly Mock<DbSet<DayDBModel>> _mockDaysDbSet;
+    private readonly DbContextOptions<EventorDBContext> _options;
 
     public MenuRepositoryTests()
     {
-        _mockContext = new Mock<EventorDBContext>();
-        _mockMenuDbSet = new Mock<DbSet<MenuDBModel>>();
-        _mockDaysDbSet = new Mock<DbSet<DayDBModel>>();
+        _options = new DbContextOptionsBuilder<EventorDBContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
 
-        _mockContext.Setup(c => c.Menu).Returns(_mockMenuDbSet.Object);
-        _mockContext.Setup(c => c.Days).Returns(_mockDaysDbSet.Object);
-        _repository = new MenuRepository(_mockContext.Object);
+        _context = new EventorDBContext(_options);
+        _logger = Mock.Of<ILogger<MenuRepository>>();
+        _repository = new MenuRepository(_context, _logger);
+    }
+
+    public void Dispose()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
+
+    private MenuDBModel CreateTestMenu(
+        Guid? id = null,
+        string name = "Test Menu",
+        double cost = 1000)
+    {
+        return new MenuDBModel(
+            id ?? Guid.NewGuid(),
+            name,
+            cost);
     }
 
     [Fact]
-    public async Task GetAllMenuAsync_ReturnsAllMenusWithItems()
+    public async Task GetAllMenuAsync_ShouldReturnAllMenus()
     {
         // Arrange
-        var menuId = Guid.NewGuid();
         var menus = new List<MenuDBModel>
         {
-            new(menuId, "Main Menu", 1000)
-            {
-                MenuItems = new List<MenuItemsDBModel>
-                {
-                    new(menuId, Guid.NewGuid(), 2)
-                }
-            }
+            CreateTestMenu(name: "Menu 1"),
+            CreateTestMenu(name: "Menu 2")
         };
 
-        var mockSet = SetupMockDbSet(menus.AsQueryable());
-        _mockContext.Setup(c => c.Menu).Returns(mockSet.Object);
+        await _context.Menu.AddRangeAsync(menus);
+        await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetAllMenuAsync();
 
         // Assert
-        Assert.Single(result);
-        Assert.Equal("Main Menu", result[0].Name);
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, m => m.Name == "Menu 1");
     }
 
     [Fact]
-    public async Task GetMenuByIdAsync_ReturnsCorrectMenu()
+    public async Task GetAllMenuAsync_ShouldLogErrorOnFailure()
     {
         // Arrange
-        var menuId = Guid.NewGuid();
-        var testMenu = new MenuDBModel(menuId, "Test Menu", 1500);
+        var corruptedContext = new Mock<EventorDBContext>(_options);
+        corruptedContext.Setup(c => c.Menu).Throws<Exception>();
+        var repository = new MenuRepository(corruptedContext.Object, _logger);
 
-        var mockSet = SetupMockDbSet(new List<MenuDBModel> { testMenu }.AsQueryable());
-        _mockContext.Setup(c => c.Menu).Returns(mockSet.Object);
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.GetAllMenuAsync());
+        Mock.Get(_logger).VerifyLog(LogLevel.Error, "Ошибка получения списка меню");
+    }
+
+    [Fact]
+    public async Task GetMenuByIdAsync_ShouldReturnCorrectMenu()
+    {
+        // Arrange
+        var menu = CreateTestMenu();
+        await _context.Menu.AddAsync(menu);
+        await _context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetMenuByIdAsync(menuId);
+        var result = await _repository.GetMenuByIdAsync(menu.Id);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(menuId, result.Id);
+        Assert.Equal(menu.Cost, result.Cost);
     }
 
     [Fact]
-    public async Task GetMenuByDayAsync_ReturnsMenuForDay()
+    public async Task GetMenuByDayAsync_ShouldReturnLinkedMenu()
     {
         // Arrange
         var dayId = Guid.NewGuid();
-        var menuId = Guid.NewGuid();
-        var testDay = new DayDBModel(dayId, menuId, "Day 1", 1, "Test Day", 500)
+        var menu = CreateTestMenu();
+        var day = new DayDBModel(dayId, menu.Id, "Test Day", 1, "Desc", 500)
         {
-            Menu = new MenuDBModel(menuId, "Day Menu", 800)
+            Menu = menu
         };
 
-        // Настраиваем DbSet без мокирования Include
-        var mockSet = SetupMockDbSet(new List<DayDBModel> { testDay }.AsQueryable());
-        _mockContext.Setup(c => c.Days).Returns(mockSet.Object);
+        await _context.Days.AddAsync(day);
+        await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetMenuByDayAsync(dayId);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Day Menu", result.Name);
+        Assert.Equal(menu.Name, result.Name);
     }
 
     [Fact]
-    public async Task InsertMenuAsync_AddsNewMenuToDatabase()
+    public async Task InsertMenuAsync_ShouldAddNewMenu()
     {
         // Arrange
-        var newMenu = new Menu(Guid.NewGuid(), "New Menu", 2000);
-        MenuDBModel capturedMenu = null;
-
-        _mockMenuDbSet.Setup(m => m.AddAsync(It.IsAny<MenuDBModel>(), default))
-            .Callback<MenuDBModel, CancellationToken>((m, _) => capturedMenu = m)
-            .ReturnsAsync(() => null);
+        var newMenu = new Menu(
+            Guid.NewGuid(),
+            "New Menu",
+            2000);
 
         // Act
         await _repository.InsertMenuAsync(newMenu);
+        var result = await _context.Menu.FirstOrDefaultAsync();
 
         // Assert
-        Assert.NotNull(capturedMenu);
-        Assert.Equal(newMenu.Name, capturedMenu.Name);
-        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
+        Assert.NotNull(result);
+        Assert.Equal(newMenu.Name, result.Name);
     }
 
     [Fact]
-    public async Task UpdateMenuAsync_UpdatesExistingMenu()
+    public async Task UpdateMenuAsync_ShouldUpdateExistingMenu()
     {
         // Arrange
-        var menuId = Guid.NewGuid();
-        var existingMenu = new MenuDBModel(menuId, "Old Name", 1000);
-        var updatedMenu = new Menu(menuId, "New Name", 1500);
+        var menu = CreateTestMenu();
+        await _context.Menu.AddAsync(menu);
+        await _context.SaveChangesAsync();
 
-        var mockSet = SetupMockDbSet(new List<MenuDBModel> { existingMenu }.AsQueryable());
-        _mockContext.Setup(c => c.Menu).Returns(mockSet.Object);
+        var updatedMenu = new Menu(
+            menu.Id,
+            "Updated Name",
+            1500);
 
         // Act
         await _repository.UpdateMenuAsync(updatedMenu);
+        var result = await _context.Menu.FindAsync(menu.Id);
 
         // Assert
-        Assert.Equal("New Name", existingMenu.Name);
-        Assert.Equal(1500, existingMenu.Cost);
-        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
+        Assert.Equal("Updated Name", result.Name);
+        Assert.Equal(1500, result.Cost);
     }
 
     [Fact]
-    public async Task DeleteMenuAsync_RemovesMenuFromDatabase()
+    public async Task DeleteMenuAsync_ShouldRemoveMenu()
     {
         // Arrange
-        var menuId = Guid.NewGuid();
-        var testMenu = new MenuDBModel(menuId, "Test Menu", 1000);
-
-        // Настройка DbSet с поддержкой асинхронных операций
-        var mockSet = SetupMockDbSet(new List<MenuDBModel> { testMenu }.AsQueryable());
-
-        // Настройка FirstOrDefaultAsync для возврата testMenu
-        mockSet.As<IAsyncEnumerable<MenuDBModel>>()
-            .Setup(m => m.GetAsyncEnumerator(default))
-            .Returns(new TestAsyncEnumerator<MenuDBModel>(new List<MenuDBModel> { testMenu }.GetEnumerator()));
-
-        _mockContext.Setup(c => c.Menu).Returns(mockSet.Object);
+        var menu = CreateTestMenu();
+        await _context.Menu.AddAsync(menu);
+        await _context.SaveChangesAsync();
 
         // Act
-        await _repository.DeleteMenuAsync(menuId);
+        await _repository.DeleteMenuAsync(menu.Id);
+        var result = await _context.Menu.FindAsync(menu.Id);
 
         // Assert
-        mockSet.Verify(m => m.Remove(It.Is<MenuDBModel>(m => m.Id == menuId)), Times.Once);
-        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
+        Assert.Null(result);
     }
 
-    private Mock<DbSet<T>> SetupMockDbSet<T>(IQueryable<T> data) where T : class
+    [Fact]
+    public async Task DeleteMenuAsync_ShouldLogWarningForNonExistingId()
     {
-        var mockSet = new Mock<DbSet<T>>();
-        mockSet.As<IAsyncEnumerable<T>>()
-            .Setup(m => m.GetAsyncEnumerator(default))
-            .Returns(new TestAsyncEnumerator<T>(data.GetEnumerator()));
+        // Act
+        await _repository.DeleteMenuAsync(Guid.NewGuid());
 
-        mockSet.As<IQueryable<T>>()
-            .Setup(m => m.Provider)
-            .Returns(new TestAsyncQueryProvider<T>(data.Provider));
-
-        mockSet.As<IQueryable<T>>()
-            .Setup(m => m.Expression).Returns(data.Expression);
-
-        mockSet.As<IQueryable<T>>()
-            .Setup(m => m.ElementType).Returns(data.ElementType);
-
-        mockSet.As<IQueryable<T>>()
-            .Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-
-        return mockSet;
+        // Assert
+        Mock.Get(_logger).VerifyLog(LogLevel.Warning, "не найдено");
     }
 }

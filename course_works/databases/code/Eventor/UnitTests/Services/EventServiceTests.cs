@@ -1,14 +1,14 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Database.Core;
-using Eventor.Services;
 using Eventor.Services.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Eventor.Database.Core;
+using Eventor.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Eventor.Tests.Services;
 
@@ -19,6 +19,7 @@ public class EventServiceTests
     private readonly EventService _eventService;
     private readonly Guid _testUserId = Guid.NewGuid();
     private readonly Guid _testEventId = Guid.NewGuid();
+    private readonly Guid _nonExistingEventId = Guid.NewGuid();
 
     public EventServiceTests()
     {
@@ -39,13 +40,12 @@ public class EventServiceTests
         7.5
     );
 
-    // GetAllEventsAsync
     [Fact]
-    public async Task GetAllEventsAsync_ReturnsEvents()
+    public async Task GetAllEventsAsync_ReturnsEvents_WhenRepositoryReturnsData()
     {
         // Arrange
-        var events = new List<Event> { CreateTestEvent() };
-        _mockRepo.Setup(r => r.GetAllEventsAsync()).ReturnsAsync(events);
+        var expectedEvents = new List<Event> { CreateTestEvent() };
+        _mockRepo.Setup(r => r.GetAllEventsAsync()).ReturnsAsync(expectedEvents);
 
         // Act
         var result = await _eventService.GetAllEventsAsync();
@@ -53,28 +53,31 @@ public class EventServiceTests
         // Assert
         Assert.Single(result);
         Assert.Equal(_testEventId, result[0].Id);
+        _mockRepo.Verify(r => r.GetAllEventsAsync(), Times.Once);
     }
 
-    [Fact]
-    public async Task GetAllEventsAsync_DbException_ThrowsServiceException()
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    [InlineData(typeof(Exception))]
+    public async Task GetAllEventsAsync_ThrowsServiceException_OnAnyError(Type exceptionType)
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetAllEventsAsync())
-            .ThrowsAsync(new DbUpdateException());
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test error");
+        _mockRepo.Setup(r => r.GetAllEventsAsync()).ThrowsAsync(exception);
 
         // Act & Assert
         await Assert.ThrowsAsync<EventServiceException>(
             () => _eventService.GetAllEventsAsync());
     }
 
-    // GetAllEventsByUserAsync
     [Fact]
-    public async Task GetAllEventsByUserAsync_ReturnsUserEvents()
+    public async Task GetAllEventsByUserAsync_ReturnsEvents_ForValidUserId()
     {
         // Arrange
-        var events = new List<Event> { CreateTestEvent() };
+        var expectedEvents = new List<Event> { CreateTestEvent() };
         _mockRepo.Setup(r => r.GetAllEventsByUserAsync(_testUserId))
-            .ReturnsAsync(events);
+            .ReturnsAsync(expectedEvents);
 
         // Act
         var result = await _eventService.GetAllEventsByUserAsync(_testUserId);
@@ -82,108 +85,109 @@ public class EventServiceTests
         // Assert
         Assert.Single(result);
         Assert.Equal(_testEventId, result[0].Id);
+        _mockRepo.Verify(r => r.GetAllEventsByUserAsync(_testUserId), Times.Once);
     }
 
     [Fact]
-    public async Task GetAllEventsByUserAsync_DbException_ThrowsServiceException()
+    public async Task GetEventByIdAsync_ReturnsEvent_WhenExists()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetAllEventsByUserAsync(_testUserId))
-            .ThrowsAsync(new DbUpdateException());
-
-        // Act & Assert
-        await Assert.ThrowsAsync<EventServiceException>(
-            () => _eventService.GetAllEventsByUserAsync(_testUserId));
-    }
-
-    // GetEventByIdAsync
-    [Fact]
-    public async Task GetEventByIdAsync_ValidId_ReturnsEvent()
-    {
-        // Arrange
-        var testEvent = CreateTestEvent();
+        var expectedEvent = CreateTestEvent();
         _mockRepo.Setup(r => r.GetEventByIdAsync(_testEventId))
-            .ReturnsAsync(testEvent);
+            .ReturnsAsync(expectedEvent);
 
         // Act
         var result = await _eventService.GetEventByIdAsync(_testEventId);
 
         // Assert
-        Assert.Equal(_testEventId, result.Id);
+        Assert.Equal(expectedEvent.Id, result.Id);
+        _mockRepo.Verify(r => r.GetEventByIdAsync(_testEventId), Times.Once);
     }
 
     [Fact]
-    public async Task GetEventByIdAsync_InvalidId_ThrowsNotFoundException()
+    public async Task GetEventByIdAsync_ThrowsNotFoundException_WhenEventNotExists()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetEventByIdAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new InvalidOperationException());
+        _mockRepo.Setup(r => r.GetEventByIdAsync(_nonExistingEventId))
+            .ThrowsAsync(new ArgumentException("Not found"));
 
         // Act & Assert
         await Assert.ThrowsAsync<EventNotFoundException>(
-            () => _eventService.GetEventByIdAsync(Guid.NewGuid()));
+            () => _eventService.GetEventByIdAsync(_nonExistingEventId));
     }
 
-    // AddEventAsync
     [Fact]
-    public async Task AddEventAsync_ValidEvent_SavesSuccessfully()
+    public async Task AddEventAsync_SavesEvent_WhenValid()
     {
         // Arrange
-        var testEvent = CreateTestEvent();
-        _mockRepo.Setup(r => r.InsertEventAsync(testEvent)).Returns(Task.CompletedTask);
+        var newEvent = CreateTestEvent();
+        _mockRepo.Setup(r => r.InsertEventAsync(newEvent))
+            .Returns(Task.CompletedTask);
 
         // Act
-        await _eventService.AddEventAsync(testEvent);
+        await _eventService.AddEventAsync(newEvent);
 
         // Assert
-        _mockRepo.Verify(r => r.InsertEventAsync(testEvent), Times.Once);
+        _mockRepo.Verify(r => r.InsertEventAsync(It.Is<Event>(e =>
+            e.Id == newEvent.Id &&
+            e.Name == newEvent.Name)),
+            Times.Once);
     }
 
-    [Fact]
-    public async Task AddEventAsync_DbException_ThrowsCreateException()
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task AddEventAsync_ThrowsCreateException_OnFailure(Type exceptionType)
     {
         // Arrange
-        var testEvent = CreateTestEvent();
-        _mockRepo.Setup(r => r.InsertEventAsync(testEvent))
-            .ThrowsAsync(new DbUpdateException());
+        var newEvent = CreateTestEvent();
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test error");
+        _mockRepo.Setup(r => r.InsertEventAsync(newEvent)).ThrowsAsync(exception);
 
         // Act & Assert
         await Assert.ThrowsAsync<EventCreateException>(
-            () => _eventService.AddEventAsync(testEvent));
+            () => _eventService.AddEventAsync(newEvent));
     }
 
-    // UpdateEventAsync
     [Fact]
-    public async Task UpdateEventAsync_ValidEvent_UpdatesSuccessfully()
+    public async Task UpdateEventAsync_UpdatesExistingEvent_WhenValid()
     {
         // Arrange
-        var testEvent = CreateTestEvent();
-        _mockRepo.Setup(r => r.GetEventByIdAsync(_testEventId))
-            .ReturnsAsync(testEvent);
+        var existingEvent = CreateTestEvent();
+        var updatedEvent = existingEvent;
+        updatedEvent.Name = "Updated Name";
+
+        _mockRepo.Setup(r => r.GetEventByIdAsync(existingEvent.Id))
+            .ReturnsAsync(existingEvent);
+        _mockRepo.Setup(r => r.UpdateEventAsync(updatedEvent))
+            .Returns(Task.CompletedTask);
 
         // Act
-        await _eventService.UpdateEventAsync(testEvent);
+        await _eventService.UpdateEventAsync(updatedEvent);
 
         // Assert
-        _mockRepo.Verify(r => r.UpdateEventAsync(testEvent), Times.Once);
+        _mockRepo.Verify(r => r.UpdateEventAsync(It.Is<Event>(e =>
+            e.Id == updatedEvent.Id &&
+            e.Name == "Updated Name")),
+            Times.Once);
     }
 
     [Fact]
-    public async Task UpdateEventAsync_NonExistingEvent_ThrowsNotFoundException()
+    public async Task UpdateEventAsync_ThrowsNotFoundException_WhenEventNotExists()
     {
         // Arrange
-        var testEvent = CreateTestEvent();
-        _mockRepo.Setup(r => r.GetEventByIdAsync(_testEventId))
-            .ThrowsAsync(new InvalidOperationException());
+        var nonExistingEvent = CreateTestEvent();
+        nonExistingEvent.Id = _nonExistingEventId;
+        _mockRepo.Setup(r => r.GetEventByIdAsync(_nonExistingEventId))
+            .ThrowsAsync(new ArgumentException("Not found"));
 
         // Act & Assert
         await Assert.ThrowsAsync<EventNotFoundException>(
-            () => _eventService.UpdateEventAsync(testEvent));
+            () => _eventService.UpdateEventAsync(nonExistingEvent));
     }
 
-    // DeleteEventAsync
     [Fact]
-    public async Task DeleteEventAsync_ValidId_DeletesSuccessfully()
+    public async Task DeleteEventAsync_DeletesExistingEvent_WhenValid()
     {
         // Arrange
         _mockRepo.Setup(r => r.DeleteEventAsync(_testEventId))
@@ -197,14 +201,28 @@ public class EventServiceTests
     }
 
     [Fact]
-    public async Task DeleteEventAsync_NonExistingEvent_ThrowsNotFoundException()
+    public async Task DeleteEventAsync_ThrowsNotFoundException_WhenEventNotExists()
     {
         // Arrange
-        _mockRepo.Setup(r => r.DeleteEventAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new InvalidOperationException());
+        _mockRepo.Setup(r => r.DeleteEventAsync(_nonExistingEventId))
+            .ThrowsAsync(new ArgumentException("Not found"));
 
         // Act & Assert
         await Assert.ThrowsAsync<EventNotFoundException>(
-            () => _eventService.DeleteEventAsync(Guid.NewGuid()));
+            () => _eventService.DeleteEventAsync(_nonExistingEventId));
+    }
+
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task DeleteEventAsync_ThrowsDeleteException_OnFailure(Type exceptionType)
+    {
+        // Arrange
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test error");
+        _mockRepo.Setup(r => r.DeleteEventAsync(_testEventId)).ThrowsAsync(exception);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<EventDeleteException>(
+            () => _eventService.DeleteEventAsync(_testEventId));
     }
 }

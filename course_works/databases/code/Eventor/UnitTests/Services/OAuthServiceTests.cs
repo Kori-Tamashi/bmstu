@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Eventor.Common.Enums;
 using Eventor.Database.Core;
 using Eventor.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Eventor.Tests.Services;
 
@@ -27,7 +28,7 @@ public class OAuthServiceTests
         _testUser = new User(
             Guid.NewGuid(),
             "Test User",
-            "+123456789",
+            "+12025550123", 
             Gender.Male,
             "hashed_password",
             UserRole.User
@@ -127,5 +128,124 @@ public class OAuthServiceTests
             ),
             Times.Once
         );
+    }
+
+
+    [Fact]
+    public async Task Registrate_DatabaseError_ThrowsOAuthServiceException()
+    {
+        // Arrange
+        var validUser = new User(
+            Guid.NewGuid(),
+            "Test User",
+            "+12025550123",  // Валидный международный номер (пример для США)
+            Gender.Male,
+            "hashed_password",
+            UserRole.User
+        );
+
+        _mockUserService.Setup(s => s.GetUserByPhoneAsync(validUser.Phone))
+            .ThrowsAsync(new UserNotFoundException(""));
+
+        _mockUserService.Setup(s => s.AddUserAsync(It.IsAny<User>()))
+            .ThrowsAsync(new DbUpdateException("Database error"));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<OAuthServiceException>(
+            () => _oauthService.Registrate(validUser, "password123"));
+    }
+
+    [Fact]
+    public async Task Registrate_EmptyPassword_ThrowsArgumentException()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => _oauthService.Registrate(_testUser, ""));
+    }
+
+    [Fact]
+    public async Task Registrate_InvalidPhoneFormat_ThrowsArgumentException()
+    {
+        // Arrange
+        var invalidUser = new User(
+            Guid.NewGuid(),
+            "Invalid User",
+            "invalid_phone", // Не соответствует формату
+            Gender.Male,
+            "hashed_password",
+            UserRole.User
+        );
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => _oauthService.Registrate(invalidUser, "password123"));
+    }
+
+    [Fact]
+    public async Task Registrate_GeneralError_ThrowsOAuthServiceException()
+    {
+        // Arrange
+        _mockUserService.Setup(s => s.GetUserByPhoneAsync(_testUser.Phone))
+            .ThrowsAsync(new InvalidOperationException("Some error"));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<OAuthServiceException>(
+            () => _oauthService.Registrate(_testUser, "password123"));
+    }
+
+    [Fact]
+    public async Task Registrate_Success_LogsInformation()
+    {
+        // Arrange
+        _mockUserService.Setup(s => s.GetUserByPhoneAsync(_testUser.Phone))
+            .ThrowsAsync(new UserNotFoundException(""));
+        _mockUserService.Setup(s => s.AddUserAsync(It.IsAny<User>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        await _oauthService.Registrate(_testUser, "password123");
+
+        // Assert
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, _) =>
+                    v.ToString().Contains("User registered successfully") &&
+                    v.ToString().Contains($"Phone: {_testUser.Phone}")
+                ),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()
+            ),
+            Times.Once
+        );
+    }
+
+    [Fact]
+    public void VerifyPassword_CorrectHash_ReturnsTrue()
+    {
+        // Arrange
+        var password = "correct_password";
+        _testUser.CreateHash(password);
+
+        // Act
+        var result = _testUser.VerifyPassword(password);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void VerifyPassword_WrongPassword_ReturnsFalse()
+    {
+        // Arrange
+        var password = "correct_password";
+        _testUser.CreateHash(password);
+
+        // Act
+        var result = _testUser.VerifyPassword("wrong_password");
+
+        // Assert
+        Assert.False(result);
     }
 }

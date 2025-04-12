@@ -24,3 +24,11 @@ public class IncorrectPasswordException : Exception
 {
     public IncorrectPasswordException(string message) : base(message) { }
 }
+
+public class OAuthServiceException : Exception
+{
+    public OAuthServiceException(string message) : base(message) { }
+
+    public OAuthServiceException(string message, Exception inner)
+        : base(message, inner) { }
+}

@@ -1,18 +1,24 @@
 ﻿using Eventor.Common.Core;
+using Eventor.Common.Enums;
 using Eventor.Database.Context;
 using Eventor.Database.Models;
 using Eventor.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
-using Eventor.Common.Enums;
 
 namespace Eventor.Tests.Database.Repositories;
 
-public class FeedbackRepositoryTests
+public class FeedbackRepositoryTests : IDisposable
 {
+    private readonly EventorDBContext _context;
+    private readonly ILogger<FeedbackRepository> _logger;
+    private readonly FeedbackRepository _repository;
     private readonly DbContextOptions<EventorDBContext> _options;
 
     public FeedbackRepositoryTests()
@@ -20,331 +26,240 @@ public class FeedbackRepositoryTests
         _options = new DbContextOptionsBuilder<EventorDBContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
+
+        _context = new EventorDBContext(_options);
+        _logger = Mock.Of<ILogger<FeedbackRepository>>();
+        _repository = new FeedbackRepository(_context, _logger);
     }
 
-    [Fact]
-    public async Task GetAllFeedbackAsync_ReturnsAllFeedback()
+    public void Dispose()
     {
-        // Arrange
-        var eventId = Guid.NewGuid();
-        var personId = Guid.NewGuid();
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
 
-        // Создаем связанные сущности
+    private FeedbackDBModel CreateTestFeedback(
+        Guid? eventId = null,
+        Guid? personId = null,
+        string comment = "Test Comment",
+        double rating = 5.0)
+    {
+        var feedbackId = Guid.NewGuid();
         var testEvent = new EventDBModel(
-            eventId,
+            eventId ?? Guid.NewGuid(),
             Guid.NewGuid(),
             "Test Event",
             "Description",
             DateOnly.FromDateTime(DateTime.Now),
-            10, 2, 15, 4.5
-        );
+            10, 2, 15, 4.5);
 
         var testPerson = new PersonDBModel(
-            personId,
+            personId ?? Guid.NewGuid(),
             "Test User",
             PersonType.Standart,
-            true
-        );
+            true);
 
-        var testFeedbacks = new List<FeedbackDBModel>
+        _context.Events.Add(testEvent);
+        _context.Persons.Add(testPerson);
+        _context.SaveChanges();
+
+        return new FeedbackDBModel(
+            feedbackId,
+            testEvent.Id,
+            testPerson.Id,
+            comment,
+            rating);
+    }
+
+    [Fact]
+    public async Task GetAllFeedbackAsync_ShouldReturnAllFeedback()
     {
-        new(Guid.NewGuid(), eventId, personId, "Good", 9),
-        new(Guid.NewGuid(), eventId, personId, "Bad", 4)
-    };
-
-        using (var context = new EventorDBContext(_options))
+        // Arrange
+        var feedbacks = new List<FeedbackDBModel>
         {
-            // Добавляем обязательные связанные сущности
-            context.Events.Add(testEvent);
-            context.Persons.Add(testPerson);
+            CreateTestFeedback(comment: "Feedback 1"),
+            CreateTestFeedback(comment: "Feedback 2")
+        };
 
-            // Затем добавляем отзывы
-            context.Feedbacks.AddRange(testFeedbacks);
-            await context.SaveChangesAsync();
-        }
+        await _context.Feedbacks.AddRangeAsync(feedbacks);
+        await _context.SaveChangesAsync();
 
         // Act
-        List<Feedback> result;
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            result = await repository.GetAllFeedbackAsync();
-        }
+        var result = await _repository.GetAllFeedbackAsync();
 
         // Assert
         Assert.Equal(2, result.Count);
-        Assert.Contains(result, f => f.Rating == 9);
-        Assert.Contains(result, f => f.Rating == 4);
+        Assert.Contains(result, f => f.Comment == "Feedback 1");
+        Assert.Contains(result, f => f.Comment == "Feedback 2");
     }
 
     [Fact]
-    public async Task GetAllFeedbacksByEventAsync_ReturnsFilteredFeedback()
+    public async Task GetAllFeedbackAsync_ShouldLogErrorOnFailure()
     {
         // Arrange
-        var eventId = Guid.NewGuid();
-        var personId = Guid.NewGuid();
+        var corruptedContext = new Mock<EventorDBContext>(_options);
+        corruptedContext.Setup(c => c.Feedbacks).Throws<Exception>();
+        var repository = new FeedbackRepository(corruptedContext.Object, _logger);
 
-        // Создаем связанные сущности
-        var testEvent = new EventDBModel(
-            eventId,
-            Guid.NewGuid(),
-            "Test Event",
-            "Description",
-            DateOnly.FromDateTime(DateTime.Now),
-            10, 2, 15, 4.5
-        );
-
-        var testPerson = new PersonDBModel(
-            personId,
-            "Test User",
-            PersonType.Standart,
-            true
-        );
-
-        var testData = new List<FeedbackDBModel>
-    {
-        new(Guid.NewGuid(), eventId, personId, "Event feedback", 8),
-        new(Guid.NewGuid(), Guid.NewGuid(), personId, "Other event", 7)
-    };
-
-        using (var context = new EventorDBContext(_options))
-        {
-            // Добавляем обязательные сущности
-            context.Events.Add(testEvent);
-            context.Persons.Add(testPerson);
-
-            // Затем добавляем отзывы
-            context.Feedbacks.AddRange(testData);
-            await context.SaveChangesAsync();
-        }
-
-        // Act
-        List<Feedback> result;
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            result = await repository.GetAllFeedbacksByEventAsync(eventId);
-        }
-
-        // Assert
-        Assert.Single(result);
-        Assert.Equal("Event feedback", result[0].Comment);
-        Assert.Equal(8, result[0].Rating);
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.GetAllFeedbackAsync());
+        Mock.Get(_logger).VerifyLog(LogLevel.Error, "Ошибка получения списка отзывов");
     }
 
     [Fact]
-    public async Task GetAllFeedbacksByUserAsync_ReturnsUserFeedback()
+    public async Task GetFeedbackByIdAsync_ShouldReturnCorrectFeedback()
     {
         // Arrange
-        var eventId = Guid.NewGuid();
-        var userId = Guid.NewGuid();
-
-        // Создаем обязательные связанные сущности
-        var testEvent = new EventDBModel(
-            eventId,
-            Guid.NewGuid(),
-            "Test Event",
-            "Description",
-            DateOnly.FromDateTime(DateTime.Now),
-            10, 2, 15, 4.5
-        );
-
-        var testUser = new PersonDBModel(
-            userId,
-            "Test User",
-            PersonType.Standart,
-            true
-        );
-
-        // Тестовые данные с корректными внешними ключами
-        var testData = new List<FeedbackDBModel>
-    {
-        new(Guid.NewGuid(), eventId, userId, "User comment", 6),
-        new(Guid.NewGuid(), eventId, Guid.NewGuid(), "Other user", 9)
-    };
-
-        using (var context = new EventorDBContext(_options))
-        {
-            // Сохраняем связанные сущности перед отзывами
-            context.Events.Add(testEvent);
-            context.Persons.Add(testUser);
-            context.Feedbacks.AddRange(testData);
-            await context.SaveChangesAsync();
-        }
+        var testFeedback = CreateTestFeedback();
+        await _context.Feedbacks.AddAsync(testFeedback);
+        await _context.SaveChangesAsync();
 
         // Act
-        List<Feedback> result;
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            result = await repository.GetAllFeedbacksByUserAsync(userId);
-        }
-
-        // Assert
-        Assert.Single(result);
-        Assert.Equal(6, result[0].Rating);
-        Assert.Equal("User comment", result[0].Comment);
-    }
-
-    [Fact]
-    public async Task GetFeedbackByIdAsync_ReturnsCorrectFeedback()
-    {
-        // Arrange
-        var feedbackId = Guid.NewGuid();
-        var eventId = Guid.NewGuid();
-        var personId = Guid.NewGuid();
-
-        // Создаем связанные сущности
-        var testEvent = new EventDBModel(
-            eventId,
-            Guid.NewGuid(),
-            "Test Event",
-            "Description",
-            DateOnly.FromDateTime(DateTime.Now),
-            10, 2, 15, 4.5
-        );
-
-        var testPerson = new PersonDBModel(
-            personId,
-            "Test User",
-            PersonType.Standart,
-            true
-        );
-
-        var testFeedback = new FeedbackDBModel(feedbackId, eventId, personId, "Test Feedback", 10);
-
-        using (var context = new EventorDBContext(_options))
-        {
-            // Добавляем обязательные сущности
-            context.Events.Add(testEvent);
-            context.Persons.Add(testPerson);
-            context.Feedbacks.Add(testFeedback);
-            await context.SaveChangesAsync();
-        }
-
-        // Act
-        Feedback result;
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            result = await repository.GetFeedbackByIdAsync(feedbackId);
-        }
+        var result = await _repository.GetFeedbackByIdAsync(testFeedback.Id);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Test Feedback", result.Comment);
-        Assert.Equal(10, result.Rating);
-        Assert.Equal(eventId, result.EventId);
-        Assert.Equal(personId, result.PersonId);
+        Assert.Equal(testFeedback.Comment, result.Comment);
+        Assert.Equal(testFeedback.Rating, result.Rating);
     }
 
     [Fact]
-    public async Task InsertFeedbackAsync_AddsNewFeedbackToDatabase()
+    public async Task GetFeedbackByIdAsync_ShouldReturnNullForNonExistingId()
+    {
+        // Act
+        var result = await _repository.GetFeedbackByIdAsync(Guid.NewGuid());
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task InsertFeedbackAsync_ShouldAddNewFeedback()
     {
         // Arrange
+        // Создаем и сохраняем тестовые Event и Person
+        var testEvent = new EventDBModel(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Test Event",
+            "Description",
+            DateOnly.FromDateTime(DateTime.Now),
+            10, 2, 15, 4.5);
+
+        var testPerson = new PersonDBModel(
+            Guid.NewGuid(),
+            "Test User",
+            PersonType.Standart,
+            true);
+
+        await _context.Events.AddAsync(testEvent);
+        await _context.Persons.AddAsync(testPerson);
+        await _context.SaveChangesAsync();
+
+        // Создаем отзыв с валидными внешними ключами
         var newFeedback = new Feedback(
             Guid.NewGuid(),
+            testEvent.Id,
+            testPerson.Id,
+            "New Feedback",
+            8.5);
+
+        // Act
+        await _repository.InsertFeedbackAsync(newFeedback);
+        var result = await _context.Feedbacks.FirstOrDefaultAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(newFeedback.Comment, result.Comment);
+        Assert.Equal(testEvent.Id, result.EventId);
+        Assert.Equal(testPerson.Id, result.PersonId);
+    }
+
+    [Fact]
+    public async Task InsertFeedbackAsync_ShouldThrowOnInvalidData()
+    {
+        // Arrange
+        var invalidFeedback = new Feedback(
             Guid.NewGuid(),
-            Guid.NewGuid(),
-            "New comment",
-            7.5
-        );
-
-        // Act
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            await repository.InsertFeedbackAsync(newFeedback);
-        }
-
-        // Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var feedbackInDb = await context.Feedbacks.FirstOrDefaultAsync();
-            Assert.NotNull(feedbackInDb);
-            Assert.Equal("New comment", feedbackInDb.Comment);
-        }
-    }
-
-    [Fact]
-    public async Task UpdateFeedbackAsync_UpdatesExistingFeedback()
-    {
-        // Arrange
-        var feedbackId = Guid.NewGuid();
-        var originalFeedback = new FeedbackDBModel(feedbackId, Guid.NewGuid(), Guid.NewGuid(), "Original", 5);
-
-        using (var context = new EventorDBContext(_options))
-        {
-            context.Feedbacks.Add(originalFeedback);
-            await context.SaveChangesAsync();
-        }
-
-        var updatedFeedback = new Feedback(
-            feedbackId,
-            originalFeedback.EventId,
-            originalFeedback.PersonId,
-            "Updated comment",
-            9
-        );
-
-        // Act
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            await repository.UpdateFeedbackAsync(updatedFeedback);
-        }
-
-        // Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var feedbackInDb = await context.Feedbacks.FindAsync(feedbackId);
-            Assert.NotNull(feedbackInDb);
-            Assert.Equal("Updated comment", feedbackInDb.Comment);
-            Assert.Equal(9, feedbackInDb.Rating);
-        }
-    }
-
-    [Fact]
-    public async Task DeleteFeedbackAsync_RemovesFeedbackFromDatabase()
-    {
-        // Arrange
-        var feedbackId = Guid.NewGuid();
-        var testFeedback = new FeedbackDBModel(feedbackId, Guid.NewGuid(), Guid.NewGuid(), "To delete", 3);
-
-        using (var context = new EventorDBContext(_options))
-        {
-            context.Feedbacks.Add(testFeedback);
-            await context.SaveChangesAsync();
-        }
-
-        // Act
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            await repository.DeleteFeedbackAsync(feedbackId);
-        }
-
-        // Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var feedbackInDb = await context.Feedbacks.FindAsync(feedbackId);
-            Assert.Null(feedbackInDb);
-        }
-    }
-
-    [Fact]
-    public async Task DeleteFeedbackAsync_WhenNotFound_DoesNothing()
-    {
-        // Arrange
-        var nonExistentId = Guid.NewGuid();
+            Guid.NewGuid(), // Несуществующий Event
+            Guid.NewGuid(), // Несуществующий Person
+            "Invalid",
+            10);
 
         // Act & Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new FeedbackRepository(context);
-            await repository.DeleteFeedbackAsync(nonExistentId);
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            () => _repository.InsertFeedbackAsync(invalidFeedback)
+        );
 
-            Assert.Equal(0, await context.Feedbacks.CountAsync());
-        }
+        Assert.Contains("не найден", exception.Message);
+    }
+
+    [Fact]
+    public async Task UpdateFeedbackAsync_ShouldUpdateExistingFeedback()
+    {
+        // Arrange
+        var testFeedback = CreateTestFeedback();
+        await _context.Feedbacks.AddAsync(testFeedback);
+        await _context.SaveChangesAsync();
+
+        var updatedFeedback = new Feedback(
+            testFeedback.Id,
+            testFeedback.EventId,
+            testFeedback.PersonId,
+            "Updated Comment",
+            9.5);
+
+        // Act
+        await _repository.UpdateFeedbackAsync(updatedFeedback);
+        var result = await _context.Feedbacks.FindAsync(testFeedback.Id);
+
+        // Assert
+        Assert.Equal("Updated Comment", result.Comment);
+        Assert.Equal(9.5, result.Rating);
+    }
+
+    [Fact]
+    public async Task UpdateFeedbackAsync_ShouldNotThrowForNonExistingFeedback()
+    {
+        // Arrange
+        var nonExistingFeedback = new Feedback(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Non-existing",
+            1);
+
+        // Act
+        var exception = await Record.ExceptionAsync(() =>
+            _repository.UpdateFeedbackAsync(nonExistingFeedback));
+
+        // Assert
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task DeleteFeedbackAsync_ShouldRemoveFeedback()
+    {
+        // Arrange
+        var testFeedback = CreateTestFeedback();
+        await _context.Feedbacks.AddAsync(testFeedback);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _repository.DeleteFeedbackAsync(testFeedback.Id);
+        var result = await _context.Feedbacks.FindAsync(testFeedback.Id);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task DeleteFeedbackAsync_ShouldLogWarningForNonExistingId()
+    {
+        // Act
+        await _repository.DeleteFeedbackAsync(Guid.NewGuid());
+
+        // Assert
+        Mock.Get(_logger).VerifyLog(LogLevel.Warning, "не найден");
     }
 }

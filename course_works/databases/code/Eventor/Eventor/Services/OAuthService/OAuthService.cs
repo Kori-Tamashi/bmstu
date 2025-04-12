@@ -1,7 +1,12 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PhoneNumbers;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Eventor.Services;
 
@@ -18,45 +23,95 @@ public class OAuthService : IOauthService
 
     public async Task Registrate(User user, string password)
     {
-        try
-        {
-            var existingUser = await _userService.GetUserByPhoneAsync(user.Phone);
-            throw new UserLoginAlreadyExistsException($"Phone {user.Phone} already registered");
-        }
-        catch (UserNotFoundException) { }
+        // 1. Валидация входных данных
+        if (string.IsNullOrWhiteSpace(password))
+            throw new ArgumentException("Password cannot be empty", nameof(password));
 
-        user.CreateHash(password);
+        if (!IsValidPhone(user.Phone))
+            throw new ArgumentException("Invalid phone format", nameof(user.Phone));
 
         try
         {
+            // 2. Проверка существования пользователя
+            try
+            {
+                var existingUser = await _userService.GetUserByPhoneAsync(user.Phone);
+                throw new UserLoginAlreadyExistsException($"Phone {user.Phone} already registered");
+            }
+            catch (UserNotFoundException)
+            {
+                // Продолжаем регистрацию
+            }
+
+            // 3. Хеширование пароля и сохранение
+            user.CreateHash(password);
             await _userService.AddUserAsync(user);
+
+            _logger.LogInformation("User registered successfully | Phone: {Phone}", user.Phone);
         }
-        catch (UserCreateException ex)
+        catch (UserLoginAlreadyExistsException)
         {
-            _logger.LogError(ex, "Registration failed | Phone: {Phone}", user.Phone);
-            throw new UserCreateException("Registration failed", ex);
+            throw;
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Database error during registration | Phone: {Phone}", user.Phone);
+            throw new OAuthServiceException("Database error during registration", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error during registration | Phone: {Phone}", user.Phone);
+            throw new OAuthServiceException("Registration failed", ex);
+        }
+    }
+
+    // Валидация номера телефона с поддержкой международных форматов
+    private bool IsValidPhone(string phone)
+    {
+        try
+        {
+            var phoneNumberUtil = PhoneNumberUtil.GetInstance();
+            var numberProto = phoneNumberUtil.Parse(phone, null);
+            return phoneNumberUtil.IsValidNumber(numberProto);
+        }
+        catch (NumberParseException)
+        {
+            return false;
         }
     }
 
     public async Task<User> Login(string phone, string password)
     {
-        User user;
         try
         {
-            user = await _userService.GetUserByPhoneAsync(phone);
+            var user = await _userService.GetUserByPhoneAsync(phone);
+
+            if (!user.VerifyPassword(password))
+            {
+                _logger.LogWarning("Invalid password for phone: {Phone}", phone);
+                throw new IncorrectPasswordException("Invalid credentials");
+            }
+
+            return user;
         }
         catch (UserNotFoundException ex)
         {
             _logger.LogWarning("Login attempt for non-existent phone: {Phone}", phone);
             throw new UserLoginNotFoundException($"Phone {phone} not registered", ex);
         }
-
-        if (!user.VerifyPassword(password))
+        catch (IncorrectPasswordException) 
         {
-            _logger.LogWarning("Invalid password for phone: {Phone}", phone);
-            throw new IncorrectPasswordException("Invalid credentials");
+            throw;
         }
-
-        return user;
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Database error during login | Phone: {Phone}", phone);
+            throw new OAuthServiceException("Database error during login", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error during login | Phone: {Phone}", phone);
+            throw new OAuthServiceException("Login failed", ex);
+        }
     }
 }

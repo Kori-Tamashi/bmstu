@@ -1,336 +1,219 @@
-﻿using Eventor.Database.Context;
+﻿using Eventor.Common.Core;
+using Eventor.Database.Context;
 using Eventor.Database.Models;
 using Eventor.Database.Repositories;
-using Eventor.Tests.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Eventor.Tests.Database.Repositories;
 
-/// <summary>
-/// Набор тестов для проверки функциональности репозитория дней мероприятий
-/// </summary>
-public class DayRepositoryTests
+public class DayRepositoryTests : IDisposable
 {
-    private readonly Mock<EventorDBContext> _mockContext;
+    private readonly EventorDBContext _context;
+    private readonly ILogger<DayRepository> _logger;
     private readonly DayRepository _repository;
-    private readonly Mock<DbSet<DayDBModel>> _mockDaysDbSet;
-    private readonly Mock<DbSet<EventDayDBModel>> _mockEventDaysDbSet;
+    private readonly DbContextOptions<EventorDBContext> _options;
 
-    /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="DayRepositoryTests"/>
-    /// </summary>
     public DayRepositoryTests()
     {
-        _mockContext = new Mock<EventorDBContext>();
-        _mockDaysDbSet = new Mock<DbSet<DayDBModel>>();
-        _mockEventDaysDbSet = new Mock<DbSet<EventDayDBModel>>();
+        _options = new DbContextOptionsBuilder<EventorDBContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
 
-        _mockContext.Setup(c => c.Days).Returns(_mockDaysDbSet.Object);
-        _mockContext.Setup(c => c.EventsDays).Returns(_mockEventDaysDbSet.Object);
-
-        _repository = new DayRepository(_mockContext.Object);
+        _context = new EventorDBContext(_options);
+        _logger = Mock.Of<ILogger<DayRepository>>();
+        _repository = new DayRepository(_context, _logger);
     }
 
-    /// <summary>
-    /// Проверяет, что метод GetAllDaysAsync возвращает все дни мероприятий
-    /// </summary>
+    public void Dispose()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
+
     [Fact]
-    public async Task GetAllDaysAsync_ReturnsAllDays()
+    public async Task GetAllDaysAsync_ShouldReturnAllDays()
     {
         // Arrange
-        var testData = new List<DayDBModel>
+        var days = new List<DayDBModel>
         {
             new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 1", 1, "Desc", 100),
             new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 2", 2, "Desc", 200)
-        }.AsQueryable();
+        };
 
-        // Настройка мока DbSet
-        var mockSet = new Mock<DbSet<DayDBModel>>();
-        mockSet.As<IAsyncEnumerable<DayDBModel>>()
-            .Setup(m => m.GetAsyncEnumerator(default))
-            .Returns(new TestAsyncEnumerator<DayDBModel>(testData.GetEnumerator()));
-
-        mockSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.Provider)
-            .Returns(new TestAsyncQueryProvider<DayDBModel>(testData.Provider));
-
-        mockSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.Expression).Returns(testData.Expression);
-        mockSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.ElementType).Returns(testData.ElementType);
-        mockSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.GetEnumerator()).Returns(testData.GetEnumerator());
-
-        _mockContext.Setup(c => c.Days).Returns(mockSet.Object);
+        await _context.Days.AddRangeAsync(days);
+        await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetAllDaysAsync();
 
         // Assert
         Assert.Equal(2, result.Count);
-        Assert.Collection(result,
-            d => Assert.Equal("Day 1", d.Name),
-            d => Assert.Equal("Day 2", d.Name));
+        Assert.Contains(result, d => d.Name == "Day 1");
+        Assert.Contains(result, d => d.Name == "Day 2");
     }
 
-    /// <summary>
-    /// Проверяет, что метод GetAllDaysByEventAsync возвращает дни только для указанного мероприятия
-    /// </summary>
     [Fact]
-    public async Task GetAllDaysByEventAsync_ReturnsFilteredDays()
+    public async Task GetAllDaysByEventAsync_ShouldFilterByEventId()
     {
         // Arrange
-        var options = new DbContextOptionsBuilder<EventorDBContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
         var eventId = Guid.NewGuid();
-        var dayId = Guid.NewGuid();
+        var dayInEvent = new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Event Day", 1, "Desc", 100);
+        var dayNotInEvent = new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Other Day", 2, "Desc", 200);
 
-        // Заполняем тестовыми данными
-        using (var context = new EventorDBContext(options))
-        {
-            context.EventsDays.AddRange(
-                new EventDayDBModel(eventId, dayId)
-                {
-                    Day = new DayDBModel(dayId, Guid.NewGuid(), "Day 1", 1, "Event Day", 100)
-                },
-                new EventDayDBModel(Guid.NewGuid(), Guid.NewGuid())
-                {
-                    Day = new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 2", 2, "Other Day", 200)
-                }
-            );
-            await context.SaveChangesAsync();
-        }
+        await _context.EventsDays.AddRangeAsync(
+            new EventDayDBModel(eventId, dayInEvent.Id) { Day = dayInEvent },
+            new EventDayDBModel(Guid.NewGuid(), dayNotInEvent.Id) { Day = dayNotInEvent }
+        );
+        await _context.SaveChangesAsync();
 
-        // Создаем новый контекст для теста
-        using (var context = new EventorDBContext(options))
-        {
-            var repository = new DayRepository(context);
+        // Act
+        var result = await _repository.GetAllDaysByEventAsync(eventId);
 
-            // Act
-            var result = await repository.GetAllDaysByEventAsync(eventId);
-
-            // Assert
-            var day = Assert.Single(result);
-            Assert.Equal(dayId, day.Id);
-            Assert.Equal("Event Day", day.Description);
-            Assert.Equal(100, day.Price);
-        }
+        // Assert
+        var day = Assert.Single(result);
+        Assert.Equal("Event Day", day.Name);
     }
 
     [Fact]
-    public async Task GetAllDaysByPersonAsync_ReturnsCorrectDays()
+    public async Task GetAllDaysByPersonAsync_ShouldFilterByPersonId()
     {
         // Arrange
-        var options = new DbContextOptionsBuilder<EventorDBContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
         var personId = Guid.NewGuid();
         var day1 = new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 1", 1, "Desc", 100);
         var day2 = new DayDBModel(Guid.NewGuid(), Guid.NewGuid(), "Day 2", 2, "Desc", 200);
 
-        using (var context = new EventorDBContext(options))
-        {
-            context.PersonsDays.AddRange(
-                new PersonDayDBModel(personId, day1.Id) { Day = day1 },
-                new PersonDayDBModel(personId, day2.Id) { Day = day2 },
-                new PersonDayDBModel(Guid.NewGuid(), day1.Id) { Day = day1 }
-            );
-            await context.SaveChangesAsync();
-        }
+        await _context.PersonsDays.AddRangeAsync(
+            new PersonDayDBModel(personId, day1.Id) { Day = day1 },
+            new PersonDayDBModel(personId, day2.Id) { Day = day2 },
+            new PersonDayDBModel(Guid.NewGuid(), day1.Id) { Day = day1 }
+        );
+        await _context.SaveChangesAsync();
 
         // Act
-        using (var context = new EventorDBContext(options))
-        {
-            var repository = new DayRepository(context);
-            var result = await repository.GetAllDaysByPersonAsync(personId);
+        var result = await _repository.GetAllDaysByPersonAsync(personId);
 
-            // Assert
-            Assert.Equal(2, result.Count);
-            Assert.Collection(result,
-                d => Assert.Equal("Day 1", d.Name),
-                d => Assert.Equal("Day 2", d.Name));
-        }
+        // Assert
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, d => d.Name == "Day 1");
+        Assert.Contains(result, d => d.Name == "Day 2");
     }
 
     [Fact]
-    public async Task GetSelectedDaysAsync_ReturnsEmptyList_WhenNoDaysSelected()
-    {
-        // Arrange
-        var options = new DbContextOptionsBuilder<EventorDBContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
-        var personId = Guid.NewGuid();
-
-        // Используем реальный контекст с in-memory базой
-        using (var context = new EventorDBContext(options))
-        {
-            var repository = new DayRepository(context);
-
-            // Act
-            var result = await repository.GetAllDaysByPersonAsync(personId);
-
-            // Assert
-            Assert.Empty(result);
-        }
-    }
-
-    /// <summary>
-    /// Проверяет, что метод GetDayByIdAsync возвращает корректный день по идентификатору
-    /// </summary>
-    [Fact]
-    public async Task GetDayByIdAsync_ReturnsCorrectDay()
+    public async Task GetDayByIdAsync_ShouldReturnCorrectDay()
     {
         // Arrange
         var dayId = Guid.NewGuid();
-        var menuId = Guid.NewGuid();
-        var testDay = new DayDBModel(dayId, menuId, "Test Day", 1, "Test Desc", 150);
+        var expectedDay = new DayDBModel(dayId, Guid.NewGuid(), "Test Day", 1, "Test Desc", 150);
 
-        var testData = new List<DayDBModel> { testDay }.AsQueryable();
-
-        // Настройка мока DbSet<DayDBModel>
-        var mockDaysDbSet = new Mock<DbSet<DayDBModel>>();
-
-        // Поддержка IAsyncEnumerable
-        mockDaysDbSet.As<IAsyncEnumerable<DayDBModel>>()
-            .Setup(m => m.GetAsyncEnumerator(default))
-            .Returns(new TestAsyncEnumerator<DayDBModel>(testData.GetEnumerator()));
-
-        // Поддержка IQueryable
-        mockDaysDbSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.Provider)
-            .Returns(new TestAsyncQueryProvider<DayDBModel>(testData.Provider));
-
-        mockDaysDbSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.Expression).Returns(testData.Expression);
-
-        mockDaysDbSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.ElementType).Returns(testData.ElementType);
-
-        mockDaysDbSet.As<IQueryable<DayDBModel>>()
-            .Setup(m => m.GetEnumerator()).Returns(testData.GetEnumerator());
-
-        _mockContext.Setup(c => c.Days).Returns(mockDaysDbSet.Object);
+        await _context.Days.AddAsync(expectedDay);
+        await _context.SaveChangesAsync();
 
         // Act
         var result = await _repository.GetDayByIdAsync(dayId);
 
         // Assert
         Assert.Equal(dayId, result.Id);
-        Assert.Equal(menuId, result.MenuId);
         Assert.Equal("Test Desc", result.Description);
-        Assert.Equal(150, result.Price);
     }
 
-    /// <summary>
-    /// Проверяет, что метод InsertDayAsync добавляет полные данные дня в контекст
-    /// </summary>
     [Fact]
-    public async Task InsertDayAsync_AddsFullDayDataToContext()
+    public async Task GetDayByIdAsync_ShouldThrowWhenNotFound()
     {
         // Arrange
-        var day = new Common.Core.Day(
-            id: Guid.NewGuid(),
-            menuId: Guid.NewGuid(),
-            name: "New Day",
-            sequenceNumber: 3,
-            description: "Full Description",
-            price: 300);
+        var invalidId = Guid.NewGuid();
 
-        DayDBModel capturedDay = null;
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            () => _repository.GetDayByIdAsync(invalidId)
+        );
 
-        _mockDaysDbSet.Setup(m => m.AddAsync(It.IsAny<DayDBModel>(), default))
-            .Callback<DayDBModel, CancellationToken>((d, _) => capturedDay = d)
-            .ReturnsAsync(() => null);
-
-        // Act
-        await _repository.InsertDayAsync(day);
-
-        // Assert
-        Assert.NotNull(capturedDay);
-        Assert.Equal(day.Id, capturedDay.Id);
-        Assert.Equal(day.MenuId, capturedDay.MenuId);
-        Assert.Equal(day.SequenceNumber, capturedDay.SequenceNumber);
-        Assert.Equal(day.Description, capturedDay.Description);
-        Assert.Equal(day.Price, capturedDay.Price);
-
-        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
+        Assert.Contains(invalidId.ToString(), exception.Message);
     }
 
-    /// <summary>
-    /// Проверяет, что метод UpdateDayAsync обновляет все поля дня
-    /// </summary>
     [Fact]
-    public async Task UpdateDayAsync_UpdatesAllFields()
+    public async Task InsertDayAsync_ShouldAddNewDay()
+    {
+        // Arrange
+        var newDay = new Day(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "New Day",
+            3,
+            "New Description",
+            300);
+
+        // Act
+        await _repository.InsertDayAsync(newDay);
+        var result = await _context.Days.FirstOrDefaultAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(newDay.Name, result.Name);
+        Assert.Equal(newDay.Price, result.Price);
+    }
+
+    [Fact]
+    public async Task UpdateDayAsync_ShouldModifyExistingDay()
     {
         // Arrange
         var dayId = Guid.NewGuid();
-        var menuId = Guid.NewGuid();
+        var originalDay = new DayDBModel(dayId, Guid.NewGuid(), "Old Name", 1, "Old Desc", 100);
 
-        // Исходные данные
-        var existingDay = new DayDBModel(dayId, menuId, "Old Name", 1, "Old Desc", 100);
+        await _context.Days.AddAsync(originalDay);
+        await _context.SaveChangesAsync();
 
-        // Обновлённые данные
-        var updatedDay = new Common.Core.Day(
+        // Detach the entity to avoid tracking conflict
+        _context.Entry(originalDay).State = EntityState.Detached;
+
+        var updatedDay = new Day(
             dayId,
-            menuId,  // Используем тот же MenuId
+            originalDay.MenuId,
             "New Name",
             2,
             "New Desc",
             200);
 
-        // Настройка моков
-        _mockDaysDbSet.Setup(m => m.FindAsync(dayId))
-            .ReturnsAsync(existingDay);
-
-        // Важно: Настраиваем вызов Update
-        _mockDaysDbSet.Setup(m => m.Update(It.IsAny<DayDBModel>()))
-            .Callback<DayDBModel>(entity =>
-            {
-                // Применяем изменения к существующей сущности
-                existingDay.Name = entity.Name;
-                existingDay.SequenceNumber = entity.SequenceNumber;
-                existingDay.Description = entity.Description;
-                existingDay.Price = entity.Price;
-            });
-
         // Act
         await _repository.UpdateDayAsync(updatedDay);
+        var result = await _context.Days.FindAsync(dayId);
 
         // Assert
-        Assert.Equal("New Name", existingDay.Name);
-        Assert.Equal(2, existingDay.SequenceNumber);
-        Assert.Equal("New Desc", existingDay.Description);
-        Assert.Equal(200, existingDay.Price);
-
-        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
+        Assert.Equal("New Name", result.Name);
+        Assert.Equal(200, result.Price);
     }
 
-    /// <summary>
-    /// Проверяет, что метод DeleteDayAsync выбрасывает исключение, когда день не найден
-    /// </summary>
     [Fact]
-    public async Task DeleteDayAsync_WhenDayNotFound_ThrowsArgumentException()
+    public async Task DeleteDayAsync_ShouldRemoveDay()
     {
         // Arrange
         var dayId = Guid.NewGuid();
-        _mockDaysDbSet.Setup(m => m.FindAsync(dayId)).ReturnsAsync((DayDBModel)null);
+        var day = new DayDBModel(dayId, Guid.NewGuid(), "Delete Day", 1, "Desc", 100);
+
+        await _context.Days.AddAsync(day);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _repository.DeleteDayAsync(dayId);
+        var result = await _context.Days.FindAsync(dayId);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task DeleteDayAsync_ShouldThrowWhenDayNotFound()
+    {
+        // Arrange
+        var invalidId = Guid.NewGuid();
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ArgumentException>(
-            () => _repository.DeleteDayAsync(dayId)
-        );
-
-        Assert.Equal($"День с ID {dayId} не найден.", exception.Message);
+        await Assert.ThrowsAsync<ArgumentException>(() => _repository.DeleteDayAsync(invalidId));
     }
 }

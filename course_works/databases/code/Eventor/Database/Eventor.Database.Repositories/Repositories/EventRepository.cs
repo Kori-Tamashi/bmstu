@@ -3,40 +3,49 @@ using Eventor.Common.Core;
 using Eventor.Database.Context;
 using Eventor.Database.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Eventor.Database.Repositories;
 
-/// <summary>
-/// Репозиторий мероприятий
-/// </summary>
 public class EventRepository : BaseRepository, IEventRepository
 {
     private readonly EventorDBContext _dbContext;
+    private readonly ILogger<EventRepository> _logger;
 
-    public EventRepository(EventorDBContext dbContext)
+    public EventRepository(
+        EventorDBContext dbContext,
+        ILogger<EventRepository> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <summary>
-    /// Получить все мероприятия
-    /// </summary>
-    /// <returns>Список всех мероприятий</returns>
     public async Task<List<Event>> GetAllEventsAsync()
     {
-        return await _dbContext.Events
-            .OrderBy(e => e.Date)
-            .Select(e => EventConverter.ConvertDBToCore(e))
-            .AsNoTracking()
-            .ToListAsync();
+        try
+        {
+            return await _dbContext.Events
+                .OrderBy(e => e.Date)
+                .Select(e => EventConverter.ConvertDBToCore(e))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения списка мероприятий");
+            throw new InvalidOperationException("Не удалось получить список мероприятий", ex);
+        }
     }
 
-    /// <summary>
-    /// Получить все мероприятия пользователя
-    /// </summary>
-    /// <returns>Список всех мероприятий пользователя</returns>
     public async Task<List<Event>> GetAllEventsByUserAsync(Guid userId)
     {
-        return await _dbContext.UsersEvents
+        try
+        {
+            return await _dbContext.UsersEvents
                 .Where(ue => ue.UserId == userId)
                 .Include(ue => ue.Event)
                     .ThenInclude(e => e.Location)
@@ -47,15 +56,19 @@ public class EventRepository : BaseRepository, IEventRepository
                 .Select(ue => EventConverter.ConvertDBToCore(ue.Event))
                 .AsNoTracking()
                 .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения мероприятий пользователя {UserId}", userId);
+            throw new InvalidOperationException($"Не удалось получить мероприятия пользователя {userId}", ex);
+        }
     }
 
-    /// <summary>
-    /// Получить мероприятие по его идентификатору
-    /// </summary>
-    /// <returns>Мероприятие</returns>
     public async Task<Event> GetEventByIdAsync(Guid eventId)
     {
-        var eventEntity = await _dbContext.Events
+        try
+        {
+            var eventEntity = await _dbContext.Events
                 .Include(e => e.Location)
                 .Include(e => e.EventDays)
                     .ThenInclude(ed => ed.Day)
@@ -64,68 +77,104 @@ public class EventRepository : BaseRepository, IEventRepository
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
-        return EventConverter.ConvertDBToCore(eventEntity);
+            if (eventEntity == null)
+            {
+                throw new ArgumentException($"Мероприятие {eventId} не найдено");
+            }
+
+            return EventConverter.ConvertDBToCore(eventEntity);
+        }
+        catch (DbUpdateException ex) 
+        {
+            _logger.LogError(ex, "Ошибка получения мероприятия {EventId}", eventId);
+            throw new InvalidOperationException($"Не удалось получить мероприятие {eventId}", ex);
+        }
     }
 
-    /// <summary>
-    /// Получить мероприятие по его дню
-    /// </summary>
-    /// <returns>Мероприятие</returns>
     public async Task<Event> GetEventByDayAsync(Guid dayId)
     {
-        var eventDay = await _dbContext.EventsDays
-            .Include(ed => ed.Event)
-            .FirstOrDefaultAsync(ed => ed.DayId == dayId);
+        try
+        {
+            var eventDay = await _dbContext.EventsDays
+                .Include(ed => ed.Event)
+                .FirstOrDefaultAsync(ed => ed.DayId == dayId);
 
-        if (eventDay?.Event == null)
-            return null;
+            if (eventDay?.Event == null)
+                return null;
 
-        return await GetEventByIdAsync(eventDay.Event.Id);
+            return await GetEventByIdAsync(eventDay.Event.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка поиска мероприятия по дню {DayId}", dayId);
+            throw new InvalidOperationException($"Не удалось найти мероприятие для дня {dayId}", ex);
+        }
     }
 
-    /// <summary>
-    /// Создать мероприятие
-    /// </summary>
-    /// <returns></returns>
     public async Task InsertEventAsync(Event _event)
     {
-        var eventEntity = EventConverter.ConvertCoreToDB(_event);
-        await _dbContext.Events.AddAsync(eventEntity);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            var eventEntity = EventConverter.ConvertCoreToDB(_event);
+            await _dbContext.Events.AddAsync(eventEntity);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка создания мероприятия");
+            throw new InvalidOperationException("Не удалось создать мероприятие", ex);
+        }
     }
 
-    /// <summary>
-    /// Обновить мероприятие
-    /// </summary>
-    /// <returns></returns>
     public async Task UpdateEventAsync(Event updateEvent)
     {
-        var existingEvent = await _dbContext.Events
+        try
+        {
+            var existingEvent = await _dbContext.Events
                 .FirstOrDefaultAsync(e => e.Id == updateEvent.Id);
 
-        existingEvent.Name = updateEvent.Name;
-        existingEvent.Description = updateEvent.Description;
-        existingEvent.Date = updateEvent.Date;
-        existingEvent.LocationId = updateEvent.LocationId;
-        existingEvent.PersonCount = updateEvent.PersonCount;
-        existingEvent.DaysCount = updateEvent.DaysCount;
-        existingEvent.Percent = updateEvent.Percent;
-        existingEvent.Rating = updateEvent.Rating;
+            if (existingEvent == null)
+            {
+                throw new ArgumentException($"Мероприятие {updateEvent.Id} не найдено");
+            }
 
-        _dbContext.Events.Update(existingEvent);
-        await _dbContext.SaveChangesAsync();
+            existingEvent.Name = updateEvent.Name;
+            existingEvent.Description = updateEvent.Description;
+            existingEvent.Date = updateEvent.Date;
+            existingEvent.LocationId = updateEvent.LocationId;
+            existingEvent.PersonCount = updateEvent.PersonCount;
+            existingEvent.DaysCount = updateEvent.DaysCount;
+            existingEvent.Percent = updateEvent.Percent;
+            existingEvent.Rating = updateEvent.Rating;
+
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка обновления мероприятия {EventId}", updateEvent.Id);
+            throw new InvalidOperationException($"Не удалось обновить мероприятие {updateEvent.Id}", ex);
+        }
     }
 
-    /// <summary>
-    /// Удалить мероприятие
-    /// </summary>
-    /// <returns></returns>
     public async Task DeleteEventAsync(Guid eventId)
     {
-        var eventToDelete = await _dbContext.Events
+        try
+        {
+            var eventToDelete = await _dbContext.Events
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
-        _dbContext.Events.Remove(eventToDelete);
-        await _dbContext.SaveChangesAsync();
+            if (eventToDelete == null)
+            {
+                throw new ArgumentException($"Мероприятие {eventId} не найдено");
+            }
+
+            _dbContext.Events.Remove(eventToDelete);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка удаления мероприятия {EventId}", eventId);
+            throw new InvalidOperationException($"Не удалось удалить мероприятие {eventId}", ex);
+        }
     }
 }

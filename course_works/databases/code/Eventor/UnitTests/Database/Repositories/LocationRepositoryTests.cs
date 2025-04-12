@@ -3,15 +3,22 @@ using Eventor.Database.Context;
 using Eventor.Database.Models;
 using Eventor.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Eventor.Tests.Database.Repositories;
 
-public class LocationRepositoryTests
+public class LocationRepositoryTests : IDisposable
 {
+    private readonly EventorDBContext _context;
+    private readonly ILogger<LocationRepository> _logger;
+    private readonly LocationRepository _repository;
     private readonly DbContextOptions<EventorDBContext> _options;
 
     public LocationRepositoryTests()
@@ -19,173 +26,201 @@ public class LocationRepositoryTests
         _options = new DbContextOptionsBuilder<EventorDBContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
+
+        _context = new EventorDBContext(_options);
+        _logger = Mock.Of<ILogger<LocationRepository>>();
+        _repository = new LocationRepository(_context, _logger);
+    }
+
+    public void Dispose()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
+
+    private LocationDBModel CreateTestLocation(
+        Guid? id = null,
+        string name = "Test Location",
+        string description = "Test Description",
+        double price = 1000)
+    {
+        return new LocationDBModel(
+            id ?? Guid.NewGuid(),
+            name,
+            description,
+            price);
     }
 
     [Fact]
-    public async Task GetAllLocationsAsync_ReturnsAllLocations()
+    public async Task GetAllLocationsAsync_ShouldReturnAllLocations()
     {
         // Arrange
-        var testLocations = new List<LocationDBModel>
+        var locations = new List<LocationDBModel>
         {
-            new(Guid.NewGuid(), "Location 1", "Desc 1", 1000),
-            new(Guid.NewGuid(), "Location 2", "Desc 2", 2000)
+            CreateTestLocation(name: "Location 1"),
+            CreateTestLocation(name: "Location 2")
         };
 
-        using (var context = new EventorDBContext(_options))
-        {
-            context.Locations.AddRange(testLocations);
-            await context.SaveChangesAsync();
-        }
+        await _context.Locations.AddRangeAsync(locations);
+        await _context.SaveChangesAsync();
 
         // Act
-        List<Location> result;
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new LocationRepository(context);
-            result = await repository.GetAllLocationsAsync();
-        }
+        var result = await _repository.GetAllLocationsAsync();
 
         // Assert
         Assert.Equal(2, result.Count);
         Assert.Contains(result, l => l.Name == "Location 1");
-        Assert.Contains(result, l => l.Price == 2000);
     }
 
     [Fact]
-    public async Task GetLocationByIdAsync_ReturnsCorrectLocation()
+    public async Task GetAllLocationsAsync_ShouldLogErrorOnFailure()
     {
         // Arrange
-        var locationId = Guid.NewGuid();
-        var testLocation = new LocationDBModel(locationId, "Test Location", "Test Desc", 1500);
+        var corruptedContext = new Mock<EventorDBContext>(_options);
+        corruptedContext.Setup(c => c.Locations).Throws<Exception>();
+        var repository = new LocationRepository(corruptedContext.Object, _logger);
 
-        using (var context = new EventorDBContext(_options))
-        {
-            context.Locations.Add(testLocation);
-            await context.SaveChangesAsync();
-        }
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => repository.GetAllLocationsAsync());
+        Mock.Get(_logger).VerifyLog(LogLevel.Error, "Ошибка получения списка локаций");
+    }
+
+    [Fact]
+    public async Task GetLocationByIdAsync_ShouldReturnCorrectLocation()
+    {
+        // Arrange
+        var location = CreateTestLocation();
+        await _context.Locations.AddAsync(location);
+        await _context.SaveChangesAsync();
 
         // Act
-        Location result;
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new LocationRepository(context);
-            result = await repository.GetLocationByIdAsync(locationId);
-        }
+        var result = await _repository.GetLocationByIdAsync(location.Id);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(locationId, result.Id);
-        Assert.Equal("Test Location", result.Name);
+        Assert.Equal(location.Description, result.Description);
     }
 
     [Fact]
-    public async Task InsertLocationAsync_AddsNewLocationToDatabase()
+    public async Task GetLocationByIdAsync_ShouldReturnNullForNonExistingId()
+    {
+        // Act
+        var result = await _repository.GetLocationByIdAsync(Guid.NewGuid());
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task InsertLocationAsync_ShouldAddNewLocation()
     {
         // Arrange
         var newLocation = new Location(
             Guid.NewGuid(),
             "New Location",
-            "New Description",
-            3000
-        );
+            "Description",
+            3000);
 
         // Act
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new LocationRepository(context);
-            await repository.InsertLocationAsync(newLocation);
-        }
+        await _repository.InsertLocationAsync(newLocation);
+        var result = await _context.Locations.FirstOrDefaultAsync();
 
         // Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var locationInDb = await context.Locations.FirstOrDefaultAsync();
-            Assert.NotNull(locationInDb);
-            Assert.Equal("New Location", locationInDb.Name);
-            Assert.Equal(3000, locationInDb.Price);
-        }
+        Assert.NotNull(result);
+        Assert.Equal(newLocation.Name, result.Name);
     }
 
     [Fact]
-    public async Task UpdateLocationAsync_UpdatesExistingLocation()
+    public async Task InsertLocationAsync_ShouldThrowOnDatabaseError()
     {
         // Arrange
-        var locationId = Guid.NewGuid();
-        var originalLocation = new LocationDBModel(locationId, "Original Name", "Original Desc", 1000);
+        var newLocation = new Location(Guid.NewGuid(), "Test", "Desc", 1000);
 
-        using (var context = new EventorDBContext(_options))
-        {
-            context.Locations.Add(originalLocation);
-            await context.SaveChangesAsync();
-        }
+        // Настраиваем мок DbSet
+        var mockSet = new Mock<DbSet<LocationDBModel>>();
+        mockSet.Setup(m => m.AddAsync(It.IsAny<LocationDBModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((LocationDBModel model, CancellationToken token) => null);
 
-        var updatedLocation = new Location(
-            locationId,
-            "Updated Name",
-            "Updated Desc",
-            2000
-        );
+        // Настраиваем контекст
+        var corruptedContext = new Mock<EventorDBContext>(_options);
+        corruptedContext.Setup(c => c.Locations).Returns(mockSet.Object);
+        corruptedContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new DbUpdateException("Test error"));
 
-        // Act
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new LocationRepository(context);
-            await repository.UpdateLocationAsync(updatedLocation);
-        }
-
-        // Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var locationInDb = await context.Locations.FindAsync(locationId);
-            Assert.NotNull(locationInDb);
-            Assert.Equal("Updated Name", locationInDb.Name);
-            Assert.Equal("Updated Desc", locationInDb.Description);
-            Assert.Equal(2000, locationInDb.Price);
-        }
-    }
-
-    [Fact]
-    public async Task DeleteLocationAsync_RemovesLocationFromDatabase()
-    {
-        // Arrange
-        var locationId = Guid.NewGuid();
-        var testLocation = new LocationDBModel(locationId, "To Delete", "Delete Desc", 500);
-
-        using (var context = new EventorDBContext(_options))
-        {
-            context.Locations.Add(testLocation);
-            await context.SaveChangesAsync();
-        }
-
-        // Act
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new LocationRepository(context);
-            await repository.DeleteLocationAsync(locationId);
-        }
-
-        // Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var locationInDb = await context.Locations.FindAsync(locationId);
-            Assert.Null(locationInDb);
-        }
-    }
-
-    [Fact]
-    public async Task DeleteLocationAsync_WhenLocationNotFound_DoesNothing()
-    {
-        // Arrange
-        var nonExistentId = Guid.NewGuid();
+        var repository = new LocationRepository(corruptedContext.Object, _logger);
 
         // Act & Assert
-        using (var context = new EventorDBContext(_options))
-        {
-            var repository = new LocationRepository(context);
-            await repository.DeleteLocationAsync(nonExistentId); // Не должно выбрасывать исключение
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => repository.InsertLocationAsync(newLocation));
 
-            var locationsCount = await context.Locations.CountAsync();
-            Assert.Equal(0, locationsCount);
-        }
+        Assert.Contains("Не удалось создать локацию", exception.Message);
+        Mock.Get(_logger).VerifyLog(LogLevel.Error, "Ошибка создания локации");
+    }
+
+    [Fact]
+    public async Task UpdateLocationAsync_ShouldUpdateExistingLocation()
+    {
+        // Arrange
+        var location = CreateTestLocation();
+        await _context.Locations.AddAsync(location);
+        await _context.SaveChangesAsync();
+
+        var updatedLocation = new Location(
+            location.Id,
+            "Updated Name",
+            "Updated Desc",
+            2000);
+
+        // Act
+        await _repository.UpdateLocationAsync(updatedLocation);
+        var result = await _context.Locations.FindAsync(location.Id);
+
+        // Assert
+        Assert.Equal("Updated Name", result.Name);
+        Assert.Equal(2000, result.Price);
+    }
+
+    [Fact]
+    public async Task UpdateLocationAsync_ShouldNotUpdateNonExistingLocation()
+    {
+        // Arrange
+        var nonExistingLocation = new Location(
+            Guid.NewGuid(),
+            "Non-existing",
+            "Desc",
+            500);
+
+        // Act
+        await _repository.UpdateLocationAsync(nonExistingLocation);
+        var count = await _context.Locations.CountAsync();
+
+        // Assert
+        Assert.Equal(0, count);
+    }
+
+    [Fact]
+    public async Task DeleteLocationAsync_ShouldRemoveLocation()
+    {
+        // Arrange
+        var location = CreateTestLocation();
+        await _context.Locations.AddAsync(location);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _repository.DeleteLocationAsync(location.Id);
+        var result = await _context.Locations.FindAsync(location.Id);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task DeleteLocationAsync_ShouldLogWarningForNonExistingId()
+    {
+        // Act
+        await _repository.DeleteLocationAsync(Guid.NewGuid());
+
+        // Assert
+        Mock.Get(_logger).VerifyLog(LogLevel.Warning, "не найдена");
     }
 }

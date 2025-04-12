@@ -30,8 +30,10 @@
         {
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            tabPage2 = new TabPage();
-            tabPage3 = new TabPage();
+            groupBox2 = new GroupBox();
+            dataGridView1 = new DataGridView();
+            name = new DataGridViewTextBoxColumn();
+            paid = new DataGridViewTextBoxColumn();
             groupBox1 = new GroupBox();
             userInfo_tableLayoutPanel = new TableLayoutPanel();
             label1 = new Label();
@@ -41,17 +43,22 @@
             userName_textBox = new TextBox();
             userGender_textBox = new TextBox();
             userRole_textBox = new TextBox();
-            maskedTextBox1 = new MaskedTextBox();
-            groupBox2 = new GroupBox();
-            dataGridView1 = new DataGridView();
-            name = new DataGridViewTextBoxColumn();
-            paid = new DataGridViewTextBoxColumn();
+            userPhone_maskedTextBox = new MaskedTextBox();
+            tabPage2 = new TabPage();
+            groupBox3 = new GroupBox();
+            dataGridView2 = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            tabPage3 = new TabPage();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
-            groupBox1.SuspendLayout();
-            userInfo_tableLayoutPanel.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            groupBox1.SuspendLayout();
+            userInfo_tableLayoutPanel.SuspendLayout();
+            tabPage2.SuspendLayout();
+            groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
             // 
             // tabControl1
@@ -62,7 +69,7 @@
             tabControl1.Location = new Point(12, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1196, 751);
+            tabControl1.Size = new Size(354, 751);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -72,30 +79,48 @@
             tabPage1.Location = new Point(4, 29);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1188, 718);
+            tabPage1.Size = new Size(346, 718);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Профиль";
             tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // groupBox2
             // 
-            tabPage2.Location = new Point(4, 29);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1188, 718);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Мероприятия";
-            tabPage2.UseVisualStyleBackColor = true;
+            groupBox2.Controls.Add(dataGridView1);
+            groupBox2.Location = new Point(6, 190);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(330, 522);
+            groupBox2.TabIndex = 4;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Выбранные мероприятия";
             // 
-            // tabPage3
+            // dataGridView1
             // 
-            tabPage3.Location = new Point(4, 29);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(345, 718);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "Организация";
-            tabPage3.UseVisualStyleBackColor = true;
+            dataGridView1.BackgroundColor = Color.White;
+            dataGridView1.ColumnHeadersHeight = 29;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { name, paid });
+            dataGridView1.Location = new Point(6, 26);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.Size = new Size(318, 490);
+            dataGridView1.TabIndex = 5;
+            // 
+            // name
+            // 
+            name.HeaderText = "Название";
+            name.MinimumWidth = 6;
+            name.Name = "name";
+            name.ReadOnly = true;
+            name.Width = 125;
+            // 
+            // paid
+            // 
+            paid.HeaderText = "Статус оплаты";
+            paid.MinimumWidth = 6;
+            paid.Name = "paid";
+            paid.ReadOnly = true;
+            paid.Width = 140;
             // 
             // groupBox1
             // 
@@ -122,7 +147,7 @@
             userInfo_tableLayoutPanel.Controls.Add(userName_textBox, 1, 0);
             userInfo_tableLayoutPanel.Controls.Add(userGender_textBox, 1, 2);
             userInfo_tableLayoutPanel.Controls.Add(userRole_textBox, 1, 3);
-            userInfo_tableLayoutPanel.Controls.Add(maskedTextBox1, 1, 1);
+            userInfo_tableLayoutPanel.Controls.Add(userPhone_maskedTextBox, 1, 1);
             userInfo_tableLayoutPanel.Location = new Point(6, 22);
             userInfo_tableLayoutPanel.Name = "userInfo_tableLayoutPanel";
             userInfo_tableLayoutPanel.RowCount = 4;
@@ -186,6 +211,7 @@
             userName_textBox.Size = new Size(152, 27);
             userName_textBox.TabIndex = 9;
             userName_textBox.TextAlign = HorizontalAlignment.Center;
+            userName_textBox.TextChanged += userName_textBox_TextChanged;
             // 
             // userGender_textBox
             // 
@@ -207,68 +233,95 @@
             userRole_textBox.TabIndex = 11;
             userRole_textBox.TextAlign = HorizontalAlignment.Center;
             // 
-            // maskedTextBox1
+            // userPhone_maskedTextBox
             // 
-            maskedTextBox1.Location = new Point(162, 40);
-            maskedTextBox1.Mask = "+7 (999) 000-0000";
-            maskedTextBox1.Name = "maskedTextBox1";
-            maskedTextBox1.Size = new Size(152, 27);
-            maskedTextBox1.TabIndex = 12;
+            userPhone_maskedTextBox.Location = new Point(162, 40);
+            userPhone_maskedTextBox.Mask = "+7 (999) 000-0000";
+            userPhone_maskedTextBox.Name = "userPhone_maskedTextBox";
+            userPhone_maskedTextBox.ReadOnly = true;
+            userPhone_maskedTextBox.Size = new Size(152, 27);
+            userPhone_maskedTextBox.TabIndex = 12;
             // 
-            // groupBox2
+            // tabPage2
             // 
-            groupBox2.Controls.Add(dataGridView1);
-            groupBox2.Location = new Point(6, 190);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(330, 522);
-            groupBox2.TabIndex = 4;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Выбранные меропрития";
+            tabPage2.Controls.Add(groupBox3);
+            tabPage2.Location = new Point(4, 29);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(346, 718);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Мероприятия";
+            tabPage2.UseVisualStyleBackColor = true;
             // 
-            // dataGridView1
+            // groupBox3
             // 
-            dataGridView1.BackgroundColor = Color.White;
-            dataGridView1.ColumnHeadersHeight = 29;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { name, paid });
-            dataGridView1.Location = new Point(6, 26);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(318, 490);
-            dataGridView1.TabIndex = 5;
+            groupBox3.Controls.Add(dataGridView2);
+            groupBox3.Location = new Point(6, 6);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(332, 706);
+            groupBox3.TabIndex = 0;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Доступные мероприятия";
             // 
-            // name
+            // dataGridView2
             // 
-            name.HeaderText = "Название";
-            name.MinimumWidth = 6;
-            name.Name = "name";
-            name.ReadOnly = true;
-            name.Width = 125;
+            dataGridView2.BackgroundColor = Color.White;
+            dataGridView2.ColumnHeadersHeight = 29;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
+            dataGridView2.Location = new Point(6, 26);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.RowHeadersWidth = 51;
+            dataGridView2.Size = new Size(318, 674);
+            dataGridView2.TabIndex = 6;
             // 
-            // paid
+            // dataGridViewTextBoxColumn1
             // 
-            paid.HeaderText = "Статус оплаты";
-            paid.MinimumWidth = 6;
-            paid.Name = "paid";
-            paid.ReadOnly = true;
-            paid.Width = 140;
+            dataGridViewTextBoxColumn1.HeaderText = "Название";
+            dataGridViewTextBoxColumn1.MinimumWidth = 6;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
+            dataGridViewTextBoxColumn1.Width = 125;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.HeaderText = "Текущая цена";
+            dataGridViewTextBoxColumn2.MinimumWidth = 6;
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.ReadOnly = true;
+            dataGridViewTextBoxColumn2.Width = 140;
+            // 
+            // tabPage3
+            // 
+            tabPage3.Location = new Point(4, 29);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(346, 718);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Организация";
+            tabPage3.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1211, 775);
+            ClientSize = new Size(369, 775);
             Controls.Add(tabControl1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "MainWindow";
             Text = "Планировщик мероприятия";
             Load += MainWindow_Load;
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             groupBox1.ResumeLayout(false);
             userInfo_tableLayoutPanel.ResumeLayout(false);
             userInfo_tableLayoutPanel.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            tabPage2.ResumeLayout(false);
+            groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
         }
 
@@ -287,10 +340,14 @@
         private TextBox userName_textBox;
         private TextBox userGender_textBox;
         private TextBox userRole_textBox;
-        private MaskedTextBox maskedTextBox1;
+        private MaskedTextBox userPhone_maskedTextBox;
         private GroupBox groupBox2;
         private DataGridView dataGridView1;
         private DataGridViewTextBoxColumn name;
         private DataGridViewTextBoxColumn paid;
+        private GroupBox groupBox3;
+        private DataGridView dataGridView2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
     }
 }

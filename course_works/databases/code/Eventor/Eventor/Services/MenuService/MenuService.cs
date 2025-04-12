@@ -1,9 +1,11 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Database.Core;
-using Eventor.Database.Repositories;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Eventor.Services;
 
@@ -26,7 +28,17 @@ public class MenuService : IMenuService
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving menus");
+            _logger.LogError(ex, "Database error while retrieving menus");
+            throw new MenuServiceException("Failed to retrieve menus due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data inconsistency error while retrieving menus");
+            throw new MenuServiceException("Failed to retrieve menus due to data inconsistency", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving menus");
             throw new MenuServiceException("Failed to retrieve menus", ex);
         }
     }
@@ -36,15 +48,31 @@ public class MenuService : IMenuService
         try
         {
             var menu = await _menuRepository.GetMenuByIdAsync(menuId);
+
             if (menu == null)
             {
+                _logger.LogWarning("Menu {MenuId} not found", menuId);
                 throw new MenuNotFoundException($"Menu {menuId} not found");
             }
             return menu;
         }
+        catch (MenuNotFoundException)
+        {
+            throw;
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid menu ID: {MenuId}", menuId);
+            throw new MenuServiceException($"Invalid menu ID: {menuId}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving menu {MenuId}", menuId);
+            _logger.LogError(ex, "Database error while retrieving menu {MenuId}", menuId);
+            throw new MenuServiceException($"Failed to retrieve menu {menuId} due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving menu {MenuId}", menuId);
             throw new MenuServiceException($"Failed to retrieve menu {menuId}", ex);
         }
     }
@@ -54,15 +82,31 @@ public class MenuService : IMenuService
         try
         {
             var menu = await _menuRepository.GetMenuByDayAsync(dayId);
+
             if (menu == null)
             {
+                _logger.LogWarning("Menu for day {DayId} not found", dayId);
                 throw new MenuNotFoundException($"Menu for day {dayId} not found");
             }
             return menu;
         }
+        catch (MenuNotFoundException)
+        {
+            throw;
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid day ID: {DayId}", dayId);
+            throw new MenuServiceException($"Invalid day ID: {dayId}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving menu for day {DayId}", dayId);
+            _logger.LogError(ex, "Database error while retrieving menu for day {DayId}", dayId);
+            throw new MenuServiceException($"Failed to retrieve menu for day {dayId} due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving menu for day {DayId}", dayId);
             throw new MenuServiceException($"Failed to retrieve menu for day {dayId}", ex);
         }
     }
@@ -73,9 +117,24 @@ public class MenuService : IMenuService
         {
             await _menuRepository.InsertMenuAsync(menu);
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Validation error while creating menu");
+            throw new MenuCreateException($"Failed to create menu: {ex.Message}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error creating menu");
+            _logger.LogError(ex, "Database error while creating menu");
+            throw new MenuCreateException("Failed to create menu due to database constraints", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data conflict while creating menu");
+            throw new MenuCreateException("Failed to create menu due to data conflict", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while creating menu");
             throw new MenuCreateException("Failed to create menu", ex);
         }
     }
@@ -86,9 +145,24 @@ public class MenuService : IMenuService
         {
             await _menuRepository.InsertItemAsync(menuId, itemId, amount);
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Validation error while adding item {ItemId} to menu {MenuId}", itemId, menuId);
+            throw new MenuUpdateException($"Failed to add item: {ex.Message}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error adding item {ItemId} to menu {MenuId}", itemId, menuId);
+            _logger.LogError(ex, "Database error while adding item {ItemId} to menu {MenuId}", itemId, menuId);
+            throw new MenuUpdateException($"Failed to add item {itemId} to menu {menuId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while adding item {ItemId} to menu {MenuId}", itemId, menuId);
+            throw new MenuUpdateException($"Concurrency conflict while adding item {itemId} to menu {menuId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while adding item {ItemId} to menu {MenuId}", itemId, menuId);
             throw new MenuUpdateException($"Failed to add item {itemId} to menu {menuId}", ex);
         }
     }
@@ -98,16 +172,37 @@ public class MenuService : IMenuService
         try
         {
             var existingMenu = await _menuRepository.GetMenuByIdAsync(updateMenu.Id);
+
             if (existingMenu == null)
             {
+                _logger.LogWarning("Menu {MenuId} not found for update", updateMenu.Id);
                 throw new MenuNotFoundException($"Menu {updateMenu.Id} not found");
             }
 
             await _menuRepository.UpdateMenuAsync(updateMenu);
         }
+        catch (MenuNotFoundException)
+        {
+            throw;
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid data while updating menu {MenuId}", updateMenu.Id);
+            throw new MenuUpdateException($"Failed to update menu {updateMenu.Id}: {ex.Message}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error updating menu {MenuId}", updateMenu.Id);
+            _logger.LogError(ex, "Database error while updating menu {MenuId}", updateMenu.Id);
+            throw new MenuUpdateException($"Failed to update menu {updateMenu.Id} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while updating menu {MenuId}", updateMenu.Id);
+            throw new MenuUpdateException($"Concurrency conflict while updating menu {updateMenu.Id}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while updating menu {MenuId}", updateMenu.Id);
             throw new MenuUpdateException($"Failed to update menu {updateMenu.Id}", ex);
         }
     }
@@ -117,16 +212,37 @@ public class MenuService : IMenuService
         try
         {
             var existingMenu = await _menuRepository.GetMenuByIdAsync(menuId);
+
             if (existingMenu == null)
             {
+                _logger.LogWarning("Menu {MenuId} not found for deletion", menuId);
                 throw new MenuNotFoundException($"Menu {menuId} not found");
             }
 
             await _menuRepository.DeleteMenuAsync(menuId);
         }
+        catch (MenuNotFoundException)
+        {
+            throw;
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid menu ID: {MenuId}", menuId);
+            throw new MenuDeleteException($"Invalid menu ID: {menuId}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error deleting menu {MenuId}", menuId);
+            _logger.LogError(ex, "Database error while deleting menu {MenuId}", menuId);
+            throw new MenuDeleteException($"Failed to delete menu {menuId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while deleting menu {MenuId}", menuId);
+            throw new MenuDeleteException($"Concurrency conflict while deleting menu {menuId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while deleting menu {MenuId}", menuId);
             throw new MenuDeleteException($"Failed to delete menu {menuId}", ex);
         }
     }
@@ -137,9 +253,24 @@ public class MenuService : IMenuService
         {
             await _menuRepository.DeleteItemAsync(menuId, itemId);
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid data while deleting item {ItemId} from menu {MenuId}", itemId, menuId);
+            throw new MenuUpdateException($"Failed to delete item: {ex.Message}", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error deleting item {ItemId} from menu {MenuId}", itemId, menuId);
+            _logger.LogError(ex, "Database error while deleting item {ItemId} from menu {MenuId}", itemId, menuId);
+            throw new MenuUpdateException($"Failed to delete item {itemId} from menu {menuId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while deleting item {ItemId} from menu {MenuId}", itemId, menuId);
+            throw new MenuUpdateException($"Concurrency conflict while deleting item {itemId} from menu {menuId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while deleting item {ItemId} from menu {MenuId}", itemId, menuId);
             throw new MenuUpdateException($"Failed to delete item {itemId} from menu {menuId}", ex);
         }
     }

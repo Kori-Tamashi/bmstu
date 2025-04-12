@@ -1,14 +1,14 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Database.Core;
-using Eventor.Services;
 using Eventor.Services.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Eventor.Database.Core;
+using Eventor.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Eventor.Tests.Services;
 
@@ -19,6 +19,7 @@ public class DayServiceTests
     private readonly DayService _dayService;
     private readonly Guid _testEventId = Guid.NewGuid();
     private readonly Guid _testDayId = Guid.NewGuid();
+    private readonly Guid _nonExistingDayId = Guid.NewGuid();
 
     public DayServiceTests()
     {
@@ -36,13 +37,12 @@ public class DayServiceTests
         100.0
     );
 
-    // GetAllDaysAsync
     [Fact]
-    public async Task GetAllDaysAsync_ReturnsDays()
+    public async Task GetAllDaysAsync_ReturnsDays_WhenRepositoryReturnsData()
     {
         // Arrange
-        var days = new List<Day> { CreateTestDay() };
-        _mockRepo.Setup(r => r.GetAllDaysAsync()).ReturnsAsync(days);
+        var expectedDays = new List<Day> { CreateTestDay() };
+        _mockRepo.Setup(r => r.GetAllDaysAsync()).ReturnsAsync(expectedDays);
 
         // Act
         var result = await _dayService.GetAllDaysAsync();
@@ -50,28 +50,31 @@ public class DayServiceTests
         // Assert
         Assert.Single(result);
         Assert.Equal(_testDayId, result[0].Id);
+        _mockRepo.Verify(r => r.GetAllDaysAsync(), Times.Once);
     }
 
-    [Fact]
-    public async Task GetAllDaysAsync_DbException_ThrowsServiceException()
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    [InlineData(typeof(Exception))]
+    public async Task GetAllDaysAsync_ThrowsServiceException_OnAnyError(Type exceptionType)
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetAllDaysAsync())
-            .ThrowsAsync(new DbUpdateException());
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test exception");
+        _mockRepo.Setup(r => r.GetAllDaysAsync()).ThrowsAsync(exception);
 
         // Act & Assert
         await Assert.ThrowsAsync<DayServiceException>(
             () => _dayService.GetAllDaysAsync());
     }
 
-    // GetAllDaysByEventAsync
     [Fact]
-    public async Task GetAllDaysByEventAsync_ReturnsDays()
+    public async Task GetAllDaysByEventAsync_ReturnsDays_ForValidEventId()
     {
         // Arrange
-        var days = new List<Day> { CreateTestDay() };
+        var expectedDays = new List<Day> { CreateTestDay() };
         _mockRepo.Setup(r => r.GetAllDaysByEventAsync(_testEventId))
-            .ReturnsAsync(days);
+            .ReturnsAsync(expectedDays);
 
         // Act
         var result = await _dayService.GetAllDaysByEventAsync(_testEventId);
@@ -79,108 +82,109 @@ public class DayServiceTests
         // Assert
         Assert.Single(result);
         Assert.Equal(_testDayId, result[0].Id);
+        _mockRepo.Verify(r => r.GetAllDaysByEventAsync(_testEventId), Times.Once);
     }
 
     [Fact]
-    public async Task GetAllDaysByEventAsync_DbException_ThrowsServiceException()
+    public async Task GetDayByIdAsync_ReturnsDay_WhenExists()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetAllDaysByEventAsync(_testEventId))
-            .ThrowsAsync(new DbUpdateException());
-
-        // Act & Assert
-        await Assert.ThrowsAsync<DayServiceException>(
-            () => _dayService.GetAllDaysByEventAsync(_testEventId));
-    }
-
-    // GetDayByIdAsync
-    [Fact]
-    public async Task GetDayByIdAsync_ValidId_ReturnsDay()
-    {
-        // Arrange
-        var testDay = CreateTestDay();
+        var expectedDay = CreateTestDay();
         _mockRepo.Setup(r => r.GetDayByIdAsync(_testDayId))
-            .ReturnsAsync(testDay);
+            .ReturnsAsync(expectedDay);
 
         // Act
         var result = await _dayService.GetDayByIdAsync(_testDayId);
 
         // Assert
-        Assert.Equal(_testDayId, result.Id);
+        Assert.Equal(expectedDay.Id, result.Id);
+        _mockRepo.Verify(r => r.GetDayByIdAsync(_testDayId), Times.Once);
     }
 
     [Fact]
-    public async Task GetDayByIdAsync_InvalidId_ThrowsNotFoundException()
+    public async Task GetDayByIdAsync_ThrowsNotFoundException_WhenDayNotExists()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetDayByIdAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new InvalidOperationException());
+        _mockRepo.Setup(r => r.GetDayByIdAsync(_nonExistingDayId))
+            .ThrowsAsync(new ArgumentException("Not found"));
 
         // Act & Assert
         await Assert.ThrowsAsync<DayNotFoundException>(
-            () => _dayService.GetDayByIdAsync(Guid.NewGuid()));
+            () => _dayService.GetDayByIdAsync(_nonExistingDayId));
     }
 
-    // AddDayAsync
     [Fact]
-    public async Task AddDayAsync_ValidDay_SavesSuccessfully()
+    public async Task AddDayAsync_SavesDay_WhenValid()
     {
         // Arrange
-        var testDay = CreateTestDay();
-        _mockRepo.Setup(r => r.InsertDayAsync(testDay)).Returns(Task.CompletedTask);
+        var newDay = CreateTestDay();
+        _mockRepo.Setup(r => r.InsertDayAsync(newDay))
+            .Returns(Task.CompletedTask);
 
         // Act
-        await _dayService.AddDayAsync(testDay);
+        await _dayService.AddDayAsync(newDay);
 
         // Assert
-        _mockRepo.Verify(r => r.InsertDayAsync(testDay), Times.Once);
+        _mockRepo.Verify(r => r.InsertDayAsync(It.Is<Day>(d =>
+            d.Id == newDay.Id &&
+            d.Name == newDay.Name)),
+            Times.Once);
     }
 
-    [Fact]
-    public async Task AddDayAsync_DbException_ThrowsCreateException()
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task AddDayAsync_ThrowsCreateException_OnFailure(Type exceptionType)
     {
         // Arrange
-        var testDay = CreateTestDay();
-        _mockRepo.Setup(r => r.InsertDayAsync(testDay))
-            .ThrowsAsync(new DbUpdateException());
+        var newDay = CreateTestDay();
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test exception");
+        _mockRepo.Setup(r => r.InsertDayAsync(newDay)).ThrowsAsync(exception);
 
         // Act & Assert
         await Assert.ThrowsAsync<DayCreateException>(
-            () => _dayService.AddDayAsync(testDay));
+            () => _dayService.AddDayAsync(newDay));
     }
 
-    // UpdateDayAsync
     [Fact]
-    public async Task UpdateDayAsync_ValidDay_UpdatesSuccessfully()
+    public async Task UpdateDayAsync_UpdatesExistingDay_WhenValid()
     {
         // Arrange
-        var testDay = CreateTestDay();
-        _mockRepo.Setup(r => r.GetDayByIdAsync(_testDayId))
-            .ReturnsAsync(testDay);
+        var existingDay = CreateTestDay();
+        var updatedDay = existingDay;
+        updatedDay.Name = "Updated Name";
+
+        _mockRepo.Setup(r => r.GetDayByIdAsync(existingDay.Id))
+            .ReturnsAsync(existingDay);
+        _mockRepo.Setup(r => r.UpdateDayAsync(updatedDay))
+            .Returns(Task.CompletedTask);
 
         // Act
-        await _dayService.UpdateDayAsync(testDay);
+        await _dayService.UpdateDayAsync(updatedDay);
 
         // Assert
-        _mockRepo.Verify(r => r.UpdateDayAsync(testDay), Times.Once);
+        _mockRepo.Verify(r => r.UpdateDayAsync(It.Is<Day>(d =>
+            d.Id == updatedDay.Id &&
+            d.Name == "Updated Name")),
+            Times.Once);
     }
 
     [Fact]
-    public async Task UpdateDayAsync_NonExistingDay_ThrowsNotFoundException()
+    public async Task UpdateDayAsync_ThrowsNotFoundException_WhenDayNotExists()
     {
         // Arrange
-        var testDay = CreateTestDay();
-        _mockRepo.Setup(r => r.GetDayByIdAsync(_testDayId))
-            .ThrowsAsync(new InvalidOperationException());
+        var nonExistingDay = CreateTestDay();
+        nonExistingDay.Id = _nonExistingDayId;
+        _mockRepo.Setup(r => r.GetDayByIdAsync(_nonExistingDayId))
+            .ThrowsAsync(new ArgumentException("Not found"));
 
         // Act & Assert
         await Assert.ThrowsAsync<DayNotFoundException>(
-            () => _dayService.UpdateDayAsync(testDay));
+            () => _dayService.UpdateDayAsync(nonExistingDay));
     }
 
-    // DeleteDayAsync
     [Fact]
-    public async Task DeleteDayAsync_ValidId_DeletesSuccessfully()
+    public async Task DeleteDayAsync_DeletesExistingDay_WhenValid()
     {
         // Arrange
         _mockRepo.Setup(r => r.DeleteDayAsync(_testDayId))
@@ -194,14 +198,28 @@ public class DayServiceTests
     }
 
     [Fact]
-    public async Task DeleteDayAsync_NonExistingDay_ThrowsNotFoundException()
+    public async Task DeleteDayAsync_ThrowsNotFoundException_WhenDayNotExists()
     {
         // Arrange
-        _mockRepo.Setup(r => r.DeleteDayAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new InvalidOperationException());
+        _mockRepo.Setup(r => r.DeleteDayAsync(_nonExistingDayId))
+            .ThrowsAsync(new ArgumentException("Not found"));
 
         // Act & Assert
         await Assert.ThrowsAsync<DayNotFoundException>(
-            () => _dayService.DeleteDayAsync(Guid.NewGuid()));
+            () => _dayService.DeleteDayAsync(_nonExistingDayId));
+    }
+
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task DeleteDayAsync_ThrowsDeleteException_OnFailure(Type exceptionType)
+    {
+        // Arrange
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test exception");
+        _mockRepo.Setup(r => r.DeleteDayAsync(_testDayId)).ThrowsAsync(exception);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<DayDeleteException>(
+            () => _dayService.DeleteDayAsync(_testDayId));
     }
 }

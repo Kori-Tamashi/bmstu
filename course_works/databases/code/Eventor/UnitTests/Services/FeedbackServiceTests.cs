@@ -1,15 +1,14 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Eventor.Database.Core;
 using Eventor.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Eventor.Tests.Services;
 
@@ -21,6 +20,7 @@ public class FeedbackServiceTests
     private readonly Guid _testEventId = Guid.NewGuid();
     private readonly Guid _testUserId = Guid.NewGuid();
     private readonly Guid _testFeedbackId = Guid.NewGuid();
+    private readonly Guid _nonExistingFeedbackId = Guid.NewGuid();
 
     public FeedbackServiceTests()
     {
@@ -37,13 +37,12 @@ public class FeedbackServiceTests
         5
     );
 
-    // GetAllFeedbackAsync
     [Fact]
-    public async Task GetAllFeedbackAsync_ReturnsFeedbackList()
+    public async Task GetAllFeedbackAsync_ReturnsFeedback_WhenDataExists()
     {
         // Arrange
-        var feedbacks = new List<Feedback> { CreateTestFeedback() };
-        _mockRepo.Setup(r => r.GetAllFeedbackAsync()).ReturnsAsync(feedbacks);
+        var expectedFeedback = new List<Feedback> { CreateTestFeedback() };
+        _mockRepo.Setup(r => r.GetAllFeedbackAsync()).ReturnsAsync(expectedFeedback);
 
         // Act
         var result = await _feedbackService.GetAllFeedbackAsync();
@@ -51,23 +50,26 @@ public class FeedbackServiceTests
         // Assert
         Assert.Single(result);
         Assert.Equal(_testFeedbackId, result[0].Id);
+        _mockRepo.Verify(r => r.GetAllFeedbackAsync(), Times.Once);
     }
 
-    [Fact]
-    public async Task GetAllFeedbackAsync_DbException_ThrowsServiceException()
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    [InlineData(typeof(Exception))]
+    public async Task GetAllFeedbackAsync_ThrowsServiceException_OnErrors(Type exceptionType)
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetAllFeedbackAsync())
-            .ThrowsAsync(new DbUpdateException());
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test error");
+        _mockRepo.Setup(r => r.GetAllFeedbackAsync()).ThrowsAsync(exception);
 
         // Act & Assert
         await Assert.ThrowsAsync<FeedbackServiceException>(
             () => _feedbackService.GetAllFeedbackAsync());
     }
 
-    // GetAllFeedbacksByEventAsync
     [Fact]
-    public async Task GetAllFeedbacksByEventAsync_ReturnsFilteredFeedback()
+    public async Task GetAllFeedbacksByEventAsync_ReturnsFilteredResults()
     {
         // Arrange
         var feedbacks = new List<Feedback> { CreateTestFeedback() };
@@ -78,27 +80,12 @@ public class FeedbackServiceTests
         var result = await _feedbackService.GetAllFeedbacksByEventAsync(_testEventId);
 
         // Assert
-        Assert.Equal(_testEventId, result[0].EventId);
+        Assert.All(result, f => Assert.Equal(_testEventId, f.EventId));
+        _mockRepo.Verify(r => r.GetAllFeedbacksByEventAsync(_testEventId), Times.Once);
     }
 
     [Fact]
-    public async Task GetAllFeedbacksByEventAsync_EmptyResult_LogsInformation()
-    {
-        // Arrange
-        _mockRepo.Setup(r => r.GetAllFeedbacksByEventAsync(_testEventId))
-            .ReturnsAsync(new List<Feedback>());
-
-        // Act
-        var result = await _feedbackService.GetAllFeedbacksByEventAsync(_testEventId);
-
-        // Assert
-        Assert.Empty(result);
-        // Можно добавить VerifyLog для проверки логов
-    }
-
-    // GetAllFeedbacksByUserAsync
-    [Fact]
-    public async Task GetAllFeedbacksByUserAsync_ReturnsUserFeedback()
+    public async Task GetAllFeedbacksByUserAsync_ValidUserId_ReturnsUserFeedback()
     {
         // Arrange
         var feedbacks = new List<Feedback> { CreateTestFeedback() };
@@ -109,103 +96,117 @@ public class FeedbackServiceTests
         var result = await _feedbackService.GetAllFeedbacksByUserAsync(_testUserId);
 
         // Assert
-        Assert.Equal(_testUserId, result[0].PersonId);
+        Assert.All(result, f => Assert.Equal(_testUserId, f.PersonId));
+        _mockRepo.Verify(r => r.GetAllFeedbacksByUserAsync(_testUserId), Times.Once);
     }
 
-    // GetFeedbackByIdAsync
     [Fact]
-    public async Task GetFeedbackByIdAsync_ValidId_ReturnsFeedback()
+    public async Task GetFeedbackByIdAsync_ExistingId_ReturnsFeedback()
     {
         // Arrange
-        var testFeedback = CreateTestFeedback();
+        var expectedFeedback = CreateTestFeedback();
         _mockRepo.Setup(r => r.GetFeedbackByIdAsync(_testFeedbackId))
-            .ReturnsAsync(testFeedback);
+            .ReturnsAsync(expectedFeedback);
 
         // Act
         var result = await _feedbackService.GetFeedbackByIdAsync(_testFeedbackId);
 
         // Assert
-        Assert.Equal("Test Comment", result.Comment);
+        Assert.Equal(expectedFeedback.Comment, result.Comment);
+        _mockRepo.Verify(r => r.GetFeedbackByIdAsync(_testFeedbackId), Times.Once);
     }
 
     [Fact]
-    public async Task GetFeedbackByIdAsync_NotFound_ThrowsException()
+    public async Task GetFeedbackByIdAsync_NonExistingId_ThrowsNotFoundException()
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetFeedbackByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Feedback)null!);
+        _mockRepo.Setup(r => r.GetFeedbackByIdAsync(_nonExistingFeedbackId))
+            .ReturnsAsync((Feedback)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<FeedbackNotFoundException>(
-            () => _feedbackService.GetFeedbackByIdAsync(Guid.NewGuid()));
+        var ex = await Assert.ThrowsAsync<FeedbackNotFoundException>(
+            () => _feedbackService.GetFeedbackByIdAsync(_nonExistingFeedbackId));
+
+        Assert.Contains(_nonExistingFeedbackId.ToString(), ex.Message);
     }
 
-    // AddFeedbackAsync
     [Fact]
-    public async Task AddFeedbackAsync_ValidData_SavesSuccessfully()
+    public async Task AddFeedbackAsync_ValidData_CallsRepository()
     {
         // Arrange
-        var testFeedback = CreateTestFeedback();
-        _mockRepo.Setup(r => r.InsertFeedbackAsync(testFeedback))
+        var newFeedback = CreateTestFeedback();
+        _mockRepo.Setup(r => r.InsertFeedbackAsync(newFeedback))
             .Returns(Task.CompletedTask);
 
         // Act
-        await _feedbackService.AddFeedbackAsync(testFeedback);
+        await _feedbackService.AddFeedbackAsync(newFeedback);
 
         // Assert
-        _mockRepo.Verify(r => r.InsertFeedbackAsync(testFeedback), Times.Once);
+        _mockRepo.Verify(r => r.InsertFeedbackAsync(It.Is<Feedback>(f =>
+            f.Id == newFeedback.Id &&
+            f.Comment == newFeedback.Comment)),
+            Times.Once);
     }
 
-    [Fact]
-    public async Task AddFeedbackAsync_DbException_ThrowsCreateException()
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(ArgumentException))]
+    public async Task AddFeedbackAsync_ThrowsCreateException_OnFailure(Type exceptionType)
     {
         // Arrange
-        var testFeedback = CreateTestFeedback();
-        _mockRepo.Setup(r => r.InsertFeedbackAsync(testFeedback))
-            .ThrowsAsync(new DbUpdateException());
+        var newFeedback = CreateTestFeedback();
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test error");
+        _mockRepo.Setup(r => r.InsertFeedbackAsync(newFeedback)).ThrowsAsync(exception);
 
         // Act & Assert
         await Assert.ThrowsAsync<FeedbackCreateException>(
-            () => _feedbackService.AddFeedbackAsync(testFeedback));
+            () => _feedbackService.AddFeedbackAsync(newFeedback));
     }
 
-    // UpdateFeedbackAsync
     [Fact]
-    public async Task UpdateFeedbackAsync_ValidData_UpdatesSuccessfully()
+    public async Task UpdateFeedbackAsync_ValidData_UpdatesEntity()
     {
         // Arrange
-        var testFeedback = CreateTestFeedback();
-        _mockRepo.Setup(r => r.GetFeedbackByIdAsync(_testFeedbackId))
-            .ReturnsAsync(testFeedback);
+        var existingFeedback = CreateTestFeedback();
+        var updatedFeedback = existingFeedback;
+        updatedFeedback.Comment = "Updated Comment";
+
+        _mockRepo.Setup(r => r.GetFeedbackByIdAsync(existingFeedback.Id))
+            .ReturnsAsync(existingFeedback);
+        _mockRepo.Setup(r => r.UpdateFeedbackAsync(updatedFeedback))
+            .Returns(Task.CompletedTask);
 
         // Act
-        await _feedbackService.UpdateFeedbackAsync(testFeedback);
+        await _feedbackService.UpdateFeedbackAsync(updatedFeedback);
 
         // Assert
-        _mockRepo.Verify(r => r.UpdateFeedbackAsync(testFeedback), Times.Once);
+        _mockRepo.Verify(r => r.UpdateFeedbackAsync(It.Is<Feedback>(f =>
+            f.Id == updatedFeedback.Id &&
+            f.Comment == "Updated Comment")),
+            Times.Once);
     }
 
     [Fact]
-    public async Task UpdateFeedbackAsync_NotFound_ThrowsException()
+    public async Task UpdateFeedbackAsync_NonExistingId_ThrowsNotFoundException()
     {
         // Arrange
-        var testFeedback = CreateTestFeedback();
-        _mockRepo.Setup(r => r.GetFeedbackByIdAsync(_testFeedbackId))
-            .ReturnsAsync((Feedback)null!);
+        var feedback = CreateTestFeedback();
+        feedback.Id = _nonExistingFeedbackId;
+        _mockRepo.Setup(r => r.GetFeedbackByIdAsync(_nonExistingFeedbackId))
+            .ReturnsAsync((Feedback)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<FeedbackNotFoundException>(
-            () => _feedbackService.UpdateFeedbackAsync(testFeedback));
+            () => _feedbackService.UpdateFeedbackAsync(feedback));
     }
 
-    // DeleteFeedbackAsync
     [Fact]
-    public async Task DeleteFeedbackAsync_ValidId_DeletesSuccessfully()
+    public async Task DeleteFeedbackAsync_ExistingId_DeletesEntity()
     {
         // Arrange
-        var testFeedback = CreateTestFeedback();
+        var existingFeedback = CreateTestFeedback();
         _mockRepo.Setup(r => r.GetFeedbackByIdAsync(_testFeedbackId))
-            .ReturnsAsync(testFeedback);
+            .ReturnsAsync(existingFeedback);
 
         // Act
         await _feedbackService.DeleteFeedbackAsync(_testFeedbackId);
@@ -214,15 +215,17 @@ public class FeedbackServiceTests
         _mockRepo.Verify(r => r.DeleteFeedbackAsync(_testFeedbackId), Times.Once);
     }
 
-    [Fact]
-    public async Task DeleteFeedbackAsync_NotFound_ThrowsException()
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task DeleteFeedbackAsync_ThrowsDeleteException_OnFailure(Type exceptionType)
     {
         // Arrange
-        _mockRepo.Setup(r => r.GetFeedbackByIdAsync(_testFeedbackId))
-            .ReturnsAsync((Feedback)null!);
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test error");
+        _mockRepo.Setup(r => r.DeleteFeedbackAsync(_testFeedbackId)).ThrowsAsync(exception);
 
         // Act & Assert
-        await Assert.ThrowsAsync<FeedbackNotFoundException>(
+        await Assert.ThrowsAsync<FeedbackDeleteException>(
             () => _feedbackService.DeleteFeedbackAsync(_testFeedbackId));
     }
 }

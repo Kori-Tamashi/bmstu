@@ -1,30 +1,31 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Services;
+using Eventor.Common.Enums;
 using Eventor.Services.Exceptions;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eventor.Common.Enums;
+using Eventor.Database.Core;
+using Eventor.Services;
+using Microsoft.Extensions.Logging;
 
 namespace Eventor.Tests.Services;
 
 public class ItemServiceTests
 {
-    private readonly Mock<IItemService> _mockService;
-    private readonly Mock<ILogger<ItemService>> _mockLogger;
+    private readonly Mock<IItemRepository> _mockRepo;
     private readonly ItemService _itemService;
     private readonly Guid _testItemId = Guid.NewGuid();
     private readonly Guid _testMenuId = Guid.NewGuid();
+    private readonly Guid _nonExistingItemId = Guid.NewGuid();
 
     public ItemServiceTests()
     {
-        _mockService = new Mock<IItemService>();
-        _mockLogger = new Mock<ILogger<ItemService>>();
-        // Если ItemService требует репозиторий в конструкторе:
-        // _itemService = new ItemService(repoMock.Object, _mockLogger.Object);
+        _mockRepo = new Mock<IItemRepository>();
+        var logger = Mock.Of<ILogger<ItemService>>();
+        _itemService = new ItemService(_mockRepo.Object, logger);
     }
 
     private Item CreateTestItem() => new Item(
@@ -34,149 +35,135 @@ public class ItemServiceTests
         100.0
     );
 
-    // GetAllItemsAsync
     [Fact]
-    public async Task GetAllItemsAsync_ReturnsItems()
+    public async Task GetAllItemsAsync_ReturnsItems_WhenDataExists()
+    {
+        // Arrange
+        var expectedItems = new List<Item> { CreateTestItem() };
+        _mockRepo.Setup(r => r.GetAllItemsAsync()).ReturnsAsync(expectedItems);
+
+        // Act
+        var result = await _itemService.GetAllItemsAsync();
+
+        // Assert
+        Assert.Equal(expectedItems, result);
+        _mockRepo.Verify(r => r.GetAllItemsAsync(), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(typeof(DbUpdateException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task GetAllItemsAsync_ThrowsServiceException_OnFailure(Type exceptionType)
+    {
+        // Arrange
+        var exception = (Exception)Activator.CreateInstance(exceptionType, "Test error");
+        _mockRepo.Setup(r => r.GetAllItemsAsync()).ThrowsAsync(exception);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ItemServiceException>(
+            () => _itemService.GetAllItemsAsync());
+    }
+
+    [Fact]
+    public async Task GetAllItemsByMenuAsync_ReturnsItems_ForValidMenu()
     {
         // Arrange
         var items = new List<Item> { CreateTestItem() };
-        _mockService.Setup(s => s.GetAllItemsAsync()).ReturnsAsync(items);
+        _mockRepo.Setup(r => r.GetAllItemsByMenuAsync(_testMenuId)).ReturnsAsync(items);
 
         // Act
-        var result = await _mockService.Object.GetAllItemsAsync();
+        var result = await _itemService.GetAllItemsByMenuAsync(_testMenuId);
 
         // Assert
         Assert.Single(result);
-        Assert.Equal(_testItemId, result[0].Id);
+        _mockRepo.Verify(r => r.GetAllItemsByMenuAsync(_testMenuId), Times.Once);
     }
 
     [Fact]
-    public async Task GetAllItemsAsync_DbError_ThrowsServiceException()
+    public async Task GetItemByIdAsync_ReturnsItem_WhenExists()
     {
         // Arrange
-        _mockService.Setup(s => s.GetAllItemsAsync())
-            .ThrowsAsync(new Exception("Database error"));
-
-        // Act & Assert
-        await Assert.ThrowsAsync<Exception>(
-            () => _mockService.Object.GetAllItemsAsync());
-    }
-
-    // GetAllItemsByMenuAsync
-    [Fact]
-    public async Task GetAllItemsByMenuAsync_ReturnsItems()
-    {
-        // Arrange
-        var items = new List<Item> { CreateTestItem() };
-        _mockService.Setup(s => s.GetAllItemsByMenuAsync(_testMenuId))
-            .ReturnsAsync(items);
+        var expectedItem = CreateTestItem();
+        _mockRepo.Setup(r => r.GetItemByIdAsync(_testItemId)).ReturnsAsync(expectedItem);
 
         // Act
-        var result = await _mockService.Object.GetAllItemsByMenuAsync(_testMenuId);
+        var result = await _itemService.GetItemByIdAsync(_testItemId);
 
         // Assert
-        Assert.Single(result);
-        Assert.Equal(_testItemId, result[0].Id);
+        Assert.Equal(expectedItem.Price, result.Price);
+        _mockRepo.Verify(r => r.GetItemByIdAsync(_testItemId), Times.Once);
     }
 
     [Fact]
-    public async Task GetAllItemsByMenuAsync_InvalidMenu_ReturnsEmpty()
+    public async Task GetItemByIdAsync_ThrowsNotFoundException_WhenNotExists()
     {
         // Arrange
-        _mockService.Setup(s => s.GetAllItemsByMenuAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new List<Item>());
-
-        // Act
-        var result = await _mockService.Object.GetAllItemsByMenuAsync(Guid.NewGuid());
-
-        // Assert
-        Assert.Empty(result);
-    }
-
-    // GetItemByIdAsync
-    [Fact]
-    public async Task GetItemByIdAsync_ValidId_ReturnsItem()
-    {
-        // Arrange
-        var testItem = CreateTestItem();
-        _mockService.Setup(s => s.GetItemByIdAsync(_testItemId))
-            .ReturnsAsync(testItem);
-
-        // Act
-        var result = await _mockService.Object.GetItemByIdAsync(_testItemId);
-
-        // Assert
-        Assert.Equal(_testItemId, result.Id);
-    }
-
-    [Fact]
-    public async Task GetItemByIdAsync_InvalidId_ThrowsNotFound()
-    {
-        // Arrange
-        _mockService.Setup(s => s.GetItemByIdAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new ItemNotFoundException("Item not found"));
+        _mockRepo.Setup(r => r.GetItemByIdAsync(_nonExistingItemId)).ReturnsAsync((Item)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<ItemNotFoundException>(
-            () => _mockService.Object.GetItemByIdAsync(Guid.NewGuid()));
+            () => _itemService.GetItemByIdAsync(_nonExistingItemId));
     }
 
-    // AddItemAsync
     [Fact]
-    public async Task AddItemAsync_ValidItem_SavesSuccessfully()
+    public async Task AddItemAsync_SavesItem_WithCorrectData()
     {
         // Arrange
-        var testItem = CreateTestItem();
-        _mockService.Setup(s => s.AddItemAsync(testItem))
-            .Returns(Task.CompletedTask);
+        var newItem = CreateTestItem();
+        _mockRepo.Setup(r => r.InsertItemAsync(newItem)).Returns(Task.CompletedTask);
 
         // Act
-        await _mockService.Object.AddItemAsync(testItem);
+        await _itemService.AddItemAsync(newItem);
 
         // Assert
-        _mockService.Verify(s => s.AddItemAsync(testItem), Times.Once);
+        _mockRepo.Verify(r => r.InsertItemAsync(It.Is<Item>(i =>
+            i.Id == newItem.Id &&
+            i.Name == "Test Item")),
+            Times.Once);
     }
 
-    // UpdateItemAsync
     [Fact]
-    public async Task UpdateItemAsync_ValidItem_UpdatesSuccessfully()
+    public async Task UpdateItemAsync_UpdatesExistingItem_WhenValid()
     {
         // Arrange
-        var testItem = CreateTestItem();
-        _mockService.Setup(s => s.UpdateItemAsync(testItem))
-            .Returns(Task.CompletedTask);
+        var existingItem = CreateTestItem();
+        var updatedItem = existingItem;
+        updatedItem.Price = 150;
+
+        _mockRepo.Setup(r => r.GetItemByIdAsync(_testItemId)).ReturnsAsync(existingItem);
+        _mockRepo.Setup(r => r.UpdateItemAsync(updatedItem)).Returns(Task.CompletedTask);
 
         // Act
-        await _mockService.Object.UpdateItemAsync(testItem);
+        await _itemService.UpdateItemAsync(updatedItem);
 
         // Assert
-        _mockService.Verify(s => s.UpdateItemAsync(testItem), Times.Once);
+        _mockRepo.Verify(r => r.UpdateItemAsync(It.Is<Item>(i =>
+            i.Id == _testItemId &&
+            i.Price == 150.0)),
+            Times.Once);
     }
 
-    // DeleteItemAsync
     [Fact]
-    public async Task DeleteItemAsync_ValidId_DeletesSuccessfully()
+    public async Task DeleteItemAsync_DeletesItem_WhenExists()
     {
         // Arrange
-        _mockService.Setup(s => s.DeleteItemAsync(_testItemId))
-            .Returns(Task.CompletedTask);
+        _mockRepo.Setup(r => r.GetItemByIdAsync(_testItemId)).ReturnsAsync(CreateTestItem());
 
         // Act
-        await _mockService.Object.DeleteItemAsync(_testItemId);
+        await _itemService.DeleteItemAsync(_testItemId);
 
         // Assert
-        _mockService.Verify(s => s.DeleteItemAsync(_testItemId), Times.Once);
+        _mockRepo.Verify(r => r.DeleteItemAsync(_testItemId), Times.Once);
     }
 
     [Fact]
-    public async Task DeleteItemAsync_InvalidId_ThrowsException()
+    public async Task DeleteItemAsync_ThrowsNotFoundException_WhenNotExists()
     {
         // Arrange
-        _mockService.Setup(s => s.DeleteItemAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new ItemNotFoundException("Item not found"));
+        _mockRepo.Setup(r => r.GetItemByIdAsync(_nonExistingItemId)).ReturnsAsync((Item)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<ItemNotFoundException>(
-            () => _mockService.Object.DeleteItemAsync(Guid.NewGuid()));
+            () => _itemService.DeleteItemAsync(_nonExistingItemId));
     }
 }

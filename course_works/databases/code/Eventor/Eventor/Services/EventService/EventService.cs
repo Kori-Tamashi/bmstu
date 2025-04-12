@@ -1,8 +1,11 @@
 ﻿using Eventor.Common.Core;
+using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Eventor.Database.Core;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Eventor.Services;
 
@@ -21,11 +24,21 @@ public class EventService : IEventService
     {
         try
         {
-           return await _eventRepository.GetAllEventsAsync();
+            return await _eventRepository.GetAllEventsAsync();
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving events");
+            _logger.LogError(ex, "Database error while retrieving events");
+            throw new EventServiceException("Failed to retrieve events due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data inconsistency error while retrieving events");
+            throw new EventServiceException("Failed to retrieve events due to data inconsistency", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving events");
             throw new EventServiceException("Failed to retrieve events", ex);
         }
     }
@@ -36,9 +49,24 @@ public class EventService : IEventService
         {
             return await _eventRepository.GetAllEventsByUserAsync(userId);
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "User {UserId} not found", userId);
+            throw new EventNotFoundException($"User {userId} not found", ex);
+        }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving events for user {UserId}", userId);
+            _logger.LogError(ex, "Database error while retrieving events for user {UserId}", userId);
+            throw new EventServiceException($"Failed to retrieve events for user {userId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data inconsistency error while retrieving events for user {UserId}", userId);
+            throw new EventServiceException($"Failed to retrieve events for user {userId} due to data inconsistency", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving events for user {UserId}", userId);
             throw new EventServiceException($"Failed to retrieve events for user {userId}", ex);
         }
     }
@@ -49,14 +77,24 @@ public class EventService : IEventService
         {
             return await _eventRepository.GetEventByIdAsync(eventId);
         }
-        catch (InvalidOperationException ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, "Event {EventId} not found", eventId);
             throw new EventNotFoundException($"Event {eventId} not found", ex);
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error retrieving event {EventId}", eventId);
+            _logger.LogError(ex, "Database error while retrieving event {EventId}", eventId);
+            throw new EventServiceException($"Failed to retrieve event {eventId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data inconsistency error while retrieving event {EventId}", eventId);
+            throw new EventServiceException($"Failed to retrieve event {eventId} due to data inconsistency", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving event {EventId}", eventId);
             throw new EventServiceException($"Failed to retrieve event {eventId}", ex);
         }
     }
@@ -69,7 +107,17 @@ public class EventService : IEventService
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error creating event");
+            _logger.LogError(ex, "Database error while creating event");
+            throw new EventCreateException("Failed to create event due to database constraints violation", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data conflict while creating event");
+            throw new EventCreateException("Failed to create event due to data conflict", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while creating event");
             throw new EventCreateException("Failed to create event", ex);
         }
     }
@@ -79,16 +127,26 @@ public class EventService : IEventService
         try
         {
             var existingEvent = await _eventRepository.GetEventByIdAsync(updateEvent.Id);
-            await _eventRepository.UpdateEventAsync(existingEvent);
+            await _eventRepository.UpdateEventAsync(updateEvent);
         }
-        catch (InvalidOperationException ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, "Event {EventId} not found for update", updateEvent.Id);
             throw new EventNotFoundException($"Event {updateEvent.Id} not found", ex);
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error updating event {EventId}", updateEvent.Id);
+            _logger.LogError(ex, "Database error while updating event {EventId}", updateEvent.Id);
+            throw new EventUpdateException($"Failed to update event {updateEvent.Id} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while updating event {EventId}", updateEvent.Id);
+            throw new EventUpdateException($"Concurrency conflict while updating event {updateEvent.Id}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while updating event {EventId}", updateEvent.Id);
             throw new EventUpdateException($"Failed to update event {updateEvent.Id}", ex);
         }
     }
@@ -99,14 +157,24 @@ public class EventService : IEventService
         {
             await _eventRepository.DeleteEventAsync(eventId);
         }
-        catch (InvalidOperationException ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, "Event {EventId} not found for deletion", eventId);
             throw new EventNotFoundException($"Event {eventId} not found", ex);
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error deleting event {EventId}", eventId);
+            _logger.LogError(ex, "Database error while deleting event {EventId}", eventId);
+            throw new EventDeleteException($"Failed to delete event {eventId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict while deleting event {EventId}", eventId);
+            throw new EventDeleteException($"Concurrency conflict while deleting event {eventId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while deleting event {EventId}", eventId);
             throw new EventDeleteException($"Failed to delete event {eventId}", ex);
         }
     }

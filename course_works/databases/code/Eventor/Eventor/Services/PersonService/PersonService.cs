@@ -1,9 +1,11 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Common.Converter;
-using Eventor.Database.Repositories;
+using Eventor.Common.Enums;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Eventor.Database.Core;
 
@@ -29,6 +31,11 @@ public class PersonService : IPersonService
             _logger.LogError(ex, "Error retrieving persons");
             throw new PersonServiceException("Failed to retrieve persons", ex);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving persons");
+            throw new PersonServiceException("Unexpected error occurred", ex);
+        }
     }
 
     public async Task<List<Person>> GetAllPersonsByDayAsync(Guid dayId)
@@ -41,6 +48,11 @@ public class PersonService : IPersonService
         {
             _logger.LogError(ex, "Error retrieving persons for day {DayId}", dayId);
             throw new PersonServiceException($"Failed to retrieve persons for day {dayId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving persons for day {DayId}", dayId);
+            throw new PersonServiceException("Unexpected error occurred", ex);
         }
     }
 
@@ -55,23 +67,38 @@ public class PersonService : IPersonService
             _logger.LogError(ex, "Error retrieving persons for event {EventId}", eventId);
             throw new PersonServiceException($"Failed to retrieve persons for event {eventId}", ex);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving persons for event {EventId}", eventId);
+            throw new PersonServiceException("Unexpected error occurred", ex);
+        }
     }
 
     public async Task<Person> GetPersonByIdAsync(Guid personId)
     {
         try
         {
-            return await _personRepository.GetPersonByIdAsync(personId);
+            var person = await _personRepository.GetPersonByIdAsync(personId);
+            if (person == null)
+            {
+                _logger.LogError("Person {PersonId} not found", personId);
+                throw new PersonNotFoundException($"Person {personId} not found");
+            }
+            return person;
         }
-        catch (InvalidOperationException ex)
+        catch (PersonNotFoundException)
         {
-            _logger.LogError(ex, "Person {PersonId} not found", personId);
-            throw new PersonNotFoundException($"Person {personId} not found", ex);
+            throw;
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error retrieving person {PersonId}", personId);
             throw new PersonServiceException($"Failed to retrieve person {personId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving person {PersonId}", personId);
+            throw new PersonServiceException("Unexpected error occurred", ex);
         }
     }
 
@@ -79,12 +106,23 @@ public class PersonService : IPersonService
     {
         try
         {
+            ValidatePerson(person);
             await _personRepository.InsertPersonAsync(person);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Validation error creating person");
+            throw new PersonCreateException("Invalid person data: " + ex.Message, ex);
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error creating person");
             throw new PersonCreateException("Failed to create person", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error creating person");
+            throw new PersonCreateException("Unexpected error occurred", ex);
         }
     }
 
@@ -92,18 +130,28 @@ public class PersonService : IPersonService
     {
         try
         {
-            var existingPerson = await _personRepository.GetPersonByIdAsync(updatePerson.Id);
+            ValidatePerson(updatePerson);
+            var existingPerson = await GetExistingPerson(updatePerson.Id);
             await _personRepository.UpdatePersonAsync(existingPerson);
         }
-        catch (InvalidOperationException ex)
+        catch (ArgumentException ex)
         {
-            _logger.LogError(ex, "Person {PersonId} not found for update", updatePerson.Id);
-            throw new PersonNotFoundException($"Person {updatePerson.Id} not found", ex);
+            _logger.LogError(ex, "Validation error updating person {PersonId}", updatePerson.Id);
+            throw new PersonUpdateException("Invalid person data: " + ex.Message, ex);
+        }
+        catch (PersonNotFoundException)
+        {
+            throw;
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error updating person {PersonId}", updatePerson.Id);
             throw new PersonUpdateException($"Failed to update person {updatePerson.Id}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error updating person {PersonId}", updatePerson.Id);
+            throw new PersonUpdateException("Unexpected error occurred", ex);
         }
     }
 
@@ -111,17 +159,34 @@ public class PersonService : IPersonService
     {
         try
         {
+            var existingPerson = await GetExistingPerson(personId);
             await _personRepository.DeletePersonAsync(personId);
         }
-        catch (InvalidOperationException ex)
+        catch (PersonNotFoundException)
         {
-            _logger.LogError(ex, "Person {PersonId} not found for deletion", personId);
-            throw new PersonNotFoundException($"Person {personId} not found", ex);
+            throw;
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error deleting person {PersonId}", personId);
             throw new PersonDeleteException($"Failed to delete person {personId}", ex);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error deleting person {PersonId}", personId);
+            throw new PersonDeleteException("Unexpected error occurred", ex);
+        }
+    }
+
+    private async Task<Person> GetExistingPerson(Guid personId)
+    {
+        var person = await _personRepository.GetPersonByIdAsync(personId);
+        return person ?? throw new PersonNotFoundException($"Person {personId} not found");
+    }
+
+    private void ValidatePerson(Person person)
+    {
+        if (string.IsNullOrWhiteSpace(person.Name))
+            throw new ArgumentException("Person name is required");
     }
 }

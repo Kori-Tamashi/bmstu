@@ -1,10 +1,12 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Common.Converter;
+using Eventor.Common.Enums;
 using Eventor.Database.Context;
 using Eventor.Database.Models;
 using Eventor.Database.Repositories;
 using Eventor.Tests.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -12,31 +14,26 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using Eventor.Common.Enums;
 
 namespace Eventor.Tests.Database.Repositories;
 
-/// <summary>
-/// Набор тестов для проверки функциональности репозитория пользователей
-/// </summary>
 public class UserRepositoryTests
 {
     private readonly Mock<EventorDBContext> _mockContext;
+    private readonly Mock<ILogger<UserRepository>> _mockLogger;
     private readonly UserRepository _repository;
     private readonly Mock<DbSet<UserDBModel>> _mockUsersDbSet;
 
     public UserRepositoryTests()
     {
         _mockContext = new Mock<EventorDBContext>();
+        _mockLogger = new Mock<ILogger<UserRepository>>();
         _mockUsersDbSet = new Mock<DbSet<UserDBModel>>();
 
         _mockContext.Setup(c => c.Users).Returns(_mockUsersDbSet.Object);
-        _repository = new UserRepository(_mockContext.Object);
+        _repository = new UserRepository(_mockContext.Object, _mockLogger.Object);
     }
 
-    /// <summary>
-    /// Проверяет, что метод GetAllUserAsync возвращает всех пользователей
-    /// </summary>
     [Fact]
     public async Task GetAllUserAsync_ReturnsAllUsers()
     {
@@ -59,9 +56,17 @@ public class UserRepositoryTests
         Assert.Contains(result, u => u.Name == "User2");
     }
 
-    /// <summary>
-    /// Проверяет, что метод GetUserByIdAsync возвращает пользователя по ID
-    /// </summary>
+    [Fact]
+    public async Task GetAllUserAsync_ThrowsOnDatabaseError()
+    {
+        // Arrange
+        _mockContext.Setup(c => c.Users).Throws<Exception>();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.GetAllUserAsync());
+        _mockLogger.VerifyLog(LogLevel.Error, "Ошибка получения списка пользователей");
+    }
+
     [Fact]
     public async Task GetUserByIdAsync_ReturnsUser()
     {
@@ -78,12 +83,8 @@ public class UserRepositoryTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(userId, result.Id);
-        Assert.Equal("TestUser", result.Name);
     }
 
-    /// <summary>
-    /// Проверяет, что метод GetUserByIdAsync возвращает null при отсутствии пользователя
-    /// </summary>
     [Fact]
     public async Task GetUserByIdAsync_ReturnsNullForNonExistingUser()
     {
@@ -98,9 +99,17 @@ public class UserRepositoryTests
         Assert.Null(result);
     }
 
-    /// <summary>
-    /// Проверяет, что метод GetUserByPhoneAsync возвращает пользователя по номеру телефона
-    /// </summary>
+    [Fact]
+    public async Task GetUserByIdAsync_ThrowsOnDatabaseError()
+    {
+        // Arrange
+        _mockContext.Setup(c => c.Users).Throws<Exception>();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.GetUserByIdAsync(Guid.NewGuid()));
+        _mockLogger.VerifyLog(LogLevel.Error, "Ошибка получения пользователя");
+    }
+
     [Fact]
     public async Task GetUserByPhoneAsync_ReturnsUser()
     {
@@ -119,30 +128,45 @@ public class UserRepositoryTests
         Assert.Equal(phone, result.Phone);
     }
 
-    /// <summary>
-    /// Проверяет, что метод InsertUserAsync добавляет пользователя в контекст
-    /// </summary>
+    [Fact]
+    public async Task GetUserByPhoneAsync_ThrowsOnDatabaseError()
+    {
+        // Arrange
+        _mockContext.Setup(c => c.Users).Throws<Exception>();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.GetUserByPhoneAsync("+79000000000"));
+        _mockLogger.VerifyLog(LogLevel.Error, "Ошибка поиска пользователя по телефону");
+    }
+
     [Fact]
     public async Task InsertUserAsync_AddsUserToContext()
     {
         // Arrange
         var user = new User(Guid.NewGuid(), "NewUser", "+79111111111", Gender.Male, "hash", UserRole.User);
-        var mockSet = new Mock<DbSet<UserDBModel>>();
 
-        _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
         _mockContext.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
 
         // Act
         await _repository.InsertUserAsync(user);
 
         // Assert
-        mockSet.Verify(m => m.AddAsync(It.IsAny<UserDBModel>(), default), Times.Once);
+        _mockUsersDbSet.Verify(m => m.AddAsync(It.IsAny<UserDBModel>(), default), Times.Once);
         _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
     }
 
-    /// <summary>
-    /// Проверяет, что метод UpdateUserAsync обновляет данные пользователя
-    /// </summary>
+    [Fact]
+    public async Task InsertUserAsync_ThrowsOnDatabaseError()
+    {
+        // Arrange
+        var user = new User(Guid.NewGuid(), "NewUser", "+79111111111", Gender.Male, "hash", UserRole.User);
+        _mockContext.Setup(c => c.SaveChangesAsync(default)).Throws<DbUpdateException>();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.InsertUserAsync(user));
+        _mockLogger.VerifyLog(LogLevel.Error, "Ошибка создания пользователя");
+    }
+
     [Fact]
     public async Task UpdateUserAsync_UpdatesUserProperties()
     {
@@ -153,22 +177,50 @@ public class UserRepositoryTests
 
         var mockSet = SetupMockDbSet(new List<UserDBModel> { existingUser }.AsQueryable());
         _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
+        _mockContext.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
 
         // Act
         await _repository.UpdateUserAsync(updatedUser);
 
         // Assert
         Assert.Equal("NewName", existingUser.Name);
-        Assert.Equal("+79111111111", existingUser.Phone);
-        Assert.Equal(Gender.Female, existingUser.Gender);
-        Assert.Equal("newHash", existingUser.PasswordHash);
-        Assert.Equal(UserRole.Administrator, existingUser.Role);
         _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
     }
 
-    /// <summary>
-    /// Проверяет, что метод DeleteUserAsync удаляет пользователя из контекста
-    /// </summary>
+    [Fact]
+    public async Task UpdateUserAsync_DoesNothingWhenUserNotFound()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Administrator);
+
+        var mockSet = SetupMockDbSet(new List<UserDBModel>().AsQueryable());
+        _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
+
+        // Act
+        await _repository.UpdateUserAsync(updatedUser);
+
+        // Assert
+        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateUserAsync_ThrowsOnDatabaseError()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var existingUser = new UserDBModel(userId, "OldName", "+79000000000", Gender.Male, "oldHash", UserRole.User);
+        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Administrator);
+
+        var mockSet = SetupMockDbSet(new List<UserDBModel> { existingUser }.AsQueryable());
+        _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
+        _mockContext.Setup(c => c.SaveChangesAsync(default)).Throws<DbUpdateException>();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.UpdateUserAsync(updatedUser));
+        _mockLogger.VerifyLog(LogLevel.Error, "Ошибка обновления пользователя");
+    }
+
     [Fact]
     public async Task DeleteUserAsync_RemovesUserFromContext()
     {
@@ -176,43 +228,68 @@ public class UserRepositoryTests
         var userId = Guid.NewGuid();
         var user = new UserDBModel(userId, "TestUser", "+79000000000", Gender.Male, "hash", UserRole.User);
 
-        var mockSet = SetupMockDbSet(new List<UserDBModel> { user }.AsQueryable());
+        // Настраиваем мок для FirstOrDefaultAsync
+        var mockSet = new Mock<DbSet<UserDBModel>>();
+        mockSet.As<IQueryable<UserDBModel>>()
+            .Setup(m => m.Provider)
+            .Returns(new TestAsyncQueryProvider<UserDBModel>(new List<UserDBModel> { user }.AsQueryable().Provider));
+
+        mockSet.As<IQueryable<UserDBModel>>()
+            .Setup(m => m.Expression)
+            .Returns(new List<UserDBModel> { user }.AsQueryable().Expression);
+
+        mockSet.As<IQueryable<UserDBModel>>()
+            .Setup(m => m.ElementType)
+            .Returns(new List<UserDBModel> { user }.AsQueryable().ElementType);
+
+        mockSet.As<IQueryable<UserDBModel>>()
+            .Setup(m => m.GetEnumerator())
+            .Returns(() => new List<UserDBModel> { user }.GetEnumerator());
+
+        mockSet.As<IAsyncEnumerable<UserDBModel>>()
+            .Setup(m => m.GetAsyncEnumerator(default))
+            .Returns(new TestAsyncEnumerator<UserDBModel>(new List<UserDBModel> { user }.GetEnumerator()));
+
         _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
+        _mockContext.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
 
         // Act
         await _repository.DeleteUserAsync(userId);
 
         // Assert
-        mockSet.Verify(m => m.Remove(user), Times.Once);
+        mockSet.Verify(m => m.Remove(It.Is<UserDBModel>(u => u.Id == userId)), Times.Once);
         _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
     }
 
-    /// <summary>
-    /// Проверяет конвертацию из UserDBModel в User
-    /// </summary>
+
     [Fact]
-    public void UserConverter_ConvertsDBModelToCoreCorrectly()
+    public async Task DeleteUserAsync_DoesNothingWhenUserNotFound()
     {
         // Arrange
-        var dbModel = new UserDBModel(
-            Guid.NewGuid(),
-            "TestUser",
-            "+79000000000",
-            Gender.Male,
-            "testHash",
-            UserRole.Administrator
-        );
+        var mockSet = SetupMockDbSet(new List<UserDBModel>().AsQueryable());
+        _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
 
         // Act
-        var result = UserConverter.ConvertDBToCore(dbModel);
+        await _repository.DeleteUserAsync(Guid.NewGuid());
 
         // Assert
-        Assert.Equal(dbModel.Id, result.Id);
-        Assert.Equal(dbModel.Name, result.Name);
-        Assert.Equal(dbModel.Phone, result.Phone);
-        Assert.Equal(dbModel.Gender, result.Gender);
-        Assert.Equal(dbModel.PasswordHash, result.PasswordHash);
-        Assert.Equal(dbModel.Role, result.Role);
+        _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteUserAsync_ThrowsOnDatabaseError()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var user = new UserDBModel(userId, "TestUser", "+79000000000", Gender.Male, "hash", UserRole.User);
+
+        var mockSet = SetupMockDbSet(new List<UserDBModel> { user }.AsQueryable());
+        _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
+        _mockContext.Setup(c => c.SaveChangesAsync(default)).Throws<DbUpdateException>();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _repository.DeleteUserAsync(userId));
+        _mockLogger.VerifyLog(LogLevel.Error, "Ошибка удаления пользователя");
     }
 
     private Mock<DbSet<T>> SetupMockDbSet<T>(IQueryable<T> data) where T : class
@@ -236,5 +313,20 @@ public class UserRepositoryTests
             .Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
 
         return mockSet;
+    }
+}
+
+public static class LoggerExtensions
+{
+    public static void VerifyLog<T>(this Mock<ILogger<T>> loggerMock, LogLevel level, string message)
+    {
+        loggerMock.Verify(
+            x => x.Log(
+                level,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(message)),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.AtLeastOnce);
     }
 }

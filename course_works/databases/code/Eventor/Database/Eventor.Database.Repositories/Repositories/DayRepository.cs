@@ -2,114 +2,158 @@
 using Eventor.Database.Context;
 using Eventor.Database.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Day = Eventor.Common.Core.Day;
+
 namespace Eventor.Database.Repositories;
 
-/// <summary>
-/// Репозиторий дней мероприятий
-/// </summary>
 public class DayRepository : BaseRepository, IDayRepository
 {
     private readonly EventorDBContext _dbContext;
+    private readonly ILogger<DayRepository> _logger;
 
-    /// <summary>
-    /// Конструктор репозитория дней
-    /// </summary>
-    /// <param name="dbContext">Контекст базы данных</param>
-    public DayRepository(EventorDBContext dbContext)
+    public DayRepository(
+        EventorDBContext dbContext,
+        ILogger<DayRepository> logger)
     {
         _dbContext = dbContext;
+        _logger = logger;
     }
 
-    /// <summary>
-    /// Получить все дни мероприятий
-    /// </summary>
-    /// <returns>Список всех дней</returns>
     public async Task<List<Day>> GetAllDaysAsync()
     {
-        return await _dbContext.Days
-            .Select(d => DayConverter.ConvertDBToCore(d))
-            .AsNoTracking()
-            .ToListAsync();
+        try
+        {
+            return await _dbContext.Days
+                .Select(d => DayConverter.ConvertDBToCore(d))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения списка дней");
+            throw new InvalidOperationException("Не удалось получить список дней", ex);
+        }
     }
 
-    /// <summary>
-    /// Получить дни конкретного мероприятия
-    /// </summary>
-    /// <param name="eventId">Идентификатор мероприятия</param>
-    /// <returns>Список дней мероприятия</returns>
     public async Task<List<Day>> GetAllDaysByEventAsync(Guid eventId)
     {
-        return await _dbContext.EventsDays
-            .Where(ed => ed.EventId == eventId)
-            .Include(ed => ed.Day)
-            .Select(ed => DayConverter.ConvertDBToCore(ed.Day))
-            .AsNoTracking()
-            .ToListAsync();
+        try
+        {
+            return await _dbContext.EventsDays
+                .Where(ed => ed.EventId == eventId)
+                .Include(ed => ed.Day)
+                .Select(ed => DayConverter.ConvertDBToCore(ed.Day))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения дней мероприятия {EventId}", eventId);
+            throw new InvalidOperationException($"Не удалось получить дни мероприятия {eventId}", ex);
+        }
     }
 
-    /// <summary>
-    /// Получить дни конкретного участника мероприятия
-    /// </summary>
     public async Task<List<Day>> GetAllDaysByPersonAsync(Guid personId)
     {
-        return await _dbContext.PersonsDays
-            .Where(pd => pd.PersonId == personId)
-            .Include(pd => pd.Day)
-            .Select(pd => DayConverter.ConvertDBToCore(pd.Day))
-            .AsNoTracking()
-            .ToListAsync();
+        try
+        {
+            return await _dbContext.PersonsDays
+                .Where(pd => pd.PersonId == personId)
+                .Include(pd => pd.Day)
+                .Select(pd => DayConverter.ConvertDBToCore(pd.Day))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения дней участника {PersonId}", personId);
+            throw new InvalidOperationException($"Не удалось получить дни участника {personId}", ex);
+        }
     }
 
-    /// <summary>
-    /// Получить день по идентификатору
-    /// </summary>
-    /// <param name="dayId">Идентификатор дня</param>
-    /// <returns>Объект дня</returns>
     public async Task<Day> GetDayByIdAsync(Guid dayId)
     {
-        var day = await _dbContext.Days
-            .FirstOrDefaultAsync(d => d.Id == dayId);
+        try
+        {
+            var day = await _dbContext.Days
+                .FirstOrDefaultAsync(d => d.Id == dayId);
 
-        return DayConverter.ConvertDBToCore(day);
+            if (day == null)
+            {
+                throw new ArgumentException($"День {dayId} не найден");
+            }
+
+            return DayConverter.ConvertDBToCore(day);
+        }
+        catch (DbUpdateException ex) // Перехватываем только исключения БД
+        {
+            _logger.LogError(ex, "Ошибка получения дня {DayId}", dayId);
+            throw new InvalidOperationException($"Не удалось получить день {dayId}", ex);
+        }
     }
 
-    /// <summary>
-    /// Создать новый день
-    /// </summary>
-    /// <param name="day">Объект дня для создания</param>
     public async Task InsertDayAsync(Day day)
     {
-        var dayDb = DayConverter.ConvertCoreToDB(day);
-        await _dbContext.Days.AddAsync(dayDb);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            var dayDb = DayConverter.ConvertCoreToDB(day);
+            await _dbContext.Days.AddAsync(dayDb);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка создания дня");
+            throw new InvalidOperationException("Не удалось создать день", ex);
+        }
     }
 
-    /// <summary>
-    /// Обновить существующий день
-    /// </summary>
-    /// <param name="updateDay">Обновленный объект дня</param>
     public async Task UpdateDayAsync(Day updateDay)
     {
-        var dayDb = DayConverter.ConvertCoreToDB(updateDay);
-        _dbContext.Days.Update(dayDb);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            // Get the existing entity from the database
+            var existingDay = await _dbContext.Days
+                .FirstOrDefaultAsync(d => d.Id == updateDay.Id);
+
+            if (existingDay == null)
+            {
+                throw new ArgumentException($"День {updateDay.Id} не найден");
+            }
+
+            // Update fields
+            existingDay.MenuId = updateDay.MenuId;
+            existingDay.Name = updateDay.Name;
+            existingDay.SequenceNumber = updateDay.SequenceNumber;
+            existingDay.Description = updateDay.Description;
+            existingDay.Price = updateDay.Price;
+
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка обновления дня {DayId}", updateDay.Id);
+            throw new InvalidOperationException($"Не удалось обновить день {updateDay.Id}", ex);
+        }
     }
 
-    /// <summary>
-    /// Удалить день
-    /// </summary>
-    /// <param name="dayId">Идентификатор дня для удаления</param>
     public async Task DeleteDayAsync(Guid dayId)
     {
-        var day = await _dbContext.Days.FindAsync(dayId);
-
-        if (day == null)
+        try
         {
-            throw new ArgumentException($"День с ID {dayId} не найден.");
-        }
+            var day = await _dbContext.Days.FindAsync(dayId);
+            if (day == null)
+            {
+                throw new ArgumentException($"День {dayId} не найден");
+            }
 
-        _dbContext.Days.Remove(day);
-        await _dbContext.SaveChangesAsync();
+            _dbContext.Days.Remove(day);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка удаления дня {DayId}", dayId);
+            throw new InvalidOperationException($"Не удалось удалить день {dayId}", ex);
+        }
     }
 }

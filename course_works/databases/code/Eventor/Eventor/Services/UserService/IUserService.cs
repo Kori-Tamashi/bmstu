@@ -1,4 +1,5 @@
 ﻿using Eventor.Common.Core;
+using Eventor.Common.Enums;
 namespace Eventor.Database.Core;
 
 /// <summary>
@@ -35,6 +36,24 @@ public interface IUserService
     /// </summary>
     /// <returns></returns>
     Task UpdateUserAsync(User updateUser);
+
+    /// <summary>
+    /// Обновить имя пользователя 
+    /// </summary>
+    /// <returns></returns>
+    Task UpdateUserNameAsync(string userPhone, string newName);
+
+    /// <summary>
+    /// Обновить гендер пользователя 
+    /// </summary>
+    /// <returns></returns>
+    Task UpdateUserGenderAsync(string userPhone, Gender gender);
+
+    /// <summary>
+    /// Обновить права доступа пользователя
+    /// </summary>
+    /// <returns></returns>
+    Task UpdateUserRoleAsync(string userPhone, UserRole role);
 
     /// <summary>
     /// Удалить пользователя

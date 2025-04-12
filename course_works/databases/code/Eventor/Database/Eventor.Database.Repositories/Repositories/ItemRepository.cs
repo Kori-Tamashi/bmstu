@@ -3,6 +3,12 @@ using Eventor.Common.Core;
 using Microsoft.EntityFrameworkCore;
 using Eventor.Database.Context;
 using Eventor.Common.Converter;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Eventor.Database.Repositories;
 
 /// <summary>
@@ -11,101 +17,153 @@ namespace Eventor.Database.Repositories;
 public class ItemRepository : BaseRepository, IItemRepository
 {
     private readonly EventorDBContext _dbContext;
+    private readonly ILogger<ItemRepository> _logger;
 
     /// <summary>
     /// Инициализирует новый экземпляр репозитория предметов
     /// </summary>
     /// <param name="dbContext">Контекст базы данных</param>
+    /// <param name="logger">Логгер</param>
     /// <exception cref="ArgumentNullException">Если dbContext равен null</exception>
-    public ItemRepository(EventorDBContext dbContext)
+    public ItemRepository(
+        EventorDBContext dbContext,
+        ILogger<ItemRepository> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
     /// Получить все предметы
     /// </summary>
-    /// <returns>Список всех предметов</returns>
     public async Task<List<Item>> GetAllItemsAsync()
     {
-        return await _dbContext.Items
-            .Select(i => ItemConverter.ConvertDBToCore(i))
-            .AsNoTracking()
-            .ToListAsync();
+        try
+        {
+            return await _dbContext.Items
+                .Select(i => ItemConverter.ConvertDBToCore(i))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения списка предметов");
+            throw new InvalidOperationException("Не удалось получить список предметов", ex);
+        }
     }
 
     /// <summary>
     /// Получить все предметы конкретного меню
     /// </summary>
-    /// <param name="menuId">Идентификатор меню</param>
-    /// <returns>Список предметов в указанном меню</returns>
     public async Task<List<Item>> GetAllItemsByMenuAsync(Guid menuId)
     {
-        return await _dbContext.MenuItems
-            .Where(mi => mi.MenuId == menuId)
-            .Include(mi => mi.Item)
-            .Select(mi => ItemConverter.ConvertDBToCore(mi.Item))
-            .AsNoTracking()
-            .ToListAsync();
+        try
+        {
+            return await _dbContext.MenuItems
+                .Where(mi => mi.MenuId == menuId)
+                .Include(mi => mi.Item)
+                .Select(mi => ItemConverter.ConvertDBToCore(mi.Item))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения предметов меню {MenuId}", menuId);
+            throw new InvalidOperationException($"Не удалось получить предметы меню {menuId}", ex);
+        }
     }
 
     /// <summary>
     /// Получить предмет по идентификатору
     /// </summary>
-    /// <param name="itemId">Идентификатор предмета</param>
-    /// <returns>Найденный предмет или null</returns>
     public async Task<Item> GetItemByIdAsync(Guid itemId)
     {
-        var itemEntity = await _dbContext.Items
-            .FirstOrDefaultAsync(i => i.Id == itemId);
+        try
+        {
+            var itemEntity = await _dbContext.Items
+                .FirstOrDefaultAsync(i => i.Id == itemId);
 
-        return itemEntity != null
-            ? ItemConverter.ConvertDBToCore(itemEntity)
-            : null;
+            return itemEntity != null
+                ? ItemConverter.ConvertDBToCore(itemEntity)
+                : null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения предмета {ItemId}", itemId);
+            throw new InvalidOperationException($"Не удалось получить предмет {itemId}", ex);
+        }
     }
 
     /// <summary>
     /// Добавить новый предмет
     /// </summary>
-    /// <param name="item">Модель предмета для добавления</param>
     public async Task InsertItemAsync(Item item)
     {
-        var itemEntity = ItemConverter.ConvertCoreToDB(item);
-        await _dbContext.Items.AddAsync(itemEntity);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            var itemEntity = ItemConverter.ConvertCoreToDB(item);
+            await _dbContext.Items.AddAsync(itemEntity);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка создания предмета");
+            throw new InvalidOperationException("Не удалось создать предмет", ex);
+        }
     }
 
     /// <summary>
     /// Обновить существующий предмет
     /// </summary>
-    /// <param name="item">Модель с обновленными данными предмета</param>
     public async Task UpdateItemAsync(Item item)
     {
-        var existingItem = await _dbContext.Items
-            .FirstOrDefaultAsync(i => i.Id == item.Id);
+        try
+        {
+            var existingItem = await _dbContext.Items
+                .FirstOrDefaultAsync(i => i.Id == item.Id);
 
-        if (existingItem == null) return;
+            if (existingItem == null)
+            {
+                _logger.LogWarning("Предмет {ItemId} не найден", item.Id);
+                return;
+            }
 
-        existingItem.Name = item.Name;
-        existingItem.Type = item.Type;
-        existingItem.Price = item.Price;
+            existingItem.Name = item.Name;
+            existingItem.Type = item.Type;
+            existingItem.Price = item.Price;
 
-        _dbContext.Items.Update(existingItem);
-        await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка обновления предмета {ItemId}", item.Id);
+            throw new InvalidOperationException($"Не удалось обновить предмет {item.Id}", ex);
+        }
     }
 
     /// <summary>
     /// Удалить предмет по идентификатору
     /// </summary>
-    /// <param name="itemId">Идентификатор удаляемого предмета</param>
     public async Task DeleteItemAsync(Guid itemId)
     {
-        var itemToDelete = await _dbContext.Items
-            .FirstOrDefaultAsync(i => i.Id == itemId);
+        try
+        {
+            var itemToDelete = await _dbContext.Items
+                .FirstOrDefaultAsync(i => i.Id == itemId);
 
-        if (itemToDelete == null) return;
+            if (itemToDelete == null)
+            {
+                _logger.LogWarning("Предмет {ItemId} не найден", itemId);
+                return;
+            }
 
-        _dbContext.Items.Remove(itemToDelete);
-        await _dbContext.SaveChangesAsync();
+            _dbContext.Items.Remove(itemToDelete);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка удаления предмета {ItemId}", itemId);
+            throw new InvalidOperationException($"Не удалось удалить предмет {itemId}", ex);
+        }
     }
 }
