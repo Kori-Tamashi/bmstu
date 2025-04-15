@@ -28,7 +28,7 @@ public class ItemDBModel
     /// Тип
     /// </summary>
     /// <example>VIP</example>
-    [Column("type", TypeName = "item_type")]
+    [Column("type", TypeName = "item_type_enum")]
     public ItemType Type { get; set; }
 
     /// <summary>

@@ -35,7 +35,7 @@ public class UserDBModel
     /// Гендер
     /// </summary>
     /// <example>Мужчина</example>
-    [Column("gender", TypeName = "gender")]
+    [Column("gender", TypeName = "gender_enum")]
     public Gender Gender { get; set; }
 
     /// <summary>
@@ -48,7 +48,7 @@ public class UserDBModel
     /// Роль
     /// </summary>
     /// <example>Пользователь</example>
-    [Column("role", TypeName = "role")]
+    [Column("role", TypeName = "user_role_enum")]
     public UserRole Role { get; set; }
 
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using DotNetEnv;
+using Eventor.Common.Enums;
 using Eventor.Database.Models;
 using Microsoft.EntityFrameworkCore;
 namespace Eventor.Database.Context;
@@ -74,6 +75,11 @@ public class EventorDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresEnum<Gender>("gender_enum");
+        modelBuilder.HasPostgresEnum<UserRole>("user_role_enum");
+        modelBuilder.HasPostgresEnum<ItemType>("item_type_enum");
+        modelBuilder.HasPostgresEnum<PersonType>("person_type_enum");
+
         modelBuilder.Entity<EventDayDBModel>()
             .HasKey(ed => new { ed.EventId, ed.DayId });
 
@@ -91,7 +97,7 @@ public class EventorDBContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "virtual DbSettings.env"));
+            Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "dbsettings.env"));
 
             var connectionString =
                 $"Host={Env.GetString("DB_HOST")};" +
@@ -100,7 +106,13 @@ public class EventorDBContext : DbContext
                 $"Username={Env.GetString("DB_USER")};" +
                 $"Password={Env.GetString("DB_PASSWORD")}";
 
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MapEnum<Gender>("gender_enum");
+                npgsqlOptions.MapEnum<UserRole>("user_role_enum");
+                npgsqlOptions.MapEnum<ItemType>("item_type_enum");
+                npgsqlOptions.MapEnum<PersonType>("person_type_enum"); 
+            });
         }
     }
 }

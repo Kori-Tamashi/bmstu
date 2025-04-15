@@ -1,27 +1,20 @@
-﻿using System.Runtime.Serialization;
+﻿using NpgsqlTypes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Eventor.Common.Enums;
 
-/// <summary>
-/// Права доступа
-/// </summary>
 public enum UserRole
 {
-    /// <summary>
-    /// Гость
-    /// </summary>
-    [EnumMember(Value = "Гость")]
-    Guest = 0,
+    [PgName("Администратор")]
+    Admin,
 
-    /// <summary>
-    /// Пользователь с простым правами доступа
-    /// </summary>
-    [EnumMember(Value = "Пользователь")]
-    User = 1,
+    [PgName("Зарегистрированный пользователь")]
+    User,
 
-    /// <summary>
-    /// Администратор
-    /// </summary>
-    [EnumMember(Value = "Администратор")]
-    Administrator = 2,
+    [PgName("Гость")]
+    Guest
 }

@@ -31,13 +31,13 @@ public class UserService : IUserService
         }
         catch (DbUpdateException ex)
         {
-            LogAndThrow(ex, "Database error retrieving users", "Failed to retrieve users");
-            throw;
+            _logger.LogError(ex, "Database error retrieving users");
+            throw new UserServiceException("Failed to retrieve users", ex);
         }
         catch (Exception ex)
         {
-            LogAndThrow(ex, "Unexpected error retrieving users", "Unexpected error occurred");
-            throw;
+            _logger.LogError(ex, ex.Message);
+            throw new UserServiceException(ex.Message, ex);
         }
     }
 
@@ -52,13 +52,13 @@ public class UserService : IUserService
         }
         catch (DbUpdateException ex)
         {
-            LogAndThrow(ex, $"Database error retrieving user {userId}", $"Failed to retrieve user {userId}");
-            throw;
+            _logger.LogError(ex, "Database error retrieving user {UserId}", userId);
+            throw new UserServiceException($"Failed to retrieve user {userId}", ex);
         }
         catch (Exception ex)
         {
-            LogAndThrow(ex, $"Unexpected error retrieving user {userId}", "Unexpected error occurred");
-            throw;
+            _logger.LogError(ex, "Unexpected error retrieving user {UserId}", userId);
+            throw new UserServiceException("Unexpected error occurred", ex);
         }
     }
 
@@ -73,7 +73,7 @@ public class UserService : IUserService
         }
         catch (UserNotFoundException)
         {
-            throw; 
+            throw;
         }
         catch (DbUpdateException ex)
         {
@@ -97,14 +97,12 @@ public class UserService : IUserService
         }
         catch (DbUpdateException ex)
         {
-            LogAndThrow(ex, $"Database error creating user {user.Phone}",
-                $"Failed to create user {user.Phone}");
+            _logger.LogError(ex, "Database error creating user {Phone}", user.Phone);
             throw new UserCreateException("User creation failed", ex);
         }
         catch (Exception ex)
         {
-            LogAndThrow(ex, $"Unexpected error creating user {user.Phone}",
-                "Unexpected error occurred");
+            _logger.LogError(ex, "Unexpected error creating user {Phone}", user.Phone);
             throw new UserCreateException("User creation failed", ex);
         }
     }
@@ -148,14 +146,12 @@ public class UserService : IUserService
         }
         catch (DbUpdateException ex)
         {
-            LogAndThrow(ex, $"Database error updating name for {userPhone}",
-                $"Failed to update name for {userPhone}");
+            _logger.LogError(ex, "Database error updating name for {Phone}", userPhone);
             throw new UserUpdateException("Name update failed", ex);
         }
         catch (Exception ex)
         {
-            LogAndThrow(ex, $"Unexpected error updating name for {userPhone}",
-                "Unexpected error occurred");
+            _logger.LogError(ex, "Unexpected error updating name for {Phone}", userPhone);
             throw new UserUpdateException("Name update failed", ex);
         }
     }
@@ -172,14 +168,12 @@ public class UserService : IUserService
         }
         catch (DbUpdateException ex)
         {
-            LogAndThrow(ex, $"Database error updating gender for {userPhone}",
-                $"Failed to update gender for {userPhone}");
+            _logger.LogError(ex, "Database error updating gender for {Phone}", userPhone);
             throw new UserUpdateException("Gender update failed", ex);
         }
         catch (Exception ex)
         {
-            LogAndThrow(ex, $"Unexpected error updating gender for {userPhone}",
-                "Unexpected error occurred");
+            _logger.LogError(ex, "Unexpected error updating gender for {Phone}", userPhone);
             throw new UserUpdateException("Gender update failed", ex);
         }
     }
@@ -188,7 +182,6 @@ public class UserService : IUserService
     {
         ValidatePhone(userPhone);
 
-        // Новая проверка валидности роли
         if (!Enum.IsDefined(typeof(UserRole), role))
         {
             throw new ValidationException($"Invalid role value: {(int)role}");
@@ -202,8 +195,13 @@ public class UserService : IUserService
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error updating role for user {Phone}", userPhone);
-            throw new UserUpdateException($"Failed to update role for user {userPhone}", ex);
+            _logger.LogError(ex, "Database error updating role for {Phone}", userPhone);
+            throw new UserUpdateException("Role update failed", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error updating role for {Phone}", userPhone);
+            throw new UserUpdateException("Role update failed", ex);
         }
     }
 
@@ -218,14 +216,12 @@ public class UserService : IUserService
         }
         catch (DbUpdateException ex)
         {
-            LogAndThrow(ex, $"Database error deleting user {userId}",
-                $"Failed to delete user {userId}");
+            _logger.LogError(ex, "Database error deleting user {UserId}", userId);
             throw new UserDeleteException("User deletion failed", ex);
         }
         catch (Exception ex)
         {
-            LogAndThrow(ex, $"Unexpected error deleting user {userId}",
-                "Unexpected error occurred");
+            _logger.LogError(ex, "Unexpected error deleting user {UserId}", userId);
             throw new UserDeleteException("User deletion failed", ex);
         }
     }
@@ -260,24 +256,17 @@ public class UserService : IUserService
 
     private void ValidatePhone(string phone)
     {
-        if (string.IsNullOrWhiteSpace(phone) || phone.Length < 10) // Пример для международного формата
+        if (string.IsNullOrWhiteSpace(phone) || phone.Length < 10)
             throw new ValidationException("Invalid phone number");
 
-        // Дополнительная проверка формата, если необходимо
         if (!phone.StartsWith("+"))
             throw new ValidationException("Phone number must start with '+'");
     }
 
     private void ValidateName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name) || name.Length < 2)
-            throw new ValidationException("Invalid user name");
-    }
-
-    private void LogAndThrow(Exception ex, string logMessage, string exceptionMessage)
-    {
-        _logger.LogError(ex, logMessage);
-        throw new UserServiceException(exceptionMessage, ex);
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ValidationException("User name is required");
     }
     #endregion
 }

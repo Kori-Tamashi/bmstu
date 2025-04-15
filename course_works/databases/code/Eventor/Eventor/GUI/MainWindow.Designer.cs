@@ -241,6 +241,7 @@
             userPhone_maskedTextBox.ReadOnly = true;
             userPhone_maskedTextBox.Size = new Size(152, 27);
             userPhone_maskedTextBox.TabIndex = 12;
+            userPhone_maskedTextBox.Text = "9194068111";
             // 
             // tabPage2
             // 

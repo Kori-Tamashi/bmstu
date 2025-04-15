@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using NpgsqlTypes;
+using System.Runtime.Serialization;
 
 namespace Eventor.Common.Enums;
 
@@ -10,18 +11,18 @@ public enum PersonType
     /// <summary>
     /// Участник без привилегий
     /// </summary>
-    [EnumMember(Value = "Обычный участник")]
+    [PgName("Обычный участник")]
     Standart = 0,
 
     /// <summary>
     /// Участник с привилегиями
     /// </summary>
-    [EnumMember(Value = "VIP")]
+    [PgName("VIP")]
     VIP = 1,
 
     /// <summary>
     /// Организатор
     /// </summary>
-    [EnumMember(Value = "Организатор")]
+    [PgName("Организатор")]
     Organizer = 2,
 }

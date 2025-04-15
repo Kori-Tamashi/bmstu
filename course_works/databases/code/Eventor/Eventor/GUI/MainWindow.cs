@@ -1,6 +1,8 @@
+using Eventor.Common.Core;
 using Eventor.Database.Core;
 using Eventor.Services;
 using Eventor.Services.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Eventor
 {
@@ -56,6 +58,8 @@ namespace Eventor
             var phone = userPhone_maskedTextBox.Text.Trim();
             var newName = userName_textBox.Text.Trim();
 
+            List<User> users = await _userService.GetAllUserAsync();
+
             if (string.IsNullOrEmpty(phone))
             {
                 MessageBox.Show("Номер телефона отсутствует.");
@@ -71,6 +75,10 @@ namespace Eventor
             try
             {
                 await _userService.UpdateUserNameAsync(phone, newName);
+            }
+            catch (ValidationException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
             catch (UserNotFoundException ex)
             {

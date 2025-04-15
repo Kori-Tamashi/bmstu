@@ -47,7 +47,7 @@ public class FeedbackDBModel
     /// Комментарий
     /// </summary>
     /// <example>Все прошло хорошо</example>
-    [Column("comment", TypeName = "varchar(255)")]
+    [Column("comment", TypeName = "text")]
     public string Comment { get; set; }
 
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using DotNetEnv;
+using Eventor.Common.Enums;
 using Eventor.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -17,7 +18,13 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<EventorDBC
             $"Password={Env.GetString("DB_PASSWORD")}";
 
         var optionsBuilder = new DbContextOptionsBuilder<EventorDBContext>();
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
+        {
+            npgsqlOptions.MapEnum<Gender>("gender_enum");
+            npgsqlOptions.MapEnum<UserRole>("user_role_enum");
+            npgsqlOptions.MapEnum<ItemType>("item_type_enum");
+            npgsqlOptions.MapEnum<PersonType>("person_type_enum");
+        });
 
         return new EventorDBContext(optionsBuilder.Options);
     }

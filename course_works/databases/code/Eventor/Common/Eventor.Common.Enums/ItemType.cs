@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using NpgsqlTypes;
+using System.Runtime.Serialization;
 
 namespace Eventor.Common.Enums;
 
@@ -10,12 +11,12 @@ public enum ItemType
     /// <summary>
     /// Однодневный
     /// </summary>
-    [EnumMember(Value = "Однодневный")]
+    [PgName("Однодневный")]
     OneDay = 0,
 
     /// <summary>
     /// Многодневный
     /// </summary>
-    [EnumMember(Value = "Многодневный")]
+    [PgName("Многодневный")]
     MultiDay = 1,
 }

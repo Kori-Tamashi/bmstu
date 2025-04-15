@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using NpgsqlTypes;
+using System.Runtime.Serialization;
 
 namespace Eventor.Common.Enums;
 
@@ -10,12 +11,12 @@ public enum Gender
     /// <summary>
     /// Мужчина
     /// </summary>
-    [EnumMember(Value = "Мужчина")]
-    Male = 0,
+    [PgName("Мужчина")]
+    Male,
 
     /// <summary>
     /// Женщина
     /// </summary>
-    [EnumMember(Value = "Женщина")]
-    Female = 1
+    [PgName("Женщина")]
+    Female
 }

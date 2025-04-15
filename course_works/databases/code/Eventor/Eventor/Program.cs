@@ -1,4 +1,5 @@
 using DotNetEnv;
+using Eventor.Common.Enums;
 using Eventor.Database.Context;
 using Eventor.Database.Core;
 using Eventor.Database.Repositories;
@@ -22,11 +23,39 @@ namespace Eventor
             ConfigureServices(services);
 
             using var provider = services.BuildServiceProvider();
+
+            if (!CheckDatabaseConnection(provider))
+            {
+                MessageBox.Show("Ошибка подключения к базе данных. Проверьте настройки подключения.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             Application.Run(provider.GetRequiredService<MainWindow>());
+        }
+
+        static bool CheckDatabaseConnection(ServiceProvider provider)
+        {
+            try
+            {
+                using var scope = provider.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<EventorDBContext>();
+
+                // Пытаемся подключиться к базе
+                var canConnect = context.Database.CanConnect();
+
+                return canConnect;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         static void ConfigureServices(IServiceCollection services)
         {
+            string dir = Directory.GetCurrentDirectory();
+
             // Загрузка переменных окружения
             Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "dbsettings.env"));
 
@@ -40,7 +69,13 @@ namespace Eventor
 
             // Регистрация контекста
             services.AddDbContext<EventorDBContext>(options =>
-                options.UseNpgsql(connectionString));
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.MapEnum<Gender>("gender_enum");
+                    npgsqlOptions.MapEnum<UserRole>("user_role_enum");
+                    npgsqlOptions.MapEnum<ItemType>("item_type_enum");
+                    npgsqlOptions.MapEnum<PersonType>("person_type_enum");
+                }));
 
             // Регистрация сервисов логирования
             services.AddLogging(loggingBuilder =>

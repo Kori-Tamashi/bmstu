@@ -28,14 +28,14 @@ public class PersonDBModel
     /// Тип
     /// </summary>
     /// <example>VIP</example>
-    [Column("type", TypeName = "person_type")]
+    [Column("type", TypeName = "person_type_enum")]
     public PersonType Type { get; set; }
 
     /// <summary>
     /// Факт оплаты
     /// </summary>
     /// <example>Заезд</example>
-    [Column("paid", TypeName = "bool")]
+    [Column("paid", TypeName = "boolean")]
     public bool Paid { get; set; }
 
     /// <summary>
