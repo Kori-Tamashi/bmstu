@@ -11,13 +11,13 @@ public enum PersonType
     /// <summary>
     /// Участник без привилегий
     /// </summary>
-    [PgName("Обычный участник")]
+    [PgName("Простой участник")]
     Standart = 0,
 
     /// <summary>
     /// Участник с привилегиями
     /// </summary>
-    [PgName("VIP")]
+    [PgName("VIP-персона")]
     VIP = 1,
 
     /// <summary>

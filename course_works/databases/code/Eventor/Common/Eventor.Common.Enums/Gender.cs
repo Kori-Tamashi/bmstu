@@ -1,4 +1,5 @@
 ﻿using NpgsqlTypes;
+using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace Eventor.Common.Enums;

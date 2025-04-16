@@ -23,7 +23,7 @@ namespace Eventor.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "gender_enum", new[] { "Женщина", "Мужчина" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "item_type_enum", new[] { "Многодневный", "Однодневный" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "person_type_enum", new[] { "VIP", "Обычный участник", "Организатор" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "person_type_enum", new[] { "VIP-персона", "Простой участник", "Организатор" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_role_enum", new[] { "Администратор", "Гость", "Зарегистрированный пользователь" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 

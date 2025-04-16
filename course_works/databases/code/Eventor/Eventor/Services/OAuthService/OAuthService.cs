@@ -23,7 +23,6 @@ public class OAuthService : IOauthService
 
     public async Task Registrate(User user, string password)
     {
-        // 1. Валидация входных данных
         if (string.IsNullOrWhiteSpace(password))
             throw new ArgumentException("Password cannot be empty", nameof(password));
 
@@ -32,7 +31,6 @@ public class OAuthService : IOauthService
 
         try
         {
-            // 2. Проверка существования пользователя
             try
             {
                 var existingUser = await _userService.GetUserByPhoneAsync(user.Phone);
@@ -43,7 +41,6 @@ public class OAuthService : IOauthService
                 // Продолжаем регистрацию
             }
 
-            // 3. Хеширование пароля и сохранение
             user.CreateHash(password);
             await _userService.AddUserAsync(user);
 

@@ -5,7 +5,8 @@ ALTER TABLE users
     ALTER COLUMN phone SET NOT NULL,
     ALTER COLUMN gender SET NOT NULL,
     ALTER COLUMN password SET NOT NULL,
-    ALTER COLUMN role SET NOT NULL;
+    ALTER COLUMN role SET NOT NULL,
+    ADD CONSTRAINT unique_phone UNIQUE (phone);
 
 -- Ограничения для таблицы локаций (Locations)
 ALTER TABLE locations

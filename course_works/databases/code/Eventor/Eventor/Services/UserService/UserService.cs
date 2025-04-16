@@ -128,8 +128,8 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error updating user {UserId}", updateUser.Id);
-            throw new UserUpdateException("Unexpected error occurred", ex);
+            _logger.LogError(ex, ex.Message, updateUser.Id);
+            throw new UserUpdateException(ex.Message, ex);
         }
     }
 
@@ -151,8 +151,8 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error updating name for {Phone}", userPhone);
-            throw new UserUpdateException("Name update failed", ex);
+            _logger.LogError(ex, ex.Message, userPhone);
+            throw new UserUpdateException(ex.Message, ex);
         }
     }
 
@@ -173,8 +173,8 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error updating gender for {Phone}", userPhone);
-            throw new UserUpdateException("Gender update failed", ex);
+            _logger.LogError(ex, ex.Message, userPhone);
+            throw new UserUpdateException(ex.Message, ex);
         }
     }
 
@@ -200,8 +200,8 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error updating role for {Phone}", userPhone);
-            throw new UserUpdateException("Role update failed", ex);
+            _logger.LogError(ex, ex.Message, userPhone);
+            throw new UserUpdateException(ex.Message, ex);
         }
     }
 
