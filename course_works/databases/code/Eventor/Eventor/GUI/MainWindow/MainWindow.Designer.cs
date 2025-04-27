@@ -33,8 +33,9 @@
             tabPage1 = new TabPage();
             userEvents_groupBox = new GroupBox();
             userEvents_dataGridView = new DataGridView();
-            name = new DataGridViewTextBoxColumn();
-            date = new DataGridViewTextBoxColumn();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column2 = new DataGridViewTextBoxColumn();
+            Column3 = new DataGridViewTextBoxColumn();
             groupBox1 = new GroupBox();
             userInfoSave_button = new Button();
             userInfo_tableLayoutPanel = new TableLayoutPanel();
@@ -49,6 +50,7 @@
             tabPage2 = new TabPage();
             groupBox3 = new GroupBox();
             events_dataGridView = new DataGridView();
+            Column4 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
@@ -103,32 +105,38 @@
             // 
             // userEvents_dataGridView
             // 
+            userEvents_dataGridView.AllowUserToAddRows = false;
             userEvents_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             userEvents_dataGridView.BackgroundColor = Color.White;
-            userEvents_dataGridView.ColumnHeadersHeight = 29;
-            userEvents_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            userEvents_dataGridView.Columns.AddRange(new DataGridViewColumn[] { name, date });
+            userEvents_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            userEvents_dataGridView.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3 });
             userEvents_dataGridView.Location = new Point(6, 26);
-            userEvents_dataGridView.MultiSelect = false;
             userEvents_dataGridView.Name = "userEvents_dataGridView";
             userEvents_dataGridView.RowHeadersWidth = 51;
             userEvents_dataGridView.Size = new Size(987, 456);
-            userEvents_dataGridView.TabIndex = 5;
+            userEvents_dataGridView.TabIndex = 0;
             // 
-            // name
+            // Column1
             // 
-            name.DataPropertyName = "Name";
-            name.HeaderText = "Название";
-            name.MinimumWidth = 125;
-            name.Name = "name";
-            name.ReadOnly = true;
+            Column1.DataPropertyName = "Name";
+            Column1.HeaderText = "Название";
+            Column1.MinimumWidth = 6;
+            Column1.Name = "Column1";
             // 
-            // date
+            // Column2
             // 
-            date.DataPropertyName = "Date";
-            date.HeaderText = "Дата";
-            date.MinimumWidth = 140;
-            date.Name = "date";
+            Column2.DataPropertyName = "Date";
+            Column2.HeaderText = "Дата";
+            Column2.MinimumWidth = 6;
+            Column2.Name = "Column2";
+            // 
+            // Column3
+            // 
+            Column3.DataPropertyName = "Id";
+            Column3.HeaderText = "Id";
+            Column3.MinimumWidth = 6;
+            Column3.Name = "Column3";
+            Column3.Visible = false;
             // 
             // groupBox1
             // 
@@ -284,11 +292,12 @@
             // 
             // events_dataGridView
             // 
+            events_dataGridView.AllowUserToAddRows = false;
             events_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             events_dataGridView.BackgroundColor = Color.White;
             events_dataGridView.ColumnHeadersHeight = 29;
             events_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            events_dataGridView.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6 });
+            events_dataGridView.Columns.AddRange(new DataGridViewColumn[] { Column4, dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6 });
             events_dataGridView.Location = new Point(6, 26);
             events_dataGridView.Name = "events_dataGridView";
             events_dataGridView.ReadOnly = true;
@@ -296,6 +305,14 @@
             events_dataGridView.Size = new Size(986, 674);
             events_dataGridView.TabIndex = 6;
             events_dataGridView.CellClick += events_dataGridView_CellClick;
+            // 
+            // Column4
+            // 
+            Column4.HeaderText = "Id";
+            Column4.MinimumWidth = 6;
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            Column4.Visible = false;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -350,7 +367,7 @@
             tabPage3.Location = new Point(4, 29);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(1017, 718);
+            tabPage3.Size = new Size(1011, 718);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Организация";
             tabPage3.UseVisualStyleBackColor = true;
@@ -400,14 +417,16 @@
         private TextBox userRole_textBox;
         private MaskedTextBox userPhone_maskedTextBox;
         private GroupBox userEvents_groupBox;
-        private DataGridView userEvents_dataGridView;
         private GroupBox groupBox3;
         private DataGridView events_dataGridView;
         private Button userInfoSave_button;
         private ComboBox userGender_comboBox;
-        private DataGridViewTextBoxColumn name;
-        private DataGridViewTextBoxColumn date;
         private System.Windows.Forms.Timer _timer;
+        private DataGridView userEvents_dataGridView;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn Column2;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;

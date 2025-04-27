@@ -4,6 +4,7 @@ using Eventor.Database.Context;
 using Eventor.Database.Core;
 using Eventor.Database.Repositories;
 using Eventor.Eventor.GUI;
+using Eventor.GUI.Controllers;
 using Eventor.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +38,11 @@ internal static class Program
         if (loginForm.ShowDialog() == DialogResult.OK && loginForm.AuthenticatedUser != null)
         {
             var mainForm = provider.GetRequiredService<MainWindow>();
-            mainForm.CurrentUser = loginForm.AuthenticatedUser;
+            var controller = provider.GetRequiredService<MainWindowController>();
+
+            controller.CurrentUser = loginForm.AuthenticatedUser;
+            mainForm.SetController(controller);
+
             Application.Run(mainForm);
         }
         else
@@ -113,9 +118,15 @@ internal static class Program
         services.AddScoped<IEconomyService, EconomyService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
 
+        // Контроллеры
+        services.AddTransient<MainWindowController>();
+        services.AddTransient<EventFormController>();
+        services.AddTransient<FeedbackFormController>();
+
         // Формы
-        services.AddSingleton<MainWindow>();
+        services.AddTransient<MainWindow>(provider => new MainWindow());
         services.AddTransient<LoginForm>();
         services.AddTransient<EventForm>();
+        services.AddTransient<FeedbackForm>();
     }
 }

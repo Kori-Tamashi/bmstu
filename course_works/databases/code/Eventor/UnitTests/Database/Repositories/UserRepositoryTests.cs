@@ -41,7 +41,7 @@ public class UserRepositoryTests
         var users = new List<UserDBModel>
         {
             new UserDBModel(Guid.NewGuid(), "User1", "+79111111111", Gender.Male, "hash1", UserRole.User),
-            new UserDBModel(Guid.NewGuid(), "User2", "+79222222222", Gender.Female, "hash2", UserRole.Administrator)
+            new UserDBModel(Guid.NewGuid(), "User2", "+79222222222", Gender.Female, "hash2", UserRole.Admin)
         };
 
         var mockSet = SetupMockDbSet(users.AsQueryable());
@@ -173,7 +173,7 @@ public class UserRepositoryTests
         // Arrange
         var userId = Guid.NewGuid();
         var existingUser = new UserDBModel(userId, "OldName", "+79000000000", Gender.Male, "oldHash", UserRole.User);
-        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Administrator);
+        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Admin);
 
         var mockSet = SetupMockDbSet(new List<UserDBModel> { existingUser }.AsQueryable());
         _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
@@ -192,7 +192,7 @@ public class UserRepositoryTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Administrator);
+        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Admin);
 
         var mockSet = SetupMockDbSet(new List<UserDBModel>().AsQueryable());
         _mockContext.Setup(c => c.Users).Returns(mockSet.Object);
@@ -210,7 +210,7 @@ public class UserRepositoryTests
         // Arrange
         var userId = Guid.NewGuid();
         var existingUser = new UserDBModel(userId, "OldName", "+79000000000", Gender.Male, "oldHash", UserRole.User);
-        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Administrator);
+        var updatedUser = new User(userId, "NewName", "+79111111111", Gender.Female, "newHash", UserRole.Admin);
 
         var mockSet = SetupMockDbSet(new List<UserDBModel> { existingUser }.AsQueryable());
         _mockContext.Setup(c => c.Users).Returns(mockSet.Object);

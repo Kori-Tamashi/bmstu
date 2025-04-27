@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             eventName_label = new Label();
             eventDescription_textBox = new TextBox();
             eventDays_dataGridView = new DataGridView();
@@ -43,6 +44,7 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             participation_button = new Button();
             feedback_button = new Button();
+            _timer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)eventDays_dataGridView).BeginInit();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -74,6 +76,7 @@
             // 
             // eventDays_dataGridView
             // 
+            eventDays_dataGridView.AllowUserToAddRows = false;
             eventDays_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             eventDays_dataGridView.BackgroundColor = SystemColors.Menu;
             eventDays_dataGridView.BorderStyle = BorderStyle.None;
@@ -87,6 +90,7 @@
             // 
             // Column5
             // 
+            Column5.DataPropertyName = "Id";
             Column5.HeaderText = "Id";
             Column5.MinimumWidth = 6;
             Column5.Name = "Column5";
@@ -115,6 +119,7 @@
             // 
             // Column3
             // 
+            Column3.DataPropertyName = "PersonCount";
             Column3.HeaderText = "Количество участников";
             Column3.MinimumWidth = 6;
             Column3.Name = "Column3";
@@ -194,6 +199,7 @@
             participation_button.TabIndex = 6;
             participation_button.Text = "Участвовать/покинуть";
             participation_button.UseVisualStyleBackColor = true;
+            participation_button.Click += participation_button_Click;
             // 
             // feedback_button
             // 
@@ -204,6 +210,11 @@
             feedback_button.TabIndex = 7;
             feedback_button.Text = "Оставить отзыв";
             feedback_button.UseVisualStyleBackColor = true;
+            feedback_button.Click += feedback_button_Click;
+            // 
+            // _timer
+            // 
+            _timer.Interval = 15000;
             // 
             // EventForm
             // 
@@ -238,6 +249,7 @@
         private TableLayoutPanel tableLayoutPanel2;
         private Button participation_button;
         private Button feedback_button;
+        private System.Windows.Forms.Timer _timer;
         private DataGridViewTextBoxColumn Column5;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn Column2;
