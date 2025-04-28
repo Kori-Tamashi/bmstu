@@ -1,6 +1,5 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Database.Core;
-using Eventor.Eventor.GUI;
 using Eventor.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

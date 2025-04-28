@@ -33,6 +33,12 @@ public class DayUpdateException : DayServiceException
         : base(message, inner) { }
 }
 
+public class DayConflictException : Exception
+{
+    public DayConflictException(string message, Exception inner)
+        : base(message, inner) { }
+}
+
 public class DayDeleteException : DayServiceException
 {
     public DayDeleteException(string message, Exception inner)

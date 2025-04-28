@@ -147,6 +147,97 @@ public class DayServiceTests
     }
 
     [Fact]
+    public async Task AddPersonToDayAsync_CallsRepositoryWithValidParameters()
+    {
+        // Arrange
+        var personId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+        var testDay = CreateTestDay();
+
+        _mockRepo.Setup(r => r.GetDayByIdAsync(dayId)).ReturnsAsync(testDay);
+        _mockRepo.Setup(r => r.InsertPersonToDayAsync(personId, dayId)).Returns(Task.CompletedTask);
+
+        // Act
+        await _dayService.AddPersonToDayAsync(personId, dayId);
+
+        // Assert
+        _mockRepo.Verify(r => r.GetDayByIdAsync(dayId), Times.Once);
+        _mockRepo.Verify(r => r.InsertPersonToDayAsync(personId, dayId), Times.Once);
+    }
+
+    [Fact]
+    public async Task AddPersonToDayAsync_ThrowsPersonNotFound_OnFkViolation()
+    {
+        // Arrange
+        var personId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+        var testDay = CreateTestDay();
+        var dbEx = new DbUpdateException("FK error", new Exception("FK_PersonsDays_Persons"));
+
+        _mockRepo.Setup(r => r.GetDayByIdAsync(dayId)).ReturnsAsync(testDay);
+        _mockRepo.Setup(r => r.InsertPersonToDayAsync(personId, dayId)).ThrowsAsync(dbEx);
+
+        // Act & Assert
+        var ex = await Assert.ThrowsAsync<PersonNotFoundException>(() =>
+            _dayService.AddPersonToDayAsync(personId, dayId));
+
+        Assert.Contains(personId.ToString(), ex.Message);
+    }
+
+    [Fact]
+    public async Task AddPersonToDayAsync_ThrowsConflict_OnDuplicateEntry()
+    {
+        // Arrange
+        var personId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+        var testDay = CreateTestDay();
+        var conflictEx = new InvalidOperationException("Duplicate key");
+
+        _mockRepo.Setup(r => r.GetDayByIdAsync(dayId)).ReturnsAsync(testDay);
+        _mockRepo.Setup(r => r.InsertPersonToDayAsync(personId, dayId)).ThrowsAsync(conflictEx);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<DayConflictException>(() =>
+            _dayService.AddPersonToDayAsync(personId, dayId));
+    }
+
+    [Fact]
+    public async Task AddPersonToDayAsync_ThrowsUpdateException_OnGeneralDbError()
+    {
+        // Arrange
+        var personId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+        var testDay = CreateTestDay();
+        var dbEx = new DbUpdateException("Database failure", new Exception());
+
+        _mockRepo.Setup(r => r.GetDayByIdAsync(dayId)).ReturnsAsync(testDay);
+        _mockRepo.Setup(r => r.InsertPersonToDayAsync(personId, dayId)).ThrowsAsync(dbEx);
+
+        // Act & Assert
+        var ex = await Assert.ThrowsAsync<DayUpdateException>(() =>
+            _dayService.AddPersonToDayAsync(personId, dayId));
+
+        Assert.Contains(dayId.ToString(), ex.Message);
+    }
+
+    [Fact]
+    public async Task AddPersonToDayAsync_ThrowsServiceException_OnUnknownError()
+    {
+        // Arrange
+        var personId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+        var testDay = CreateTestDay();
+        var unexpectedEx = new Exception("Unknown failure");
+
+        _mockRepo.Setup(r => r.GetDayByIdAsync(dayId)).ReturnsAsync(testDay);
+        _mockRepo.Setup(r => r.InsertPersonToDayAsync(personId, dayId)).ThrowsAsync(unexpectedEx);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<DayServiceException>(() =>
+            _dayService.AddPersonToDayAsync(personId, dayId));
+    }
+
+    [Fact]
     public async Task UpdateDayAsync_UpdatesExistingDay_WhenValid()
     {
         // Arrange

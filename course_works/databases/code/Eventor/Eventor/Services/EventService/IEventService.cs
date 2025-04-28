@@ -32,6 +32,12 @@ public interface IEventService
     Task AddEventAsync(Event _event);
 
     /// <summary>
+    /// Добавить пользователя на мероприятие
+    /// </summary>
+    /// <returns></returns>
+    Task AddUserForEventAsync(Guid userId, Guid eventId);
+
+    /// <summary>
     /// Обновить мероприятие
     /// </summary>
     /// <returns></returns>
@@ -42,4 +48,10 @@ public interface IEventService
     /// </summary>
     /// <returns></returns>
     Task DeleteEventAsync(Guid eventId);
+
+    /// <summary>
+    /// Удалить пользователя с мероприятия
+    /// </summary>
+    /// <returns></returns>
+    Task DeleteUserFromEventAsync(Guid userId, Guid eventId);
 }

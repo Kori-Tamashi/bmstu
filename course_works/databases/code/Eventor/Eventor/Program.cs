@@ -3,13 +3,12 @@ using Eventor.Common.Enums;
 using Eventor.Database.Context;
 using Eventor.Database.Core;
 using Eventor.Database.Repositories;
-using Eventor.Eventor.GUI;
+using Eventor.GUI;
 using Eventor.GUI.Controllers;
 using Eventor.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Configuration;
 
 namespace Eventor;
 
@@ -122,11 +121,14 @@ internal static class Program
         services.AddTransient<MainWindowController>();
         services.AddTransient<EventFormController>();
         services.AddTransient<FeedbackFormController>();
+        services.AddTransient<ParticipationFormController>();
 
         // Формы
         services.AddTransient<MainWindow>(provider => new MainWindow());
         services.AddTransient<LoginForm>();
         services.AddTransient<EventForm>();
         services.AddTransient<FeedbackForm>();
+        services.AddTransient<ParticipationForm>();
+
     }
 }

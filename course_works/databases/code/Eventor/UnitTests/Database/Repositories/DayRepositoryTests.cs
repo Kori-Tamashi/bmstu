@@ -1,10 +1,12 @@
 ﻿using Eventor.Common.Core;
+using Eventor.Common.Enums;
 using Eventor.Database.Context;
 using Eventor.Database.Models;
 using Eventor.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -135,6 +137,67 @@ public class DayRepositoryTests : IDisposable
         );
 
         Assert.Contains(invalidId.ToString(), exception.Message);
+    }
+
+    [Fact]
+    public async Task InsertPersonToDayAsync_ShouldAddPersonDayRelation()
+    {
+        // Arrange
+        var personId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+
+        // Создаем связанные сущности для валидности внешних ключей
+        await _context.Persons.AddAsync(new PersonDBModel(personId, "Test Person", PersonType.Standart, true));
+        await _context.Days.AddAsync(new DayDBModel(dayId, Guid.NewGuid(), "Test Day", 1, "Desc", 100));
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _repository.InsertPersonToDayAsync(personId, dayId);
+
+        // Assert
+        var relation = await _context.PersonsDays
+            .FirstOrDefaultAsync(pd => pd.PersonId == personId && pd.DayId == dayId);
+
+        Assert.NotNull(relation);
+        Assert.Equal(personId, relation.PersonId);
+        Assert.Equal(dayId, relation.DayId);
+    }
+
+    [Fact]
+    public async Task InsertPersonToDayAsync_ShouldHandleDuplicateEntries()
+    {
+        // Arrange
+        var personId = Guid.NewGuid();
+        var dayId = Guid.NewGuid();
+
+        // Создаем участника и день для валидности FK
+        await _context.Persons.AddAsync(new PersonDBModel(personId, "Test Person", PersonType.Standart, true));
+        await _context.Days.AddAsync(new DayDBModel(dayId, Guid.NewGuid(), "Test Day", 1, "Desc", 100));
+        await _context.SaveChangesAsync();
+
+        // Первое добавление связи
+        await _repository.InsertPersonToDayAsync(personId, dayId);
+
+        // Очищаем контекст для имитации нового запроса
+        _context.ChangeTracker.Clear();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAnyAsync<Exception>(() =>
+            _repository.InsertPersonToDayAsync(personId, dayId));
+
+        // Проверка для разных типов БД
+        switch (exception)
+        {
+            case DbUpdateException dbEx when dbEx.InnerException is PostgresException pgEx:
+                Assert.Equal("23505", pgEx.SqlState); // Код ошибки уникальности PostgreSQL
+                break;
+            case ArgumentException argEx:
+                Assert.Contains("same key", argEx.Message, StringComparison.OrdinalIgnoreCase);
+                break;
+            default:
+                Assert.Fail($"Unexpected exception type: {exception.GetType()}");
+                break;
+        }
     }
 
     [Fact]

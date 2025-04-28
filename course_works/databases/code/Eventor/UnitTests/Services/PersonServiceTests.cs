@@ -103,6 +103,33 @@ public class PersonServiceTests
         );
     }
 
+    [Fact]
+    public async Task GetAllPersonsByUserAsync_ThrowsServiceException_OnError()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        _mockRepo.Setup(r => r.GetAllPersonsByUserAsync(userId)).ThrowsAsync(new InvalidOperationException());
+
+        // Act & Assert
+        await Assert.ThrowsAsync<PersonServiceException>(() =>
+            _personService.GetAllPersonsByUserAsync(userId));
+    }
+
+    [Fact]
+    public async Task GetPersonByUserAndEventAsync_ThrowsServiceException_OnError()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        _mockRepo.Setup(r => r.GetPersonByUserAndEventAsync(userId, eventId))
+                .ThrowsAsync(new InvalidOperationException());
+
+        // Act & Assert
+        await Assert.ThrowsAsync<PersonServiceException>(() =>
+            _personService.GetPersonByUserAndEventAsync(userId, eventId));
+    }
+
     // AddPersonAsync
     [Fact]
     public async Task AddPersonAsync_InvalidData_ThrowsCreateException()

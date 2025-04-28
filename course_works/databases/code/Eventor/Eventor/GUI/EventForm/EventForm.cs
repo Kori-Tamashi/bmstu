@@ -1,6 +1,7 @@
 ﻿using Eventor.GUI.Controllers;
+using Microsoft.Extensions.Logging;
 
-namespace Eventor.Eventor.GUI;
+namespace Eventor.GUI;
 
 public partial class EventForm : Form
 {
@@ -68,8 +69,8 @@ public partial class EventForm : Form
         await _eventFormController.OpenFeedbackCreating();
     }
 
-    private void participation_button_Click(object sender, EventArgs e)
+    private async void participation_button_Click(object sender, EventArgs e)
     {
-
+        await _eventFormController.OpenParticipationCreating();
     }
 }

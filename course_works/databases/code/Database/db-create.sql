@@ -84,6 +84,12 @@ CREATE TABLE users_events (
     event_id UUID
 );
 
+-- Связь пользователей и участников (User Persons)
+CREATE TABLE users_persons (
+    user_id UUID,
+    person_id UUID
+);
+
 -- Связь дней и мероприятий (Days Events)
 CREATE TABLE events_days (
     event_id UUID,
@@ -93,8 +99,7 @@ CREATE TABLE events_days (
 -- Связь участников и дней мероприятий (Person's Days)
 CREATE TABLE persons_days (
     person_id UUID,
-    day_id UUID,
-    menu_id UUID
+    day_id UUID
 );
 
 -- Связь меню и предметов меню (Menu Items)

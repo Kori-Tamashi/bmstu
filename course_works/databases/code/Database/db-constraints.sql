@@ -93,6 +93,12 @@ ALTER TABLE users_events
     ADD FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     ADD FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE;
 
+-- Ограничения для таблицы User Persons
+ALTER TABLE users_persons
+    ADD PRIMARY KEY (user_id, person_id),
+    ADD FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    ADD FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE;
+
 -- Ограничения для таблицы Events Days
 ALTER TABLE events_days
     ADD PRIMARY KEY (event_id, day_id),

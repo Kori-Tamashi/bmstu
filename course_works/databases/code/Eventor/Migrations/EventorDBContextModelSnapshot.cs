@@ -348,6 +348,23 @@ namespace Eventor.Migrations
                     b.ToTable("users_events");
                 });
 
+            modelBuilder.Entity("Eventor.Database.Models.UserPersonDBModel", b =>
+            {
+                b.Property<Guid>("UserId")
+                    .HasColumnType("uuid")
+                    .HasColumnName("user_id");
+
+                b.Property<Guid>("PersonId")
+                    .HasColumnType("uuid")
+                    .HasColumnName("person_id");
+
+                b.HasKey("UserId", "PersonId");
+
+                b.HasIndex("PersonId");
+
+                b.ToTable("users_persons");
+            });
+
             modelBuilder.Entity("Eventor.Database.Models.DayDBModel", b =>
                 {
                     b.HasOne("Eventor.Database.Models.MenuDBModel", "Menu")
@@ -464,6 +481,25 @@ namespace Eventor.Migrations
 
                     b.Navigation("User");
                 });
+
+            modelBuilder.Entity("Eventor.Database.Models.UserPersonDBModel", b =>
+            {
+                b.HasOne("Eventor.Database.Models.PersonDBModel", "Person")
+                    .WithMany("UserPerson")
+                    .HasForeignKey("PersonId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("Eventor.Database.Models.UserDBModel", "User")
+                    .WithMany("UserEvents")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Person");
+
+                b.Navigation("User");
+            });
 
             modelBuilder.Entity("Eventor.Database.Models.DayDBModel", b =>
                 {

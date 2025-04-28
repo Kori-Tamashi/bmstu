@@ -2,8 +2,10 @@
 using Eventor.Common.Core;
 using Eventor.Database.Context;
 using Eventor.Database.Core;
+using Eventor.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,6 +128,33 @@ public class EventRepository : BaseRepository, IEventRepository
         }
     }
 
+    public async Task InsertUserForEventAsync(Guid userId, Guid eventId)
+    {
+        try
+        {
+            var userEvent = new UserEventDBModel(userId, eventId);
+
+            await _dbContext.UsersEvents.AddAsync(userEvent);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            if (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23505")
+            {
+                _logger.LogWarning("Пользователь {UserId} уже привязан к мероприятию {EventId}", userId, eventId);
+                return;
+            }
+
+            _logger.LogError(ex, "Ошибка при добавлении пользователя {UserId} на мероприятие {EventId}", userId, eventId);
+            throw new InvalidOperationException($"Не удалось добавить пользователя {userId} на мероприятие {eventId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Неизвестная ошибка при добавлении пользователя {UserId} на мероприятие {EventId}", userId, eventId);
+            throw new InvalidOperationException($"Не удалось добавить пользователя {userId} на мероприятие", ex);
+        }
+    }
+
     public async Task UpdateEventAsync(Event updateEvent)
     {
         try
@@ -175,6 +204,31 @@ public class EventRepository : BaseRepository, IEventRepository
         {
             _logger.LogError(ex, "Ошибка удаления мероприятия {EventId}", eventId);
             throw new InvalidOperationException($"Не удалось удалить мероприятие {eventId}", ex);
+        }
+    }
+
+    public async Task DeleteUserFromEventAsync(Guid userId, Guid eventId)
+    {
+        try
+        {
+            // Ищем связь пользователя с мероприятием
+            var userEvent = await _dbContext.UsersEvents
+                .FirstOrDefaultAsync(ue => ue.UserId == userId && ue.EventId == eventId);
+
+            if (userEvent == null)
+            {
+                _logger.LogWarning("Связь пользователя {UserId} с мероприятием {EventId} не найдена", userId, eventId);
+                return;
+            }
+
+            // Удаляем связь
+            _dbContext.UsersEvents.Remove(userEvent);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка удаления пользователя {UserId} с мероприятия {EventId}", userId, eventId);
+            throw new InvalidOperationException($"Не удалось удалить пользователя {userId} с мероприятия {eventId}", ex);
         }
     }
 }

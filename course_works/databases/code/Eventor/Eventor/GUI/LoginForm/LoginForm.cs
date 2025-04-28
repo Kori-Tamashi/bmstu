@@ -4,7 +4,7 @@ using Eventor.Database.Core;
 using Eventor.Services;
 using User = Eventor.Common.Core.User;
 
-namespace Eventor.Eventor.GUI;
+namespace Eventor.GUI;
 
 public partial class LoginForm : Form
 {
@@ -84,5 +84,10 @@ public partial class LoginForm : Form
         }
 
         MessageBox.Show("Вы успешно авторизовались.");
+    }
+
+    private void LoginForm_Load(object sender, EventArgs e)
+    {
+
     }
 }

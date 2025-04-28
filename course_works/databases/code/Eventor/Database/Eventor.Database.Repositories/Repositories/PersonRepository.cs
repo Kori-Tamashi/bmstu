@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Eventor.Common.Enums;
+using Eventor.Database.Models;
 
 namespace Eventor.Database.Repositories;
 
@@ -101,6 +103,27 @@ public class PersonRepository : BaseRepository, IPersonRepository
     }
 
     /// <summary>
+    /// Получить всех участников пользователя
+    /// </summary>
+    public async Task<List<Person>> GetAllPersonsByUserAsync(Guid userId)
+    {
+        try
+        {
+            return await _dbContext.UsersPersons
+                .Where(up => up.UserId == userId)
+                .Include(up => up.Person)
+                .Select(up => PersonConverter.ConvertDBToCore(up.Person))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения участников пользователя {UserId}", userId);
+            throw new InvalidOperationException($"Не удалось получить участников пользователя {userId}", ex);
+        }
+    }
+
+    /// <summary>
     /// Получить участника по идентификатору
     /// </summary>
     public async Task<Person> GetPersonByIdAsync(Guid personId)
@@ -122,6 +145,39 @@ public class PersonRepository : BaseRepository, IPersonRepository
     }
 
     /// <summary>
+    /// Получить участника мероприятия по идентификаторам пользователя и мероприятия
+    /// </summary>
+    public async Task<Person> GetPersonByUserAndEventAsync(Guid userId, Guid eventId)
+    {
+        try
+        {
+            var personEntity = await _dbContext.UsersPersons
+                .Where(up => up.UserId == userId)
+                .Include(up => up.Person)
+                    .ThenInclude(p => p.SelectedDays)
+                        .ThenInclude(pd => pd.Day)
+                            .ThenInclude(d => d.EventDays)
+                .Select(up => up.Person)
+                .FirstOrDefaultAsync(p =>
+                    p.SelectedDays.Any(pd =>
+                        pd.Day.EventDays.Any(ed => ed.EventId == eventId)
+                    ));
+
+            return personEntity != null
+                ? PersonConverter.ConvertDBToCore(personEntity)
+                : null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Ошибка получения участника для пользователя {UserId} и мероприятия {EventId}",
+                userId, eventId);
+            throw new InvalidOperationException(
+                $"Не удалось найти участника для пользователя {userId} в мероприятии {eventId}", ex);
+        }
+    }
+
+    /// <summary>
     /// Добавить нового участника
     /// </summary>
     public async Task InsertPersonAsync(Person person)
@@ -136,6 +192,41 @@ public class PersonRepository : BaseRepository, IPersonRepository
         {
             _logger.LogError(ex, "Ошибка создания участника");
             throw new InvalidOperationException("Не удалось создать участника", ex);
+        }
+    }
+
+    public async Task<Person> InsertPersonForUserAsync(string personName, Guid userId)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        try
+        {
+            // 1. Создание участника
+            var newPerson = new PersonDBModel(
+                id: Guid.NewGuid(),
+                name: personName,
+                type: PersonType.Standart,
+                paid: false
+            );
+
+            await _dbContext.Persons.AddAsync(newPerson);
+            await _dbContext.SaveChangesAsync();
+
+            // 2. Связывание с пользователем
+            var userPerson = new UserPersonDBModel(userId, newPerson.Id);
+            await _dbContext.UsersPersons.AddAsync(userPerson);
+            await _dbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return newPerson != null
+                ? PersonConverter.ConvertDBToCore(newPerson)
+                : null; ;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "Ошибка создания участника для пользователя {UserId}", userId);
+            throw new InvalidOperationException($"Не удалось создать участника для пользователя {userId}", ex);
         }
     }
 
@@ -193,4 +284,58 @@ public class PersonRepository : BaseRepository, IPersonRepository
             throw new InvalidOperationException($"Не удалось удалить участника {personId}", ex);
         }
     }
+
+    public async Task DeletePersonForUserAsync(Guid eventId, Guid userId)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        try
+        {
+            // 1. Находим участника пользователя для конкретного мероприятия
+            var person = await _dbContext.UsersPersons
+                .Where(up => up.UserId == userId)
+                .Include(up => up.Person)
+                    .ThenInclude(p => p.SelectedDays)
+                .Select(up => up.Person)
+                .FirstOrDefaultAsync(p =>
+                    p.SelectedDays.Any(pd =>
+                        pd.Day.EventDays.Any(ed => ed.EventId == eventId)
+                    ));
+
+            if (person == null)
+            {
+                throw new InvalidOperationException("Участник не найден");
+            }
+
+            // 2. Удаляем связи участника с днями мероприятия
+            var personDays = await _dbContext.PersonsDays
+                .Where(pd => pd.PersonId == person.Id)
+                .ToListAsync();
+
+            _dbContext.PersonsDays.RemoveRange(personDays);
+
+            // 3. Удаляем связь пользователь-участник
+            var userPerson = await _dbContext.UsersPersons
+                .FirstOrDefaultAsync(up =>
+                    up.UserId == userId &&
+                    up.PersonId == person.Id);
+
+            if (userPerson != null)
+            {
+                _dbContext.UsersPersons.Remove(userPerson);
+            }
+
+            // 4. Удаляем самого участника
+            _dbContext.Persons.Remove(person);
+
+            await _dbContext.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "Ошибка удаления участника для пользователя {UserId} в мероприятии {EventId}", userId, eventId);
+            throw new InvalidOperationException($"Не удалось удалить участника для пользователя {userId}", ex);
+        }
+    }
 }
+

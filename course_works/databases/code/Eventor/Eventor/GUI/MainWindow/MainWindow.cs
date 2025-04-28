@@ -1,7 +1,7 @@
 using Eventor.Common.Core;
 using Eventor.GUI.Controllers;
 
-namespace Eventor;
+namespace Eventor.GUI;
 
 public partial class MainWindow : Form
 {

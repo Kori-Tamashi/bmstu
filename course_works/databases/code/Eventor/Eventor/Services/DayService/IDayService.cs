@@ -24,6 +24,11 @@ public interface IDayService
     Task<List<Common.Core.Day>> GetAllDaysByEventAsync(Guid eventId);
 
     /// <summary>
+    /// Получить все дни участника
+    /// </summary>
+    Task<List<Common.Core.Day>> GetAllDaysByPersonAsync(Guid personId);
+
+    /// <summary>
     /// Получить день по его идентификатору
     /// </summary>
     /// <returns>День</returns>
@@ -36,6 +41,18 @@ public interface IDayService
     Task AddDayAsync(Common.Core.Day day);
 
     /// <summary>
+    /// Добавить участника на день
+    /// </summary>
+    /// <returns></returns>
+    Task AddPersonToDayAsync(Guid personId, Guid dayId);
+
+    /// <summary>
+    /// Добавить участника на день
+    /// </summary>
+    /// <returns></returns>
+    Task AddPersonToDayAsync(Guid eventId, int daySequenceNumber, Guid personId);
+
+    /// <summary>
     /// Обновить день
     /// </summary>
     /// <returns></returns>
@@ -46,4 +63,10 @@ public interface IDayService
     /// </summary>
     /// <returns></returns>
     Task DeleteDayAsync(Guid dayId);
+
+    /// <summary>
+    /// Удалить участника с дня
+    /// </summary>
+    /// <returns></returns>
+    Task DeletePersonFromDayAsync(Guid personId, Guid dayId);
 }

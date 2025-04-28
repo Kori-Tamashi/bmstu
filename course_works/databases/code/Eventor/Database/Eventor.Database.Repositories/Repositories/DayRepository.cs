@@ -1,6 +1,7 @@
 ﻿using Eventor.Common.Converter;
 using Eventor.Database.Context;
 using Eventor.Database.Core;
+using Eventor.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Day = Eventor.Common.Core.Day;
@@ -108,6 +109,21 @@ public class DayRepository : BaseRepository, IDayRepository
         }
     }
 
+    public async Task InsertPersonToDayAsync(Guid personId, Guid dayId)
+    {
+        try
+        {
+            var personDay = new PersonDayDBModel(personId, dayId);
+            await _dbContext.PersonsDays.AddAsync(personDay);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка добавления участника {PersonId} на день {DayId}", personId, dayId);
+            throw new InvalidOperationException($"Не удалось добавить участника {personId} на день {dayId}", ex);
+        }
+    }
+
     public async Task UpdateDayAsync(Day updateDay)
     {
         try
@@ -154,6 +170,31 @@ public class DayRepository : BaseRepository, IDayRepository
         {
             _logger.LogError(ex, "Ошибка удаления дня {DayId}", dayId);
             throw new InvalidOperationException($"Не удалось удалить день {dayId}", ex);
+        }
+    }
+
+    public async Task DeletePersonFromDayAsync(Guid personId, Guid dayId)
+    {
+        try
+        {
+            // Находим связь участника с днём
+            var personDay = await _dbContext.PersonsDays
+                .FirstOrDefaultAsync(pd => pd.PersonId == personId && pd.DayId == dayId);
+
+            if (personDay == null)
+            {
+                _logger.LogWarning("Связь участника {PersonId} с днём {DayId} не найдена", personId, dayId);
+                return; // Или можно выбросить исключение, если требуется
+            }
+
+            // Удаляем связь
+            _dbContext.PersonsDays.Remove(personDay);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка удаления участника {PersonId} с дня {DayId}", personId, dayId);
+            throw new InvalidOperationException($"Не удалось удалить участника {personId} с дня {dayId}", ex);
         }
     }
 }

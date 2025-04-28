@@ -1,5 +1,4 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Eventor.GUI;
 using Eventor.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
@@ -97,6 +96,21 @@ public class EventFormController : INotifyPropertyChanged
             var feedbackForm = _serviceProvider.GetRequiredService<FeedbackForm>();
             feedbackForm.SetIds(EventId, UserId);
             feedbackForm.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+            return;
+        }
+    }
+
+    public async Task OpenParticipationCreating()
+    {
+        try
+        {
+            var participationForm = _serviceProvider.GetRequiredService<ParticipationForm>();
+            participationForm.SetIds(EventId, UserId);
+            participationForm.Show();
         }
         catch (Exception ex)
         {

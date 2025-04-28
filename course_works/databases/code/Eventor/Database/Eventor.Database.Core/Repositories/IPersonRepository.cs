@@ -25,16 +25,34 @@ public interface IPersonRepository
     Task<List<Person>> GetAllPersonsByEventAsync(Guid eventId);
 
     /// <summary>
+    /// Получить всех участников пользователя
+    /// </summary>
+    /// <returns>Список всех участников пользователя</returns>
+    Task<List<Person>> GetAllPersonsByUserAsync(Guid userId);
+
+    /// <summary>
     /// Получить участника мероприятия по идентификатору
     /// </summary>
-    /// <returns>Мероприятие</returns>
+    /// <returns>Участник</returns>
     Task<Person> GetPersonByIdAsync(Guid personId);
+
+    /// <summary>
+    /// Получить участника мероприятия по идентификаторам пользователя и мероприятия
+    /// </summary>
+    /// <returns>Участник</returns>
+    Task<Person> GetPersonByUserAndEventAsync(Guid userId, Guid eventId);
 
     /// <summary>
     /// Создать участника
     /// </summary>
     /// <returns></returns>
     Task InsertPersonAsync(Person person);
+
+    /// <summary>
+    /// Создать участника для пользователя
+    /// </summary>
+    /// <returns></returns>
+    Task<Person> InsertPersonForUserAsync(string personName, Guid userId);
 
     /// <summary>
     /// Обновить участника
@@ -47,5 +65,11 @@ public interface IPersonRepository
     /// </summary>
     /// <returns></returns>
     Task DeletePersonAsync(Guid personId);
+
+    /// <summary>
+    /// Удалить участника для пользователя
+    /// </summary>
+    /// <returns></returns>
+    Task DeletePersonForUserAsync(Guid eventId, Guid userId);
 }
 

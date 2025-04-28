@@ -74,6 +74,52 @@ public class PersonRepositoryTests
     }
 
     [Fact]
+    public async Task GetAllPersonsByUserAsync_ThrowsException_OnDatabaseError()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var brokenQuery = new List<UserPersonDBModel>().AsQueryable();
+
+        var mockSet = new Mock<DbSet<UserPersonDBModel>>();
+        mockSet.As<IQueryable<UserPersonDBModel>>()
+            .Setup(m => m.Provider)
+            .Throws(new Exception("Database failure"));
+
+        _mockContext.Setup(c => c.UsersPersons).Returns(mockSet.Object);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _repository.GetAllPersonsByUserAsync(userId));
+
+        _mockLogger.Verify(log => log.Log(
+            LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(userId.ToString())),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task GetPersonByUserAndEventAsync_ThrowsException_OnDatabaseError()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+
+        var brokenSet = new Mock<DbSet<UserPersonDBModel>>();
+        brokenSet.As<IQueryable<UserPersonDBModel>>()
+            .Setup(m => m.Provider)
+            .Throws(new Exception("Database failure"));
+
+        _mockContext.Setup(c => c.UsersPersons).Returns(brokenSet.Object);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _repository.GetPersonByUserAndEventAsync(userId, eventId));
+    }
+
+    [Fact]
     public async Task InsertPersonAsync_AddsNewPersonToDatabase()
     {
         // Arrange
@@ -88,8 +134,8 @@ public class PersonRepositoryTests
         // Assert
         _mockPersonsDbSet.Verify(m => m.AddAsync(
             It.Is<PersonDBModel>(p => p.Id == newPerson.Id),
-            It.IsAny<CancellationToken>()  // Добавляем обработку токена отмены
-        ), Times.Once);  // Правильно позиционируем Times.Once
+            It.IsAny<CancellationToken>()  
+        ), Times.Once);  
 
         _mockContext.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once
@@ -149,25 +195,27 @@ public class PersonRepositoryTests
     {
         var mockSet = new Mock<DbSet<T>>();
 
+        // Настройка для IAsyncEnumerable
         mockSet.As<IAsyncEnumerable<T>>()
-              .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-              .Returns(new TestAsyncEnumerator<T>(data.GetEnumerator()));
+               .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
+               .Returns(new TestAsyncEnumerator<T>(data.GetEnumerator()));
+
+        // Настройка для IQueryable
+        mockSet.As<IQueryable<T>>()
+               .Setup(m => m.Provider)
+               .Returns(new TestAsyncQueryProvider<T>(data.Provider));
 
         mockSet.As<IQueryable<T>>()
-              .Setup(m => m.Provider)
-              .Returns(new TestAsyncQueryProvider<T>(data.Provider));
+               .Setup(m => m.Expression)
+               .Returns(data.Expression);
 
         mockSet.As<IQueryable<T>>()
-              .Setup(m => m.Expression)
-              .Returns(data.Expression);
+               .Setup(m => m.ElementType)
+               .Returns(data.ElementType);
 
         mockSet.As<IQueryable<T>>()
-              .Setup(m => m.ElementType)
-              .Returns(data.ElementType);
-
-        mockSet.As<IQueryable<T>>()
-              .Setup(m => m.GetEnumerator())
-              .Returns(data.GetEnumerator());
+               .Setup(m => m.GetEnumerator())
+               .Returns(data.GetEnumerator());
 
         return mockSet;
     }

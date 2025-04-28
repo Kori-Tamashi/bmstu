@@ -1,4 +1,4 @@
-﻿namespace Eventor
+﻿namespace Eventor.GUI
 {
     partial class MainWindow
     {

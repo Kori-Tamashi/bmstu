@@ -1,6 +1,6 @@
 ﻿using Eventor.GUI.Controllers;
 
-namespace Eventor.Eventor.GUI;
+namespace Eventor.GUI;
 
 public partial class FeedbackForm : Form
 {
@@ -40,5 +40,10 @@ public partial class FeedbackForm : Form
     {
         _feedbackFormController.EventId = eventId;
         _feedbackFormController.UserId = userId;
+    }
+
+    private void FeedbackForm_Load(object sender, EventArgs e)
+    {
+
     }
 }

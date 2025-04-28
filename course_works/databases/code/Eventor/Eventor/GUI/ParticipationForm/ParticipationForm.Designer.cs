@@ -1,4 +1,4 @@
-﻿namespace Eventor.Eventor.GUI.ParticipationForm
+﻿namespace Eventor.GUI
 {
     partial class ParticipationForm
     {
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             days_checkedListBox = new CheckedListBox();
-            button1 = new Button();
+            saveDays_button = new Button();
             SuspendLayout();
             // 
             // days_checkedListBox
@@ -40,32 +40,34 @@
             days_checkedListBox.Size = new Size(337, 114);
             days_checkedListBox.TabIndex = 0;
             // 
-            // button1
+            // saveDays_button
             // 
-            button1.Location = new Point(12, 132);
-            button1.Name = "button1";
-            button1.Size = new Size(337, 29);
-            button1.TabIndex = 1;
-            button1.Text = "Подтвердить";
-            button1.UseVisualStyleBackColor = true;
+            saveDays_button.Location = new Point(12, 132);
+            saveDays_button.Name = "saveDays_button";
+            saveDays_button.Size = new Size(337, 29);
+            saveDays_button.TabIndex = 1;
+            saveDays_button.Text = "Подтвердить";
+            saveDays_button.UseVisualStyleBackColor = true;
+            saveDays_button.Click += saveDays_button_Click;
             // 
             // ParticipationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(361, 171);
-            Controls.Add(button1);
+            Controls.Add(saveDays_button);
             Controls.Add(days_checkedListBox);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "ParticipationForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Дни присутствия";
+            Load += ParticipationForm_Load;
             ResumeLayout(false);
         }
 
         #endregion
 
         private CheckedListBox days_checkedListBox;
-        private Button button1;
+        private Button saveDays_button;
     }
 }

@@ -69,6 +69,11 @@ public class EventorDBContext : DbContext
     /// </summary>
     public virtual DbSet<UserEventDBModel> UsersEvents { get; set; }
 
+    /// <summary>
+    /// Таблица связи пользователей и участника
+    /// </summary>
+    public virtual DbSet<UserPersonDBModel> UsersPersons {  get; set; }
+
     public EventorDBContext() { }
 
     public EventorDBContext(DbContextOptions<EventorDBContext> options) : base(options) { }
@@ -91,6 +96,9 @@ public class EventorDBContext : DbContext
 
         modelBuilder.Entity<UserEventDBModel>()
             .HasKey(ue => new { ue.UserId, ue.EventId });
+
+        modelBuilder.Entity<UserPersonDBModel>()
+            .HasKey(ue => new { ue.UserId, ue.PersonId });
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

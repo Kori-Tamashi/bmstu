@@ -74,6 +74,26 @@ public class PersonService : IPersonService
         }
     }
 
+    public async Task<List<Person>> GetAllPersonsByUserAsync(Guid userId)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByUserAsync(userId);
+
+            return persons;
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Ошибка при получении участников пользователя {UserId}", userId);
+            throw new PersonServiceException($"Не удалось получить участников пользователя {userId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Неизвестная ошибка при обработке пользователя {UserId}", userId);
+            throw new PersonServiceException("Внутренняя ошибка сервиса", ex);
+        }
+    }
+
     public async Task<Person> GetPersonByIdAsync(Guid personId)
     {
         try
@@ -102,6 +122,30 @@ public class PersonService : IPersonService
         }
     }
 
+    public async Task<Person> GetPersonByUserAndEventAsync(Guid userId, Guid eventId)
+    {
+        try
+        {
+            return await _personRepository.GetPersonByUserAndEventAsync(userId, eventId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex,
+                "Ошибка при получении участника для пользователя {UserId} и мероприятия {EventId}",
+                userId, eventId);
+            throw new PersonServiceException(
+                $"Не удалось получить участника для пользователя {userId} в мероприятии {eventId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Неизвестная ошибка при обработке пользователя {UserId} и мероприятия {EventId}",
+                userId, eventId);
+            throw new PersonServiceException(
+                "Внутренняя ошибка сервиса при получении участника", ex);
+        }
+    }
+
     public async Task AddPersonAsync(Person person)
     {
         try
@@ -123,6 +167,24 @@ public class PersonService : IPersonService
         {
             _logger.LogError(ex, "Unexpected error creating person");
             throw new PersonCreateException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task<Person> AddPersonForUserAsync(string personName, Guid userId)
+    {
+        try
+        {
+            return await _personRepository.InsertPersonForUserAsync(personName, userId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Ошибка создания участника для пользователя {UserId}", userId);
+            throw new PersonServiceException($"Не удалось создать участника для пользователя {userId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Неизвестная ошибка при создании участника для пользователя {UserId}", userId);
+            throw new PersonServiceException("Внутренняя ошибка сервиса", ex);
         }
     }
 
@@ -175,6 +237,29 @@ public class PersonService : IPersonService
         {
             _logger.LogError(ex, "Unexpected error deleting person {PersonId}", personId);
             throw new PersonDeleteException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task DeletePersonForUserAsync(Guid eventId, Guid userId)
+    {
+        try
+        {
+            await _personRepository.DeletePersonForUserAsync(eventId, userId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex,
+                "Ошибка удаления участника для пользователя {UserId} в мероприятии {EventId}",
+                userId, eventId);
+            throw new PersonServiceException(
+                $"Не удалось удалить участника для пользователя {userId} в мероприятии {eventId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Неизвестная ошибка при удалении участника для пользователя {UserId} в мероприятии {EventId}",
+                userId, eventId);
+            throw new PersonServiceException("Внутренняя ошибка сервиса", ex);
         }
     }
 

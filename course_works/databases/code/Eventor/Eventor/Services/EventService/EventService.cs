@@ -3,6 +3,7 @@ using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -122,6 +123,29 @@ public class EventService : IEventService
         }
     }
 
+    public async Task AddUserForEventAsync(Guid userId, Guid eventId)
+    {
+        try
+        {
+            await _eventRepository.InsertUserForEventAsync(userId, eventId);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23505")
+        {
+            _logger.LogWarning("Пользователь {UserId} уже привязан к мероприятию {EventId}", userId, eventId);
+            throw new EventServiceException($"Пользователь {userId} уже участвует в мероприятии", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Ошибка базы данных при добавлении пользователя {UserId} на мероприятие {EventId}", userId, eventId);
+            throw new EventServiceException($"Не удалось добавить пользователя {userId} на мероприятие", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Неизвестная ошибка при добавлении пользователя {UserId} на мероприятие {EventId}", userId, eventId);
+            throw new EventServiceException("Внутренняя ошибка сервиса", ex);
+        }
+    }
+
     public async Task UpdateEventAsync(Event updateEvent)
     {
         try
@@ -176,6 +200,24 @@ public class EventService : IEventService
         {
             _logger.LogError(ex, "Unexpected error while deleting event {EventId}", eventId);
             throw new EventDeleteException($"Failed to delete event {eventId}", ex);
+        }
+    }
+
+    public async Task DeleteUserFromEventAsync(Guid userId, Guid eventId)
+    {
+        try
+        {
+            await _eventRepository.DeleteUserFromEventAsync(userId, eventId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Ошибка при удалении пользователя {UserId} с мероприятия {EventId}", userId, eventId);
+            throw new EventServiceException($"Пользователь {userId} не найден в мероприятии", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Неизвестная ошибка при удалении пользователя {UserId} с мероприятия {EventId}", userId, eventId);
+            throw new EventServiceException("Внутренняя ошибка сервиса", ex);
         }
     }
 }

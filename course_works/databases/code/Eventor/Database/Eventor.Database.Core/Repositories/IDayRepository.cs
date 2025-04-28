@@ -28,24 +28,36 @@ public interface IDayRepository
     /// Получить день по его идентификатору
     /// </summary>
     /// <returns>День</returns>
-    Task<Day> GetDayByIdAsync(Guid eventId);
+    Task<Day> GetDayByIdAsync(Guid dayId);
 
     /// <summary>
     /// Создать день
     /// </summary>
     /// <returns></returns>
-    Task InsertDayAsync(Common.Core.Day day);
+    Task InsertDayAsync(Day day);
+
+    /// <summary>
+    /// Добавить участника на день 
+    /// </summary>
+    /// <returns></returns>
+    Task InsertPersonToDayAsync(Guid personId, Guid dayId);
 
     /// <summary>
     /// Обновить день
     /// </summary>
     /// <returns></returns>
-    Task UpdateDayAsync(Common.Core.Day updateDay);
+    Task UpdateDayAsync(Day updateDay);
 
     /// <summary>
     /// Удалить день
     /// </summary>
     /// <returns></returns>
     Task DeleteDayAsync(Guid dayId);
+
+    /// <summary>
+    /// Удалить участника с дня
+    /// </summary>
+    /// <returns></returns>
+    Task DeletePersonFromDayAsync(Guid personId, Guid dayId);
 }
 

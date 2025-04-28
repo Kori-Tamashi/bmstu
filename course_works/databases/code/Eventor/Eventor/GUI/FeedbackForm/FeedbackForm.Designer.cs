@@ -1,4 +1,4 @@
-﻿namespace Eventor.Eventor.GUI
+﻿namespace Eventor.GUI
 {
     partial class FeedbackForm
     {
@@ -99,6 +99,7 @@
             Name = "FeedbackForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Отзыв";
+            Load += FeedbackForm_Load;
             ((System.ComponentModel.ISupportInitialize)feedbackRating_numericUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();

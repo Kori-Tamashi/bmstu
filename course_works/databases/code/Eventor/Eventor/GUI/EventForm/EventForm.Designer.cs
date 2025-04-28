@@ -1,4 +1,4 @@
-﻿namespace Eventor.Eventor.GUI
+﻿namespace Eventor.GUI
 {
     partial class EventForm
     {
