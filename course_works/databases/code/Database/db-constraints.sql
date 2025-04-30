@@ -109,8 +109,7 @@ ALTER TABLE events_days
 ALTER TABLE persons_days
     ADD PRIMARY KEY (person_id, day_id),
     ADD FOREIGN KEY (person_id) REFERENCES persons(person_id) ON DELETE CASCADE,
-    ADD FOREIGN KEY (day_id) REFERENCES days(day_id) ON DELETE CASCADE,
-    ADD FOREIGN KEY (menu_id) REFERENCES menu(menu_id) ON DELETE CASCADE;
+    ADD FOREIGN KEY (day_id) REFERENCES days(day_id) ON DELETE CASCADE;
 
 -- Ограничения для таблицы Menu Items
 ALTER TABLE menu_items

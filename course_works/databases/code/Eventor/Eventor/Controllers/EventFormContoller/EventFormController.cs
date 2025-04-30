@@ -119,6 +119,21 @@ public class EventFormController : INotifyPropertyChanged
         }
     }
 
+    public async Task OpenDayInfo(Guid dayId)
+    {
+        try
+        {
+            var dayForm = _serviceProvider.GetRequiredService<DayForm>();
+            dayForm.SetIds(dayId, EventId, UserId);
+            dayForm.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+            return;
+        }
+    }
+
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -25,6 +25,12 @@ public interface IMenuService
     Task<Menu> GetMenuByDayAsync(Guid dayId);
 
     /// <summary>
+    /// Получить количества предмета в конкретном меню
+    /// </summary>
+    /// <returns>Количество</returns>
+    Task<int> GetAmountForItemAsync(Guid menuId, Guid itemId);
+
+    /// <summary>
     /// Создать меню
     /// </summary>
     /// <returns></returns>

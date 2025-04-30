@@ -87,6 +87,7 @@
             eventDays_dataGridView.RowHeadersWidth = 51;
             eventDays_dataGridView.Size = new Size(943, 356);
             eventDays_dataGridView.TabIndex = 3;
+            eventDays_dataGridView.CellClick += eventDays_dataGridView_CellClick;
             // 
             // Column5
             // 

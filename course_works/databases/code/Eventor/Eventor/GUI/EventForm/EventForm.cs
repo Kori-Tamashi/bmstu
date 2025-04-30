@@ -73,4 +73,12 @@ public partial class EventForm : Form
     {
         await _eventFormController.OpenParticipationCreating();
     }
+
+    private async void eventDays_dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+    {
+        if (e.RowIndex < 0) return;
+        var row = eventDays_dataGridView.Rows[e.RowIndex];
+        var dayId = (Guid)row.Cells[0].Value;
+        await _eventFormController.OpenDayInfo(dayId);
+    }
 }

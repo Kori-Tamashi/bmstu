@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Eventor.Services;
 
@@ -108,6 +109,29 @@ public class MenuService : IMenuService
         {
             _logger.LogError(ex, "Unexpected error while retrieving menu for day {DayId}", dayId);
             throw new MenuServiceException($"Failed to retrieve menu for day {dayId}", ex);
+        }
+    }
+
+    public async Task<int> GetAmountForItemAsync(Guid menuId, Guid itemId)
+    {
+        try
+        {
+            return await _menuRepository.GetAmountItemAsync(menuId, itemId);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid item ID: {ItemID}", itemId);
+            throw new MenuServiceException($"Invalid item ID: {itemId}", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Database error while retrieving item amount for menu {MenuId}", menuId);
+            throw new MenuServiceException($"Failed to retrieve item amount for menu {menuId} due to database error", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while retrieving item amount for menu {MenuId}", menuId);
+            throw new MenuServiceException($"Failed to retrieve item amount for menu {menuId}", ex);
         }
     }
 

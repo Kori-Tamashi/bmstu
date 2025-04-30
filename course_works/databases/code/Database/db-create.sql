@@ -19,7 +19,7 @@ CREATE TABLE locations (
     location_id UUID,
     name VARCHAR(255),
     description TEXT,
-    price NUMERIC,
+    price NUMERIC(14,2),
     capacity INT
 );
 
@@ -32,8 +32,8 @@ CREATE TABLE events (
     date DATE,
     person_count INT,
     days_count INT,
-    percent NUMERIC,
-    rating NUMERIC
+    percent NUMERIC(14,4),
+    rating NUMERIC(14,4)
 );
 
 -- Таблица дней мероприятий (Days)
@@ -43,7 +43,7 @@ CREATE TABLE days (
     name VARCHAR(255),
     sequence_number INT,
     description TEXT,
-    price NUMERIC
+    price NUMERIC(14,4)
 );
 
 -- Таблица участников (Persons)
@@ -58,7 +58,7 @@ CREATE TABLE persons (
 CREATE TABLE menu (
     menu_id UUID,
     name VARCHAR(255),
-    cost NUMERIC
+    cost NUMERIC(14,4)
 );
 
 -- Таблица предметов меню (Items)
@@ -66,7 +66,7 @@ CREATE TABLE items (
     item_id UUID,
     name VARCHAR(255),
     type item_type_enum,
-    price NUMERIC
+    price NUMERIC(14,4)
 );
 
 -- Таблица отзывов (Feedbacks)
@@ -75,7 +75,7 @@ CREATE TABLE feedbacks (
     event_id UUID,
     person_id UUID,
     comment TEXT,
-    rating NUMERIC
+    rating NUMERIC(14,4)
 );
 
 -- Связь пользователей и мероприятий (User Events)
@@ -109,4 +109,3 @@ CREATE TABLE menu_items (
     amount INT
 );
 
--- INSERT INTO users VALUES('f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6', 'Misha', '+7 (919) 406-8111', 'Мужчина', 'pupirkalove', 'Администратор');

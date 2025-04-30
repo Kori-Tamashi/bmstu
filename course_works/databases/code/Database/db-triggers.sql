@@ -1,0 +1,269 @@
+-- Триггер для автоматического создания связанных данных при создании мероприятия
+CREATE OR REPLACE FUNCTION create_event_days_and_menus()
+RETURNS TRIGGER AS $$
+DECLARE
+    day_counter INT;
+    new_day_id UUID;
+    new_menu_id UUID;
+BEGIN
+    FOR day_counter IN 1..NEW.days_count LOOP
+        -- Создаем новое меню для дня
+        new_menu_id := gen_random_uuid();
+        INSERT INTO menu (menu_id, name, cost)
+        VALUES (new_menu_id, 'Меню для дня ' || day_counter || ' - ' || NEW.name, 0);
+        
+        -- Создаем новый день
+        new_day_id := gen_random_uuid();
+        INSERT INTO days (day_id, menu_id, name, sequence_number, description, price)
+        VALUES (new_day_id, new_menu_id, 
+                'День ' || day_counter || ' - ' || NEW.name,
+                day_counter,
+                'День мероприятия: ' || NEW.name,
+                0);
+        
+        -- Связываем день с мероприятием
+        INSERT INTO events_days (event_id, day_id)
+        VALUES (NEW.event_id, new_day_id);
+    END LOOP;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_create_event_days
+AFTER INSERT ON events
+FOR EACH ROW
+EXECUTE FUNCTION create_event_days_and_menus();
+
+
+
+-- Триггер для автоматического удаления связанных данных при удалении мероприятия
+CREATE OR REPLACE FUNCTION delete_event_related_data()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Удаляем отзывы мероприятия
+    DELETE FROM feedbacks WHERE event_id = OLD.event_id;
+    
+    -- Удаляем связи участников с днями и самих участников
+    WITH event_persons AS (
+        SELECT person_id 
+        FROM persons_days 
+        WHERE day_id IN (SELECT day_id FROM events_days WHERE event_id = OLD.event_id)
+    )
+    DELETE FROM users_persons WHERE person_id IN (SELECT person_id FROM event_persons);
+    
+    DELETE FROM persons WHERE person_id IN (
+        SELECT person_id FROM persons_days 
+        WHERE day_id IN (SELECT day_id FROM events_days WHERE event_id = OLD.event_id)
+    );
+    
+    -- Удаляем связи дней с мероприятием
+    DELETE FROM events_days WHERE event_id = OLD.event_id;
+    
+    -- Удаляем меню и связанные элементы
+    WITH event_days AS (
+        SELECT day_id, menu_id 
+        FROM days 
+        WHERE day_id IN (SELECT day_id FROM events_days WHERE event_id = OLD.event_id)
+    )
+    DELETE FROM menu_items WHERE menu_id IN (SELECT menu_id FROM event_days);
+    
+    -- Удаляем дни и связанные меню
+    DELETE FROM days WHERE day_id IN (SELECT day_id FROM events_days WHERE event_id = OLD.event_id);
+    DELETE FROM menu WHERE menu_id IN (SELECT menu_id FROM days WHERE day_id IN (SELECT day_id FROM events_days WHERE event_id = OLD.event_id));
+    
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_delete_event_data
+BEFORE DELETE ON events
+FOR EACH ROW
+EXECUTE FUNCTION delete_event_related_data();
+
+
+
+-- Триггер для автоматического обновления стоимости меню
+CREATE OR REPLACE FUNCTION update_menu_cost_trigger()
+RETURNS TRIGGER AS $$
+DECLARE
+    affected_menu_id UUID;
+BEGIN
+    -- Определяем какой меню был изменен
+    IF (TG_OP = 'DELETE') THEN
+        affected_menu_id := OLD.menu_id;
+    ELSE
+        affected_menu_id := NEW.menu_id;
+    END IF;
+
+    -- Обновляем стоимость меню
+    UPDATE menu 
+    SET cost = menu_cost(affected_menu_id)
+    WHERE menu_id = affected_menu_id;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER menu_items_changed
+AFTER INSERT OR UPDATE OR DELETE ON menu_items
+FOR EACH ROW EXECUTE FUNCTION update_menu_cost_trigger();
+
+
+
+-- Триггер для обновления количества участников мероприятия
+CREATE OR REPLACE FUNCTION update_event_person_count()
+RETURNS TRIGGER AS $$
+DECLARE
+    target_event_id UUID;
+    person_count_new INT;
+BEGIN
+    -- Определяем мероприятие, связанное с днем
+    IF (TG_OP = 'INSERT') THEN
+        SELECT event_id INTO target_event_id
+        FROM events_days
+        WHERE day_id = NEW.day_id;
+
+        -- Проверяем, есть ли уже участник в этом мероприятии
+        SELECT COUNT(DISTINCT person_id) INTO person_count_new
+        FROM persons_days pd
+        JOIN events_days ed ON pd.day_id = ed.day_id
+        WHERE ed.event_id = target_event_id;
+
+        -- Обновляем счетчик
+        UPDATE events
+        SET person_count = person_count_new
+        WHERE event_id = target_event_id;
+
+    ELSIF (TG_OP = 'DELETE') THEN
+        SELECT event_id INTO target_event_id
+        FROM events_days
+        WHERE day_id = OLD.day_id;
+
+        -- Пересчитываем всех участников мероприятия
+        SELECT COUNT(DISTINCT person_id) INTO person_count_new
+        FROM persons_days pd
+        JOIN events_days ed ON pd.day_id = ed.day_id
+        WHERE ed.event_id = target_event_id;
+
+        -- Обновляем счетчик
+        UPDATE events
+        SET person_count = person_count_new
+        WHERE event_id = target_event_id;
+
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_persons_days_insert
+AFTER INSERT OR UPDATE ON persons_days
+FOR EACH ROW
+EXECUTE FUNCTION update_event_person_count();
+
+CREATE TRIGGER trigger_persons_days_delete
+AFTER DELETE OR UPDATE ON persons_days
+FOR EACH ROW
+EXECUTE FUNCTION update_event_person_count();
+
+
+
+-- Триггерная функция для обновления количества дней мероприятия
+CREATE OR REPLACE FUNCTION update_event_days_count()
+RETURNS TRIGGER AS $$
+DECLARE
+    target_event_id UUID;
+BEGIN
+    -- Определяем мероприятие, для которого произошли изменения
+    IF (TG_OP = 'INSERT') THEN
+        target_event_id := NEW.event_id;
+    ELSIF (TG_OP = 'DELETE') THEN
+        target_event_id := OLD.event_id;
+    END IF;
+
+    -- Пересчитываем количество дней и обновляем events.days_count
+    UPDATE events
+    SET days_count = (
+        SELECT COUNT(day_id)
+        FROM events_days
+        WHERE event_id = target_event_id
+    )
+    WHERE event_id = target_event_id;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_events_days_changed
+AFTER INSERT OR DELETE ON events_days
+FOR EACH ROW
+EXECUTE FUNCTION update_event_days_count();
+
+
+
+-- Триггерная функция для обновления цен дней мероприятия
+CREATE OR REPLACE FUNCTION update_days_prices()
+RETURNS TRIGGER AS $$
+DECLARE
+    affected_event_id UUID;
+    day_record RECORD;
+BEGIN
+    -- Определяем связанное мероприятие в зависимости от операции
+    IF TG_TABLE_NAME = 'events' THEN
+        affected_event_id := NEW.event_id;
+    ELSIF TG_TABLE_NAME = 'days' THEN
+        affected_event_id := (SELECT event_id FROM events_days WHERE day_id = NEW.day_id);
+    ELSIF TG_TABLE_NAME = 'menu_items' THEN
+        affected_event_id := (
+            SELECT ed.event_id 
+            FROM days d
+            JOIN events_days ed ON d.day_id = ed.day_id 
+            WHERE d.menu_id = NEW.menu_id
+        );
+    ELSIF TG_TABLE_NAME = 'persons_days' THEN
+        affected_event_id := (
+            SELECT event_id 
+            FROM events_days 
+            WHERE day_id = NEW.day_id OR day_id = OLD.day_id
+            LIMIT 1
+        );
+    END IF;
+
+    -- Если решение существует, обновляем цены дней
+    IF check_balance_solution_exists(affected_event_id) THEN
+        FOR day_record IN
+            SELECT d.day_id 
+            FROM days d
+            JOIN events_days ed ON d.day_id = ed.day_id
+            WHERE ed.event_id = affected_event_id
+        LOOP
+            UPDATE days 
+            SET price = day_price_with_profit(day_record.day_id)
+            WHERE day_id = day_record.day_id;
+        END LOOP;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_events_changed
+AFTER INSERT OR UPDATE OF percent ON events
+FOR EACH ROW
+EXECUTE FUNCTION update_days_prices();
+
+CREATE TRIGGER trigger_days_changed
+AFTER UPDATE OF menu_id ON days
+FOR EACH ROW
+EXECUTE FUNCTION update_days_prices();
+
+CREATE TRIGGER trigger_menu_items_changed
+AFTER INSERT OR UPDATE OR DELETE ON menu_items
+FOR EACH ROW
+EXECUTE FUNCTION update_days_prices();
+
+CREATE TRIGGER trigger_persons_days_changed
+AFTER INSERT OR DELETE ON persons_days
+FOR EACH ROW
+EXECUTE FUNCTION update_days_prices();
