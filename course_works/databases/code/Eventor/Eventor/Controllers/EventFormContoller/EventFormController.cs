@@ -64,43 +64,70 @@ public class EventFormController : INotifyPropertyChanged
 
     public async Task InitializeAsync()
     {
-        CurrentEvent = await _eventService.GetEventByIdAsync(EventId);
-        await LoadEventDays();
-        await LoadDaysPersons();
+        try
+        {
+            CurrentEvent = await _eventService.GetEventByIdAsync(EventId);
+            await LoadEventDays();
+            await LoadDaysPersons();
+        }
+        catch(Exception ex)
+        {
+            throw;
+        }
     }
 
     private async Task LoadEventDays()
     {
-        var days = await _dayService.GetAllDaysByEventAsync(CurrentEvent.Id);
-        EventDays = new BindingList<Day>(days.ToList());
+        try
+        {
+            var days = await _dayService.GetAllDaysByEventAsync(CurrentEvent.Id);
+            EventDays = new BindingList<Day>(days.ToList());
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     private async Task LoadDaysPersons()
     {
-        _daysPersons.Clear();
-        foreach (var day in EventDays)
+        try
         {
-            _daysPersons[day.Id] = await _economyService.GetPersonCountAsync(day.Id);
+            _daysPersons.Clear();
+            foreach (var day in EventDays)
+            {
+                _daysPersons[day.Id] = await _economyService.GetPersonCountAsync(day.Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
         }
     }
 
     public int GetDayPersonsCount(Guid dayId)
     {
-        return _daysPersons.TryGetValue(dayId, out int count) ? count : 0;
+        try
+        {
+            return _daysPersons.TryGetValue(dayId, out int count) ? count : 0;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     public async Task OpenFeedbackCreating()
     {
         try
         {
-            var feedbackForm = _serviceProvider.GetRequiredService<FeedbackForm>();
+            var feedbackForm = _serviceProvider.GetRequiredService<FeedbackCreateForm>();
             feedbackForm.SetIds(EventId, UserId);
             feedbackForm.Show();
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 
@@ -114,8 +141,7 @@ public class EventFormController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 
@@ -129,8 +155,21 @@ public class EventFormController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
+        }
+    }
+
+    public async Task OpenFeedbacks()
+    {
+        try
+        {
+            var feedbacksForm = _serviceProvider.GetRequiredService<FeedbacksForm>();
+            feedbacksForm.SetIds(EventId, UserId);
+            feedbacksForm.Show();
+        }
+        catch (Exception ex)
+        {
+            throw;
         }
     }
 

@@ -3,10 +3,6 @@ using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Eventor.Services;
 
@@ -25,7 +21,14 @@ public class FeedbackService : IFeedbackService
     {
         try
         {
-            return await _feedbackRepository.GetAllFeedbackAsync();
+            var feedbacks = await _feedbackRepository.GetAllFeedbackAsync();
+
+            if (feedbacks == null || !feedbacks.Any())
+            {
+                _logger.LogInformation("No feedback found for event");
+                return new List<Feedback>(); // Возвращаем пустой список вместо null
+            }
+            return feedbacks;
         }
         catch (DbUpdateException ex)
         {

@@ -120,6 +120,8 @@ internal static class Program
         // Контроллеры
         services.AddTransient<MainWindowController>();
         services.AddTransient<EventFormController>();
+        services.AddTransient<FeedbackCreateFormController>();
+        services.AddTransient<FeedbacksFormController>();
         services.AddTransient<FeedbackFormController>();
         services.AddTransient<ParticipationFormController>();
         services.AddTransient<DayFormController>();
@@ -128,9 +130,10 @@ internal static class Program
         services.AddTransient<MainWindow>(provider => new MainWindow());
         services.AddTransient<LoginForm>();
         services.AddTransient<EventForm>();
+        services.AddTransient<FeedbackCreateForm>();
+        services.AddTransient<FeedbacksForm>();
         services.AddTransient<FeedbackForm>();
         services.AddTransient<ParticipationForm>();
         services.AddTransient<DayForm>();
-
     }
 }

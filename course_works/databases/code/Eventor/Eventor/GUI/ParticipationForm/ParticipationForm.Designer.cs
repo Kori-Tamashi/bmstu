@@ -57,9 +57,10 @@
             ClientSize = new Size(361, 171);
             Controls.Add(saveDays_button);
             Controls.Add(days_checkedListBox);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             Name = "ParticipationForm";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Дни присутствия";
             Load += ParticipationForm_Load;
             ResumeLayout(false);

@@ -13,37 +13,41 @@ public partial class DayForm : Form
         InitializeBindings();
     }
 
-    public void SetIds(Guid dayId, Guid eventId, Guid userId)
-    {
-        _dayFormController.SetIds(dayId, eventId, userId);
-    }
-
     private void InitializeBindings()
     {
-        var dayBindingSource = new BindingSource { DataSource = _dayFormController };
+        try
+        {
+            var dayBindingSource = new BindingSource { DataSource = _dayFormController };
 
-        // Day info
-        dayName_label.DataBindings.Add("Text", dayBindingSource, "CurrentDay.Name");
-        daySequenceNumber_label.DataBindings.Add("Text", dayBindingSource, "CurrentDay.SequenceNumber");
-        dayDescription_textBox.DataBindings.Add("Text", dayBindingSource, "CurrentDay.Description");
+            // Day info
+            dayName_label.DataBindings.Add("Text", dayBindingSource, "CurrentDay.Name");
+            daySequenceNumber_label.DataBindings.Add("Text", dayBindingSource, "CurrentDay.SequenceNumber");
+            dayDescription_textBox.DataBindings.Add("Text", dayBindingSource, "CurrentDay.Description");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось произвести связывание данных между формой информации о дне мероприятия и контроллером.");
+            return;
+        }
     }
 
     private void InitializeTimer()
     {
-        _timer.Tick += async (sender, e) =>
+        try
         {
-            try
+            _timer.Tick += async (sender, e) =>
             {
                 await _dayFormController.InitializeDayAsync();
                 await LoadParticipants();
                 await LoadMenu();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        };
-        _timer.Start();
+            };
+            _timer.Start();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось автоматически обновить данные формы информации о дне мероприятия по таймеру.");
+            return;
+        }
     }
 
     private async void DayForm_Load(object sender, EventArgs e)
@@ -57,7 +61,7 @@ public partial class DayForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
+            MessageBox.Show("Ошибка: не удалось загрузить форму информации о дне мероприятия.");
             Close();
         }
     }
@@ -77,7 +81,7 @@ public partial class DayForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
+            throw;
         }
     }
 
@@ -102,7 +106,21 @@ public partial class DayForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
+            throw;
         }
+    }
+
+    public void SetIds(Guid dayId, Guid eventId, Guid userId)
+    {
+        try
+        {
+            _dayFormController.SetIds(dayId, eventId, userId);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось передать данные в форму информации о дне мероприятия.");
+            return;
+        }
+
     }
 }

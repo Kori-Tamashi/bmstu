@@ -14,38 +14,63 @@ public partial class ParticipationForm : Form
 
     private async void ParticipationForm_Load(object sender, EventArgs e)
     {
-        await _participationFormController.InitializeAsync();
-        InitializeDaysCheckBox();
+        try
+        {
+            await _participationFormController.InitializeAsync();
+            InitializeDaysCheckBox();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка: не удалось загрузить форму выбора дней присутствия на мероприятии.");
+            return;
+        }
+        
     }
 
     private void InitializeDaysCheckBox()
     {
-        days_checkedListBox.Items.Clear();
-        foreach (var label in _participationFormController.DayLabels)
+        try
         {
-            days_checkedListBox.Items.Add(label);
-        }
+            days_checkedListBox.Items.Clear();
+            foreach (var label in _participationFormController.DayLabels)
+            {
+                days_checkedListBox.Items.Add(label);
+            }
 
-        for (int i = 0; i < days_checkedListBox.Items.Count; i++)
+            for (int i = 0; i < days_checkedListBox.Items.Count; i++)
+            {
+                days_checkedListBox.SetItemChecked(i, _participationFormController.SelectedDays.Contains(i + 1));
+            }
+        }
+        catch (Exception ex)
         {
-            days_checkedListBox.SetItemChecked(i, _participationFormController.SelectedDays.Contains(i + 1));
+            MessageBox.Show($"Ошибка: не удалось загрузить дни мероприятия.");
+            return;
         }
     }
 
     public void SetIds(Guid eventId, Guid userId)
     {
-        _participationFormController.EventId = eventId;
-        _participationFormController.UserId = userId;
+        try
+        {
+            _participationFormController.EventId = eventId;
+            _participationFormController.UserId = userId;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка: не удалось передать данные форме выбора дней присутствия.");
+            return;
+        }
     }
 
     private async void saveDays_button_Click(object sender, EventArgs e)
     {
-        var selectedIndices = days_checkedListBox.CheckedIndices
+        try
+        {
+            var selectedIndices = days_checkedListBox.CheckedIndices
             .Cast<int>()
             .ToList();
 
-        try
-        {
             _participationFormController.UpdateSelectedDays(selectedIndices);
             await _participationFormController.SaveParticipationAsync();
 
@@ -62,7 +87,8 @@ public partial class ParticipationForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Ошибка: {ex.Message}");
+            MessageBox.Show($"Ошибка: не удалось изменить дни присутствия на мероприятии.");
+            return;
         }
     }
 }

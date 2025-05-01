@@ -58,8 +58,7 @@ public class MainWindowController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 
@@ -74,8 +73,7 @@ public class MainWindowController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 
@@ -89,8 +87,7 @@ public class MainWindowController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 
@@ -104,8 +101,7 @@ public class MainWindowController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 
@@ -127,29 +123,21 @@ public class MainWindowController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 
-    public async Task OpenEventDetails(Event selectedEvent)
+    public async Task OpenEventDetails(Guid eventId)
     {
-        if (selectedEvent == null)
-        {
-            MessageBox.Show($"Мероприятие \"{selectedEvent.Name}\" не найдено.");
-            return;
-        }
-
         try
         {
             var eventForm = _serviceProvider.GetRequiredService<EventForm>();
-            eventForm.SetIds(selectedEvent.Id, CurrentUser.Id);
+            eventForm.SetIds(eventId, CurrentUser.Id);
             eventForm.Show();
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 

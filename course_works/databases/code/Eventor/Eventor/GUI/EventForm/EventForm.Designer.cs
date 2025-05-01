@@ -42,8 +42,9 @@
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
-            participation_button = new Button();
+            eventFeedbacks_button = new Button();
             feedback_button = new Button();
+            participation_button = new Button();
             _timer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)eventDays_dataGridView).BeginInit();
             groupBox1.SuspendLayout();
@@ -130,7 +131,7 @@
             eventPersonCount_label.Anchor = AnchorStyles.None;
             eventPersonCount_label.AutoSize = true;
             eventPersonCount_label.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            eventPersonCount_label.Location = new Point(248, 7);
+            eventPersonCount_label.Location = new Point(214, 7);
             eventPersonCount_label.Name = "eventPersonCount_label";
             eventPersonCount_label.Size = new Size(217, 23);
             eventPersonCount_label.TabIndex = 4;
@@ -141,7 +142,7 @@
             eventDaysCount_label.Anchor = AnchorStyles.None;
             eventDaysCount_label.AutoSize = true;
             eventDaysCount_label.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            eventDaysCount_label.Location = new Point(36, 7);
+            eventDaysCount_label.Location = new Point(18, 7);
             eventDaysCount_label.Name = "eventDaysCount_label";
             eventDaysCount_label.Size = new Size(165, 23);
             eventDaysCount_label.TabIndex = 5;
@@ -175,15 +176,17 @@
             // tableLayoutPanel2
             // 
             tableLayoutPanel2.Anchor = AnchorStyles.None;
-            tableLayoutPanel2.ColumnCount = 4;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel2.ColumnCount = 5;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 26.3433819F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 31.84797F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.36304F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20.44561F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 191F));
+            tableLayoutPanel2.Controls.Add(eventFeedbacks_button, 3, 0);
             tableLayoutPanel2.Controls.Add(eventDaysCount_label, 0, 0);
             tableLayoutPanel2.Controls.Add(eventPersonCount_label, 1, 0);
-            tableLayoutPanel2.Controls.Add(participation_button, 3, 0);
             tableLayoutPanel2.Controls.Add(feedback_button, 2, 0);
+            tableLayoutPanel2.Controls.Add(participation_button, 4, 0);
             tableLayoutPanel2.Location = new Point(12, 548);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
@@ -191,27 +194,38 @@
             tableLayoutPanel2.Size = new Size(955, 37);
             tableLayoutPanel2.TabIndex = 8;
             // 
-            // participation_button
+            // eventFeedbacks_button
             // 
-            participation_button.Anchor = AnchorStyles.None;
-            participation_button.Location = new Point(717, 4);
-            participation_button.Name = "participation_button";
-            participation_button.Size = new Size(235, 29);
-            participation_button.TabIndex = 6;
-            participation_button.Text = "Участвовать/покинуть";
-            participation_button.UseVisualStyleBackColor = true;
-            participation_button.Click += participation_button_Click;
+            eventFeedbacks_button.Anchor = AnchorStyles.None;
+            eventFeedbacks_button.Location = new Point(610, 4);
+            eventFeedbacks_button.Name = "eventFeedbacks_button";
+            eventFeedbacks_button.Size = new Size(150, 29);
+            eventFeedbacks_button.TabIndex = 8;
+            eventFeedbacks_button.Text = "Отзывы";
+            eventFeedbacks_button.UseVisualStyleBackColor = true;
+            eventFeedbacks_button.Click += eventFeedbacks_button_Click;
             // 
             // feedback_button
             // 
             feedback_button.Anchor = AnchorStyles.None;
-            feedback_button.Location = new Point(479, 4);
+            feedback_button.Location = new Point(449, 4);
             feedback_button.Name = "feedback_button";
-            feedback_button.Size = new Size(232, 29);
+            feedback_button.Size = new Size(152, 29);
             feedback_button.TabIndex = 7;
             feedback_button.Text = "Оставить отзыв";
             feedback_button.UseVisualStyleBackColor = true;
             feedback_button.Click += feedback_button_Click;
+            // 
+            // participation_button
+            // 
+            participation_button.Anchor = AnchorStyles.None;
+            participation_button.Location = new Point(772, 4);
+            participation_button.Name = "participation_button";
+            participation_button.Size = new Size(174, 29);
+            participation_button.TabIndex = 6;
+            participation_button.Text = "Участвовать/покинуть";
+            participation_button.UseVisualStyleBackColor = true;
+            participation_button.Click += participation_button_Click;
             // 
             // _timer
             // 
@@ -225,7 +239,8 @@
             Controls.Add(tableLayoutPanel2);
             Controls.Add(groupBox1);
             Controls.Add(tableLayoutPanel1);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             Name = "EventForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Информация о мероприятии";
@@ -256,5 +271,6 @@
         private DataGridViewTextBoxColumn Column2;
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column3;
+        private Button eventFeedbacks_button;
     }
 }

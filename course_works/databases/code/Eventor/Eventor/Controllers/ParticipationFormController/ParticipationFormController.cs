@@ -35,23 +35,37 @@ public class ParticipationFormController : INotifyPropertyChanged
 
     public async Task InitializeAsync()
     {
-        var days = await _dayService.GetAllDaysByEventAsync(EventId);
-        DaysCount = days.Count;
-        DayLabels = days.Select(d => $"День {d.SequenceNumber}").ToList();
-
-        var userPerson = await _personService.GetPersonByUserAndEventAsync(UserId, EventId);
-        if (userPerson != null)
+        try
         {
-            var userDays = await _dayService.GetAllDaysByPersonAsync(userPerson.Id);
-            _selectedDays = userDays.Select(d => d.SequenceNumber).ToList();
-        }
+            var days = await _dayService.GetAllDaysByEventAsync(EventId);
+            DaysCount = days.Count;
+            DayLabels = days.Select(d => $"День {d.SequenceNumber}").ToList();
 
-        OnPropertyChanged(nameof(DayLabels));
+            var userPerson = await _personService.GetPersonByUserAndEventAsync(UserId, EventId);
+            if (userPerson != null)
+            {
+                var userDays = await _dayService.GetAllDaysByPersonAsync(userPerson.Id);
+                _selectedDays = userDays.Select(d => d.SequenceNumber).ToList();
+            }
+
+            OnPropertyChanged(nameof(DayLabels));
+        }
+        catch
+        {
+            throw;
+        }
     }
 
     public void UpdateSelectedDays(List<int> selectedIndices)
     {
-        _selectedDays = selectedIndices.Select(i => i + 1).ToList();
+        try
+        {
+            _selectedDays = selectedIndices.Select(i => i + 1).ToList();
+        }
+        catch (Exception e) 
+        {
+            throw;
+        }
     }
 
     public async Task SaveParticipationAsync()
@@ -112,8 +126,7 @@ public class ParticipationFormController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message);
-            return;
+            throw;
         }
     }
 

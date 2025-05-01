@@ -1,5 +1,4 @@
 ﻿using Eventor.GUI.Controllers;
-using Microsoft.Extensions.Logging;
 
 namespace Eventor.GUI;
 
@@ -16,69 +15,146 @@ public partial class EventForm : Form
 
     private void InitializeBindings()
     {
-        var eventBindingSource = new BindingSource { DataSource = _eventFormController };
+        try
+        {
+            var eventBindingSource = new BindingSource { DataSource = _eventFormController };
 
-        // Event info
-        eventName_label.DataBindings.Add("Text", eventBindingSource, "CurrentEvent.Name");
-        eventDescription_textBox.DataBindings.Add("Text", eventBindingSource, "EventDescription");
-        eventDaysCount_label.DataBindings.Add("Text", eventBindingSource, "EventDaysCount");
+            // Event info
+            eventName_label.DataBindings.Add("Text", eventBindingSource, "CurrentEvent.Name");
+            eventDescription_textBox.DataBindings.Add("Text", eventBindingSource, "EventDescription");
+            eventDaysCount_label.DataBindings.Add("Text", eventBindingSource, "EventDaysCount");
+            eventPersonCount_label.DataBindings.Add("Text", eventBindingSource, "EventPersonCount");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось произвести связывание данных между формой информации о мероприятии и контроллером.");
+            return;
+        }
     }
 
     private void InitializeEventDaysGrid()
     {
-        eventDays_dataGridView.AutoGenerateColumns = false;
-        eventDays_dataGridView.Rows.Clear();
-
-        foreach (var evt in _eventFormController.EventDays)
+        try
         {
-            eventDays_dataGridView.Rows.Add(
-                evt.Id,
-                evt.SequenceNumber,
-                evt.Name,
-                evt.Price,
-                _eventFormController.GetDayPersonsCount(evt.Id)
-            );
+            eventDays_dataGridView.AutoGenerateColumns = false;
+            eventDays_dataGridView.Rows.Clear();
+
+            foreach (var evt in _eventFormController.EventDays)
+            {
+                eventDays_dataGridView.Rows.Add(
+                    evt.Id,
+                    evt.SequenceNumber,
+                    evt.Name,
+                    evt.Price,
+                    _eventFormController.GetDayPersonsCount(evt.Id)
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
         }
     }
 
     private async void EventForm_Load(object sender, EventArgs e)
     {
-        await _eventFormController.InitializeAsync();
-        InitializeEventDaysGrid();
-        InitializeTimer();
+        try
+        {
+            await _eventFormController.InitializeAsync();
+            InitializeEventDaysGrid();
+            InitializeTimer();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось произвести загрузку формы информации о мероприятии.");
+            return;
+        }
     }
 
     private void InitializeTimer()
     {
-        _timer.Tick += async (sender, e) =>
+        try
         {
-            await _eventFormController.InitializeAsync();
-            InitializeEventDaysGrid();
-        };
-        _timer.Start();
+            _timer.Tick += async (sender, e) =>
+            {
+                await _eventFormController.InitializeAsync();
+                InitializeEventDaysGrid();
+            };
+            _timer.Start();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось автоматически обновить данные формы информации о мероприятии по таймеру.");
+            return;
+        }
     }
 
     public void SetIds(Guid eventId, Guid userId)
     {
-        _eventFormController.EventId = eventId;
-        _eventFormController.UserId = userId;
+        try
+        {
+            _eventFormController.EventId = eventId;
+            _eventFormController.UserId = userId;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось передать данные в форму информации о мероприятии.");
+            return;
+        }
     }
 
     private async void feedback_button_Click(object sender, EventArgs e)
     {
-        await _eventFormController.OpenFeedbackCreating();
+        try
+        {
+            await _eventFormController.OpenFeedbackCreating();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму создания отзыва.");
+            return;
+        }
     }
 
     private async void participation_button_Click(object sender, EventArgs e)
     {
-        await _eventFormController.OpenParticipationCreating();
+        try
+        {
+            await _eventFormController.OpenParticipationCreating();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму выбора дней присутствия на мероприятии.");
+            return;
+        }
     }
 
     private async void eventDays_dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
     {
-        if (e.RowIndex < 0) return;
-        var row = eventDays_dataGridView.Rows[e.RowIndex];
-        var dayId = (Guid)row.Cells[0].Value;
-        await _eventFormController.OpenDayInfo(dayId);
+        try
+        {
+            if (e.RowIndex < 0) return;
+            var row = eventDays_dataGridView.Rows[e.RowIndex];
+            var dayId = (Guid)row.Cells[0].Value;
+            await _eventFormController.OpenDayInfo(dayId);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму информации о дне.");
+            return;
+        }
+    }
+
+    private async void eventFeedbacks_button_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            await _eventFormController.OpenFeedbacks();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму отзывов.");
+            return;
+        }
     }
 }

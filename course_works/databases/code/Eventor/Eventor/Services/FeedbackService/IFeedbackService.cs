@@ -1,5 +1,5 @@
 ﻿using Eventor.Common.Core;
-namespace Eventor.Database.Core;
+namespace Eventor.Services;
 
 /// <summary>
 /// Интерфейс репозитория отзыва

@@ -1,6 +1,6 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Common.Enums;
-namespace Eventor.Database.Core;
+namespace Eventor.Services;
 
 /// <summary>
 /// Интерфейс репозитория пользователя

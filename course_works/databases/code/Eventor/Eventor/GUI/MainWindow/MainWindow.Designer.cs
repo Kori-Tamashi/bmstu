@@ -111,10 +111,13 @@
             userEvents_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             userEvents_dataGridView.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3 });
             userEvents_dataGridView.Location = new Point(6, 26);
+            userEvents_dataGridView.MultiSelect = false;
             userEvents_dataGridView.Name = "userEvents_dataGridView";
+            userEvents_dataGridView.ReadOnly = true;
             userEvents_dataGridView.RowHeadersWidth = 51;
             userEvents_dataGridView.Size = new Size(987, 456);
             userEvents_dataGridView.TabIndex = 0;
+            userEvents_dataGridView.CellClick += userEvents_dataGridView_CellClick;
             // 
             // Column1
             // 
@@ -122,6 +125,7 @@
             Column1.HeaderText = "Название";
             Column1.MinimumWidth = 6;
             Column1.Name = "Column1";
+            Column1.ReadOnly = true;
             // 
             // Column2
             // 
@@ -129,6 +133,7 @@
             Column2.HeaderText = "Дата";
             Column2.MinimumWidth = 6;
             Column2.Name = "Column2";
+            Column2.ReadOnly = true;
             // 
             // Column3
             // 
@@ -136,6 +141,7 @@
             Column3.HeaderText = "Id";
             Column3.MinimumWidth = 6;
             Column3.Name = "Column3";
+            Column3.ReadOnly = true;
             Column3.Visible = false;
             // 
             // groupBox1

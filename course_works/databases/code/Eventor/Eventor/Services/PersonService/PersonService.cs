@@ -1,5 +1,6 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Common.Enums;
+using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -7,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Eventor.Database.Core;
+namespace Eventor.Services;
 
 public class PersonService : IPersonService
 {

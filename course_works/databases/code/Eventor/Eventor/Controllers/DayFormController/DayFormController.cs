@@ -67,9 +67,16 @@ public class DayFormController : INotifyPropertyChanged
 
     public void SetIds(Guid dayId, Guid eventId, Guid userId)
     {
-        DayId = dayId;
-        EventId = eventId;
-        UserId = userId;
+        try
+        {
+            DayId = dayId;
+            EventId = eventId;
+            UserId = userId;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     public async Task InitializeDayAsync()
@@ -80,7 +87,7 @@ public class DayFormController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("Ошибка загрузки данных дня", ex);
+            throw;
         }
     }
 
@@ -92,7 +99,7 @@ public class DayFormController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("Ошибка загрузки участников", ex);
+            throw;
         }
     }
 
@@ -105,7 +112,7 @@ public class DayFormController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("Ошибка загрузки меню", ex);
+            throw;
         }
     }
 
@@ -118,7 +125,7 @@ public class DayFormController : INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            throw new ApplicationException("Ошибка получения количества", ex);
+            throw;
         }
     }
 

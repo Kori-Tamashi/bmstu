@@ -28,89 +28,118 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            feedbackComment_textBox = new TextBox();
-            feedbackRating_numericUpDown = new NumericUpDown();
-            label2 = new Label();
-            createFeedback_button = new Button();
-            ((System.ComponentModel.ISupportInitialize)feedbackRating_numericUpDown).BeginInit();
+            components = new System.ComponentModel.Container();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            feedbackTitle_label = new Label();
+            comment_label = new Label();
+            comment_textBox = new TextBox();
+            rating_label = new Label();
+            delete_button = new Button();
+            _timer = new System.Windows.Forms.Timer(components);
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // tableLayoutPanel1
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            label1.Location = new Point(12, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(150, 28);
-            label1.TabIndex = 0;
-            label1.Text = "Комментарий";
+            tableLayoutPanel1.Anchor = AnchorStyles.None;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(feedbackTitle_label, 0, 0);
+            tableLayoutPanel1.Location = new Point(15, 12);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new Size(446, 76);
+            tableLayoutPanel1.TabIndex = 0;
             // 
-            // feedbackComment_textBox
+            // feedbackTitle_label
             // 
-            feedbackComment_textBox.Location = new Point(18, 40);
-            feedbackComment_textBox.Multiline = true;
-            feedbackComment_textBox.Name = "feedbackComment_textBox";
-            feedbackComment_textBox.Size = new Size(462, 157);
-            feedbackComment_textBox.TabIndex = 1;
+            feedbackTitle_label.Anchor = AnchorStyles.None;
+            feedbackTitle_label.AutoSize = true;
+            feedbackTitle_label.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            feedbackTitle_label.Location = new Point(133, 24);
+            feedbackTitle_label.Name = "feedbackTitle_label";
+            feedbackTitle_label.Size = new Size(180, 28);
+            feedbackTitle_label.TabIndex = 1;
+            feedbackTitle_label.Text = "Отзыв участника";
             // 
-            // feedbackRating_numericUpDown
+            // comment_label
             // 
-            feedbackRating_numericUpDown.DecimalPlaces = 2;
-            feedbackRating_numericUpDown.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            feedbackRating_numericUpDown.Location = new Point(18, 231);
-            feedbackRating_numericUpDown.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
-            feedbackRating_numericUpDown.Name = "feedbackRating_numericUpDown";
-            feedbackRating_numericUpDown.Size = new Size(150, 27);
-            feedbackRating_numericUpDown.TabIndex = 2;
-            feedbackRating_numericUpDown.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            comment_label.Anchor = AnchorStyles.None;
+            comment_label.AutoSize = true;
+            comment_label.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            comment_label.Location = new Point(15, 91);
+            comment_label.Name = "comment_label";
+            comment_label.Size = new Size(150, 28);
+            comment_label.TabIndex = 2;
+            comment_label.Text = "Комментарий";
             // 
-            // label2
+            // comment_textBox
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            label2.Location = new Point(13, 200);
-            label2.Name = "label2";
-            label2.Size = new Size(89, 28);
-            label2.TabIndex = 3;
-            label2.Text = "Рейтинг";
+            comment_textBox.BackColor = SystemColors.Menu;
+            comment_textBox.BorderStyle = BorderStyle.None;
+            comment_textBox.Location = new Point(18, 122);
+            comment_textBox.Multiline = true;
+            comment_textBox.Name = "comment_textBox";
+            comment_textBox.PlaceholderText = "Комментарий участника";
+            comment_textBox.Size = new Size(443, 124);
+            comment_textBox.TabIndex = 3;
             // 
-            // createFeedback_button
+            // rating_label
             // 
-            createFeedback_button.Location = new Point(18, 264);
-            createFeedback_button.Name = "createFeedback_button";
-            createFeedback_button.Size = new Size(462, 29);
-            createFeedback_button.TabIndex = 4;
-            createFeedback_button.Text = "Оставить отзыв";
-            createFeedback_button.UseVisualStyleBackColor = true;
-            createFeedback_button.Click += createFeedback_button_Click;
+            rating_label.Anchor = AnchorStyles.None;
+            rating_label.AutoSize = true;
+            rating_label.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            rating_label.Location = new Point(15, 249);
+            rating_label.Name = "rating_label";
+            rating_label.Size = new Size(89, 28);
+            rating_label.TabIndex = 4;
+            rating_label.Text = "Рейтинг";
+            // 
+            // delete_button
+            // 
+            delete_button.Location = new Point(310, 281);
+            delete_button.Name = "delete_button";
+            delete_button.Size = new Size(151, 29);
+            delete_button.TabIndex = 5;
+            delete_button.Text = "Удалить отзыв";
+            delete_button.UseVisualStyleBackColor = true;
+            delete_button.Click += delete_button_Click;
+            // 
+            // _timer
+            // 
+            _timer.Interval = 15000;
             // 
             // FeedbackForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(499, 310);
-            Controls.Add(createFeedback_button);
-            Controls.Add(label2);
-            Controls.Add(feedbackRating_numericUpDown);
-            Controls.Add(feedbackComment_textBox);
-            Controls.Add(label1);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            ClientSize = new Size(473, 322);
+            Controls.Add(delete_button);
+            Controls.Add(rating_label);
+            Controls.Add(comment_textBox);
+            Controls.Add(comment_label);
+            Controls.Add(tableLayoutPanel1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             Name = "FeedbackForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Отзыв";
             Load += FeedbackForm_Load;
-            ((System.ComponentModel.ISupportInitialize)feedbackRating_numericUpDown).EndInit();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Label label1;
-        private TextBox feedbackComment_textBox;
-        private NumericUpDown feedbackRating_numericUpDown;
-        private Label label2;
-        private Button createFeedback_button;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Label feedbackTitle_label;
+        private Label comment_label;
+        private TextBox comment_textBox;
+        private Label rating_label;
+        private Button delete_button;
+        private System.Windows.Forms.Timer _timer;
     }
 }
