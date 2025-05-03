@@ -31,12 +31,19 @@ public class Location
     /// <example>1000</example>
     public double Price { get; set; }
 
-    public Location(Guid id, string name, string description, double price)
+    /// <summary>
+    /// Вместимость
+    /// </summary>
+    /// <example>1000</example>
+    public int Capacity { get; set; }
+
+    public Location(Guid id, string name, string description, double price, int capacity)
     {
         Id = id;
         Name = name;
         Description = description;
         Price = price;
+        Capacity = capacity;
     }
 
     public override bool Equals(object? obj)
@@ -48,6 +55,7 @@ public class Location
         return Id == other.Id
                && Name.Equals(other.Name)
                && Description.Equals(other.Description)
-               && Price == other.Price;
+               && Price == other.Price
+               && Capacity == other.Capacity;
     }
 }

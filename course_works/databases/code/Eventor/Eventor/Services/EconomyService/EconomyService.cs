@@ -821,7 +821,7 @@ public class EconomyService : IEconomyService
     {
         try
         {
-            // 1. Проверка наличия дней
+            // 1. Проверка наличия дней мероприятия
             var days = await _dayRepository.GetAllDaysByEventAsync(eventId);
             if (!days.Any())
             {
@@ -829,7 +829,7 @@ public class EconomyService : IEconomyService
                 return false;
             }
 
-            // 2. Проверка положительности стоимости всех дней
+            // 2. Проверка положительности стоимости ВСЕХ дней
             foreach (var day in days)
             {
                 var dayCost = await GetDaysCostAsync(new[] { day.Id });
@@ -840,12 +840,15 @@ public class EconomyService : IEconomyService
                 }
             }
 
-            // 3. Проверка наличия участников
-            var participantsCount = await GetAllPersonsCountAsync(eventId);
-            if (participantsCount == 0)
+            // 3. Проверка что КАЖДЫЙ день выбран хотя бы одним участником
+            foreach (var day in days)
             {
-                _logger.LogWarning($"Мероприятие {eventId} не имеет участников");
-                return false;
+                var participantsCount = await GetPersonCountAsync(day.Id);
+                if (participantsCount <= 0)
+                {
+                    _logger.LogWarning($"День {day.Id} не имеет участников");
+                    return false;
+                }
             }
 
             return true;

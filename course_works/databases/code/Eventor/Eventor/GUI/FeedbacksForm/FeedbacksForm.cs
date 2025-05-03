@@ -20,7 +20,7 @@ namespace Eventor.GUI
                 _feedbacksFormController.EventId = eventId;
                 _feedbacksFormController.UserId = userId;
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Ошибка: не удалось передать данные в форму отзывов мероприятия.");
                 return;
@@ -32,15 +32,13 @@ namespace Eventor.GUI
             try
             {
                 var feedbacksBindingSource = new BindingSource { DataSource = _feedbacksFormController };
-
                 eventFeedbacks_label.DataBindings.Add("Text", feedbacksBindingSource, "MainLabel");
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Ошибка: не удалось произвести связывание данных между формой информации об отзывах и контроллером.");
                 return;
             }
-
         }
 
         private async void InitializeFeedbacksGrid()
@@ -62,7 +60,7 @@ namespace Eventor.GUI
                     );
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }
@@ -79,7 +77,7 @@ namespace Eventor.GUI
                 };
                 _timer.Start();
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Ошибка: не удалось автоматически обновить данные формы информации об отзывах по таймеру.");
                 return;
@@ -94,7 +92,7 @@ namespace Eventor.GUI
                 InitializeFeedbacksGrid();
                 InitializeTimer();
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Ошибка: не удалось загрузить форму отзывов мероприятия.");
                 Close();
@@ -111,7 +109,7 @@ namespace Eventor.GUI
 
                 _feedbacksFormController.OpenFeedbackInfo(feedbackId);
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Ошибка: не удалось открыть форму информации об отзыве.");
                 Close();

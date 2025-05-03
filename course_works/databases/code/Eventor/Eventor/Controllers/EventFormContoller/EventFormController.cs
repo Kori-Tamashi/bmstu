@@ -13,13 +13,25 @@ public class EventFormController : INotifyPropertyChanged
     private readonly IEventService _eventService;
     private readonly IDayService _dayService;
     private readonly IEconomyService _economyService;
+    private readonly ILocationService _locationService;
 
     public Guid EventId { get; set; }
     public Guid UserId { get; set; }
 
     private Event _currentEvent;
+    private Location _currentLocation;
     private BindingList<Day> _eventDays = new BindingList<Day>();
     private Dictionary<Guid, int> _daysPersons = new Dictionary<Guid, int>();
+
+    public Location CurrentLocation
+    {
+        get => _currentLocation;
+        set
+        {
+            _currentLocation = value;
+            OnPropertyChanged();
+        }
+    }
 
     public Event CurrentEvent
     {
@@ -45,7 +57,7 @@ public class EventFormController : INotifyPropertyChanged
     }
 
     public string EventDescription => CurrentEvent?.Description ?? string.Empty;
-    public string EventPersonCount => $"Участников: {CurrentEvent?.PersonCount}";
+    public string EventPersonCount => $"Участников: {CurrentEvent?.PersonCount}/{CurrentLocation?.Capacity}";
     public string EventDaysCount => $"Дней: {CurrentEvent?.DaysCount}";
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -54,12 +66,14 @@ public class EventFormController : INotifyPropertyChanged
         IServiceProvider serviceProvider,
         IEventService eventService,
         IDayService dayService,
-        IEconomyService economyService)
+        IEconomyService economyService,
+        ILocationService locationService)
     {
         _serviceProvider = serviceProvider;
         _eventService = eventService;
         _dayService = dayService;
         _economyService = economyService;
+        _locationService = locationService;
     }
 
     public async Task InitializeAsync()
@@ -67,6 +81,7 @@ public class EventFormController : INotifyPropertyChanged
         try
         {
             CurrentEvent = await _eventService.GetEventByIdAsync(EventId);
+            CurrentLocation = await _locationService.GetLocationByIdAsync(CurrentEvent.LocationId);
             await LoadEventDays();
             await LoadDaysPersons();
         }
@@ -166,6 +181,20 @@ public class EventFormController : INotifyPropertyChanged
             var feedbacksForm = _serviceProvider.GetRequiredService<FeedbacksForm>();
             feedbacksForm.SetIds(EventId, UserId);
             feedbacksForm.Show();
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    public async Task OpenParticipants()
+    {
+        try
+        {
+            var participantsForm = _serviceProvider.GetRequiredService<ParticipantsForm>();
+            participantsForm.SetIds(EventId, UserId);
+            participantsForm.Show();
         }
         catch (Exception ex)
         {

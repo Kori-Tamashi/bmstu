@@ -1,32 +1,37 @@
--- Триггер для автоматического создания связанных данных при создании мероприятия
-CREATE OR REPLACE FUNCTION create_event_days_and_menus()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION create_day_for_event(event_id UUID, seq_num INT)
+RETURNS VOID AS $$
 DECLARE
-    day_counter INT;
-    new_day_id UUID;
-    new_menu_id UUID;
+    new_menu_id UUID := gen_random_uuid();
+    new_day_id UUID := gen_random_uuid();
+    event_name VARCHAR(255); -- Добавляем переменную для названия мероприятия
 BEGIN
-    FOR day_counter IN 1..NEW.days_count LOOP
-        -- Создаем новое меню для дня
-        new_menu_id := gen_random_uuid();
-        INSERT INTO menu (menu_id, name, cost)
-        VALUES (new_menu_id, 'Меню для дня ' || day_counter || ' - ' || NEW.name, 0);
-        
-        -- Создаем новый день
-        new_day_id := gen_random_uuid();
-        INSERT INTO days (day_id, menu_id, name, sequence_number, description, price)
-        VALUES (new_day_id, new_menu_id, 
-                'День ' || day_counter || ' - ' || NEW.name,
-                day_counter,
-                'День мероприятия: ' || NEW.name,
-                0);
-        
-        -- Связываем день с мероприятием
-        INSERT INTO events_days (event_id, day_id)
-        VALUES (NEW.event_id, new_day_id);
-    END LOOP;
-    
-    RETURN NEW;
+    -- Получаем название мероприятия
+    SELECT name INTO event_name 
+    FROM events 
+    WHERE events.event_id = create_day_for_event.event_id;
+
+    -- Создаем меню (как в оригинальном триггере)
+    INSERT INTO menu (menu_id, name, cost) 
+    VALUES (
+        new_menu_id, 
+        'Меню для дня ' || seq_num || ' - ' || event_name, -- Формат: "Меню для дня X - Название"
+        0
+    );
+
+    -- Создаем день (как в оригинальном триггере)
+    INSERT INTO days (day_id, menu_id, name, sequence_number, description, price)
+    VALUES (
+        new_day_id,
+        new_menu_id,
+        'День ' || seq_num || ' - ' || event_name, -- Формат: "День X - Название"
+        seq_num,
+        'День мероприятия: ' || event_name,        -- Описание как в оригинале
+        0
+    );
+
+    -- Связываем с мероприятием
+    INSERT INTO events_days (event_id, day_id)
+    VALUES (event_id, new_day_id);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -239,7 +244,7 @@ BEGIN
             WHERE ed.event_id = affected_event_id
         LOOP
             UPDATE days 
-            SET price = day_price_with_profit(day_record.day_id)
+            SET price = day_price_with_profit_excluding_roles(day_record.day_id)
             WHERE day_id = day_record.day_id;
         END LOOP;
     END IF;
@@ -267,3 +272,91 @@ CREATE TRIGGER trigger_persons_days_changed
 AFTER INSERT OR DELETE ON persons_days
 FOR EACH ROW
 EXECUTE FUNCTION update_days_prices();
+
+CREATE OR REPLACE FUNCTION create_day_for_event(event_id UUID, seq_num INT)
+RETURNS VOID AS $$
+DECLARE
+    new_menu_id UUID := gen_random_uuid();
+    new_day_id UUID := gen_random_uuid();
+BEGIN
+    -- Создаем меню
+    INSERT INTO menu (menu_id, name, cost) 
+    VALUES (new_menu_id, 'Меню дня ' || seq_num, 0);
+
+    -- Создаем день
+    INSERT INTO days (day_id, menu_id, name, sequence_number, description, price)
+    VALUES (
+        new_day_id,
+        new_menu_id,
+        'День ' || seq_num,
+        seq_num,
+        'Автоматически созданный день',
+        0
+    );
+
+    -- Связываем с мероприятием
+    INSERT INTO events_days (event_id, day_id)
+    VALUES (event_id, new_day_id);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sync_event_days()
+RETURNS TRIGGER AS $$
+DECLARE
+    current_days INT;
+    max_sequence INT;
+    days_to_remove UUID[];
+BEGIN
+    -- Если days_count не изменился или это новая запись, завершаем работу
+    IF TG_OP = 'INSERT' THEN
+        RETURN NEW; -- Существующий триггер trigger_create_event_days обработает создание
+    ELSIF NEW.days_count = OLD.days_count THEN
+        RETURN NEW;
+    END IF;
+
+    -- Получаем текущее количество дней и максимальный sequence_number
+    SELECT COUNT(*), MAX(sequence_number) 
+    INTO current_days, max_sequence
+    FROM events_days
+    JOIN days USING (day_id)
+    WHERE event_id = NEW.event_id;
+
+    -- Добавление дней при увеличении days_count
+    IF NEW.days_count > current_days THEN
+        FOR i IN 1..(NEW.days_count - current_days) LOOP
+            PERFORM create_day_for_event(NEW.event_id, max_sequence + i);
+        END LOOP;
+
+    -- Удаление дней и связанных данных при уменьшении days_count
+    ELSIF NEW.days_count < current_days THEN
+        -- Собираем ID дней для удаления
+        SELECT ARRAY(
+            SELECT day_id 
+            FROM events_days 
+            JOIN days USING (day_id)
+            WHERE event_id = NEW.event_id
+            ORDER BY sequence_number DESC
+            LIMIT (current_days - NEW.days_count)
+        ) INTO days_to_remove;
+
+        -- Удаляем связи участников с днями
+        DELETE FROM persons_days WHERE day_id = ANY(days_to_remove);
+
+        -- Явное удаление меню
+        DELETE FROM menu 
+        WHERE menu_id IN (
+            SELECT menu_id FROM days WHERE day_id = ANY(days_to_remove)
+        );
+
+		-- Удаляем дни 
+        DELETE FROM days WHERE day_id = ANY(days_to_remove);
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_sync_event_days
+AFTER INSERT OR UPDATE OF days_count ON events
+FOR EACH ROW
+EXECUTE FUNCTION sync_event_days();

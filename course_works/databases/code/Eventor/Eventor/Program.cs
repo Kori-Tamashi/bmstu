@@ -114,6 +114,7 @@ internal static class Program
         services.AddScoped<IPersonService, PersonService>();
         services.AddScoped<IMenuService, MenuService>();
         services.AddScoped<IItemService, ItemService>();
+        services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IEconomyService, EconomyService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
 
@@ -124,6 +125,7 @@ internal static class Program
         services.AddTransient<FeedbacksFormController>();
         services.AddTransient<FeedbackFormController>();
         services.AddTransient<ParticipationFormController>();
+        services.AddTransient<ParticipantsFormController>();
         services.AddTransient<DayFormController>();
 
         // Формы
@@ -134,6 +136,7 @@ internal static class Program
         services.AddTransient<FeedbacksForm>();
         services.AddTransient<FeedbackForm>();
         services.AddTransient<ParticipationForm>();
+        services.AddTransient<ParticipantsForm>();
         services.AddTransient<DayForm>();
     }
 }

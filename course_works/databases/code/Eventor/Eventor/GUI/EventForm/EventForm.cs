@@ -157,4 +157,17 @@ public partial class EventForm : Form
             return;
         }
     }
+
+    private async void eventPersonCount_label_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            await _eventFormController.OpenParticipants();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму участников мероприятия.");
+            return;
+        }
+    }
 }

@@ -323,32 +323,32 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE;
 
---
+-- Функция проверки существования решения уравнения баланса
 CREATE OR REPLACE FUNCTION check_balance_solution_exists(target_event_id UUID)
 RETURNS BOOLEAN AS $$
 DECLARE
-    has_positive_costs BOOLEAN;
-    has_participants BOOLEAN;
+    all_days_have_positive_cost BOOLEAN;
+    all_days_have_participants BOOLEAN;
 BEGIN
-    -- Проверка что все дни имеют положительную стоимость
+    -- 1. Проверка что ВСЕ дни имеют положительную стоимость
     SELECT NOT EXISTS (
         SELECT 1
         FROM events_days ed
         JOIN days d ON ed.day_id = d.day_id
         WHERE ed.event_id = target_event_id
           AND day_cost(d.day_id) <= 0
-    ) INTO has_positive_costs;
+    ) INTO all_days_have_positive_cost;
 
-    -- Проверка наличия участников
-    SELECT EXISTS (
+    -- 2. Проверка что КАЖДЫЙ день выбран хотя бы одним участником
+    SELECT NOT EXISTS (
         SELECT 1
-        FROM persons_days pd
-        JOIN events_days ed ON pd.day_id = ed.day_id
+        FROM events_days ed
+        JOIN days d ON ed.day_id = d.day_id
         WHERE ed.event_id = target_event_id
-        LIMIT 1
-    ) INTO has_participants;
+          AND day_participants_count(d.day_id) = 0
+    ) INTO all_days_have_participants;
 
-    -- Проверка что мероприятие существует и имеет дни
+    -- 3. Проверка существования мероприятия и его дней
     PERFORM 1
     FROM events
     WHERE event_id = target_event_id
@@ -362,6 +362,67 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    RETURN has_positive_costs AND has_participants;
+    -- Уравнение баланса разрешимо <=> выполняются оба условия
+    RETURN all_days_have_positive_cost AND all_days_have_participants;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Функция подсчёта участников дня (без Организаторов и VIP)
+CREATE OR REPLACE FUNCTION day_participants_count_excluding_roles(target_day_id UUID)
+RETURNS INT AS $$
+BEGIN
+    RETURN (
+        SELECT COUNT(DISTINCT pd.person_id)
+        FROM persons_days pd
+        JOIN persons p ON pd.person_id = p.person_id
+        WHERE pd.day_id = target_day_id
+          AND p.type NOT IN ('Организатор', 'VIP-персона')
+    );
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Фундаментальная цена (nD) без учёта Организаторов и VIP
+CREATE OR REPLACE FUNCTION fundamental_price_nd_excluding_roles(target_event_id UUID)
+RETURNS NUMERIC AS $$
+DECLARE
+    total_cost NUMERIC;
+    sum_an NUMERIC := 0;
+    combo UUID[];
+BEGIN
+    total_cost := event_cost(target_event_id);
+
+    FOR combo IN 
+        SELECT * FROM event_day_combinations(target_event_id)
+    LOOP
+        sum_an := sum_an + 
+            days_coefficient_nd(combo) * 
+            days_participants_count_excluding_roles(combo);
+    END LOOP;
+
+    RETURN total_cost / sum_an;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Функция цены дня с исключением ролей
+CREATE OR REPLACE FUNCTION day_price_with_profit_excluding_roles(target_day_id UUID)
+RETURNS NUMERIC AS $$
+DECLARE
+    event_percent NUMERIC;
+    fundamental_p NUMERIC;
+    coefficient NUMERIC;
+BEGIN
+    SELECT 
+        e.percent, 
+        fundamental_price_nd_excluding_roles(e.event_id)
+    INTO 
+        event_percent,
+        fundamental_p
+    FROM events e
+    JOIN events_days ed ON e.event_id = ed.event_id
+    WHERE ed.day_id = target_day_id;
+
+    coefficient := day_coefficient_1d(target_day_id);
+    
+    RETURN (1 + COALESCE(event_percent, 0)/100) * coefficient * fundamental_p;
 END;
 $$ LANGUAGE plpgsql STABLE;

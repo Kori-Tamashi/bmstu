@@ -130,12 +130,14 @@
             // 
             eventPersonCount_label.Anchor = AnchorStyles.None;
             eventPersonCount_label.AutoSize = true;
+            eventPersonCount_label.Cursor = Cursors.Hand;
             eventPersonCount_label.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 204);
             eventPersonCount_label.Location = new Point(214, 7);
             eventPersonCount_label.Name = "eventPersonCount_label";
             eventPersonCount_label.Size = new Size(217, 23);
             eventPersonCount_label.TabIndex = 4;
             eventPersonCount_label.Text = "Количество участников: 0";
+            eventPersonCount_label.Click += eventPersonCount_label_Click;
             // 
             // eventDaysCount_label
             // 

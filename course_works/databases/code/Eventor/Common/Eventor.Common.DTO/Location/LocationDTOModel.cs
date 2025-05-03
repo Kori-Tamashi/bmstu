@@ -34,12 +34,20 @@ public class LocationDTOModel
     [Required]
     public double Price { get; set; }
 
-    public LocationDTOModel(Guid id, string name, string description, double price)
+    /// <summary>
+    /// Вместимость
+    /// </summary>
+    /// <example>1000</example>
+    [Required]
+    public int Capacity { get; set; }
+
+    public LocationDTOModel(Guid id, string name, string description, double price, int capacity)
     {
         Id = id;
         Name = name;
         Description = description;
         Price = price;
+        Capacity = capacity;
     }
 }
 

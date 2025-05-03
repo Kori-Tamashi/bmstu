@@ -17,7 +17,8 @@ public class LocationConverter
         return new LocationCore(id: locationDBModel.Id,
                                 name: locationDBModel.Name,
                                 description: locationDBModel.Description,
-                                price: locationDBModel.Price);
+                                price: locationDBModel.Price,
+                                capacity: locationDBModel.Capacity);
     }
 
     /// <summary>
@@ -29,7 +30,8 @@ public class LocationConverter
         return new LocationDB(id: locationCoreModel.Id,
                               name: locationCoreModel.Name,
                               description: locationCoreModel.Description,
-                              price: locationCoreModel.Price);
+                              price: locationCoreModel.Price,
+                              capacity: locationCoreModel.Capacity);
     }
 
     /// <summary>
@@ -41,6 +43,7 @@ public class LocationConverter
         return new LocationDTO(id: locationCoreModel.Id,
                               name: locationCoreModel.Name,
                               description: locationCoreModel.Description,
-                              price: locationCoreModel.Price);
+                              price: locationCoreModel.Price, 
+                              capacity: locationCoreModel.Capacity);
     }
 }

@@ -207,6 +207,10 @@ namespace Eventor.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("price");
 
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer")
+                        .HasColumnName("capacity");
+
                     b.HasKey("Id");
 
                     b.ToTable("locations");

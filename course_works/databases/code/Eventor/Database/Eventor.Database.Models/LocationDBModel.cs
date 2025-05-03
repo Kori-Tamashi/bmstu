@@ -37,12 +37,20 @@ public class LocationDBModel
     [Column("price", TypeName = "numeric")]
     public double Price { get; set; }
 
-    public LocationDBModel(Guid id, string name, string description, double price)
+    /// <summary>
+    /// Вместимость
+    /// </summary>
+    /// <example>1000</example>
+    [Column("capacity", TypeName = "int")]
+    public int Capacity { get; set; }
+
+    public LocationDBModel(Guid id, string name, string description, double price, int capacity)
     {
         Id = id;
         Name = name;
         Description = description;
         Price = price;
+        Capacity = capacity;
     }
 }
 

@@ -29,6 +29,7 @@ DROP TRIGGER IF EXISTS trigger_events_changed ON events;
 DROP TRIGGER IF EXISTS trigger_days_changed ON days;
 DROP TRIGGER IF EXISTS trigger_menu_items_changed ON menu_items;
 DROP TRIGGER IF EXISTS trigger_persons_days_changed ON persons_days;
+DROP TRIGGER IF EXISTS trigger_sync_event_days ON events;
 
 -- Удаление функций
 DROP FUNCTION IF EXISTS update_day_cost();
@@ -57,3 +58,7 @@ DROP FUNCTION IF EXISTS calculate_day_cost(UUID);
 DROP FUNCTION IF EXISTS calculate_menu_cost(UUID);
 DROP FUNCTION IF EXISTS days_n_cost(UUID[]);
 DROP FUNCTION IF EXISTS update_days_prices;
+DROP FUNCTION IF EXISTS sync_event_days;
+DROP FUNCTION IF EXISTS day_participants_count_excluding_roles(UUID);
+DROP FUNCTION IF EXISTS days_coefficient_nd_excluding_roles(UUID[]);
+DROP FUNCTION IF EXISTS day_price_with_profit_excluding_roles(UUID);
