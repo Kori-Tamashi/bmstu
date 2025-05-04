@@ -284,7 +284,7 @@
 	\forall p \in P \ \exists! (p, c) \in PD: |c| \in \{1, \dots, n\}
 \end{equation}
 
-Из определения следует, что общий одномерный случай является подмножеством общего $n$-мерного случая.
+Из определения следует, что общий одномерный случай является частным примером общего $n$-мерного случая.
 
 \subsection{Базис мероприятия}
 
@@ -376,12 +376,12 @@
 
 \textit{Функция количества человек конкретного дня первого порядка} обозначается как $N_D: D \rightarrow \mathbb{N}$ и определяется как мощность множества участников конкретного дня:
 \begin{equation}
-	N(d) = |\{p: (p, d) \in PD\}|
+	N_D(d) = |\{p: (p, d) \in PD\}|
 \end{equation}
 
 \textit{Функция количества человек конкретного дня n-го порядка} обозначается как $N_D: D^n \rightarrow \mathbb{N}$ и определяется как мощность множества участников конкретного набора из $n$ дней:
 \begin{equation}
-	N(d_1, \dots, d_n) = |\{p: (p, \{d_1, \dots, d_n\}) \in PD\}|
+	N_D(d_1, \dots, d_n) = |\{p: (p, \{d_1, \dots, d_n\}) \in PD\}|
 \end{equation}
 
 \textit{Функцией количества человек мероприятия} обозначается как \newline $N_E: E \rightarrow \mathbb{N}$ и определяется как мощность множества участников:
@@ -405,13 +405,13 @@
 
 Чтобы все расходы на конкретный день были покрыты, необходимо, чтобы доходы от участников этого дня были им равны:
 \begin{equation}
-	C_D(d) = P_D(d) \cdot N(d)
+	C_D(d) = P_D(d) \cdot N_D(d)
 	\label{eq:cost-price-1}
 \end{equation}
 
 Из определения~\ref{eq:cost-event} и уравнения~\ref{eq:cost-price-1} имеем:
 \begin{equation}
-	C_E(E) = \sum_{d_i \in D} C_D(d_i) = \sum_{d_i \in D}{P_D(d_i) \cdot N(d_i)}
+	C_E(E) = \sum_{d_i \in D} C_D(d_i) = \sum_{d_i \in D}{P_D(d_i) \cdot N_D(d_i)}
 	\label{eq:balance-equation-1}
 \end{equation}
 
@@ -419,13 +419,13 @@
 
 Чтобы все расходы на конкретную комбинацию дней были покрыты, необходимо, чтобы доходы от участников этой комбинации были им равны:
 \begin{equation}
-	C_D(d_1, \dots, d_n) = P_D(d_1, \dots, d_n) \cdot N(d_1, \dots, d_n)
+	C_D(d_1, \dots, d_n) = P_D(d_1, \dots, d_n) \cdot N_D(d_1, \dots, d_n)
 	\label{eq:cost-price-2}
 \end{equation}
 
 В $n$-мерном случае участники оплачивают присутствие не на конкретных днях, а на их комбинациях, потому, чтобы покрыть расходы на всё мероприятие, необходимо покрыть расходы на все комбинации:
 \begin{equation}
-	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)}
+	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)}
 	\label{eq:balance-equation-2}
 \end{equation}
 
@@ -433,7 +433,7 @@
 
 \subsection{Фундаментальная цена}
 
-Фундаментальная цена -- это базовая цена, которая используется для расчета цены посещения каждого дня мероприятия. Она определяется таким образом, чтобы общая выручка от участников покрывала все затраты на проведение мероприятия. Цена посещения дня выражается через фундаментальную цену $P_0$ и коэффициент дня:
+Фундаментальная цена -- это базовая цена, которая используется для расчета цены посещения каждого дня мероприятия. Она определяется таким образом, чтобы цена каждого дня мероприятия была пропорциональна его стоимости. Цена посещения дня выражается через фундаментальную цену $P_0$ и коэффициент дня:
 \begin{itemize}[label=--]
 	\item для одномерного случая:
 	\begin{equation}
@@ -447,23 +447,25 @@
 	\end{equation}
 \end{itemize}  
 
+Фундаментальную цену можно понимать как формальное решение уравнения баланса.
+
 \subsubsection{Общий одномерный случай}
 
 Подставив уравнение~\ref{eq:price-by-fundamental-price-1} в уравнение~\ref{eq:cost-price-1}, имеем:
 \begin{equation}
-	C_D(d) = A(d) \cdot P_0 \cdot N(d)
+	C_D(d) = A(d) \cdot P_0 \cdot N_D(d)
 	\label{eq:cost-by-fundamental-1}
 \end{equation}
 
 Подставив уравнение~\ref{eq:cost-by-fundamental-1} в уравнение баланса~\ref{eq:balance-equation-1}, имеем:
 \begin{equation}
-	C_E(E) = \sum_{d_i \in D}{A(d_i) \cdot P_0 \cdot N(d_i)} = P_0 \cdot \sum_{d_i \in D}{A(d_i) \cdot N(d_i)}
+	C_E(E) = \sum_{d_i \in D}{A(d_i) \cdot P_0 \cdot N_D(d_i)} = P_0 \cdot \sum_{d_i \in D}{A(d_i) \cdot N_D(d_i)}
 	\label{eq:balance-equation-by-fundamental-1}
 \end{equation}
 
 Из уравнения~\ref{eq:balance-equation-by-fundamental-1} имеем:
 \begin{equation}
-	P_0 = \frac{C_E(E)}{\sum_{d_i \in D}{A(d_i) \cdot N(d_i)}}
+	P_0 = \frac{C_E(E)}{\sum_{d_i \in D}{A(d_i) \cdot N_D(d_i)}}
 	\label{eq:fundamental-price-1}
 \end{equation}
 
@@ -471,19 +473,19 @@
 
 Подставив уравнение~\ref{eq:price-by-fundamental-price-2} в уравнение~\ref{eq:cost-price-2}, имеем:
 \begin{equation}
-	C_D(d_1, \dots, d_n) = A(d_1, \dots, d_n) \cdot P_0 \cdot N(d_1, \dots, d_n)
+	C_D(d_1, \dots, d_n) = A(d_1, \dots, d_n) \cdot P_0 \cdot N_D(d_1, \dots, d_n)
 	\label{eq:cost-by-fundamental-2}
 \end{equation}
 
 Подставив уравнение~\ref{eq:cost-by-fundamental-2} в уравнение баланса~\ref{eq:balance-equation-2}, имеем:
 \begin{equation}
-	C_E(E) = \sum_{c_i \in H(E)}{A(c_i) \cdot P_0 \cdot N(c_i)} = P_0 \cdot \sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)}
+	C_E(E) = \sum_{c_i \in H(E)}{A(c_i) \cdot P_0 \cdot N_D(c_i)} = P_0 \cdot \sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}
 	\label{eq:balance-equation-by-fundamental-2}
 \end{equation}
 
 Из уравнения~\ref{eq:balance-equation-by-fundamental-2} имеем:
 \begin{equation}
-	P_0 = \frac{C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)}}
+	P_0 = \frac{C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}}
 	\label{eq:fundamental-price-2}
 \end{equation}
 
@@ -491,10 +493,10 @@
 
 Прибыль -- это финансовый результат, при котором доходы от мероприятия превышают его затраты. В рамках уравнения баланса наличие прибыли можно обозначить как:
 \begin{equation}
-	C_E(E) < \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} \Leftrightarrow \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} - C_E(E) > 0
+	C_E(E) < \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} \Leftrightarrow \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} - C_E(E) > 0
 \end{equation}
 \begin{equation}
-	\Pi = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} - C_E(E)
+	\Pi = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} - C_E(E)
 \end{equation}
 
 Прибыль может быть реализована через процентную наценку на фундаментальную цену. Пусть $\alpha \ge 0$ -- коэффициент, увеличивающий фундаментальную цену $P_0$. Тогда функция цены посещения конкретного дня примет вид:
@@ -504,10 +506,10 @@
 
 Прибыль в этом случае будет равна:
 \begin{equation}
-	\Pi = \sum_{c_i \in H(E)}{P_D'(c_i) \cdot N(c_i)} - C_E(E) 
+	\Pi = \sum_{c_i \in H(E)}{P_D'(c_i) \cdot N_D(c_i)} - C_E(E) 
 \end{equation}
 \begin{equation}
-	\Pi = (1 + \alpha) \cdot \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} - C_E(E)
+	\Pi = (1 + \alpha) \cdot \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} - C_E(E)
 \end{equation}
 \begin{equation}
 	\Pi = (1 + \alpha) \cdot C_E(E) - C_E(E) = \alpha \cdot C_E(E)
@@ -524,7 +526,7 @@
 	A(d') = \frac{C_D(d')}{\min_{d_i \in D}{C_D(d_i)}} = \frac{\min_{d_i \in D}{C_D(d_i)}}{\min_{d_i \in D}{C_D(d_i)}} = 1
 \end{equation}
 
-Если $N(d')$ увеличивается при $N(E) = const$, тогда существует день \newline $d \in D, d \ne d'$ такой, что $N(d)$ уменьшается. Следовательно, $\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)}$ будет уменьшаться, так как $\forall d \in D: A(d') \le A(d)$, и $P_0$ будет возрастать.
+Если $N_D(d')$ увеличивается при $N_E(E) = const$, тогда существует день \newline $d \in D, d \ne d'$ такой, что $N_D(d)$ уменьшается. Следовательно, $\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}$ будет уменьшаться, так как $\forall d \in D: A(d') \le A(d)$, и $P_0$ будет возрастать.
 
 \subsubsection{Теорема об условии существования решения}
 
@@ -532,20 +534,22 @@
 \begin{equation}
 	\begin{cases}
 		\forall d \in D: C_D(d) > 0 \\
-		PD \ne \emptyset
+		\forall d \in D: N_D(d) > 0
 	\end{cases}
 \end{equation}
 
-\textit{Доказательство:} для существования решения уравнения баланса необходимо и достаточно, чтобы существовала фундаментальная цена. Из формулы~\ref{eq:fundamental-price-2} имеем, что для существования фундаментальной цены требуется:
+\textit{Доказательство:} для существования решения уравнения баланса необходимо и достаточно: a) чтобы существовала фундаментальная цена; б) чтобы были покрыты все затраты на мероприятие. 
+
+а) из формулы~\ref{eq:fundamental-price-2} имеем, что для существования фундаментальной цены требуется:
 \begin{equation}
-	\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)} > 0
+	\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)} > 0
 	\label{eq:exist-cond}
 \end{equation}
 
 Условие~\ref{eq:exist-cond} не выполняется, если:
 \begin{itemize}[label=--]
 	\item $\exists c_i \in H(E): A(c_i) \ \text{не определено, то есть} \ \min_{d_i \in D}{C_D(d_i)} = 0$;
-	\item $\exists c_i \in H(E): N(c_i) = 0, \text{то есть} \ H(E) = \emptyset \Leftrightarrow PD = \emptyset$.
+	\item $\exists c_i \in H(E): N_D(c_i) = 0, \text{то есть} \ H(E) = \emptyset \Leftrightarrow PD = \emptyset$.
 \end{itemize}
 
 Следовательно, для выполнения условия~\ref{eq:exist-cond} необходимо и достаточно:
@@ -553,6 +557,36 @@
 	\begin{cases}
 		\forall d \in D: C_D(d) > 0 \\
 		PD \ne \emptyset
+	\end{cases}
+	\label{eq:a_system}
+\end{equation}
+
+б) если $\exists d \in D: N_D(d) = 0$, то затраты на этот день в случае их наличия не покрываются, так как $P_D(d) \cdot N_D(d) = 0$. Следовательно, фундаментальная цена $P_0$ не является решением уравнения баланса. Значит, для покрытия затрат на всё мероприятие необходимо следующее условие:
+\begin{equation}
+	\forall d \in D: C_D(d) > 0 \Rightarrow N_D(d) > 0
+	\label{eq:n(d)>0}
+\end{equation}
+
+Добавив условие~\ref{eq:n(d)>0} в систему~\ref{eq:a_system}, имеем:
+\begin{equation}
+	\begin{cases}
+		\forall d \in D: C_D(d) > 0 \\
+		PD \ne \emptyset \\
+		\forall d \in D: C_D(d) > 0 \Rightarrow N_D(d) > 0
+	\end{cases} 
+	=
+	\begin{cases}
+		\forall d \in D: C_D(d) > 0 \\
+		PD \ne \emptyset \\
+		\forall d \in D: N_D(d) > 0
+	\end{cases}
+\end{equation}
+
+Заметив, что $\forall d \in D: N_D(d) > 0 \Rightarrow PD \ne \emptyset$, в итоге имеем:
+\begin{equation}
+	\begin{cases}
+		\forall d \in D: C_D(d) > 0 \\
+		\forall d \in D: N_D(d) > 0
 	\end{cases}
 \end{equation}
 
@@ -572,7 +606,7 @@
 
 Следовательно, имеем:
 \begin{equation}
-	P_0' = \frac{C_E'(E)}{\sum_{c_i \in H(E)}{A'(c_i) \cdot N(c_i)}} = \frac{k \cdot C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)}} = k \cdot P_0
+	P_0' = \frac{C_E'(E)}{\sum_{c_i \in H(E)}{A'(c_i) \cdot N_D(c_i)}} = \frac{k \cdot C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}} = k \cdot P_0
 \end{equation}
 
 При этом $P_D'(d) = A'(d) \cdot P_0' = A(d) \cdot k \cdot P_0 = k \cdot P_D(d)$, то есть:
@@ -588,7 +622,7 @@
 \begin{equation}
 	\forall d \in D:
 	\begin{cases}
-		N(d) = N \\
+		N_D(d) = N \\
 		C_D(d) = C
 	\end{cases}
 \end{equation}
@@ -600,7 +634,7 @@
 
 Тогда при условии $|D| = n$:
 \begin{equation}
-	P_0 = \frac{C_E(E)}{\sum_{d_i \in D}{A(d_i) \cdot N(d_i)}} = \frac{n \cdot C}{\sum_{d_i \in D}{N(d_i)}} = \frac{n \cdot C}{n \cdot N} = \frac{C}{N}
+	P_0 = \frac{C_E(E)}{\sum_{d_i \in D}{A(d_i) \cdot N_D(d_i)}} = \frac{n \cdot C}{\sum_{d_i \in D}{N_D(d_i)}} = \frac{n \cdot C}{n \cdot N} = \frac{C}{N}
 \end{equation}
 
 Имеем:
@@ -617,7 +651,7 @@
 
 \textit{Доказательство:} из определения $PD$ следует, что каждый участник $p \in P$ выбирает ровно одну комбинацию дней $c \subseteq D$. То есть:
 \begin{equation}
-	\forall p \in P \ \exists! c H(E): (p, c) \in PD
+	\forall p \in P \ \exists! c \in H(E): (p, c) \in PD
 \end{equation}
 
 Множество участников $P$ можно разбить на непересекающиеся множества $P_{c_i}$, где каждое $P_{c_i}$ содержит участников, выбравших комбинацию $c_i$:
@@ -649,7 +683,7 @@
 
 Рассмотрим уравнение баланса:
 \begin{equation}
-	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N(c_i)} \le max_{c_i \in H(E)}{P_D(c_i)} \cdot \sum_{c_i \in H(E)}{N_D(c_i)}
+	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} \le max_{c_i \in H(E)}{P_D(c_i)} \cdot \sum_{c_i \in H(E)}{N_D(c_i)}
 	\label{ineq:cost-event}
 \end{equation}
 
@@ -667,7 +701,7 @@
 
 \textit{Доказательство:} оценим значение знаменателя формулы фундаментальной цены сверху:
 \begin{equation}
-	\sum_{c_i \in H(E)}{A(c_i) \cdot N(c_i)} \ge \sum_{c_i \in H(E)}{N(c_i)} = N(E)
+	\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)} \ge \sum_{c_i \in H(E)}{N_D(c_i)} = N_E(E)
 \end{equation}
 
 Оценим значение числителя формулы фундаментальной цены:
@@ -680,7 +714,7 @@
 	P_0 \ge \frac{C_{min}}{N_{max}}
 \end{equation}
 
-Рассмотрим комбинацию дней $c'$, для которой $N(c') = N_{min}$. Для этой комбинации:
+Рассмотрим комбинацию дней $c'$, для которой $N_D(c') = N_{min}$. Для этой комбинации:
 \begin{equation}
 	C_D(c') = \sum_{d \in c'}{C_D(d)} \le |c'| \cdot C_{max}
 \end{equation}

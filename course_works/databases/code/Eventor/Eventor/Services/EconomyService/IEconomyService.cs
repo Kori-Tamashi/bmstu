@@ -1,5 +1,4 @@
-﻿using Eventor.Common.Core;
-using Day = Eventor.Common.Core.Day;
+﻿using Day = Eventor.Common.Core.Day;
 namespace Eventor.Services;
 
 /// <summary>
