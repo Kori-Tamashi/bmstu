@@ -123,6 +123,57 @@ public class PersonRepository : BaseRepository, IPersonRepository
         }
     }
 
+
+    /// <summary>
+    /// Получить всех участников конкретного дня, исключая некоторые роли
+    /// </summary>
+    /// <returns>Список всех участников конкретного дня, исключая некоторые роли</returns>
+    public async Task<List<Person>> GetAllPersonsByDayExcludingTypesAsync(Guid dayId, List<PersonType> excludedTypes)
+    {
+        try
+        {
+            return await _dbContext.PersonsDays
+                .Where(pd => pd.DayId == dayId)
+                .Include(pd => pd.Person)
+                .Where(pd => !excludedTypes.Contains(pd.Person.Type))
+                .Select(pd => PersonConverter.ConvertDBToCore(pd.Person))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения участников дня {DayId} с исключением типов", dayId);
+            throw new InvalidOperationException(
+                $"Не удалось получить участников дня {dayId} с фильтрацией", ex);
+        }
+    }
+
+    /// <summary>
+    /// Получить всех участников конкретных дней, исключая некоторые роли
+    /// </summary>
+    /// <returns>Список всех участников конкретного дня, исключая некоторые роли</returns>
+    public async Task<List<Person>> GetAllPersonsByDaysExcludingTypesAsync(List<Guid> dayIds, List<PersonType> excludedTypes)
+    {
+        try
+        {
+            return await _dbContext.PersonsDays
+                .Where(pd => dayIds.Contains(pd.DayId))
+                .Include(pd => pd.Person)
+                .Where(pd => !excludedTypes.Contains(pd.Person.Type))
+                .GroupBy(pd => pd.PersonId)
+                .Where(g => g.Count() == dayIds.Count())
+                .Select(g => PersonConverter.ConvertDBToCore(g.First().Person))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения участников дней с исключением типов");
+            throw new InvalidOperationException(
+                "Не удалось получить участников с фильтрацией по нескольким дням", ex);
+        }
+    }
+
     /// <summary>
     /// Получить участника по идентификатору
     /// </summary>

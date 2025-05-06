@@ -1,5 +1,6 @@
 ﻿using Eventor.Common.Converter;
 using Eventor.Common.Core;
+using Eventor.Common.Enums;
 using Eventor.Database.Context;
 using Eventor.Database.Core;
 using Eventor.Database.Models;
@@ -63,6 +64,58 @@ public class EventRepository : BaseRepository, IEventRepository
         {
             _logger.LogError(ex, "Ошибка получения мероприятий пользователя {UserId}", userId);
             throw new InvalidOperationException($"Не удалось получить мероприятия пользователя {userId}", ex);
+        }
+    }
+
+    public async Task<List<Event>> GetAllOrganizedEventsByUserAsync(Guid userId)
+    {
+        try
+        {
+            // 1. Находим всех участников-организаторов пользователя
+            var organizerPersonIds = await _dbContext.UsersPersons
+                .Where(up => up.UserId == userId)
+                .Join(_dbContext.Persons,
+                    up => up.PersonId,
+                    p => p.Id,
+                    (up, p) => new { up.PersonId, p.Type })
+                .Where(x => x.Type == PersonType.Organizer)
+                .Select(x => x.PersonId)
+                .ToListAsync();
+
+            if (!organizerPersonIds.Any())
+                return new List<Event>();
+
+            // 2. Находим дни, связанные с организаторами
+            var eventDayIds = await _dbContext.PersonsDays
+                .Where(pd => organizerPersonIds.Contains(pd.PersonId))
+                .Select(pd => pd.DayId)
+                .Distinct()
+                .ToListAsync();
+
+            // 3. Находим мероприятия через связи дней
+            var eventIds = await _dbContext.EventsDays
+                .Where(ed => eventDayIds.Contains(ed.DayId))
+                .Select(ed => ed.EventId)
+                .Distinct()
+                .ToListAsync();
+
+            // 4. Получаем полные данные мероприятий
+            var organizedEvents = await _dbContext.Events
+                .Where(e => eventIds.Contains(e.Id))
+                .Include(e => e.Location)
+                .Include(e => e.EventDays)
+                    .ThenInclude(ed => ed.Day)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return organizedEvents
+                .Select(e => EventConverter.ConvertDBToCore(e))
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения организованных мероприятий для пользователя {UserId}", userId);
+            throw new InvalidOperationException($"Не удалось получить организованные мероприятия пользователя {userId}", ex);
         }
     }
 

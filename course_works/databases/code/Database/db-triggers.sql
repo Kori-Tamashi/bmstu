@@ -1,37 +1,35 @@
-CREATE OR REPLACE FUNCTION create_day_for_event(event_id UUID, seq_num INT)
-RETURNS VOID AS $$
+
+
+
+-- Триггер для автоматического создания связанных данных при создании мероприятия
+CREATE OR REPLACE FUNCTION create_event_days_and_menus()
+RETURNS TRIGGER AS $$
 DECLARE
-    new_menu_id UUID := gen_random_uuid();
-    new_day_id UUID := gen_random_uuid();
-    event_name VARCHAR(255); -- Добавляем переменную для названия мероприятия
+    day_counter INT;
+    new_day_id UUID;
+    new_menu_id UUID;
 BEGIN
-    -- Получаем название мероприятия
-    SELECT name INTO event_name 
-    FROM events 
-    WHERE events.event_id = create_day_for_event.event_id;
-
-    -- Создаем меню (как в оригинальном триггере)
-    INSERT INTO menu (menu_id, name, cost) 
-    VALUES (
-        new_menu_id, 
-        'Меню для дня ' || seq_num || ' - ' || event_name, -- Формат: "Меню для дня X - Название"
-        0
-    );
-
-    -- Создаем день (как в оригинальном триггере)
-    INSERT INTO days (day_id, menu_id, name, sequence_number, description, price)
-    VALUES (
-        new_day_id,
-        new_menu_id,
-        'День ' || seq_num || ' - ' || event_name, -- Формат: "День X - Название"
-        seq_num,
-        'День мероприятия: ' || event_name,        -- Описание как в оригинале
-        0
-    );
-
-    -- Связываем с мероприятием
-    INSERT INTO events_days (event_id, day_id)
-    VALUES (event_id, new_day_id);
+    FOR day_counter IN 1..NEW.days_count LOOP
+        -- Создаем новое меню для дня
+        new_menu_id := gen_random_uuid();
+        INSERT INTO menu (menu_id, name, cost)
+        VALUES (new_menu_id, 'Меню для дня ' || day_counter || ' - ' || NEW.name, 0);
+        
+        -- Создаем новый день
+        new_day_id := gen_random_uuid();
+        INSERT INTO days (day_id, menu_id, name, sequence_number, description, price)
+        VALUES (new_day_id, new_menu_id, 
+                'День ' || day_counter || ' - ' || NEW.name,
+                day_counter,
+                'День мероприятия: ' || NEW.name,
+                0);
+        
+        -- Связываем день с мероприятием
+        INSERT INTO events_days (event_id, day_id)
+        VALUES (NEW.event_id, new_day_id);
+    END LOOP;
+    
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -278,19 +276,29 @@ RETURNS VOID AS $$
 DECLARE
     new_menu_id UUID := gen_random_uuid();
     new_day_id UUID := gen_random_uuid();
+    event_name VARCHAR(255); -- Добавляем переменную для названия мероприятия
 BEGIN
-    -- Создаем меню
-    INSERT INTO menu (menu_id, name, cost) 
-    VALUES (new_menu_id, 'Меню дня ' || seq_num, 0);
+    -- Получаем название мероприятия
+    SELECT name INTO event_name 
+    FROM events 
+    WHERE events.event_id = create_day_for_event.event_id;
 
-    -- Создаем день
+    -- Создаем меню (как в оригинальном триггере)
+    INSERT INTO menu (menu_id, name, cost) 
+    VALUES (
+        new_menu_id, 
+        'Меню для дня ' || seq_num || ' - ' || event_name, -- Формат: "Меню для дня X - Название"
+        0
+    );
+
+    -- Создаем день (как в оригинальном триггере)
     INSERT INTO days (day_id, menu_id, name, sequence_number, description, price)
     VALUES (
         new_day_id,
         new_menu_id,
-        'День ' || seq_num,
+        'День ' || seq_num || ' - ' || event_name, -- Формат: "День X - Название"
         seq_num,
-        'Автоматически созданный день',
+        'День мероприятия: ' || event_name,        -- Описание как в оригинале
         0
     );
 

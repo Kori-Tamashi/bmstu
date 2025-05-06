@@ -3,6 +3,7 @@ using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.ApplicationServices;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -69,6 +70,34 @@ public class EventService : IEventService
         {
             _logger.LogError(ex, "Unexpected error while retrieving events for user {UserId}", userId);
             throw new EventServiceException($"Failed to retrieve events for user {userId}", ex);
+        }
+    }
+
+    public async Task<List<Event>> GetAllOrganizedEventsByUserAsync(Guid userId)
+    {
+        try
+        {
+            return await _eventRepository.GetAllOrganizedEventsByUserAsync(userId);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Invalid user ID {UserId} for organized events", userId);
+            throw new EventNotFoundException($"User {userId} is invalid", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Database error while retrieving organized events for user {UserId}", userId);
+            throw new EventServiceException($"Failed to retrieve organized events for user {userId} due to database error", ex);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Data inconsistency error while retrieving organized events for user {UserId}", userId);
+            throw new EventServiceException($"Failed to retrieve organized events for user {userId} due to data issues", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while fetching organized events for user {UserId}", userId);
+            throw new EventServiceException($"Failed to retrieve organized events for user {userId}", ex);
         }
     }
 

@@ -59,6 +59,10 @@ DROP FUNCTION IF EXISTS calculate_menu_cost(UUID);
 DROP FUNCTION IF EXISTS days_n_cost(UUID[]);
 DROP FUNCTION IF EXISTS update_days_prices;
 DROP FUNCTION IF EXISTS sync_event_days;
+DROP FUNCTION IF EXISTS create_day_for_event(UUID, integer);
 DROP FUNCTION IF EXISTS day_participants_count_excluding_roles(UUID);
 DROP FUNCTION IF EXISTS days_coefficient_nd_excluding_roles(UUID[]);
 DROP FUNCTION IF EXISTS day_price_with_profit_excluding_roles(UUID);
+DROP FUNCTION IF EXISTS days_participants_count_excluding_roles(UUID[]);
+DROP FUNCTION IF EXISTS fundamental_price_nd_excluding_roles(UUID);
+

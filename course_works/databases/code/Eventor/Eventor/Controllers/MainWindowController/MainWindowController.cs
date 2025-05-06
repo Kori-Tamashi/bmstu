@@ -1,8 +1,6 @@
 ﻿using Eventor.Common.Core;
-using Eventor.Database.Core;
 using Eventor.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -14,6 +12,7 @@ public class MainWindowController : INotifyPropertyChanged
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IEventService _eventService;
+    private readonly ILocationService _locationService;
     private readonly IUserService _userService;
     private string _errorMessage;
     private User _currentUser;
@@ -29,6 +28,7 @@ public class MainWindowController : INotifyPropertyChanged
             OnPropertyChanged(nameof(CurrentRole));
         }
     }
+
     public string CurrentGender => EnumConverter.ToString(CurrentUser.Gender);
     public string CurrentRole => EnumConverter.ToString(CurrentUser.Role);
     public string ErrorMessage => _errorMessage;
@@ -36,16 +36,20 @@ public class MainWindowController : INotifyPropertyChanged
     public ObservableCollection<Event> UserEvents { get; } = new();
     public ObservableCollection<Event> AllEvents { get; } = new();
 
+    public ObservableCollection<Event> AllOrganizedEvents { get; } = new();
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     public MainWindowController(
         IServiceProvider serviceProvider,
         IEventService eventService,
-        IUserService userService)
+        IUserService userService,
+        ILocationService locationService)
     {
         _serviceProvider = serviceProvider;
         _eventService = eventService;
         _userService = userService;
+        _locationService = locationService;
     }
 
     public async Task InitializeAsync()
@@ -55,8 +59,9 @@ public class MainWindowController : INotifyPropertyChanged
             await LoadUserData();
             await LoadUserEvents();
             await LoadAllEvents();
+            await LoadAllOrganizedEvents();
         }
-        catch (Exception ex)
+        catch
         {
             throw;
         }
@@ -71,7 +76,7 @@ public class MainWindowController : INotifyPropertyChanged
             OnPropertyChanged(nameof(CurrentGender));
             OnPropertyChanged(nameof(CurrentRole));
         }
-        catch (Exception ex)
+        catch
         {
             throw;
         }
@@ -85,7 +90,7 @@ public class MainWindowController : INotifyPropertyChanged
             UserEvents.Clear();
             foreach (var e in events) UserEvents.Add(e);
         }
-        catch (Exception ex)
+        catch
         {
             throw;
         }
@@ -99,7 +104,21 @@ public class MainWindowController : INotifyPropertyChanged
             AllEvents.Clear();
             foreach (var e in events) AllEvents.Add(e);
         }
-        catch (Exception ex)
+        catch
+        {
+            throw;
+        }
+    }
+
+    private async Task LoadAllOrganizedEvents()
+    {
+        try
+        {
+            var organizedEvents = await _eventService.GetAllOrganizedEventsByUserAsync(CurrentUser.Id);
+            AllOrganizedEvents.Clear();
+            foreach (var e in organizedEvents) AllOrganizedEvents.Add(e);
+        }
+        catch
         {
             throw;
         }
@@ -121,7 +140,20 @@ public class MainWindowController : INotifyPropertyChanged
             await _userService.UpdateUserAsync(updatedUser);
             await LoadUserData();
         }
-        catch (Exception ex)
+        catch
+        {
+            throw;
+        }
+    }
+
+    public async Task<Location> GetEventLocation(Guid eventId)
+    {
+        try
+        {
+            var _event = await _eventService.GetEventByIdAsync(eventId);
+            return await _locationService.GetLocationByIdAsync(_event.LocationId);
+        }
+        catch
         {
             throw;
         }
@@ -135,7 +167,21 @@ public class MainWindowController : INotifyPropertyChanged
             eventForm.SetIds(eventId, CurrentUser.Id);
             eventForm.Show();
         }
-        catch (Exception ex)
+        catch
+        {
+            throw;
+        }
+    }
+
+    public async Task OpenEventOrganization(Guid eventId)
+    {
+        try
+        {
+            var eventForm = _serviceProvider.GetRequiredService<EventOrganizationForm>();
+            eventForm.SetIds(eventId, CurrentUser.Id);
+            eventForm.Show();
+        }
+        catch
         {
             throw;
         }

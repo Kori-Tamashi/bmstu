@@ -77,14 +77,20 @@ public partial class EventForm : Form
         {
             _timer.Tick += async (sender, e) =>
             {
-                await _eventFormController.InitializeAsync();
-                InitializeEventDaysGrid();
+                try
+                {
+                    await _eventFormController.InitializeAsync();
+                    InitializeEventDaysGrid();
+                }
+                catch (Exception ex)
+                {
+                    return;
+                }
             };
             _timer.Start();
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось автоматически обновить данные формы информации о мероприятии по таймеру.");
             return;
         }
     }

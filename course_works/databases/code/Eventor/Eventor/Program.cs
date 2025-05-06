@@ -88,7 +88,8 @@ internal static class Program
                 npgsqlOptions.MapEnum<UserRole>("user_role_enum");
                 npgsqlOptions.MapEnum<ItemType>("item_type_enum");
                 npgsqlOptions.MapEnum<PersonType>("person_type_enum");
-            }));
+            }),
+            ServiceLifetime.Scoped);
 
         // Регистрация сервисов логирования
         services.AddLogging(loggingBuilder =>
@@ -127,6 +128,7 @@ internal static class Program
         services.AddTransient<ParticipationFormController>();
         services.AddTransient<ParticipantsFormController>();
         services.AddTransient<DayFormController>();
+        services.AddTransient<EventOrganizationFormController>();
 
         // Формы
         services.AddTransient<MainWindow>(provider => new MainWindow());
@@ -138,5 +140,6 @@ internal static class Program
         services.AddTransient<ParticipationForm>();
         services.AddTransient<ParticipantsForm>();
         services.AddTransient<DayForm>();
+        services.AddTransient<EventOrganizationForm>();
     }
 }

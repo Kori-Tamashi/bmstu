@@ -59,7 +59,7 @@
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
             tabPage3 = new TabPage();
             groupBox2 = new GroupBox();
-            dataGridView1 = new DataGridView();
+            organizedEvents_dataGridView = new DataGridView();
             Column5 = new DataGridViewTextBoxColumn();
             Column6 = new DataGridViewTextBoxColumn();
             Column7 = new DataGridViewTextBoxColumn();
@@ -70,6 +70,8 @@
             Column12 = new DataGridViewTextBoxColumn();
             Column13 = new DataGridViewTextBoxColumn();
             _timer = new System.Windows.Forms.Timer(components);
+            statusStrip = new StatusStrip();
+            dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             userEvents_groupBox.SuspendLayout();
@@ -81,7 +83,8 @@
             ((System.ComponentModel.ISupportInitialize)events_dataGridView).BeginInit();
             tabPage3.SuspendLayout();
             groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)organizedEvents_dataGridView).BeginInit();
+            statusStrip.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -396,7 +399,7 @@
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(dataGridView1);
+            groupBox2.Controls.Add(organizedEvents_dataGridView);
             groupBox2.Location = new Point(6, 6);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(999, 706);
@@ -404,22 +407,24 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Организованные мероприятия";
             // 
-            // dataGridView1
+            // organizedEvents_dataGridView
             // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.BackgroundColor = Color.White;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column5, Column6, Column7, Column8, Column9, Column10, Column11, Column12, Column13 });
-            dataGridView1.Location = new Point(6, 26);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(987, 674);
-            dataGridView1.TabIndex = 0;
+            organizedEvents_dataGridView.AllowUserToAddRows = false;
+            organizedEvents_dataGridView.AllowUserToResizeRows = false;
+            organizedEvents_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            organizedEvents_dataGridView.BackgroundColor = Color.White;
+            organizedEvents_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            organizedEvents_dataGridView.Columns.AddRange(new DataGridViewColumn[] { Column5, Column6, Column7, Column8, Column9, Column10, Column11, Column12, Column13 });
+            organizedEvents_dataGridView.Location = new Point(6, 26);
+            organizedEvents_dataGridView.Name = "organizedEvents_dataGridView";
+            organizedEvents_dataGridView.RowHeadersWidth = 51;
+            organizedEvents_dataGridView.Size = new Size(987, 674);
+            organizedEvents_dataGridView.TabIndex = 0;
+            organizedEvents_dataGridView.CellClick += organisedEvents_dataGridView_CellClick;
             // 
             // Column5
             // 
+            Column5.DataPropertyName = "Id";
             Column5.HeaderText = "Id";
             Column5.MinimumWidth = 6;
             Column5.Name = "Column5";
@@ -428,6 +433,7 @@
             // 
             // Column6
             // 
+            Column6.DataPropertyName = "Name";
             Column6.HeaderText = "Название";
             Column6.MinimumWidth = 6;
             Column6.Name = "Column6";
@@ -435,6 +441,7 @@
             // 
             // Column7
             // 
+            Column7.DataPropertyName = "LocationName";
             Column7.HeaderText = "Локация";
             Column7.MinimumWidth = 6;
             Column7.Name = "Column7";
@@ -442,6 +449,7 @@
             // 
             // Column8
             // 
+            Column8.DataPropertyName = "Description";
             Column8.HeaderText = "Описание";
             Column8.MinimumWidth = 6;
             Column8.Name = "Column8";
@@ -449,6 +457,7 @@
             // 
             // Column9
             // 
+            Column9.DataPropertyName = "Date";
             Column9.HeaderText = "Дата";
             Column9.MinimumWidth = 6;
             Column9.Name = "Column9";
@@ -456,6 +465,7 @@
             // 
             // Column10
             // 
+            Column10.DataPropertyName = "PersonCount";
             Column10.HeaderText = "Количество человек";
             Column10.MinimumWidth = 6;
             Column10.Name = "Column10";
@@ -463,6 +473,7 @@
             // 
             // Column11
             // 
+            Column11.DataPropertyName = "DaysCount";
             Column11.HeaderText = "Количество дней";
             Column11.MinimumWidth = 6;
             Column11.Name = "Column11";
@@ -470,6 +481,7 @@
             // 
             // Column12
             // 
+            Column12.DataPropertyName = "Percent";
             Column12.HeaderText = "Наценка";
             Column12.MinimumWidth = 6;
             Column12.Name = "Column12";
@@ -477,6 +489,7 @@
             // 
             // Column13
             // 
+            Column13.DataPropertyName = "Rating";
             Column13.HeaderText = "Рейтинг";
             Column13.MinimumWidth = 6;
             Column13.Name = "Column13";
@@ -484,13 +497,30 @@
             // 
             // _timer
             // 
-            _timer.Interval = 15000;
+            _timer.Interval = 3000;
+            // 
+            // statusStrip
+            // 
+            statusStrip.ImageScalingSize = new Size(20, 20);
+            statusStrip.Items.AddRange(new ToolStripItem[] { dataStatus_toolStripStatusLabel });
+            statusStrip.Location = new Point(0, 763);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(1031, 26);
+            statusStrip.TabIndex = 1;
+            statusStrip.Text = "statusStrip1";
+            // 
+            // dataStatus_toolStripStatusLabel
+            // 
+            dataStatus_toolStripStatusLabel.Name = "dataStatus_toolStripStatusLabel";
+            dataStatus_toolStripStatusLabel.Size = new Size(151, 20);
+            dataStatus_toolStripStatusLabel.Text = "toolStripStatusLabel1";
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1031, 769);
+            ClientSize = new Size(1031, 789);
+            Controls.Add(statusStrip);
             Controls.Add(tabControl1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -510,8 +540,11 @@
             ((System.ComponentModel.ISupportInitialize)events_dataGridView).EndInit();
             tabPage3.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)organizedEvents_dataGridView).EndInit();
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -547,7 +580,7 @@
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private GroupBox groupBox2;
-        private DataGridView dataGridView1;
+        private DataGridView organizedEvents_dataGridView;
         private DataGridViewTextBoxColumn Column5;
         private DataGridViewTextBoxColumn Column6;
         private DataGridViewTextBoxColumn Column7;
@@ -557,5 +590,7 @@
         private DataGridViewTextBoxColumn Column11;
         private DataGridViewTextBoxColumn Column12;
         private DataGridViewTextBoxColumn Column13;
+        private StatusStrip statusStrip;
+        private ToolStripStatusLabel dataStatus_toolStripStatusLabel;
     }
 }

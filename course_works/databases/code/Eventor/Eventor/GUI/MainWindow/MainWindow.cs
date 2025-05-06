@@ -1,4 +1,3 @@
-using Eventor.Common.Core;
 using Eventor.GUI.Controllers;
 
 namespace Eventor.GUI;
@@ -25,6 +24,8 @@ public partial class MainWindow : Form
             await _mainWindowController.InitializeAsync();
             InitializeUserEventsGrid();
             InitializeAllEventsGrid();
+            InitializeAllOrganizedEvents();
+            InitializeLastUpdate();
             InitializeTimer();
         }
         catch (Exception ex)
@@ -90,7 +91,7 @@ public partial class MainWindow : Form
                 row.Cells[0].Value = evt.Id;
                 row.Cells[1].Value = evt.Name;
                 row.Cells[2].Value = evt.Description;
-                row.Cells[3].Value = evt.Date.ToString("dd.MM.yyyy");
+                row.Cells[3].Value = evt.Date.ToString();
                 row.Cells[4].Value = evt.PersonCount;
                 row.Cells[5].Value = evt.DaysCount;
                 row.Cells[6].Value = evt.Rating;
@@ -105,21 +106,69 @@ public partial class MainWindow : Form
         }
     }
 
+    private async void InitializeAllOrganizedEvents()
+    {
+        try
+        {
+            organizedEvents_dataGridView.AutoGenerateColumns = false;
+            organizedEvents_dataGridView.Rows.Clear();
+
+            foreach (var evt in _mainWindowController.AllOrganizedEvents)
+            {
+                var row = new DataGridViewRow();
+                row.CreateCells(organizedEvents_dataGridView);
+
+                var location = await _mainWindowController.GetEventLocation(evt.Id);
+
+                row.Cells[0].Value = evt.Id;
+                row.Cells[1].Value = evt.Name;
+                row.Cells[2].Value = location.Name;
+                row.Cells[3].Value = evt.Description;
+                row.Cells[4].Value = evt.Date.ToString();
+                row.Cells[5].Value = evt.PersonCount;
+                row.Cells[6].Value = evt.DaysCount;
+                row.Cells[7].Value = evt.Percent;
+                row.Cells[8].Value = evt.Rating;
+
+                row.Tag = evt;
+                organizedEvents_dataGridView.Rows.Add(row);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    private void InitializeLastUpdate()
+    {
+        dataStatus_toolStripStatusLabel.Text = $"Последнее обновление данных: {DateTime.Now}";
+    }
+
     private void InitializeTimer()
     {
         try
         {
             _timer.Tick += async (sender, e) =>
             {
-                await _mainWindowController.InitializeAsync();
-                InitializeUserEventsGrid();
-                InitializeAllEventsGrid();
+                try
+                {
+                    await _mainWindowController.InitializeAsync();
+                    InitializeUserEventsGrid();
+                    InitializeAllEventsGrid();
+                    InitializeAllOrganizedEvents();
+                    InitializeLastUpdate();
+                }
+                catch (Exception ex)
+                {
+                    return;
+                }
             };
             _timer.Start();
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось автоматически обновить данные главной формы по таймеру.");
+            MessageBox.Show("Ошибка: не удалось установить автоматическое обновление данных в главной форме.");
             return;
         }
     }
@@ -186,6 +235,23 @@ public partial class MainWindow : Form
             var eventId = (Guid)row.Cells[2].Value;
 
             await _mainWindowController.OpenEventDetails(eventId);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.");
+            return;
+        }
+    }
+
+    private async void organisedEvents_dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+    {
+        try
+        {
+            if (e.RowIndex < 0) return;
+            var row = organizedEvents_dataGridView.Rows[e.RowIndex];
+            var eventId = (Guid)row.Cells[0].Value;
+
+            await _mainWindowController.OpenEventOrganization(eventId);
         }
         catch (Exception ex)
         {

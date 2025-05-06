@@ -95,6 +95,36 @@ public class PersonService : IPersonService
         }
     }
 
+    public async Task<int> GetPersonCountExcludingTypesByDayAsync(Guid dayId, List<PersonType> excludedTypes)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByDayExcludingTypesAsync(dayId, excludedTypes);
+            return persons?.Count ?? 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка подсчета участников дня {DayId} с исключением типов", dayId);
+            throw new PersonServiceException(
+                $"Не удалось подсчитать участников дня {dayId} с фильтрацией", ex);
+        }
+    }
+
+    public async Task<int> GetPersonCountExcludingTypesByDaysAsync(List<Guid> dayIds, List<PersonType> excludedTypes)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByDaysExcludingTypesAsync(dayIds, excludedTypes);
+            return persons?.Count ?? 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка подсчета участников дней с исключением типов");
+            throw new PersonServiceException(
+                "Не удалось подсчитать участников с фильтрацией по нескольким дням", ex);
+        }
+    }
+
     public async Task<Person> GetPersonByIdAsync(Guid personId)
     {
         try

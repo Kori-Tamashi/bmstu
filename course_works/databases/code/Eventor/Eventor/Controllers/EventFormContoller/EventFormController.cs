@@ -85,7 +85,7 @@ public class EventFormController : INotifyPropertyChanged
             await LoadEventDays();
             await LoadDaysPersons();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw;
         }

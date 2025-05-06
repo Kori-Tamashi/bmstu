@@ -1,4 +1,5 @@
-﻿using Eventor.Database.Core;
+﻿using Eventor.Common.Enums;
+using Eventor.Database.Core;
 using Eventor.Services.Exceptions;
 using Microsoft.Extensions.Logging;
 using Day = Eventor.Common.Core.Day;
@@ -213,6 +214,26 @@ public class EconomyService : IEconomyService
         }
     }
 
+    public async Task<double> GetDayPriceWithPrivilegesAsync(Guid dayId)
+    {
+        try
+        {
+            // Получаем фундаментальную цену для мероприятия
+            var currentEvent = await _eventRepository.GetEventByDayAsync(dayId);
+            var fundamentalPrice = await CalculateFundamentalPriceWithPrivileges1DAsync(currentEvent.Id);
+
+            // Получаем коэффициент дня
+            var coefficient = await GetDayCoefficientAsync(new[] { dayId });
+
+            return (1 + currentEvent.Percent / 100) * fundamentalPrice * coefficient;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка расчета цены дня {dayId}");
+            throw new EconomyServiceException("Не удалось вычислить цену дня", ex);
+        }
+    }
+
     /// <summary>
     /// Цена набора дней n-го порядка (P_D)
     /// </summary>
@@ -252,6 +273,49 @@ public class EconomyService : IEconomyService
             // 3. Получаем фундаментальную цену мероприятия
             var eventObj = await _eventRepository.GetEventByDayAsync(firstDay.Id);
             var fundamentalPrice = await CalculateFundamentalPriceNDAsync(eventObj.Id);
+
+            // 4. Рассчитываем коэффициент комбинации дней
+            var coefficient = await GetDayCoefficientAsync(daysId);
+
+            return (1 + eventObj.Percent / 100) * fundamentalPrice * coefficient;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error calculating price for days: {DayIds}",
+                string.Join(", ", daysId));
+            throw new EconomyServiceException("Failed to calculate days price", ex);
+        }
+    }
+
+    public async Task<double> GetDaysPriceWithPrivilegesAsync(IEnumerable<Guid> daysId)
+    {
+        if (daysId == null || !daysId.Any())
+        {
+            _logger.LogWarning("Empty days collection provided");
+            return 0;
+        }
+
+        try
+        {
+            // 1. Проверяем что все дни принадлежат одному мероприятию
+            if (!await AreDaysFromSameEventAsync(daysId))
+            {
+                _logger.LogError("Days belong to different events: {DayIds}",
+                    string.Join(", ", daysId));
+                throw new EconomyServiceException("All days must belong to the same event");
+            }
+
+            // 2. Получаем первый день для определения мероприятия
+            var firstDay = await _dayRepository.GetDayByIdAsync(daysId.First());
+            if (firstDay == null)
+            {
+                _logger.LogError("First day not found");
+                throw new EconomyServiceException("Invalid day IDs provided");
+            }
+
+            // 3. Получаем фундаментальную цену мероприятия
+            var eventObj = await _eventRepository.GetEventByDayAsync(firstDay.Id);
+            var fundamentalPrice = await CalculateFundamentalPriceWithPrivilegesNDAsync(eventObj.Id);
 
             // 4. Рассчитываем коэффициент комбинации дней
             var coefficient = await GetDayCoefficientAsync(daysId);
@@ -516,6 +580,95 @@ public class EconomyService : IEconomyService
         }
     }
 
+    /// <summary>
+    /// Фундаментальная цена для общего одномерного случая с учётом привилегий (P0)
+    /// </summary>
+    public async Task<double> CalculateFundamentalPriceWithPrivileges1DAsync(Guid eventId)
+    {
+        try
+        {
+            var eventCost = await GetEventCostAsync(eventId);
+            if (eventCost < 0)
+            {
+                _logger.LogError($"Стоимость мероприятия {eventId} отрицательна: {eventCost}");
+                throw new EconomyServiceException("Недопустимая стоимость мероприятия");
+            }
+
+            var days = await _dayRepository.GetAllDaysByEventAsync(eventId);
+            if (!days.Any())
+            {
+                _logger.LogError($"Мероприятие {eventId} не содержит дней");
+                throw new EconomyServiceException("Мероприятие должно содержать дни");
+            }
+
+            double sum = 0;
+            foreach (var day in days)
+            {
+                var coefficient = await GetDayCoefficientAsync(new[] { day.Id });
+                var participants = await GetPersonCountExcludingPrivilegesAsync(day.Id);
+                sum += coefficient * participants;
+            }
+
+            if (sum <= 0)
+            {
+                _logger.LogError($"Сумма коэффициентов для мероприятия {eventId} равна {sum}");
+                throw new EconomyServiceException("Невозможно вычислить фундаментальную цену");
+            }
+
+            return eventCost / sum;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка расчета P₀ с привилегиями для мероприятия {eventId}");
+            throw new EconomyServiceException("Ошибка расчета с учетом привилегий", ex);
+        }
+    }
+
+    /// <summary>
+    /// Фундаментальная цена для общего n-мерного случая с учётом привилегий (P0)
+    /// </summary>
+    public async Task<double> CalculateFundamentalPriceWithPrivilegesNDAsync(Guid eventId)
+    {
+        try
+        {
+            var eventCost = await GetEventCostAsync(eventId);
+            if (eventCost < 0)
+            {
+                _logger.LogError($"Стоимость мероприятия {eventId} отрицательна: {eventCost}");
+                throw new EconomyServiceException("Недопустимая стоимость мероприятия");
+            }
+
+            var dayCombinations = await GetCurrentDayCombinationsWithPrivilegesAsync(eventId);
+            if (!dayCombinations.Any())
+            {
+                _logger.LogError($"Мероприятие {eventId} не имеет комбинаций дней");
+                throw new EconomyServiceException("Нет данных о комбинациях дней");
+            }
+
+            double sum = 0;
+            foreach (var combo in dayCombinations)
+            {
+                var dayIds = combo.Select(d => d.Id).ToList();
+                var coefficient = await GetDayCoefficientAsync(dayIds);
+                var participants = await GetPersonCountExcludingPrivilegesAsync(dayIds);
+                sum += coefficient * participants;
+            }
+
+            if (sum <= 0)
+            {
+                _logger.LogError($"Сумма коэффициентов для мероприятия {eventId} равна {sum}");
+                throw new EconomyServiceException("Невозможно вычислить фундаментальную цену");
+            }
+
+            return eventCost / sum;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка расчета P₀ (nD с привилегиями) для мероприятия {eventId}");
+            throw new EconomyServiceException("Ошибка многомерного расчета с привилегиями", ex);
+        }
+    }
+
     // ------------------------------------
     // Уравнения баланса
     // ------------------------------------
@@ -654,6 +807,58 @@ public class EconomyService : IEconomyService
         {
             _logger.LogError(ex, "Error getting day combinations for event {EventId}", eventId);
             throw new EconomyServiceException("Failed to retrieve current day combinations", ex);
+        }
+    }
+
+    /// <summary>
+    /// Получает текущие комбинации дней с учетом исключения привилегированных участников
+    /// </summary>
+    /// <remarks>
+    /// Исключаются участники с типами: Organizer, VIP
+    /// </remarks>
+    public async Task<IEnumerable<IEnumerable<Day>>> GetCurrentDayCombinationsWithPrivilegesAsync(Guid eventId)
+    {
+        try
+        {
+            // 1. Получаем всех участников мероприятия, исключая привилегированные типы
+            var allPersons = await _personRepository.GetAllPersonsByEventAsync(eventId);
+            var filteredPersons = allPersons
+                .Where(p => p.Type != PersonType.Organizer && p.Type != PersonType.VIP)
+                .ToList();
+
+            // 2. Для каждого участника получаем выбранные дни
+            var combinations = new List<HashSet<Guid>>();
+            foreach (var person in filteredPersons)
+            {
+                var days = await _dayRepository.GetAllDaysByPersonAsync(person.Id);
+                var dayIds = days.Select(d => d.Id).ToHashSet();
+
+                if (dayIds.Any())
+                {
+                    combinations.Add(dayIds);
+                }
+            }
+
+            // 3. Группируем уникальные комбинации
+            var uniqueCombinations = combinations
+                .GroupBy(c => c, HashSet<Guid>.CreateSetComparer())
+                .Select(g => g.Key);
+
+            // 4. Преобразуем в коллекцию дней
+            var result = new List<IEnumerable<Day>>();
+            foreach (var combo in uniqueCombinations)
+            {
+                var days = await Task.WhenAll(combo.Select(id => _dayRepository.GetDayByIdAsync(id)));
+                result.Add(days.Where(d => d != null)!);
+            }
+
+            _logger.LogInformation($"Найдено {result.Count} комбинаций с учетом привилегий");
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка получения комбинаций с привилегиями");
+            throw new EconomyServiceException("Ошибка обработки привилегий", ex);
         }
     }
 
@@ -804,6 +1009,161 @@ public class EconomyService : IEconomyService
         return eventIds.Count == 1;
     }
 
+    /// <summary>
+    /// Возвращает N-мерность мероприятия как максимальный размер комбинации выбранных дней
+    /// </summary>
+    public async Task<int> GetEventNAsync(Guid eventId)
+    {
+        try
+        {
+            // Получаем все текущие комбинации дней
+            var combinations = await GetCurrentDayCombinationsAsync(eventId);
+
+            if (!combinations.Any())
+            {
+                _logger.LogInformation($"Мероприятие {eventId} не имеет комбинаций дней");
+                return 0;
+            }
+
+            // Находим максимальный размер комбинации
+            var maxN = combinations.Max(c => c.Count());
+
+            _logger.LogDebug($"N-мерность мероприятия {eventId}: {maxN}");
+            return maxN;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка определения N-мерности мероприятия {eventId}");
+            throw new EconomyServiceException("Не удалось определить размерность мероприятия", ex);
+        }
+    }
+
+    public async Task<int> GetDaysCountBeforeEvent(Guid eventId)
+    {
+        try
+        {
+            // Получаем мероприятие по ID
+            var eventObj = await _eventRepository.GetEventByIdAsync(eventId);
+
+            if (eventObj == null)
+            {
+                _logger.LogWarning("Event {EventId} not found", eventId);
+                return 0;
+            }
+
+            // Получаем текущую дату и дату мероприятия
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var eventDate = eventObj.Date;
+
+            // Рассчитываем разницу в днях
+            int daysDifference = eventDate.DayNumber - today.DayNumber;
+
+            // Возвращаем 0 если мероприятие уже прошло
+            return daysDifference > 0 ? daysDifference : 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error calculating days before event {EventId}", eventId);
+            throw new EconomyServiceException("Failed to calculate days before event", ex);
+        }
+    }
+
+    /// <summary>
+    /// Получает количество участников без учета привилегированных ролей
+    /// </summary>
+    private async Task<int> GetPersonCountExcludingPrivilegesAsync(Guid dayId)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByDayExcludingTypesAsync(
+                dayId,
+                new List<PersonType> { PersonType.Organizer, PersonType.VIP });
+
+            return persons?.Count ?? 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка получения участников дня {dayId}");
+            throw new EconomyServiceException("Ошибка подсчета участников", ex);
+        }
+    }
+
+    /// <summary>
+    /// Получает количество участников комбинации дней без учета привилегированных ролей
+    /// </summary>
+    private async Task<int> GetPersonCountExcludingPrivilegesAsync(List<Guid> dayIds)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByDaysExcludingTypesAsync(
+                dayIds,
+                new List<PersonType> { PersonType.Organizer, PersonType.VIP });
+
+            return persons?.Count ?? 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка получения участников дней: {string.Join(", ", dayIds)}");
+            throw new EconomyServiceException("Ошибка подсчета участников", ex);
+        }
+    }
+
+    /// <summary>
+/// Рассчитывает текущие доходы мероприятия на основе выбранных комбинаций дней
+/// </summary>
+/// <remarks>
+/// Формула: Σ [P_D(c_i) * N_D(c_i)] для всех c_i ∈ H(E)
+/// </remarks>
+public async Task<double> CalculateCurrentIncomeAsync(Guid eventId)
+{
+    try
+    {
+        double totalIncome = 0;
+        
+        // 1. Получаем все текущие комбинации дней
+        var combinations = await GetCurrentDayCombinationsWithPrivilegesAsync(eventId);
+        
+        if (!combinations.Any())
+        {
+            _logger.LogWarning($"Мероприятие {eventId} не имеет комбинаций дней");
+            return 0;
+        }
+
+        // 2. Для каждой комбинации считаем вклад в доход
+        foreach (var combo in combinations)
+        {
+            var dayIds = combo.Select(d => d.Id).ToList();
+            
+            try
+            {
+                // 2.1. Получаем цену комбинации
+                var price = await GetDaysPriceWithPrivilegesAsync(dayIds);
+
+                // 2.2. Получаем количество участников
+                var participants = await GetPersonCountExcludingPrivilegesAsync(dayIds);
+                
+                // 2.3. Добавляем к общему доходу
+                totalIncome += price * participants;
+                
+                _logger.LogDebug($"Комбинация дней: {string.Join(",", dayIds)} " +
+                                $"Вклад: {price} * {participants} = {price * participants}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Ошибка расчета для комбинации дней: {string.Join(",", dayIds)}");
+            }
+        }
+
+        _logger.LogInformation($"Общий доход мероприятия {eventId}: {totalIncome}");
+        return totalIncome;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, $"Ошибка расчета общего дохода для мероприятия {eventId}");
+        throw new EconomyServiceException("Не удалось рассчитать текущие доходы", ex);
+    }
+}
+
     // ------------------------------------
     // Теоремы
     // ------------------------------------
@@ -844,6 +1204,49 @@ public class EconomyService : IEconomyService
             foreach (var day in days)
             {
                 var participantsCount = await GetPersonCountAsync(day.Id);
+                if (participantsCount <= 0)
+                {
+                    _logger.LogWarning($"День {day.Id} не имеет участников");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка проверки условий существования решения для мероприятия {eventId}");
+            throw new EconomyServiceException("Не удалось проверить условия существования решения", ex);
+        }
+    }
+
+    public async Task<bool> CheckSolutionExistenceWithPrivilegesAsync(Guid eventId)
+    {
+        try
+        {
+            // 1. Проверка наличия дней мероприятия
+            var days = await _dayRepository.GetAllDaysByEventAsync(eventId);
+            if (!days.Any())
+            {
+                _logger.LogWarning($"Мероприятие {eventId} не содержит дней");
+                return false;
+            }
+
+            // 2. Проверка положительности стоимости ВСЕХ дней
+            foreach (var day in days)
+            {
+                var dayCost = await GetDaysCostAsync(new[] { day.Id });
+                if (dayCost <= 0)
+                {
+                    _logger.LogWarning($"День {day.Id} имеет неположительную стоимость: {dayCost}");
+                    return false;
+                }
+            }
+
+            // 3. Проверка что КАЖДЫЙ день выбран хотя бы одним участником без привилегий
+            foreach (var day in days)
+            {
+                var participantsCount = await GetPersonCountExcludingPrivilegesAsync(day.Id);
                 if (participantsCount <= 0)
                 {
                     _logger.LogWarning($"День {day.Id} не имеет участников");
@@ -932,7 +1335,7 @@ public class EconomyService : IEconomyService
             }
 
             // Получаем фундаментальную цену мероприятия
-            var fundamentalPrice = await CalculateFundamentalPriceNDAsync(eventId);
+            var fundamentalPrice = await CalculateFundamentalPriceWithPrivilegesNDAsync(eventId);
             if (fundamentalPrice <= 0)
             {
                 _logger.LogWarning($"Фундаментальная цена мероприятия {eventId} неположительна");
@@ -940,7 +1343,7 @@ public class EconomyService : IEconomyService
             }
 
             // Получаем текущие комбинации дней
-            var dayCombinations = await GetCurrentDayCombinationsAsync(eventId);
+            var dayCombinations = await GetCurrentDayCombinationsWithPrivilegesAsync(eventId);
             if (!dayCombinations.Any())
             {
                 _logger.LogWarning($"Мероприятие {eventId} не имеет комбинаций дней");
@@ -988,6 +1391,80 @@ public class EconomyService : IEconomyService
         {
             _logger.LogError(ex, $"Ошибка расчета наценки для мероприятия {eventId}");
             throw new EconomyServiceException("Не удалось рассчитать наценку", ex);
+        }
+    }
+
+    /// <summary>
+    /// Рассчитывает интервал фундаментальной цены для мероприятия
+    /// </summary>
+    /// <remarks>
+    /// Формула: [C_min/N_max, C_max/N_min]
+    /// где:
+    /// - C_min - минимальная стоимость дня
+    /// - C_max - максимальная стоимость дня
+    /// - N_min - минимальное количество участников в комбинации
+    /// - N_max - максимальное количество участников в комбинации
+    /// </remarks>
+    public async Task<(double Min, double Max)> CalculateFundamentalPriceIntervalAsync(Guid eventId)
+    {
+        try
+        {
+            // 1. Получаем все дни мероприятия
+            var days = await _dayRepository.GetAllDaysByEventAsync(eventId);
+            if (!days.Any())
+            {
+                _logger.LogWarning($"Мероприятие {eventId} не содержит дней");
+                return (0, 0);
+            }
+
+            // 2. Рассчитываем стоимости всех дней
+            var dayCosts = new List<double>();
+            foreach (var day in days)
+            {
+                var cost = await GetDaysCostAsync(new[] { day.Id });
+                dayCosts.Add(cost);
+            }
+
+            var C_min = dayCosts.Min();
+            var C_max = dayCosts.Max();
+
+            // 3. Получаем все комбинации дней
+            var combinations = await GetCurrentDayCombinationsAsync(eventId);
+            if (!combinations.Any())
+            {
+                _logger.LogWarning($"Мероприятие {eventId} не имеет комбинаций дней");
+                return (0, 0);
+            }
+
+            // 4. Рассчитываем количество участников для каждой комбинации
+            var participantsCounts = new List<int>();
+            foreach (var combo in combinations)
+            {
+                var count = await GetPersonCountAsync(combo.Select(d => d.Id));
+                participantsCounts.Add(count);
+            }
+
+            var N_min = participantsCounts.Min();
+            var N_max = participantsCounts.Max();
+
+            // 5. Проверка делителей
+            if (N_max <= 0 || N_min <= 0)
+            {
+                _logger.LogError($"Некорректное количество участников: N_min={N_min}, N_max={N_max}");
+                throw new EconomyServiceException("Количество участников должно быть положительным");
+            }
+
+            // 6. Рассчитываем границы интервала
+            var lowerBound = C_min / N_max;
+            var upperBound = C_max / N_min;
+
+            _logger.LogInformation($"Интервал фундаментальной цены для {eventId}: [{lowerBound}, {upperBound}]");
+            return (lowerBound, upperBound);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка расчета интервала фундаментальной цены для мероприятия {eventId}");
+            throw new EconomyServiceException("Не удалось рассчитать интервал цены", ex);
         }
     }
 }

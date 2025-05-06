@@ -20,6 +20,12 @@ public interface IEventService
     Task<List<Event>> GetAllEventsByUserAsync(Guid userId);
 
     /// <summary>
+    /// Получить все организованные мероприятия пользователя
+    /// </summary>
+    /// <returns>Список всех организовынных мероприятий пользователя</returns>
+    Task<List<Event>> GetAllOrganizedEventsByUserAsync(Guid userId);
+
+    /// <summary>
     /// Получить мероприятие по его идентификатору
     /// </summary>
     /// <returns>Мероприятие</returns>

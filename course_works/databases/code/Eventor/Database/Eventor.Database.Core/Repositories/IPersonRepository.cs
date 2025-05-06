@@ -1,4 +1,5 @@
 ﻿using Eventor.Common.Core;
+using Eventor.Common.Enums;
 namespace Eventor.Database.Core;
 
 /// <summary>
@@ -29,6 +30,18 @@ public interface IPersonRepository
     /// </summary>
     /// <returns>Список всех участников пользователя</returns>
     Task<List<Person>> GetAllPersonsByUserAsync(Guid userId);
+
+    /// <summary>
+    /// Получить всех участников конкретного дня, исключая некоторые роли
+    /// </summary>
+    /// <returns>Список всех участников конкретного дня, исключая некоторые роли</returns>
+    Task<List<Person>> GetAllPersonsByDayExcludingTypesAsync(Guid dayId, List<PersonType> excludedTypes);
+
+    /// <summary>
+    /// Получить всех участников конкретных дней, исключая некоторые роли
+    /// </summary>
+    /// <returns>Список всех участников конкретного дня, исключая некоторые роли</returns>
+    Task<List<Person>> GetAllPersonsByDaysExcludingTypesAsync(List<Guid> dayIds, List<PersonType> excludedTypes);
 
     /// <summary>
     /// Получить участника мероприятия по идентификатору

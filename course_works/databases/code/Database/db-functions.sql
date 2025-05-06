@@ -381,6 +381,37 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE;
 
+-- Функция подсчёта участников набора дней (nD) без учёта Организаторов и VIP
+CREATE OR REPLACE FUNCTION days_participants_count_excluding_roles(day_ids UUID[])
+RETURNS INT AS $$
+DECLARE
+    valid_days UUID[];
+BEGIN
+    -- Фильтрация валидных уникальных дней
+    SELECT ARRAY_AGG(DISTINCT d) INTO valid_days 
+    FROM unnest(day_ids) AS d
+    WHERE d IS NOT NULL;
+
+    -- Проверка на пустой массив
+    IF array_length(valid_days, 1) IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    RETURN (
+        SELECT COUNT(*)
+        FROM (
+            SELECT pd.person_id
+            FROM persons_days pd
+            JOIN persons p ON pd.person_id = p.person_id
+            WHERE pd.day_id = ANY(valid_days)
+              AND p.type NOT IN ('Организатор', 'VIP-персона')
+            GROUP BY pd.person_id
+            HAVING COUNT(DISTINCT pd.day_id) = array_length(valid_days, 1)
+        ) AS matching_participants
+    );
+END;
+$$ LANGUAGE plpgsql STABLE;
+
 -- Фундаментальная цена (nD) без учёта Организаторов и VIP
 CREATE OR REPLACE FUNCTION fundamental_price_nd_excluding_roles(target_event_id UUID)
 RETURNS NUMERIC AS $$

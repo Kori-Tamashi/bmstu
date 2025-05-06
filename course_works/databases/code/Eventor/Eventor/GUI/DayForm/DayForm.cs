@@ -37,15 +37,21 @@ public partial class DayForm : Form
         {
             _timer.Tick += async (sender, e) =>
             {
-                await _dayFormController.InitializeDayAsync();
-                await LoadParticipants();
-                await LoadMenu();
+                try
+                {
+                    await _dayFormController.InitializeDayAsync();
+                    await LoadParticipants();
+                    await LoadMenu();
+                }
+                catch (Exception ex)
+                {
+                    return;
+                }
             };
             _timer.Start();
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось автоматически обновить данные формы информации о дне мероприятия по таймеру.");
             return;
         }
     }

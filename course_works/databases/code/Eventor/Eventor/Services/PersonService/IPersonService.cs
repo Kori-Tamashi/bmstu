@@ -1,4 +1,5 @@
 ﻿using Eventor.Common.Core;
+using Eventor.Common.Enums;
 namespace Eventor.Services;
 
 /// <summary>
@@ -29,6 +30,18 @@ public interface IPersonService
     /// </summary>
     /// <returns>Список всех участников пользователя</returns>
     Task<List<Person>> GetAllPersonsByUserAsync(Guid userId);
+
+    /// <summary>
+    /// Получить количество всех участников конкретного дня, исключая некоторые роли
+    /// </summary>
+    /// <returns>Количество всех участников конкретного дня, исключая некоторые роли</returns>
+    Task<int> GetPersonCountExcludingTypesByDayAsync(Guid dayId, List<PersonType> excludedTypes);
+
+    /// <summary>
+    /// Получить всех количество участников конкретных дней, исключая некоторые роли
+    /// </summary>
+    /// <returns>Количество всех участников конкретного дня, исключая некоторые роли</returns>
+    Task<int> GetPersonCountExcludingTypesByDaysAsync(List<Guid> dayIds, List<PersonType> excludedTypes);
 
     /// <summary>
     /// Получить участника мероприятия по идентификатору

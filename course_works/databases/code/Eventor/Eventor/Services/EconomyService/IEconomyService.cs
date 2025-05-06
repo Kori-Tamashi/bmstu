@@ -37,9 +37,19 @@ public interface IEconomyService
     Task<double> GetDayPriceAsync(Guid dayId);
 
     /// <summary>
+    /// Цена дня первого порядка с учетом привилегий (P_D)
+    /// </summary>
+    Task<double> GetDayPriceWithPrivilegesAsync(Guid dayId);
+
+    /// <summary>
     /// Цена набора дней n-го порядка (P_D)
     /// </summary>
     Task<double> GetDaysPriceAsync(IEnumerable<Guid> daysId);
+
+    /// <summary>
+    /// Цена набора дней n-го порядка с учетом привилегий (P_D)
+    /// </summary>
+    Task<double> GetDaysPriceWithPrivilegesAsync(IEnumerable<Guid> daysId);
 
     /// <summary>
     /// Цена мероприятия (P_E)
@@ -64,6 +74,16 @@ public interface IEconomyService
     /// </summary>
     Task<double> CalculateFundamentalPriceNDAsync(Guid eventId);
 
+    /// <summary>
+    /// Фундаментальная цена для общего одномерного случая с учётом привилегий (P0)
+    /// </summary>
+    Task<double> CalculateFundamentalPriceWithPrivileges1DAsync(Guid eventId);
+
+    /// <summary>
+    /// Фундаментальная цена для общего n-мерного случая с учётом привилегий (P0)
+    /// </summary>
+    Task<double> CalculateFundamentalPriceWithPrivilegesNDAsync(Guid eventId);
+
 
     // --- Уравнения баланса ---
 
@@ -86,6 +106,14 @@ public interface IEconomyService
     Task<IEnumerable<IEnumerable<Day>>> GetCurrentDayCombinationsAsync(Guid eventId);
 
     /// <summary>
+    /// Получает текущие комбинации дней с учетом исключения привилегированных участников
+    /// </summary>
+    /// <remarks>
+    /// Исключаются участники с типами: Organizer, VIP
+    /// </remarks>
+    Task<IEnumerable<IEnumerable<Day>>> GetCurrentDayCombinationsWithPrivilegesAsync(Guid eventId);
+
+    /// <summary>
     /// Количество участников для дня/набора дней (N_D)
     /// </summary>
     Task<int> GetPersonCountAsync(Guid dayId);
@@ -95,6 +123,23 @@ public interface IEconomyService
     /// </summary>
     Task<int> GetAllPersonsCountAsync(Guid eventId);
 
+    /// <summary>
+    /// N-мерность мероприятия
+    /// </summary>
+    Task<int> GetEventNAsync(Guid eventId);
+
+    /// <summary>
+    /// Количество дней до мероприятия
+    /// </summary>
+    Task<int> GetDaysCountBeforeEvent(Guid eventId);
+
+    /// <summary>
+    /// Рассчитывает текущие доходы мероприятия на основе выбранных комбинаций дней
+    /// </summary>
+    /// <remarks>
+    /// Формула: Σ [P_D(c_i) * N_D(c_i)] для всех c_i ∈ H(E)
+    /// </remarks>
+    Task<double> CalculateCurrentIncomeAsync(Guid eventId);
 
     // --- Теоремы ---
 
@@ -102,6 +147,11 @@ public interface IEconomyService
     /// Проверка условия существования решения
     /// </summary>
     Task<bool> CheckSolutionExistenceAsync(Guid eventId);
+
+    /// <summary>
+    /// Проверка условия существования решения, исключая привилегии
+    /// </summary>
+    Task<bool> CheckSolutionExistenceWithPrivilegesAsync(Guid eventId);
 
     /// <summary>
     /// Расчет минимального количества участников для покрытия расходов
@@ -112,4 +162,9 @@ public interface IEconomyService
     /// Расчет допустимой наценки
     /// </summary>
     Task<double> CalculateMaxMarkupAsync(Guid eventId, double maxPrice);
+
+    /// <summary>
+    /// Расчет интервала фундаментальной цены
+    /// </summary>
+    Task<(double Min, double Max)> CalculateFundamentalPriceIntervalAsync(Guid eventId);
 }
