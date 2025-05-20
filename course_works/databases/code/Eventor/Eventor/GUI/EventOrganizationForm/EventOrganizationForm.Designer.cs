@@ -77,10 +77,9 @@
             eventFundamentalPriceValue_label = new Label();
             eventFundamentalPriceWithPrivileges_label = new Label();
             eventFundamentalPrice_label = new Label();
-            eventFundamentalPriceInterval_label = new Label();
+            eventlPrice_label = new Label();
             label1 = new Label();
             eventAveragePrice_label = new Label();
-            eventFundamentalPriceIntervalValue_label = new Label();
             eventAveragePriceWithPrivilegesValue_label = new Label();
             eventAveragePriceValue_label = new Label();
             label5 = new Label();
@@ -103,6 +102,9 @@
             _timer = new System.Windows.Forms.Timer(components);
             statusStrip1 = new StatusStrip();
             dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
+            eventPriceValue_label = new Label();
+            label2 = new Label();
+            eventPriceWithPrivilegesValue_label = new Label();
             eventInfo_groupBox.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)eventDaysCount_numericUpDown).BeginInit();
@@ -262,6 +264,7 @@
             eventLocation_comboBox.Name = "eventLocation_comboBox";
             eventLocation_comboBox.Size = new Size(237, 28);
             eventLocation_comboBox.TabIndex = 6;
+            eventLocation_comboBox.SelectedIndexChanged += eventLocation_comboBox_SelectedIndexChanged;
             // 
             // eventDate_label
             // 
@@ -543,6 +546,7 @@
             eventDays_dataGridView.RowHeadersWidth = 10;
             eventDays_dataGridView.Size = new Size(450, 405);
             eventDays_dataGridView.TabIndex = 0;
+            eventDays_dataGridView.CellClick += eventDays_dataGridView_CellClick;
             // 
             // Column1
             // 
@@ -636,28 +640,31 @@
             tableLayoutPanel4.ColumnCount = 2;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 54F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 46F));
+            tableLayoutPanel4.Controls.Add(eventPriceValue_label, 1, 5);
+            tableLayoutPanel4.Controls.Add(label2, 0, 6);
             tableLayoutPanel4.Controls.Add(eventFundamentalPriceWithPrivilegesValue_label, 1, 1);
             tableLayoutPanel4.Controls.Add(eventFundamentalPriceValue_label, 1, 0);
             tableLayoutPanel4.Controls.Add(eventFundamentalPriceWithPrivileges_label, 0, 1);
             tableLayoutPanel4.Controls.Add(eventFundamentalPrice_label, 0, 0);
-            tableLayoutPanel4.Controls.Add(eventFundamentalPriceInterval_label, 0, 5);
+            tableLayoutPanel4.Controls.Add(eventlPrice_label, 0, 5);
             tableLayoutPanel4.Controls.Add(label1, 0, 4);
             tableLayoutPanel4.Controls.Add(eventAveragePrice_label, 0, 3);
-            tableLayoutPanel4.Controls.Add(eventFundamentalPriceIntervalValue_label, 1, 5);
             tableLayoutPanel4.Controls.Add(eventAveragePriceWithPrivilegesValue_label, 1, 4);
             tableLayoutPanel4.Controls.Add(eventAveragePriceValue_label, 1, 3);
             tableLayoutPanel4.Controls.Add(label5, 0, 2);
             tableLayoutPanel4.Controls.Add(eventFundamentalPriceRelativeDifferenceValue_label, 1, 2);
+            tableLayoutPanel4.Controls.Add(eventPriceWithPrivilegesValue_label, 1, 6);
             tableLayoutPanel4.Location = new Point(6, 7);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 6;
+            tableLayoutPanel4.RowCount = 7;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 45F));
-            tableLayoutPanel4.Size = new Size(402, 262);
+            tableLayoutPanel4.Size = new Size(402, 298);
             tableLayoutPanel4.TabIndex = 0;
             // 
             // eventFundamentalPriceWithPrivilegesValue_label
@@ -705,17 +712,17 @@
             eventFundamentalPrice_label.TabIndex = 5;
             eventFundamentalPrice_label.Text = "Фундаментальная цена:";
             // 
-            // eventFundamentalPriceInterval_label
+            // eventlPrice_label
             // 
-            eventFundamentalPriceInterval_label.Anchor = AnchorStyles.None;
-            eventFundamentalPriceInterval_label.AutoSize = true;
-            eventFundamentalPriceInterval_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            eventFundamentalPriceInterval_label.Location = new Point(19, 216);
-            eventFundamentalPriceInterval_label.Name = "eventFundamentalPriceInterval_label";
-            eventFundamentalPriceInterval_label.Size = new Size(180, 40);
-            eventFundamentalPriceInterval_label.TabIndex = 13;
-            eventFundamentalPriceInterval_label.Text = "Интервал \r\nфундаментальной цены:\r\n";
-            eventFundamentalPriceInterval_label.TextAlign = ContentAlignment.MiddleCenter;
+            eventlPrice_label.Anchor = AnchorStyles.None;
+            eventlPrice_label.AutoSize = true;
+            eventlPrice_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            eventlPrice_label.Location = new Point(35, 219);
+            eventlPrice_label.Name = "eventlPrice_label";
+            eventlPrice_label.Size = new Size(147, 20);
+            eventlPrice_label.TabIndex = 13;
+            eventlPrice_label.Text = "Цена мероприятия:";
+            eventlPrice_label.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
@@ -740,18 +747,6 @@
             eventAveragePrice_label.TabIndex = 9;
             eventAveragePrice_label.Text = "Средняя цена дня:";
             eventAveragePrice_label.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // eventFundamentalPriceIntervalValue_label
-            // 
-            eventFundamentalPriceIntervalValue_label.Anchor = AnchorStyles.None;
-            eventFundamentalPriceIntervalValue_label.AutoSize = true;
-            eventFundamentalPriceIntervalValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            eventFundamentalPriceIntervalValue_label.Location = new Point(287, 226);
-            eventFundamentalPriceIntervalValue_label.Name = "eventFundamentalPriceIntervalValue_label";
-            eventFundamentalPriceIntervalValue_label.Size = new Size(42, 20);
-            eventFundamentalPriceIntervalValue_label.TabIndex = 14;
-            eventFundamentalPriceIntervalValue_label.Text = "(0, 0)";
-            eventFundamentalPriceIntervalValue_label.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // eventAveragePriceWithPrivilegesValue_label
             // 
@@ -987,7 +982,7 @@
             // 
             // _timer
             // 
-            _timer.Interval = 1000;
+            _timer.Interval = 7500;
             // 
             // statusStrip1
             // 
@@ -1004,6 +999,42 @@
             dataStatus_toolStripStatusLabel.Name = "dataStatus_toolStripStatusLabel";
             dataStatus_toolStripStatusLabel.Size = new Size(151, 20);
             dataStatus_toolStripStatusLabel.Text = "toolStripStatusLabel1";
+            // 
+            // eventPriceValue_label
+            // 
+            eventPriceValue_label.Anchor = AnchorStyles.None;
+            eventPriceValue_label.AutoSize = true;
+            eventPriceValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            eventPriceValue_label.Location = new Point(300, 219);
+            eventPriceValue_label.Name = "eventPriceValue_label";
+            eventPriceValue_label.Size = new Size(17, 20);
+            eventPriceValue_label.TabIndex = 17;
+            eventPriceValue_label.Text = "0\r\n";
+            eventPriceValue_label.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.None;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label2.Location = new Point(37, 251);
+            label2.Name = "label2";
+            label2.Size = new Size(144, 40);
+            label2.TabIndex = 18;
+            label2.Text = "Цена мероприятия\r\n(с привилегиями):";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // eventPriceWithPrivilegesValue_label
+            // 
+            eventPriceWithPrivilegesValue_label.Anchor = AnchorStyles.None;
+            eventPriceWithPrivilegesValue_label.AutoSize = true;
+            eventPriceWithPrivilegesValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            eventPriceWithPrivilegesValue_label.Location = new Point(300, 261);
+            eventPriceWithPrivilegesValue_label.Name = "eventPriceWithPrivilegesValue_label";
+            eventPriceWithPrivilegesValue_label.Size = new Size(17, 20);
+            eventPriceWithPrivilegesValue_label.TabIndex = 19;
+            eventPriceWithPrivilegesValue_label.Text = "0\r\n";
+            eventPriceWithPrivilegesValue_label.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // EventOrganizationForm
             // 
@@ -1093,8 +1124,7 @@
         private Label label1;
         private Label eventAveragePriceWithPrivilegesValue_label;
         private TabPage tabPage3;
-        private Label eventFundamentalPriceInterval_label;
-        private Label eventFundamentalPriceIntervalValue_label;
+        private Label eventlPrice_label;
         private TableLayoutPanel tableLayoutPanel3;
         private Label eventIncome_label;
         private Label eventIncomeValue_label;
@@ -1121,5 +1151,8 @@
         private DataGridViewTextBoxColumn Column5;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel dataStatus_toolStripStatusLabel;
+        private Label label2;
+        private Label eventPriceValue_label;
+        private Label eventPriceWithPrivilegesValue_label;
     }
 }

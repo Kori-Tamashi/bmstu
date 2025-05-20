@@ -72,6 +72,7 @@
             _timer = new System.Windows.Forms.Timer(components);
             statusStrip = new StatusStrip();
             dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
+            eventCreate_button = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             userEvents_groupBox.SuspendLayout();
@@ -399,6 +400,7 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(eventCreate_button);
             groupBox2.Controls.Add(organizedEvents_dataGridView);
             groupBox2.Location = new Point(6, 6);
             groupBox2.Name = "groupBox2";
@@ -418,7 +420,7 @@
             organizedEvents_dataGridView.Location = new Point(6, 26);
             organizedEvents_dataGridView.Name = "organizedEvents_dataGridView";
             organizedEvents_dataGridView.RowHeadersWidth = 51;
-            organizedEvents_dataGridView.Size = new Size(987, 674);
+            organizedEvents_dataGridView.Size = new Size(987, 639);
             organizedEvents_dataGridView.TabIndex = 0;
             organizedEvents_dataGridView.CellClick += organisedEvents_dataGridView_CellClick;
             // 
@@ -497,7 +499,7 @@
             // 
             // _timer
             // 
-            _timer.Interval = 3000;
+            _timer.Interval = 15000;
             // 
             // statusStrip
             // 
@@ -514,6 +516,15 @@
             dataStatus_toolStripStatusLabel.Name = "dataStatus_toolStripStatusLabel";
             dataStatus_toolStripStatusLabel.Size = new Size(151, 20);
             dataStatus_toolStripStatusLabel.Text = "toolStripStatusLabel1";
+            // 
+            // eventCreate_button
+            // 
+            eventCreate_button.Location = new Point(750, 671);
+            eventCreate_button.Name = "eventCreate_button";
+            eventCreate_button.Size = new Size(243, 29);
+            eventCreate_button.TabIndex = 1;
+            eventCreate_button.Text = "Создать мероприятие";
+            eventCreate_button.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
@@ -592,5 +603,6 @@
         private DataGridViewTextBoxColumn Column13;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel dataStatus_toolStripStatusLabel;
+        private Button eventCreate_button;
     }
 }

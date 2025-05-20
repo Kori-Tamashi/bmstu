@@ -19,6 +19,7 @@ public partial class EventOrganizationForm : Form
         try
         {
             await _eventOrganizationFormController.InitializeAsync();
+            InitializeLocations();
             InitializeEventInfo();
             InitializeDaysGrid();
             InitializeLastUpdate();
@@ -50,7 +51,9 @@ public partial class EventOrganizationForm : Form
             eventFundamentalPriceRelativeDifferenceValue_label.DataBindings.Add("Text", eventOrganizationController, "EventFundamentalPriceRelativeDifference");
             eventAveragePriceValue_label.DataBindings.Add("Text", eventOrganizationController, "EventDaysAveragePrice");
             eventAveragePriceWithPrivilegesValue_label.DataBindings.Add("Text", eventOrganizationController, "EventDaysAveragePriceWithPrivileges");
-            eventFundamentalPriceIntervalValue_label.DataBindings.Add("Text", eventOrganizationController, "EventFundamentalPriceInterval");
+            eventPriceValue_label.DataBindings.Add("Text", eventOrganizationController, "EventPrice");
+            eventPriceWithPrivilegesValue_label.DataBindings.Add("Text", eventOrganizationController, "EventPriceWithPrivileges");
+            // eventFundamentalPriceIntervalValue_label.DataBindings.Add("Text", eventOrganizationController, "EventFundamentalPriceInterval");
 
             eventExpensesValue_label.DataBindings.Add("Text", eventOrganizationController, "EventExpenses");
             eventIncomeValue_label.DataBindings.Add("Text", eventOrganizationController, "EventIncome");
@@ -71,12 +74,23 @@ public partial class EventOrganizationForm : Form
         {
             eventName_textBox.Text = _eventOrganizationFormController.EventName;
             eventDescription_textBox.Text = _eventOrganizationFormController.EventDescription;
-            
+
             eventLocationId_label.Text = _eventOrganizationFormController.CurrentEvent.LocationId.ToString();
             eventDate_maskedTextBox.Text = _eventOrganizationFormController.EventDate;
             eventDaysCount_numericUpDown.Value = _eventOrganizationFormController.CurrentEvent.DaysCount;
             eventPercent_numericUpDown.Value = (decimal)_eventOrganizationFormController.CurrentEvent.Percent;
+        }
+        catch
+        {
+            throw;
+        }
+    }
 
+    private void InitializeLocations()
+    {
+        try
+        {
+            eventLocation_comboBox.Items.Clear();
             foreach (var loc in _eventOrganizationFormController.AllLocations)
             {
                 eventLocation_comboBox.Items.Add(loc.Name);
@@ -110,7 +124,7 @@ public partial class EventOrganizationForm : Form
         }
         catch
         {
-            throw;
+            return;
         }
     }
 
@@ -128,6 +142,7 @@ public partial class EventOrganizationForm : Form
                 try
                 {
                     await _eventOrganizationFormController.InitializeAsync();
+                    InitializeLocations();
                     InitializeDaysGrid();
                     InitializeLastUpdate();
                 }
@@ -159,6 +174,8 @@ public partial class EventOrganizationForm : Form
         }
     }
 
+
+
     private async void eventSettingSave_button_Click(object sender, EventArgs e)
     {
         try
@@ -186,6 +203,43 @@ public partial class EventOrganizationForm : Form
         catch (Exception ex)
         {
             MessageBox.Show("Ошибка: не удалось обновить информацию о мероприятии.");
+            return;
+        }
+    }
+
+    private void eventDays_dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+    {
+        try
+        {
+            if (e.RowIndex < 0) return;
+            var row = eventDays_dataGridView.Rows[e.RowIndex];
+            var dayId = (Guid)row.Cells[0].Value;
+            _eventOrganizationFormController.OpenDayOrganization(dayId);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму организации дня мероприятия.");
+            return;
+        }
+    }
+
+    private void eventLocation_comboBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            if ((string)eventLocation_comboBox.SelectedItem != "Добавить")
+            {
+                var locationName = (string)eventLocation_comboBox.SelectedItem;
+                var locationId = _eventOrganizationFormController.LocationsIds[locationName];
+                eventLocationId_label.Text = locationId.ToString();
+            }
+            else
+            {
+                _eventOrganizationFormController.OpenLocationCreate();
+            }
+        }
+        catch
+        {
             return;
         }
     }

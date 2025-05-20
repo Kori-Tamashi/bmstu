@@ -159,6 +159,21 @@ public class MainWindowController : INotifyPropertyChanged
         }
     }
 
+    public async Task OpenEventLogic(Guid eventId)
+    {
+        try
+        {
+            if (CurrentUser.Role == Common.Enums.UserRole.Admin)
+                OpenEventOrganization(eventId);
+            else
+                OpenEventDetails(eventId);
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
     public async Task OpenEventDetails(Guid eventId)
     {
         try

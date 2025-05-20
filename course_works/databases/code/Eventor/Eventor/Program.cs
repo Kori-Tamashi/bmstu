@@ -129,6 +129,9 @@ internal static class Program
         services.AddTransient<ParticipantsFormController>();
         services.AddTransient<DayFormController>();
         services.AddTransient<EventOrganizationFormController>();
+        services.AddTransient<DayOrganizationFormController>();
+        services.AddTransient<ItemCreateFormController>();
+        services.AddTransient<LocationCreateFormController>();
 
         // Формы
         services.AddTransient<MainWindow>(provider => new MainWindow());
@@ -141,5 +144,8 @@ internal static class Program
         services.AddTransient<ParticipantsForm>();
         services.AddTransient<DayForm>();
         services.AddTransient<EventOrganizationForm>();
+        services.AddTransient<DayOrganizationForm>();
+        services.AddTransient<ItemCreateForm>();
+        services.AddTransient<LocationCreateForm>();
     }
 }

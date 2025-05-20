@@ -69,4 +69,34 @@ public static class EnumConverter
         var pgNameAttribute = memberInfo.GetCustomAttribute<PgNameAttribute>();
         return pgNameAttribute?.PgName ?? role.ToString();
     }
+
+    public static PersonType ToPersonType(this string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            throw new ArgumentException("Строка не может быть пустой.");
+
+        foreach (var type in Enum.GetValues(typeof(PersonType)).Cast<PersonType>())
+        {
+            var memberInfo = typeof(PersonType).GetMember(type.ToString())[0];
+            var pgNameAttribute = memberInfo.GetCustomAttribute<PgNameAttribute>();
+
+            if (pgNameAttribute != null &&
+                string.Equals(pgNameAttribute.PgName, value, StringComparison.OrdinalIgnoreCase))
+            {
+                return type;
+            }
+        }
+
+        throw new ArgumentException($"Недопустимое значение: {value}");
+    }
+
+    public static string ToString(this PersonType type)
+    {
+        var memberInfo = typeof(PersonType).GetMember(type.ToString()).FirstOrDefault();
+        if (memberInfo == null)
+            throw new ArgumentException($"Недопустимое значение перечисления: {type}");
+
+        var pgNameAttribute = memberInfo.GetCustomAttribute<PgNameAttribute>();
+        return pgNameAttribute?.PgName ?? type.ToString();
+    }
 }

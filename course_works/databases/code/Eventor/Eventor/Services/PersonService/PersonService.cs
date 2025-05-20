@@ -224,8 +224,7 @@ public class PersonService : IPersonService
         try
         {
             ValidatePerson(updatePerson);
-            var existingPerson = await GetExistingPerson(updatePerson.Id);
-            await _personRepository.UpdatePersonAsync(existingPerson);
+            await _personRepository.UpdatePersonAsync(updatePerson);
         }
         catch (ArgumentException ex)
         {

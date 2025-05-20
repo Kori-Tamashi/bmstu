@@ -136,7 +136,7 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            throw;
+            return;
         }
     }
 
@@ -217,7 +217,7 @@ public partial class MainWindow : Form
             var row = events_dataGridView.Rows[e.RowIndex];
             var eventId = (Guid)row.Cells[0].Value;
 
-            await _mainWindowController.OpenEventDetails(eventId);
+            await _mainWindowController.OpenEventLogic(eventId);
         }
         catch (Exception ex)
         {
@@ -234,7 +234,7 @@ public partial class MainWindow : Form
             var row = userEvents_dataGridView.Rows[e.RowIndex];
             var eventId = (Guid)row.Cells[2].Value;
 
-            await _mainWindowController.OpenEventDetails(eventId);
+            await _mainWindowController.OpenEventLogic(eventId);
         }
         catch (Exception ex)
         {

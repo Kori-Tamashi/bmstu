@@ -36,13 +36,26 @@ $$ LANGUAGE plpgsql STABLE;
 CREATE OR REPLACE FUNCTION day_cost(target_day_id UUID)
 RETURNS NUMERIC AS $$
 DECLARE
-    menu_id UUID;
+    menu_cost_val NUMERIC;
+    location_price NUMERIC;
 BEGIN
-    SELECT d.menu_id INTO menu_id
+    -- 1. Получаем стоимость меню дня
+    SELECT menu_cost(d.menu_id) 
+    INTO menu_cost_val
     FROM days d
     WHERE d.day_id = target_day_id;
 
-    RETURN menu_cost(menu_id);
+    -- 2. Получаем цену локации мероприятия
+    SELECT l.price 
+    INTO location_price
+    FROM days d
+    JOIN events_days ed ON d.day_id = ed.day_id
+    JOIN events e ON ed.event_id = e.event_id
+    JOIN locations l ON e.location_id = l.location_id
+    WHERE d.day_id = target_day_id;
+
+    -- 3. Возвращаем сумму (с обработкой NULL)
+    RETURN COALESCE(menu_cost_val, 0) + COALESCE(location_price, 0);
 END;
 $$ LANGUAGE plpgsql STABLE;
 
@@ -98,6 +111,33 @@ BEGIN
                 )
             ) AS days_combo
         FROM persons_days pd
+        GROUP BY pd.person_id
+    ) combo
+    WHERE combo.days_combo IS NOT NULL
+    AND array_length(combo.days_combo, 1) > 0;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Функция текущих комбинаций дней H(E) без учёта Организаторов и VIP-персон
+CREATE OR REPLACE FUNCTION event_day_combinations_excluding_roles(target_event_id UUID)
+RETURNS SETOF UUID[] AS $$
+BEGIN
+    RETURN QUERY
+    SELECT DISTINCT combo.days_combo
+    FROM (
+        SELECT 
+            pd.person_id,
+            ARRAY_AGG(pd.day_id ORDER BY pd.day_id) FILTER (
+                WHERE EXISTS (
+                    SELECT 1 
+                    FROM events_days ed 
+                    WHERE ed.day_id = pd.day_id 
+                    AND ed.event_id = target_event_id
+                )
+            ) AS days_combo
+        FROM persons_days pd
+        JOIN persons p ON pd.person_id = p.person_id  -- Добавляем соединение с участниками
+        WHERE p.type NOT IN ('Организатор', 'VIP-персона')  -- Исключаем привилегированных
         GROUP BY pd.person_id
     ) combo
     WHERE combo.days_combo IS NOT NULL
@@ -245,7 +285,7 @@ BEGIN
     LOOP
         sum_an := sum_an + 
             days_coefficient_nd(combo) * 
-            days_participants_count(combo);
+            get_person_count_exact(combo);
     END LOOP;
 
     IF sum_an <= 0 THEN
@@ -367,6 +407,172 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE;
 
+-- Функция проверки существования решения уравнения баланса
+CREATE OR REPLACE FUNCTION check_balance_solution_exists_exact_excluding_roles(target_event_id UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+    all_days_have_positive_cost BOOLEAN;
+    all_days_have_participants BOOLEAN;
+BEGIN
+    -- 1. Проверка что ВСЕ дни имеют положительную стоимость
+    SELECT NOT EXISTS (
+        SELECT 1
+        FROM events_days ed
+        JOIN days d ON ed.day_id = d.day_id
+        WHERE ed.event_id = target_event_id
+          AND day_cost(d.day_id) <= 0
+    ) INTO all_days_have_positive_cost;
+
+    -- 2. Проверка что КАЖДЫЙ день выбран хотя бы одним участником
+    SELECT NOT EXISTS (
+        SELECT 1
+        FROM events_days ed
+        JOIN days d ON ed.day_id = d.day_id
+        WHERE ed.event_id = target_event_id
+          AND day_participants_count_excluding_roles(d.day_id) = 0
+    ) INTO all_days_have_participants;
+
+    -- 3. Проверка существования мероприятия и его дней
+    PERFORM 1
+    FROM events
+    WHERE event_id = target_event_id
+      AND EXISTS (
+          SELECT 1
+          FROM events_days
+          WHERE event_id = target_event_id
+      );
+
+    IF NOT FOUND THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Уравнение баланса разрешимо <=> выполняются оба условия
+    RETURN all_days_have_positive_cost AND all_days_have_participants;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Функция точного подсчёта участников для набора дней (без учёта привилегий)
+CREATE OR REPLACE FUNCTION get_person_count_exact(days_id UUID[])
+RETURNS INT AS $$
+DECLARE
+    target_event_id UUID;
+BEGIN
+    -- 1. Проверка входных данных
+    IF array_length(days_id, 1) IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    -- 2. Получаем ID мероприятия по первому дню
+    SELECT ed.event_id INTO target_event_id
+    FROM events_days ed
+    WHERE ed.day_id = days_id[1]
+    LIMIT 1;
+
+    IF target_event_id IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    -- 3. Проверяем, что все дни принадлежат одному мероприятию
+    IF EXISTS (
+        SELECT 1
+        FROM unnest(days_id) d
+        LEFT JOIN events_days ed ON d = ed.day_id
+        WHERE ed.event_id != target_event_id OR ed.event_id IS NULL
+    ) THEN
+        RETURN 0;
+    END IF;
+
+    -- 4. Находим участников, которые:
+    --    a) Посещают ВСЕ дни из days_id
+    --    b) Не посещают другие дни мероприятия
+    RETURN (
+        SELECT COUNT(*)
+        FROM (
+            SELECT pd.person_id
+            FROM persons_days pd
+            -- Все дни участника в рамках мероприятия
+            LEFT JOIN events_days ed ON pd.day_id = ed.day_id AND ed.event_id = target_event_id
+            WHERE pd.person_id IN (
+                -- Участники, которые посещают ВСЕ дни из days_id
+                SELECT person_id
+                FROM persons_days
+                WHERE day_id = ANY(days_id)
+                GROUP BY person_id
+                HAVING COUNT(DISTINCT day_id) = array_length(days_id, 1)
+            )
+            GROUP BY pd.person_id
+            HAVING 
+                -- Условие a: Посещает все требуемые дни
+                COUNT(DISTINCT pd.day_id) FILTER (WHERE pd.day_id = ANY(days_id)) = array_length(days_id, 1)
+                AND
+                -- Условие b: Не посещает другие дни
+                COUNT(DISTINCT pd.day_id) FILTER (WHERE pd.day_id NOT IN (SELECT unnest(days_id))) = 0
+        ) AS exact_participants
+    );
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Функция с исключением привилегированных ролей
+CREATE OR REPLACE FUNCTION get_person_count_exact_excluding_roles(days_id UUID[])
+RETURNS INT AS $$
+DECLARE
+    target_event_id UUID;
+BEGIN
+    -- 1. Проверка входных данных
+    IF array_length(days_id, 1) IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    -- 2. Получаем ID мероприятия по первому дню
+    SELECT ed.event_id INTO target_event_id
+    FROM events_days ed
+    WHERE ed.day_id = days_id[1]
+    LIMIT 1;
+
+    IF target_event_id IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    -- 3. Проверяем, что все дни принадлежат одному мероприятию
+    IF EXISTS (
+        SELECT 1
+        FROM unnest(days_id) d
+        LEFT JOIN events_days ed ON d = ed.day_id
+        WHERE ed.event_id != target_event_id OR ed.event_id IS NULL
+    ) THEN
+        RETURN 0;
+    END IF;
+
+    -- 4. Находим участников, которые:
+    --    a) Посещают ВСЕ дни из days_id
+    --    b) Не посещают другие дни мероприятия
+    --    c) Не являются Организаторами или VIP-персонами
+    RETURN (
+        SELECT COUNT(*)
+        FROM (
+            SELECT pd.person_id
+            FROM persons_days pd
+            JOIN persons p ON pd.person_id = p.person_id
+            LEFT JOIN events_days ed ON pd.day_id = ed.day_id AND ed.event_id = target_event_id
+            WHERE 
+                p.type NOT IN ('Организатор', 'VIP-персона')
+                AND pd.person_id IN (
+                    SELECT person_id
+                    FROM persons_days
+                    WHERE day_id = ANY(days_id)
+                    GROUP BY person_id
+                    HAVING COUNT(DISTINCT day_id) = array_length(days_id, 1)
+                )
+            GROUP BY pd.person_id
+            HAVING 
+                COUNT(DISTINCT pd.day_id) FILTER (WHERE pd.day_id = ANY(days_id)) = array_length(days_id, 1)
+                AND
+                COUNT(DISTINCT pd.day_id) FILTER (WHERE pd.day_id NOT IN (SELECT unnest(days_id))) = 0
+        ) AS exact_participants
+    );
+END;
+$$ LANGUAGE plpgsql STABLE;
+
 -- Функция подсчёта участников дня (без Организаторов и VIP)
 CREATE OR REPLACE FUNCTION day_participants_count_excluding_roles(target_day_id UUID)
 RETURNS INT AS $$
@@ -423,11 +629,11 @@ BEGIN
     total_cost := event_cost(target_event_id);
 
     FOR combo IN 
-        SELECT * FROM event_day_combinations(target_event_id)
+        SELECT * FROM event_day_combinations_excluding_roles(target_event_id)
     LOOP
         sum_an := sum_an + 
             days_coefficient_nd(combo) * 
-            days_participants_count_excluding_roles(combo);
+            get_person_count_exact_excluding_roles(combo);
     END LOOP;
 
     RETURN total_cost / sum_an;

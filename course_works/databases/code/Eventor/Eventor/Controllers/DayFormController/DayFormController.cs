@@ -18,6 +18,8 @@ public class DayFormController : INotifyPropertyChanged
     public Guid EventId { get; set; }
     public Guid UserId { get; set; }
 
+    
+
     private Day _currentDay;
     public Day CurrentDay
     {
@@ -90,6 +92,8 @@ public class DayFormController : INotifyPropertyChanged
             throw;
         }
     }
+
+
 
     public async Task LoadParticipantsAsync()
     {

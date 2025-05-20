@@ -1,6 +1,7 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Services;
 using Microsoft.Build.Framework;
+using Microsoft.Extensions.DependencyInjection;
 using PhoneNumbers;
 using System.ComponentModel;
 using System.Globalization;
@@ -19,11 +20,9 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     private readonly IEconomyService _economyService;
     private readonly ILocationService _locationService;
 
-
     public Guid EventId { get; set; }
     public Guid UserId { get; set; }
     public double MaxPrice { get; set; } = 30000;
-
 
     private double _eventCost = 0;
     public double CurrentEventCost
@@ -143,6 +142,28 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         set
         {
             _eventDaysAveragePriceWithPrivileges = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private double _eventPrice = 0;
+    public double CurrentEventPrice
+    {
+        get => _eventPrice;
+        set
+        {
+            _eventPrice = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private double _eventPriceWithPrivileges = 0;
+    public double CurrentEventPriceWithPrivileges
+    {
+        get => _eventPriceWithPrivileges;
+        set
+        {
+            _eventPriceWithPrivileges = value;
             OnPropertyChanged();
         }
     }
@@ -331,8 +352,7 @@ public class EventOrganizationFormController : INotifyPropertyChanged
             }
             else
             {
-                if (!CurrentEvent.IsEventExpired()) return "Мероприятие проходит.";
-                else return "Мероприятие завершилось.";
+                return !CurrentEvent.IsEventExpired() ? "Мероприятие проходит." : "Мероприятие завершилось.";
             }
         }
     }
@@ -353,6 +373,11 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         $"({ValueCheck(_eventFundamentalPriceInterval.Item1)}, " +
         $"{ValueCheck(_eventFundamentalPriceInterval.Item2)})" : "Расчет невозможен";
 
+    public string EventPrice => ValueCheck(_eventPrice);
+
+    public string EventPriceWithPrivileges => ValueCheck(_eventPriceWithPrivileges);
+
+
     public string EventExpenses => ValueCheck(_eventExpenses);
 
     public string EventIncome => ValueCheck(_eventIncome);
@@ -362,7 +387,7 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     public string EventTheoryProfit => ValueCheck(_eventTheoryProfit);
 
     public string EventMaxMarkup => 
-        _eventMaxMarkup != _errorValue ? $"{_eventMaxMarkup}%" : "Расчет невозможен.";
+        _eventMaxMarkup != _errorValue ? $"{Math.Round(_eventMaxMarkup, 2)}%" : "0%";
 
     public string EventMinParticipants => ValueCheck(_eventMinParticipants);
 
@@ -440,6 +465,12 @@ public class EventOrganizationFormController : INotifyPropertyChanged
 
             CurrentEventFundamentalPriceInterval = CurrentEventSolutionExists ?
                 await _economyService.CalculateFundamentalPriceIntervalAsync(EventId) : (_errorValue, _errorValue);
+
+            CurrentEventPrice = CurrentEventSolutionExists ?
+                await _economyService.GetEventPriceAsync(EventId) : _errorValue;
+
+            CurrentEventPriceWithPrivileges = CurrentEventSolutionExistsWithPrivileges ? 
+                await _economyService.GetEventPriceWithPrivilegesAsync(EventId) : _errorValue;
 
             // Прибыль
 
@@ -616,6 +647,18 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         return await _economyService.GetPersonCountAsync(dayId);
     }
 
+    public async Task<string> GetFirstDayPrice()
+    {
+        var price = await _economyService.GetDayPriceWithPrivilegesAsync(EventDays[0].Id);
+        return price.ToString();
+    }
+
+    public async Task<string> GetFundamentalPrice()
+    {
+        var fPrice = await _economyService.CalculateFundamentalPriceWithPrivilegesNDAsync(CurrentEvent.Id);
+        return fPrice.ToString();
+    }
+
     public async Task SaveEvent(string locationId, string name, string description, string date, 
         int daysCount, double percent, double maxPrice)
     {
@@ -658,6 +701,19 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         await _eventService.UpdateEventAsync(updatedEvent);
 
         MaxPrice = maxPrice;
+    }
+
+    public void OpenDayOrganization(Guid dayId)
+    {
+        var dayOrganizationForm = _serviceProvider.GetRequiredService<DayOrganizationForm>();
+        dayOrganizationForm.SetIds(dayId, EventId, UserId);
+        dayOrganizationForm.Show();
+    }
+
+    public void OpenLocationCreate()
+    {
+        var locationCreateForm = _serviceProvider.GetRequiredService<LocationCreateForm>();
+        locationCreateForm.Show();
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

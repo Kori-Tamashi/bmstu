@@ -56,6 +56,10 @@ public interface IEconomyService
     /// </summary>
     Task<double> GetEventPriceAsync(Guid eventId);
 
+    /// <summary>
+    /// Цена мероприятия с учетом привилегий (P_E)
+    /// </summary>
+    Task<double> GetEventPriceWithPrivilegesAsync(Guid eventId);
 
     // --- Коэффициенты и фундаментальные цены ---
 

@@ -16,7 +16,8 @@ ALTER TABLE locations
     ALTER COLUMN price SET NOT NULL,
     ALTER COLUMN capacity SET NOT NULL,
     ADD CHECK (price >= 0),
-    ADD CHECK (capacity >= 0);
+    ADD CHECK (capacity >= 0),
+    ADD CONSTRAINT unique_name UNIQUE (name);
 
 -- Ограничения для таблицы мероприятий (Events)
 ALTER TABLE events
@@ -71,7 +72,8 @@ ALTER TABLE items
     ALTER COLUMN name SET NOT NULL,
     ALTER COLUMN type SET NOT NULL,
     ALTER COLUMN price SET NOT NULL,
-    ADD CHECK (price >= 0);
+    ADD CHECK (price >= 0),
+    ADD CONSTRAINT unique_name UNIQUE (name);
 
 -- Ограничения для таблицы отзывов (Feedback)
 ALTER TABLE feedbacks

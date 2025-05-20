@@ -1,5 +1,6 @@
 ﻿using Eventor.Common.Enums;
 using Eventor.Database.Core;
+using Eventor.Database.Repositories;
 using Eventor.Services.Exceptions;
 using Microsoft.Extensions.Logging;
 using Day = Eventor.Common.Core.Day;
@@ -12,6 +13,7 @@ public class EconomyService : IEconomyService
     private readonly IItemRepository _itemRepository;
     private readonly IMenuRepository _menuRepository;
     private readonly IPersonRepository _personRepository;
+    private readonly ILocationRepository _locationRepository;
     private readonly ILogger<EconomyService> _logger;
 
     public EconomyService(
@@ -20,6 +22,7 @@ public class EconomyService : IEconomyService
         IItemRepository itemRepository,
         IMenuRepository menuRepository,
         IPersonRepository personRepository,
+        ILocationRepository locationRepository,
         ILogger<EconomyService> logger)
     {
         _eventRepository = eventRepository;
@@ -27,6 +30,7 @@ public class EconomyService : IEconomyService
         _itemRepository = itemRepository;
         _menuRepository = menuRepository;
         _personRepository = personRepository;
+        _locationRepository = locationRepository;
         _logger = logger;
     }
 
@@ -125,8 +129,22 @@ public class EconomyService : IEconomyService
                     continue;
                 }
 
-                var dayCost = await GetMenuCostAsync(day.MenuId);
-                totalCost += dayCost;
+                // 1. Стоимость меню дня
+                var menuCost = await GetMenuCostAsync(day.MenuId);
+
+                // 2. Цена локации мероприятия
+                var eventObj = await _eventRepository.GetEventByDayAsync(dayId);
+                if (eventObj == null)
+                {
+                    _logger.LogWarning("Event not found for day {DayId}", dayId);
+                    continue;
+                }
+
+                var location = await _locationRepository.GetLocationByIdAsync(eventObj.LocationId);
+                var locationPrice = location?.Price ?? 0;
+
+                // 3. Общая стоимость дня
+                totalCost += menuCost + locationPrice;
             }
 
             return totalCost;
@@ -146,31 +164,20 @@ public class EconomyService : IEconomyService
     {
         try
         {
-            var eventDays = await _dayRepository.GetAllDaysByEventAsync(eventId);
-
-            if (!eventDays.Any())
+            var eventObj = await _eventRepository.GetEventByIdAsync(eventId);
+            if (eventObj == null)
             {
-                _logger.LogInformation("Event {EventId} has no days", eventId);
+                _logger.LogWarning("Event {EventId} not found", eventId);
                 return 0;
             }
 
-            double totalCost = 0;
-            foreach (var day in eventDays)
-            {
-                try
-                {
-                    var dayCost = await GetMenuCostAsync(day.MenuId);
-                    totalCost += dayCost;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error calculating cost for day {DayId} in event {EventId}",
-                        day.Id, eventId);
-                }
-            }
+            // 1. Стоимость всех дней
+            var eventDays = await _dayRepository.GetAllDaysByEventAsync(eventId);
+            var daysCost = await GetDaysCostAsync(eventDays.Select(d => d.Id));
 
-            _logger.LogDebug("Total cost {Cost} calculated for event {EventId}", totalCost, eventId);
-            return totalCost;
+            // 2. Добавляем стоимость локации (если требуется)
+            // (В зависимости от бизнес-логики, возможно, не нужно дублировать)
+            return daysCost;
         }
         catch (Exception ex)
         {
@@ -200,7 +207,7 @@ public class EconomyService : IEconomyService
         {
             // Получаем фундаментальную цену для мероприятия
             var currentEvent = await _eventRepository.GetEventByDayAsync(dayId);
-            var fundamentalPrice = await CalculateFundamentalPrice1DAsync(currentEvent.Id);
+            var fundamentalPrice = await CalculateFundamentalPriceNDAsync(currentEvent.Id);
 
             // Получаем коэффициент дня
             var coefficient = await GetDayCoefficientAsync(new[] { dayId });
@@ -220,7 +227,7 @@ public class EconomyService : IEconomyService
         {
             // Получаем фундаментальную цену для мероприятия
             var currentEvent = await _eventRepository.GetEventByDayAsync(dayId);
-            var fundamentalPrice = await CalculateFundamentalPriceWithPrivileges1DAsync(currentEvent.Id);
+            var fundamentalPrice = await CalculateFundamentalPriceWithPrivilegesNDAsync(currentEvent.Id);
 
             // Получаем коэффициент дня
             var coefficient = await GetDayCoefficientAsync(new[] { dayId });
@@ -355,8 +362,37 @@ public class EconomyService : IEconomyService
             }
 
             var allDayIds = days.Select(d => d.Id);
-            var eventObj = await _eventRepository.GetEventByDayAsync(eventId);
+            var eventObj = await _eventRepository.GetEventByIdAsync(eventId);
             var fundamentalPrice = await CalculateFundamentalPriceNDAsync(eventId);
+            var allDaysCoefficient = await GetDayCoefficientAsync(allDayIds);
+            var price = fundamentalPrice * allDaysCoefficient;
+
+            return (1 + eventObj.Percent / 100) * fundamentalPrice * allDaysCoefficient;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error calculating price for event {EventId}", eventId);
+            throw new EconomyServiceException("Failed to calculate event price", ex);
+        }
+    }
+
+    /// <summary>
+    /// Цена мероприятия с учетом привилегий (P_E)
+    /// </summary>
+    public async Task<double> GetEventPriceWithPrivilegesAsync(Guid eventId)
+    {
+        try
+        {
+            var days = await _dayRepository.GetAllDaysByEventAsync(eventId);
+            if (!days.Any())
+            {
+                _logger.LogWarning("Event {EventId} has no days", eventId);
+                return 0;
+            }
+
+            var allDayIds = days.Select(d => d.Id);
+            var eventObj = await _eventRepository.GetEventByIdAsync(eventId);
+            var fundamentalPrice = await CalculateFundamentalPriceWithPrivilegesNDAsync(eventId);
             var allDaysCoefficient = await GetDayCoefficientAsync(allDayIds);
             var price = fundamentalPrice * allDaysCoefficient;
 
@@ -419,7 +455,7 @@ public class EconomyService : IEconomyService
             var eventDayCosts = new List<double>();
             foreach (var day in allEventDays)
             {
-                var cost = await GetMenuCostAsync(day.MenuId);
+                var cost = await GetDaysCostAsync(new[] { day.Id });
                 if (cost <= 0)
                 {
                     _logger.LogError("Day {DayId} has non-positive cost: {Cost}", day.Id, cost);
@@ -554,7 +590,7 @@ public class EconomyService : IEconomyService
                 }
 
                 // Количество участников для комбинации
-                var participantsCount = await GetPersonCountAsync(dayIds);
+                var participantsCount = await GetPersonCountExactAsync(dayIds);
                 if (participantsCount == 0)
                 {
                     _logger.LogWarning("Комбинация дней не имеет участников");
@@ -650,7 +686,7 @@ public class EconomyService : IEconomyService
             {
                 var dayIds = combo.Select(d => d.Id).ToList();
                 var coefficient = await GetDayCoefficientAsync(dayIds);
-                var participants = await GetPersonCountExcludingPrivilegesAsync(dayIds);
+                var participants = await GetPersonCountExactExcludingPrivilegesAsync(dayIds);
                 sum += coefficient * participants;
             }
 
@@ -978,12 +1014,115 @@ public class EconomyService : IEconomyService
         }
     }
 
+    public async Task<int> GetPersonCountExactAsync(List<Guid> dayIds)
+    {
+        if (dayIds == null || !dayIds.Any())
+            return 0;
+
+        try
+        {
+            // 1. Получаем ID мероприятия по первому дню
+            var firstDay = await _dayRepository.GetDayByIdAsync(dayIds.First());
+            if (firstDay == null) return 0;
+
+            var eventId = (await _eventRepository.GetEventByDayAsync(firstDay.Id))?.Id;
+            if (eventId == null) return 0;
+
+            // 2. Получаем ВСЕ дни мероприятия
+            var allEventDays = await _dayRepository.GetAllDaysByEventAsync(eventId.Value);
+            var allEventDayIds = allEventDays.Select(d => d.Id).ToList();
+
+            // 3. Находим участников, которые:
+            //    a) Посещают ВСЕ дни из dayIds
+            //    b) Не посещают дни вне dayIds
+            var persons = await _personRepository.GetAllPersonsByEventAsync(eventId.Value);
+
+            var count = 0;
+            foreach (var person in persons)
+            {
+                var personDays = (await _dayRepository.GetAllDaysByPersonAsync(person.Id))
+                    .Select(d => d.Id)
+                    .ToList();
+
+                // Проверка 1: Посещает все требуемые дни
+                bool attendsAllRequired = dayIds.All(id => personDays.Contains(id));
+
+                // Проверка 2: Не посещает дни вне требуемых
+                bool attendsOnlyRequired = personDays.All(id => dayIds.Contains(id));
+
+                if (attendsAllRequired && attendsOnlyRequired)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка подсчёта участников для дней: {string.Join(",", dayIds)}");
+            throw new EconomyServiceException("Ошибка точного подсчёта участников", ex);
+        }
+    }
+
+    public async Task<int> GetPersonCountExactExcludingPrivilegesAsync(List<Guid> dayIds)
+    {
+        if (dayIds == null || !dayIds.Any())
+            return 0;
+
+        try
+        {
+            // 1. Получаем ID мероприятия по первому дню
+            var firstDay = await _dayRepository.GetDayByIdAsync(dayIds.First());
+            if (firstDay == null) return 0;
+
+            var eventId = (await _eventRepository.GetEventByDayAsync(firstDay.Id))?.Id;
+            if (eventId == null) return 0;
+
+            // 2. Получаем ВСЕ дни мероприятия
+            var allEventDays = await _dayRepository.GetAllDaysByEventAsync(eventId.Value);
+            var allEventDayIds = allEventDays.Select(d => d.Id).ToList();
+
+            // 3. Находим участников, которые:
+            //    a) Посещают ВСЕ дни из dayIds
+            //    b) Не посещают дни вне dayIds
+            //    c) Не являются Организаторами/VIP
+            var persons = await _personRepository.GetAllPersonsByEventAsync(eventId.Value);
+
+            var count = 0;
+            foreach (var person in persons.Where(p => p.Type != PersonType.Organizer && p.Type != PersonType.VIP))
+            {
+                var personDays = (await _dayRepository.GetAllDaysByPersonAsync(person.Id))
+                    .Select(d => d.Id)
+                    .ToList();
+
+                // Проверка 1: Посещает все требуемые дни
+                bool attendsAllRequired = dayIds.All(id => personDays.Contains(id));
+
+                // Проверка 2: Не посещает дни вне требуемых
+                bool attendsOnlyRequired = personDays.All(id => dayIds.Contains(id));
+
+                if (attendsAllRequired && attendsOnlyRequired)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Ошибка подсчёта участников для дней: {string.Join(",", dayIds)}");
+            throw new EconomyServiceException("Ошибка точного подсчёта участников", ex);
+        }
+    }
+
     /// <summary>
     /// Проверяет, что все дни принадлежат одному мероприятию
     /// </summary>
     /// <param name="daysId">Коллекция идентификаторов дней</param>
     /// <returns>True если все дни принадлежат одному мероприятию, иначе False</returns>
-     public async Task<bool> AreDaysFromSameEventAsync(IEnumerable<Guid> daysId)
+    public async Task<bool> AreDaysFromSameEventAsync(IEnumerable<Guid> daysId)
     {
         if (daysId == null || !daysId.Any())
             return false;
@@ -1140,7 +1279,7 @@ public async Task<double> CalculateCurrentIncomeAsync(Guid eventId)
                 var price = await GetDaysPriceWithPrivilegesAsync(dayIds);
 
                 // 2.2. Получаем количество участников
-                var participants = await GetPersonCountExcludingPrivilegesAsync(dayIds);
+                var participants = await GetPersonCountExactExcludingPrivilegesAsync(dayIds);
                 
                 // 2.3. Добавляем к общему доходу
                 totalIncome += price * participants;
@@ -1385,7 +1524,7 @@ public async Task<double> CalculateCurrentIncomeAsync(Guid eventId)
                 return -1;
             }
 
-            return Math.Round(minMarkup, 2) * 100;
+            return Math.Round(minMarkup * 100, 2);
         }
         catch (Exception ex)
         {

@@ -4,6 +4,12 @@
     <Compile Update="Eventor\GUI\DayForm\DayForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Eventor\GUI\DayOrganizationForm\DayOrganizationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\EventCreateForm\EventCreateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Eventor\GUI\EventForm\EventForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -17,6 +23,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Eventor\GUI\FeedbacksForm\FeedbacksForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\ItemCreateForm\ItemCreateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\LocationCreateForm\LocationCreateForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Eventor\GUI\LoginForm\LoginForm.cs">

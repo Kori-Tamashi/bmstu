@@ -112,8 +112,6 @@ CREATE TRIGGER menu_items_changed
 AFTER INSERT OR UPDATE OR DELETE ON menu_items
 FOR EACH ROW EXECUTE FUNCTION update_menu_cost_trigger();
 
-
-
 -- Триггер для обновления количества участников мероприятия
 CREATE OR REPLACE FUNCTION update_event_person_count()
 RETURNS TRIGGER AS $$
@@ -218,12 +216,23 @@ BEGIN
     ELSIF TG_TABLE_NAME = 'days' THEN
         affected_event_id := (SELECT event_id FROM events_days WHERE day_id = NEW.day_id);
     ELSIF TG_TABLE_NAME = 'menu_items' THEN
-        affected_event_id := (
-            SELECT ed.event_id 
-            FROM days d
-            JOIN events_days ed ON d.day_id = ed.day_id 
-            WHERE d.menu_id = NEW.menu_id
-        );
+        -- Обработка DELETE: используем OLD.menu_id
+        IF TG_OP = 'DELETE' THEN
+            affected_event_id := (
+                SELECT ed.event_id 
+                FROM days d
+                JOIN events_days ed ON d.day_id = ed.day_id 
+                WHERE d.menu_id = OLD.menu_id
+            );
+        ELSE
+            -- Обработка INSERT/UPDATE: используем NEW.menu_id
+            affected_event_id := (
+                SELECT ed.event_id 
+                FROM days d
+                JOIN events_days ed ON d.day_id = ed.day_id 
+                WHERE d.menu_id = NEW.menu_id
+            );
+        END IF;
     ELSIF TG_TABLE_NAME = 'persons_days' THEN
         affected_event_id := (
             SELECT event_id 
@@ -231,10 +240,18 @@ BEGIN
             WHERE day_id = NEW.day_id OR day_id = OLD.day_id
             LIMIT 1
         );
+    ELSIF TG_TABLE_NAME = 'persons' THEN
+        affected_event_id := (
+            SELECT ed.event_id
+            FROM persons_days pd
+            JOIN events_days ed ON pd.day_id = ed.day_id
+            WHERE pd.person_id = NEW.person_id
+            LIMIT 1
+        );
     END IF;
 
     -- Если решение существует, обновляем цены дней
-    IF check_balance_solution_exists(affected_event_id) THEN
+    IF check_balance_solution_exists_exact_excluding_roles(affected_event_id) THEN
         FOR day_record IN
             SELECT d.day_id 
             FROM days d
@@ -252,7 +269,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger_events_changed
-AFTER INSERT OR UPDATE OF percent ON events
+AFTER INSERT OR UPDATE ON events
 FOR EACH ROW
 EXECUTE FUNCTION update_days_prices();
 
@@ -263,11 +280,16 @@ EXECUTE FUNCTION update_days_prices();
 
 CREATE TRIGGER trigger_menu_items_changed
 AFTER INSERT OR UPDATE OR DELETE ON menu_items
-FOR EACH ROW
+FOR EACH ROW 
 EXECUTE FUNCTION update_days_prices();
 
 CREATE TRIGGER trigger_persons_days_changed
 AFTER INSERT OR DELETE ON persons_days
+FOR EACH ROW
+EXECUTE FUNCTION update_days_prices();
+
+CREATE TRIGGER trigger_person_type_changed
+AFTER INSERT OR DELETE OR UPDATE OF type ON persons
 FOR EACH ROW
 EXECUTE FUNCTION update_days_prices();
 
@@ -276,7 +298,7 @@ RETURNS VOID AS $$
 DECLARE
     new_menu_id UUID := gen_random_uuid();
     new_day_id UUID := gen_random_uuid();
-    event_name VARCHAR(255); -- Добавляем переменную для названия мероприятия
+    event_name VARCHAR(255); 
 BEGIN
     -- Получаем название мероприятия
     SELECT name INTO event_name 

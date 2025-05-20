@@ -32,8 +32,8 @@ CREATE TABLE events (
     date DATE,
     person_count INT,
     days_count INT,
-    percent NUMERIC(14,4),
-    rating NUMERIC(14,4)
+    percent NUMERIC(14,2),
+    rating NUMERIC(14,2)
 );
 
 -- Таблица дней мероприятий (Days)
@@ -43,7 +43,7 @@ CREATE TABLE days (
     name VARCHAR(255),
     sequence_number INT,
     description TEXT,
-    price NUMERIC(14,4)
+    price NUMERIC(14,2)
 );
 
 -- Таблица участников (Persons)
@@ -58,7 +58,7 @@ CREATE TABLE persons (
 CREATE TABLE menu (
     menu_id UUID,
     name VARCHAR(255),
-    cost NUMERIC(14,4)
+    cost NUMERIC(14,2)
 );
 
 -- Таблица предметов меню (Items)
@@ -66,7 +66,7 @@ CREATE TABLE items (
     item_id UUID,
     name VARCHAR(255),
     type item_type_enum,
-    price NUMERIC(14,4)
+    price NUMERIC(14,2)
 );
 
 -- Таблица отзывов (Feedbacks)
@@ -75,7 +75,7 @@ CREATE TABLE feedbacks (
     event_id UUID,
     person_id UUID,
     comment TEXT,
-    rating NUMERIC(14,4)
+    rating NUMERIC(14,2)
 );
 
 -- Связь пользователей и мероприятий (User Events)
