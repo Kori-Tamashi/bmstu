@@ -15,6 +15,7 @@ BEGIN
     RETURN COALESCE(result, 0);
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION item_cost(UUID) IS 'Функция стоимости предмета 1-го порядка';
 
 -- Стоимость меню (C_M)
 CREATE OR REPLACE FUNCTION menu_cost(target_menu_id UUID)
@@ -31,6 +32,7 @@ BEGIN
     RETURN COALESCE(total, 0);
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION menu_cost(UUID) IS 'Функция стоимости меню 1-го порядка';
 
 -- Стоимость дня (C_D)
 CREATE OR REPLACE FUNCTION day_cost(target_day_id UUID)
@@ -58,6 +60,7 @@ BEGIN
     RETURN COALESCE(menu_cost_val, 0) + COALESCE(location_price, 0);
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION day_cost(UUID) IS 'Функция стоимости дня 1-го порядка';
 
 -- Стоимость дня n-го порядка (C_D)
 CREATE OR REPLACE FUNCTION days_n_cost(day_ids UUID[]) 
@@ -72,6 +75,7 @@ BEGIN
     RETURN total;
 END;
 $$ LANGUAGE plpgsql;
+COMMENT ON FUNCTION days_n_cost(UUID[]) IS 'Функция стоимости дней n-го порядка';
 
 -- Стоимость мероприятия (C_E)
 CREATE OR REPLACE FUNCTION event_cost(target_event_id UUID)
@@ -88,6 +92,7 @@ BEGIN
     RETURN COALESCE(total, 0);
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION event_cost(UUID) IS 'Функция стоимости мероприятия 1-го порядка';
 
 -----------------------------------------
 -- Вспомогательные функции
@@ -117,6 +122,7 @@ BEGIN
     AND array_length(combo.days_combo, 1) > 0;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION event_day_combinations(UUID) IS 'Функция текущих комбинаций дней H(E)';
 
 -- Функция текущих комбинаций дней H(E) без учёта Организаторов и VIP-персон
 CREATE OR REPLACE FUNCTION event_day_combinations_excluding_roles(target_event_id UUID)
@@ -136,14 +142,15 @@ BEGIN
                 )
             ) AS days_combo
         FROM persons_days pd
-        JOIN persons p ON pd.person_id = p.person_id  -- Добавляем соединение с участниками
-        WHERE p.type NOT IN ('Организатор', 'VIP-персона')  -- Исключаем привилегированных
+        JOIN persons p ON pd.person_id = p.person_id 
+        WHERE p.type NOT IN ('Организатор', 'VIP-персона')
         GROUP BY pd.person_id
     ) combo
     WHERE combo.days_combo IS NOT NULL
     AND array_length(combo.days_combo, 1) > 0;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION event_day_combinations_excluding_roles(UUID) IS 'Функция текущих комбинаций дней H(E) без учёта Организаторов и VIP-персон';
 
 -- Функция количества участников дня (N(d))
 CREATE OR REPLACE FUNCTION day_participants_count(target_day_id UUID)
@@ -156,6 +163,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION day_participants_count(UUID) IS 'Функция количества участников дня 1-го порядка (N(d))';
 
 -- Функция количества участников набора дней (n-ный порядок)
 CREATE OR REPLACE FUNCTION days_participants_count(day_ids UUID[])
@@ -185,6 +193,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION days_participants_count(UUID[]) IS 'Функция количества участников дня n-го порядка';
 
 -- Функция количества участников мероприятия N_E(E)
 CREATE OR REPLACE FUNCTION event_participants_count(target_event_id UUID)
@@ -198,6 +207,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION event_participants_count(UUID) IS 'Функция количества участников мероприятия N_E(E)';
 
 -- Функция коэффициента дня
 CREATE OR REPLACE FUNCTION day_coefficient_1d(target_day_id UUID)
@@ -205,7 +215,7 @@ RETURNS NUMERIC AS $$
 DECLARE
     current_day_cost NUMERIC;
     min_event_cost NUMERIC;
-    event_id_var UUID; -- Переименованная переменная
+    event_id_var UUID; 
 BEGIN
     -- Получаем принадлежность дня к мероприятию
     SELECT ed.event_id, day_cost(d.day_id)
@@ -229,6 +239,7 @@ BEGIN
     RETURN current_day_cost / min_event_cost;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION day_coefficient_1d(UUID) IS 'Функция коэффициента дня 1-го порядка';
 
 
 -- Функция коэффициента дня n-го порядка
@@ -269,6 +280,11 @@ BEGIN
     RETURN total_cost / min_event_cost;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION days_coefficient_nd(UUID[]) IS 'Функция коэффициента дня n-го порядка';
+
+-----------------------------------------
+-- Функции цены
+-----------------------------------------
 
 -- Фундаментальная цена (nD случай)
 CREATE OR REPLACE FUNCTION fundamental_price_nd(target_event_id UUID)
@@ -295,6 +311,7 @@ BEGIN
     RETURN total_cost / sum_an;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION fundamental_price_nd(UUID) IS 'Фундаментальная цена (n-мерный случай)';
 
 -- Цена дня первого порядка (с наценкой)
 CREATE OR REPLACE FUNCTION day_price_with_profit(target_day_id UUID)
@@ -321,6 +338,7 @@ BEGIN
     RETURN (1 + COALESCE(event_percent, 0)/100) * coefficient * fundamental_p;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION day_price_with_profit(UUID) IS 'Функция цены дня 1-го порядка (с наценкой)';
 
 -- Цена набора дней n-го порядка (с наценкой)
 CREATE OR REPLACE FUNCTION days_price_with_profit(day_ids UUID[])
@@ -362,6 +380,7 @@ BEGIN
     RETURN (1 + COALESCE(event_percent, 0)/100) * coefficient * fundamental_p;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION days_price_with_profit(UUID[]) IS 'Функция цены дня n-го порядка (с наценкой)';
 
 -- Функция проверки существования решения уравнения баланса
 CREATE OR REPLACE FUNCTION check_balance_solution_exists(target_event_id UUID)
@@ -406,6 +425,7 @@ BEGIN
     RETURN all_days_have_positive_cost AND all_days_have_participants;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION check_balance_solution_exists(UUID) IS 'Функция проверки существования решения уравнения баланса';
 
 -- Функция проверки существования решения уравнения баланса
 CREATE OR REPLACE FUNCTION check_balance_solution_exists_exact_excluding_roles(target_event_id UUID)
@@ -450,8 +470,9 @@ BEGIN
     RETURN all_days_have_positive_cost AND all_days_have_participants;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION check_balance_solution_exists_exact_excluding_roles(UUID) IS 'Функция проверки существования решения уравнения баланса (с учётом привилегий)';
 
--- Функция точного подсчёта участников для набора дней (без учёта привилегий)
+-- Функция точного подсчёта участников для набора дней (с учётом привилегий)
 CREATE OR REPLACE FUNCTION get_person_count_exact(days_id UUID[])
 RETURNS INT AS $$
 DECLARE
@@ -511,6 +532,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION get_person_count_exact(UUID[]) IS 'Функция строгого подсчёта участников для набора дней (с учётом привилегий)';
 
 -- Функция с исключением привилегированных ролей
 CREATE OR REPLACE FUNCTION get_person_count_exact_excluding_roles(days_id UUID[])
@@ -572,6 +594,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION get_person_count_exact_excluding_roles(UUID[]) IS 'Функция строгого подсчёта участников для набора дней (c учётом привилегий)';
 
 -- Функция подсчёта участников дня (без Организаторов и VIP)
 CREATE OR REPLACE FUNCTION day_participants_count_excluding_roles(target_day_id UUID)
@@ -617,6 +640,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION days_participants_count_excluding_roles(UUID[]) IS 'Функция подсчёта участников набора дней (с учётом привилегий)';
 
 -- Фундаментальная цена (nD) без учёта Организаторов и VIP
 CREATE OR REPLACE FUNCTION fundamental_price_nd_excluding_roles(target_event_id UUID)
@@ -639,6 +663,7 @@ BEGIN
     RETURN total_cost / sum_an;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION fundamental_price_nd_excluding_roles(UUID) IS 'Фундаментальная цена (n-мерный случай) (с учётом привилегий)';
 
 -- Функция цены дня с исключением ролей
 CREATE OR REPLACE FUNCTION day_price_with_profit_excluding_roles(target_day_id UUID)
@@ -663,3 +688,4 @@ BEGIN
     RETURN (1 + COALESCE(event_percent, 0)/100) * coefficient * fundamental_p;
 END;
 $$ LANGUAGE plpgsql STABLE;
+COMMENT ON FUNCTION day_price_with_profit_excluding_roles(UUID) IS 'Функция цены дня 1-го порядка (с наценкой) (с учётом привилегий)';

@@ -14,49 +14,38 @@ namespace Eventor;
 
 internal static class Program
 {
+    static IServiceCollection _services;
+    static ServiceProvider _servicesProvider;
+
     [STAThread]
     static void Main()
     {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-
-        var services = new ServiceCollection();
-        ConfigureServices(services);
-
-        using var provider = services.BuildServiceProvider();
-
-        if (!CheckDatabaseConnection(provider))
+        try
         {
-            MessageBox.Show("Ошибка подключения к базе данных. Проверьте настройки подключения.",
-                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            InitializeServices(UserRole.Guest);
+
+            if (!CheckDatabaseConnection())
+            {
+                MessageBox.Show("Ошибка: не удалось подключиться к базе данных.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            ApplicationRun();
+        }
+        catch
+        {
+            MessageBox.Show("Ошибка: произошла непредвиденная ошибка.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
-        }
-
-        using var loginForm = provider.GetRequiredService<LoginForm>();
-
-        if (loginForm.ShowDialog() == DialogResult.OK && loginForm.AuthenticatedUser != null)
-        {
-            var mainForm = provider.GetRequiredService<MainWindow>();
-            var controller = provider.GetRequiredService<MainWindowController>();
-
-            controller.CurrentUser = loginForm.AuthenticatedUser;
-            mainForm.SetController(controller);
-
-            Application.Run(mainForm);
-        }
-        else
-        {
-            Application.Exit();
         }
     }
 
-    static bool CheckDatabaseConnection(ServiceProvider provider)
+    static bool CheckDatabaseConnection()
     {
         try
         {
-            using var scope = provider.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<EventorDBContext>();
-
+            var context = _servicesProvider.GetRequiredService<EventorDBContext>();
             return context.Database.CanConnect();
         }
         catch (Exception ex)
@@ -65,39 +54,56 @@ internal static class Program
         }
     }
 
-    static void ConfigureServices(IServiceCollection services)
+    static void InitializeServices(UserRole userRole = UserRole.Guest)
     {
-        string dir = Directory.GetCurrentDirectory();
+        _services = new ServiceCollection();
+        ConfigureDI(_services, userRole);
+        _servicesProvider = _services.BuildServiceProvider();
+    }
 
-        // Загрузка переменных окружения
-        Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "dbsettings.env"));
+    static void ConfigureDI(IServiceCollection services, UserRole userRole = UserRole.Guest)
+    {
+        ConfigureContext(services, userRole);
+        ConfigureLogging(services);
+        ConfigureRepositories(services);
+        ConfigureServices(services);
+        ConfigureControllers(services);
+        ConfigureForms(services);
+    }
 
-        // Формирование строки подключения
-        var connectionString =
-            $"Host={Env.GetString("DB_HOST")};" +
-            $"Port={Env.GetString("DB_PORT")};" +
-            $"Database={Env.GetString("DB_NAME")};" +
-            $"Username={Env.GetString("DB_USER")};" +
-            $"Password={Env.GetString("DB_PASSWORD")}";
-
-        // Регистрация контекста
+    static void ConfigureContext(IServiceCollection services, UserRole userRole = UserRole.Guest)
+    {
         services.AddDbContext<EventorDBContext>(options =>
+        {
+            Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "dbsettings.env"));
+
+            var connectionString =
+                $"Host={Env.GetString("DB_HOST")};" +
+                $"Port={Env.GetString("DB_PORT")};" +
+                $"Database={Env.GetString("DB_NAME")};" +
+                $"Username={GetDatabaseRole(userRole)};" + 
+                $"Password={GetDatabaseRolePassword(userRole)};";
+
             options.UseNpgsql(connectionString, npgsqlOptions =>
             {
                 npgsqlOptions.MapEnum<Gender>("gender_enum");
                 npgsqlOptions.MapEnum<UserRole>("user_role_enum");
                 npgsqlOptions.MapEnum<ItemType>("item_type_enum");
                 npgsqlOptions.MapEnum<PersonType>("person_type_enum");
-            }),
-            ServiceLifetime.Scoped);
+            });
+        });
+    }
 
-        // Регистрация сервисов логирования
+    static void ConfigureLogging(IServiceCollection services)
+    {
         services.AddLogging(loggingBuilder =>
         {
-            loggingBuilder.AddConsole(); // Для вывода логов в консоль
+            loggingBuilder.AddConsole();
         });
+    }
 
-        // Репозитории 
+    static void ConfigureRepositories(IServiceCollection services)
+    {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IDayRepository, DayRepository>();
@@ -106,8 +112,10 @@ internal static class Program
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<ILocationRepository, LocationRepository>();
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+    }
 
-        // Сервисы 
+    static void ConfigureServices(IServiceCollection services)
+    {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IOauthService, OAuthService>();
         services.AddScoped<IEventService, EventService>();
@@ -118,10 +126,13 @@ internal static class Program
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IEconomyService, EconomyService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
+    }
 
-        // Контроллеры
+    static void ConfigureControllers(IServiceCollection services)
+    {
         services.AddTransient<MainWindowController>();
         services.AddTransient<EventFormController>();
+        services.AddTransient<LoginFormController>();
         services.AddTransient<FeedbackCreateFormController>();
         services.AddTransient<FeedbacksFormController>();
         services.AddTransient<FeedbackFormController>();
@@ -132,8 +143,11 @@ internal static class Program
         services.AddTransient<DayOrganizationFormController>();
         services.AddTransient<ItemCreateFormController>();
         services.AddTransient<LocationCreateFormController>();
+        services.AddTransient<EventCreateFormController>();
+    }
 
-        // Формы
+    static void ConfigureForms(IServiceCollection services)
+    {
         services.AddTransient<MainWindow>(provider => new MainWindow());
         services.AddTransient<LoginForm>();
         services.AddTransient<EventForm>();
@@ -147,5 +161,58 @@ internal static class Program
         services.AddTransient<DayOrganizationForm>();
         services.AddTransient<ItemCreateForm>();
         services.AddTransient<LocationCreateForm>();
+        services.AddTransient<EventCreateForm>();
+    }
+
+    private static string GetDatabaseRole(UserRole role)
+    {
+        var roleString = role switch
+        {
+            UserRole.Admin => "admin",
+            UserRole.User => "user_role",
+            UserRole.Guest => "guest",
+            _ => throw new ArgumentException($"Неизвестная роль: {role}")
+        };
+
+        return roleString ?? throw new ArgumentNullException($"Роль базы даных для роли {role} не определен");
+    }
+
+    private static string GetDatabaseRolePassword(UserRole role)
+    {
+        var password = role switch
+        {
+            UserRole.Admin => Env.GetString("DB_ADMIN_PASS"),
+            UserRole.User => Env.GetString("DB_USER_PASS"),
+            UserRole.Guest => Env.GetString("DB_GUEST_PASS"),
+            _ => throw new ArgumentException($"Неизвестная роль: {role}")
+        };
+
+        return password ?? throw new ArgumentNullException($"Пароль для роли {role} не найден в .env");
+    }
+
+    static void ApplicationRun()
+    {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
+        var loginForm = _servicesProvider.GetRequiredService<LoginForm>();
+
+        if (loginForm.ShowDialog() == DialogResult.OK && loginForm.AuthenticatedUser != null)
+        {
+            var userRole = loginForm.AuthenticatedUser.Role;
+            InitializeServices(userRole);
+
+            var controller = _servicesProvider.GetRequiredService<MainWindowController>();
+            controller.CurrentUser = loginForm.AuthenticatedUser;
+
+            var mainForm = _servicesProvider.GetRequiredService<MainWindow>();
+            mainForm.SetController(controller);
+
+            Application.Run(mainForm);
+        }
+        else
+        {
+            Application.Exit();
+        }
     }
 }

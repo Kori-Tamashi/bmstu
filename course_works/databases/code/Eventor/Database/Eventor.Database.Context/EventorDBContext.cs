@@ -100,28 +100,5 @@ public class EventorDBContext : DbContext
         modelBuilder.Entity<UserPersonDBModel>()
             .HasKey(ue => new { ue.UserId, ue.PersonId });
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "dbsettings.env"));
-
-            var connectionString =
-                $"Host={Env.GetString("DB_HOST")};" +
-                $"Port={Env.GetString("DB_PORT")};" +
-                $"Database={Env.GetString("DB_NAME")};" +
-                $"Username={Env.GetString("DB_USER")};" +
-                $"Password={Env.GetString("DB_PASSWORD")}";
-
-            optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
-            {
-                npgsqlOptions.MapEnum<Gender>("gender_enum");
-                npgsqlOptions.MapEnum<UserRole>("user_role_enum");
-                npgsqlOptions.MapEnum<ItemType>("item_type_enum");
-                npgsqlOptions.MapEnum<PersonType>("person_type_enum"); 
-            });
-        }
-    }
 }
 

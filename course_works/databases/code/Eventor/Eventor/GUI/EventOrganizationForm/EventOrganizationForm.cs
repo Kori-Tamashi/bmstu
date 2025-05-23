@@ -1,4 +1,5 @@
-﻿using Eventor.GUI.Controllers;
+﻿using Eventor.Common.Core;
+using Eventor.GUI.Controllers;
 using Microsoft.VisualBasic.Logging;
 
 namespace Eventor.GUI;
@@ -93,10 +94,11 @@ public partial class EventOrganizationForm : Form
             eventLocation_comboBox.Items.Clear();
             foreach (var loc in _eventOrganizationFormController.AllLocations)
             {
-                eventLocation_comboBox.Items.Add(loc.Name);
+                eventLocation_comboBox.Items.Add(loc);
             }
             eventLocation_comboBox.Items.Add("Добавить");
-            eventLocation_comboBox.SelectedItem = _eventOrganizationFormController.EventLocationName;
+            eventLocation_comboBox.DisplayMember = "Name";
+            eventLocation_comboBox.SelectedItem = _eventOrganizationFormController.CurrentLocation;
         }
         catch
         {
@@ -227,11 +229,17 @@ public partial class EventOrganizationForm : Form
     {
         try
         {
-            if ((string)eventLocation_comboBox.SelectedItem != "Добавить")
+            if (eventLocation_comboBox.SelectedItem != "Добавить")
             {
-                var locationName = (string)eventLocation_comboBox.SelectedItem;
-                var locationId = _eventOrganizationFormController.LocationsIds[locationName];
-                eventLocationId_label.Text = locationId.ToString();
+                var location = (Location)eventLocation_comboBox.SelectedItem;
+                eventLocationId_label.Text = location.Id.ToString();
+
+                string tooltipText = $"{location.Name}\n\n" +
+                        $"{location.Description}\n\n" +
+                        $"Цена аренды на 1 день: {location.Price}\n" +
+                        $"Вместимость: {location.Capacity} человек";
+
+                _toolTip.SetToolTip(eventLocation_comboBox, tooltipText);
             }
             else
             {

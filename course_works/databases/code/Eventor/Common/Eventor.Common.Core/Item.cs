@@ -21,7 +21,7 @@ public class Item
     /// <summary>
     /// Тип
     /// </summary>
-    /// <example>VIP</example>
+    /// <example>Однодневный</example>
     public ItemType Type { get; set; }
 
     /// <summary>

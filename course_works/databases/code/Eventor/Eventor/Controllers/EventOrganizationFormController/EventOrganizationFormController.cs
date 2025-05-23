@@ -677,7 +677,7 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         if (percent < 0)
             throw new ArgumentOutOfRangeException("percent");
 
-        if (maxPrice < 0)
+        if (maxPrice <= 0)
             throw new ArgumentOutOfRangeException("maxPrice");
 
         if (!Guid.TryParse(locationId, out var updatedLocationId))

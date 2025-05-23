@@ -16,8 +16,7 @@ ALTER TABLE locations
     ALTER COLUMN price SET NOT NULL,
     ALTER COLUMN capacity SET NOT NULL,
     ADD CHECK (price >= 0),
-    ADD CHECK (capacity >= 0),
-    ADD CONSTRAINT unique_name UNIQUE (name);
+    ADD CHECK (capacity >= 0);
 
 -- Ограничения для таблицы мероприятий (Events)
 ALTER TABLE events
@@ -28,14 +27,14 @@ ALTER TABLE events
     ALTER COLUMN date SET NOT NULL,
     ALTER COLUMN person_count SET NOT NULL,
     ALTER COLUMN days_count SET NOT NULL,
-    ADD CHECK (person_count >= 0),
     ADD CHECK (days_count > 0),
+    ADD CHECK (person_count >= 0),
     ADD CHECK (percent >= 0),
     ADD CHECK (rating BETWEEN 0 AND 10);
 
 -- Внешние ключи для мероприятий
 ALTER TABLE events
-    ADD FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE CASCADE;
+    ADD FOREIGN KEY (location_id) REFERENCES locations(location_id);
 
 -- Ограничения для таблицы меню (Menu)
 ALTER TABLE menu
@@ -57,7 +56,7 @@ ALTER TABLE days
 
 -- Внешние ключи для дней
 ALTER TABLE days
-    ADD FOREIGN KEY (menu_id) REFERENCES menu(menu_id) ON DELETE CASCADE;
+    ADD FOREIGN KEY (menu_id) REFERENCES menu(menu_id);
 
 -- Ограничения для таблицы участников (Persons)
 ALTER TABLE persons
@@ -72,8 +71,7 @@ ALTER TABLE items
     ALTER COLUMN name SET NOT NULL,
     ALTER COLUMN type SET NOT NULL,
     ALTER COLUMN price SET NOT NULL,
-    ADD CHECK (price >= 0),
-    ADD CONSTRAINT unique_name UNIQUE (name);
+    ADD CHECK (price >= 0);
 
 -- Ограничения для таблицы отзывов (Feedback)
 ALTER TABLE feedbacks

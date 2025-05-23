@@ -59,13 +59,24 @@ public class DayOrganizationFormController : INotifyPropertyChanged
         }
     }
 
-    private Dictionary<string, Guid> _itemsIds = new();
-    public Dictionary<string, Guid> ItemsIds
+    private List<Item> _remainingItems = new();
+    public List<Item> RemainingItems
     {
-        get => _itemsIds;
+        get => _remainingItems;
         set
         {
-            _itemsIds = value;
+            _remainingItems = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private List<Item> _allItems = new();
+    public List<Item> AllItems
+    {
+        get => _allItems;
+        set
+        {
+            _allItems = value;
             OnPropertyChanged();
         }
     }
@@ -214,18 +225,10 @@ public class DayOrganizationFormController : INotifyPropertyChanged
         {
             var menu = await _menuService.GetMenuByDayAsync(DayId);
             MenuItems = await _itemService.GetAllItemsByMenuAsync(menu.Id);
-
-            ItemsIds.Clear();
-            var allItems = await _itemService.GetAllItemsAsync();
+            AllItems = await _itemService.GetAllItemsAsync();
 
             var menuItemIds = new HashSet<Guid>(MenuItems.Select(item => item.Id));
-
-            var items = allItems.Where(item => !menuItemIds.Contains(item.Id));
-
-            foreach (var item in items)
-            {
-                ItemsIds[item.Name] = item.Id;
-            }
+            RemainingItems = AllItems.Where(item => !menuItemIds.Contains(item.Id)).ToList();
         }
         catch (Exception ex)
         {
@@ -347,18 +350,21 @@ public class DayOrganizationFormController : INotifyPropertyChanged
         }
     }
 
-    public async Task AddItemToMenu(string itemName, int amount)
+    public async Task AddItemToMenu(object? item, int amount)
     {
         try
         {
-            if (string.IsNullOrEmpty(itemName))
-                throw new ArgumentNullException(nameof(itemName));
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            if (item is not Item)
+                throw new ArgumentException(nameof(item));
 
             if (amount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
 
-            var itemId = ItemsIds[itemName];
-            await _menuService.AddItemAsync(CurrentDay.MenuId, itemId, amount);
+            
+            await _menuService.AddItemAsync(CurrentDay.MenuId, ((Item)item).Id, amount);
         }
         catch
         {

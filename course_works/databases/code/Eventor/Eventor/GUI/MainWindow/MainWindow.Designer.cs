@@ -59,6 +59,7 @@
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
             tabPage3 = new TabPage();
             groupBox2 = new GroupBox();
+            eventCreate_button = new Button();
             organizedEvents_dataGridView = new DataGridView();
             Column5 = new DataGridViewTextBoxColumn();
             Column6 = new DataGridViewTextBoxColumn();
@@ -72,7 +73,8 @@
             _timer = new System.Windows.Forms.Timer(components);
             statusStrip = new StatusStrip();
             dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
-            eventCreate_button = new Button();
+            _contextMenuStrip = new ContextMenuStrip(components);
+            eventDelete_ToolStripMenuItem = new ToolStripMenuItem();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             userEvents_groupBox.SuspendLayout();
@@ -86,6 +88,7 @@
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)organizedEvents_dataGridView).BeginInit();
             statusStrip.SuspendLayout();
+            _contextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -330,6 +333,7 @@
             events_dataGridView.Size = new Size(986, 674);
             events_dataGridView.TabIndex = 6;
             events_dataGridView.CellClick += events_dataGridView_CellClick;
+            events_dataGridView.CellMouseClick += events_dataGridView_CellMouseClick;
             // 
             // Column4
             // 
@@ -408,6 +412,16 @@
             groupBox2.TabIndex = 0;
             groupBox2.TabStop = false;
             groupBox2.Text = "Организованные мероприятия";
+            // 
+            // eventCreate_button
+            // 
+            eventCreate_button.Location = new Point(750, 671);
+            eventCreate_button.Name = "eventCreate_button";
+            eventCreate_button.Size = new Size(243, 29);
+            eventCreate_button.TabIndex = 1;
+            eventCreate_button.Text = "Создать мероприятие";
+            eventCreate_button.UseVisualStyleBackColor = true;
+            eventCreate_button.Click += eventCreate_button_Click;
             // 
             // organizedEvents_dataGridView
             // 
@@ -517,14 +531,19 @@
             dataStatus_toolStripStatusLabel.Size = new Size(151, 20);
             dataStatus_toolStripStatusLabel.Text = "toolStripStatusLabel1";
             // 
-            // eventCreate_button
+            // _contextMenuStrip
             // 
-            eventCreate_button.Location = new Point(750, 671);
-            eventCreate_button.Name = "eventCreate_button";
-            eventCreate_button.Size = new Size(243, 29);
-            eventCreate_button.TabIndex = 1;
-            eventCreate_button.Text = "Создать мероприятие";
-            eventCreate_button.UseVisualStyleBackColor = true;
+            _contextMenuStrip.ImageScalingSize = new Size(20, 20);
+            _contextMenuStrip.Items.AddRange(new ToolStripItem[] { eventDelete_ToolStripMenuItem });
+            _contextMenuStrip.Name = "_contextMenuStrip";
+            _contextMenuStrip.Size = new Size(234, 56);
+            // 
+            // eventDelete_ToolStripMenuItem
+            // 
+            eventDelete_ToolStripMenuItem.Name = "eventDelete_ToolStripMenuItem";
+            eventDelete_ToolStripMenuItem.Size = new Size(233, 24);
+            eventDelete_ToolStripMenuItem.Text = "Удалить мероприятие";
+            eventDelete_ToolStripMenuItem.Click += eventDelete_ToolStripMenuItem_Click;
             // 
             // MainWindow
             // 
@@ -554,6 +573,7 @@
             ((System.ComponentModel.ISupportInitialize)organizedEvents_dataGridView).EndInit();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
+            _contextMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -604,5 +624,7 @@
         private StatusStrip statusStrip;
         private ToolStripStatusLabel dataStatus_toolStripStatusLabel;
         private Button eventCreate_button;
+        private ContextMenuStrip _contextMenuStrip;
+        private ToolStripMenuItem eventDelete_ToolStripMenuItem;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Eventor.Common.Core;
 using Eventor.Common.Enums;
 using Eventor.Database.Core;
+using Eventor.GUI.Controllers;
 using Eventor.Services;
 using User = Eventor.Common.Core.User;
 
@@ -8,86 +9,54 @@ namespace Eventor.GUI;
 
 public partial class LoginForm : Form
 {
-    IOauthService _oauthService;
-    IUserService _userService;
+    private readonly LoginFormController _loginFormController;
 
-    public User? AuthenticatedUser { get; private set; }
+    public User? AuthenticatedUser => _loginFormController.AuthenticatedUser;
 
-    public LoginForm(IOauthService oauthService,
-        IUserService userService)
+    public LoginForm(LoginFormController loginFormController)
     {
-        _oauthService = oauthService;
-        _userService = userService;
-
+        _loginFormController = loginFormController;
         InitializeComponent();
+        InitializeBindings();
+    }
+
+    private void InitializeBindings()
+    {
+        var loginFormController = new BindingSource { DataSource = _loginFormController };
+
+        userName_textBox.DataBindings.Add("Text", loginFormController, "Name");
+        userPhone_maskedTextBox.DataBindings.Add("Text", loginFormController, "Phone");
+        userGender_comboBox.DataBindings.Add("Text", loginFormController, "Gender");
+        userPassword_textBox.DataBindings.Add("Text", loginFormController, "Password");
+        userCheckPassword_textBox.DataBindings.Add("Text", loginFormController, "ConfirmPassword");
     }
 
     private async void registrate_button_Click(object sender, EventArgs e)
     {
-        var name = userName_textBox.Text.Trim();
-        var gender = userGender_comboBox.Text.Trim();
-        var phone = userPhone_maskedTextBox.Text.Trim();
-        var password = userPassword_textBox.Text.Trim();
-        var checkPassword = userCheckPassword_textBox.Text.Trim();
-
-        if (password != checkPassword)
+        if (await _loginFormController.TryRegisterAsync())
         {
-            MessageBox.Show("Пароли для регистрации не совпадают.");
-            return;
-        }
-
-        try
-        {
-            var user = new User(
-                id: Guid.NewGuid(),
-                name: name,
-                phone: phone,
-                gender: gender.ToGender(),
-                passwordHash: string.Empty,
-                role: UserRole.User
-            );
-
-            await _oauthService.Registrate(user, password);
-
-            AuthenticatedUser = await _userService.GetUserByIdAsync(user.Id);
+            MessageBox.Show("Вы успешно зарегистрировались в системе.");
             DialogResult = DialogResult.OK;
             Close();
+            
         }
-        catch (Exception ex)
+        else
         {
-            MessageBox.Show(ex.Message);
-            return;
+            MessageBox.Show("Ошибка: не удалось произвести регистрацию.");
         }
-
-        MessageBox.Show("Вы успешно зарегистрировались.");
     }
 
     private async void authorization_button_Click(object sender, EventArgs e)
     {
-        var name = userName_textBox.Text.Trim();
-        var gender = userGender_comboBox.Text.Trim();
-        var phone = userPhone_maskedTextBox.Text.Trim();
-        var password = userPassword_textBox.Text.Trim();
-
-        try
+        if (await _loginFormController.TryLoginAsync())
         {
-            await _oauthService.Login(phone, password);
-
-            AuthenticatedUser = await _userService.GetUserByPhoneAsync(phone);
+            MessageBox.Show("Вы успешно авторизовались в системе.");
             DialogResult = DialogResult.OK;
             Close();
         }
-        catch (Exception ex)
+        else
         {
-            MessageBox.Show(ex.Message);
-            return;
+            MessageBox.Show("Ошибка: не удалось произвести авторизацию.");
         }
-
-        MessageBox.Show("Вы успешно авторизовались.");
-    }
-
-    private void LoginForm_Load(object sender, EventArgs e)
-    {
-
     }
 }

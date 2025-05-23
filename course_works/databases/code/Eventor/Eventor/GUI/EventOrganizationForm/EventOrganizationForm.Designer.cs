@@ -73,6 +73,8 @@
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             tableLayoutPanel4 = new TableLayoutPanel();
+            eventPriceValue_label = new Label();
+            label2 = new Label();
             eventFundamentalPriceWithPrivilegesValue_label = new Label();
             eventFundamentalPriceValue_label = new Label();
             eventFundamentalPriceWithPrivileges_label = new Label();
@@ -84,6 +86,7 @@
             eventAveragePriceValue_label = new Label();
             label5 = new Label();
             eventFundamentalPriceRelativeDifferenceValue_label = new Label();
+            eventPriceWithPrivilegesValue_label = new Label();
             tabPage3 = new TabPage();
             tableLayoutPanel3 = new TableLayoutPanel();
             eventExpensesValue_label = new Label();
@@ -102,9 +105,7 @@
             _timer = new System.Windows.Forms.Timer(components);
             statusStrip1 = new StatusStrip();
             dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
-            eventPriceValue_label = new Label();
-            label2 = new Label();
-            eventPriceWithPrivilegesValue_label = new Label();
+            _toolTip = new ToolTip(components);
             eventInfo_groupBox.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)eventDaysCount_numericUpDown).BeginInit();
@@ -667,6 +668,30 @@
             tableLayoutPanel4.Size = new Size(402, 298);
             tableLayoutPanel4.TabIndex = 0;
             // 
+            // eventPriceValue_label
+            // 
+            eventPriceValue_label.Anchor = AnchorStyles.None;
+            eventPriceValue_label.AutoSize = true;
+            eventPriceValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            eventPriceValue_label.Location = new Point(300, 219);
+            eventPriceValue_label.Name = "eventPriceValue_label";
+            eventPriceValue_label.Size = new Size(17, 20);
+            eventPriceValue_label.TabIndex = 17;
+            eventPriceValue_label.Text = "0\r\n";
+            eventPriceValue_label.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.None;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label2.Location = new Point(37, 251);
+            label2.Name = "label2";
+            label2.Size = new Size(144, 40);
+            label2.TabIndex = 18;
+            label2.Text = "Цена мероприятия\r\n(с привилегиями):";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // eventFundamentalPriceWithPrivilegesValue_label
             // 
             eventFundamentalPriceWithPrivilegesValue_label.Anchor = AnchorStyles.None;
@@ -795,6 +820,18 @@
             eventFundamentalPriceRelativeDifferenceValue_label.TabIndex = 16;
             eventFundamentalPriceRelativeDifferenceValue_label.Text = "0";
             eventFundamentalPriceRelativeDifferenceValue_label.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // eventPriceWithPrivilegesValue_label
+            // 
+            eventPriceWithPrivilegesValue_label.Anchor = AnchorStyles.None;
+            eventPriceWithPrivilegesValue_label.AutoSize = true;
+            eventPriceWithPrivilegesValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            eventPriceWithPrivilegesValue_label.Location = new Point(300, 261);
+            eventPriceWithPrivilegesValue_label.Name = "eventPriceWithPrivilegesValue_label";
+            eventPriceWithPrivilegesValue_label.Size = new Size(17, 20);
+            eventPriceWithPrivilegesValue_label.TabIndex = 19;
+            eventPriceWithPrivilegesValue_label.Text = "0\r\n";
+            eventPriceWithPrivilegesValue_label.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tabPage3
             // 
@@ -1000,42 +1037,6 @@
             dataStatus_toolStripStatusLabel.Size = new Size(151, 20);
             dataStatus_toolStripStatusLabel.Text = "toolStripStatusLabel1";
             // 
-            // eventPriceValue_label
-            // 
-            eventPriceValue_label.Anchor = AnchorStyles.None;
-            eventPriceValue_label.AutoSize = true;
-            eventPriceValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            eventPriceValue_label.Location = new Point(300, 219);
-            eventPriceValue_label.Name = "eventPriceValue_label";
-            eventPriceValue_label.Size = new Size(17, 20);
-            eventPriceValue_label.TabIndex = 17;
-            eventPriceValue_label.Text = "0\r\n";
-            eventPriceValue_label.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.None;
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label2.Location = new Point(37, 251);
-            label2.Name = "label2";
-            label2.Size = new Size(144, 40);
-            label2.TabIndex = 18;
-            label2.Text = "Цена мероприятия\r\n(с привилегиями):";
-            label2.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // eventPriceWithPrivilegesValue_label
-            // 
-            eventPriceWithPrivilegesValue_label.Anchor = AnchorStyles.None;
-            eventPriceWithPrivilegesValue_label.AutoSize = true;
-            eventPriceWithPrivilegesValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            eventPriceWithPrivilegesValue_label.Location = new Point(300, 261);
-            eventPriceWithPrivilegesValue_label.Name = "eventPriceWithPrivilegesValue_label";
-            eventPriceWithPrivilegesValue_label.Size = new Size(17, 20);
-            eventPriceWithPrivilegesValue_label.TabIndex = 19;
-            eventPriceWithPrivilegesValue_label.Text = "0\r\n";
-            eventPriceWithPrivilegesValue_label.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // EventOrganizationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1154,5 +1155,6 @@
         private Label label2;
         private Label eventPriceValue_label;
         private Label eventPriceWithPrivilegesValue_label;
+        private ToolTip _toolTip;
     }
 }

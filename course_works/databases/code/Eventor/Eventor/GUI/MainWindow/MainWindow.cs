@@ -41,7 +41,6 @@ public partial class MainWindow : Form
         {
             var userBindingSource = new BindingSource { DataSource = _mainWindowController };
 
-            // User info
             userName_textBox.DataBindings.Add("Text", userBindingSource, "CurrentUser.Name");
             userPhone_maskedTextBox.DataBindings.Add("Text", userBindingSource, "CurrentUser.Phone");
             userGender_comboBox.DataBindings.Add("Text", userBindingSource, "CurrentGender");
@@ -190,6 +189,18 @@ public partial class MainWindow : Form
         }
     }
 
+    private bool IsAdmin()
+    {
+        try
+        {
+            return _mainWindowController.IsAdmin();
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private async void userInfoSave_button_Click(object sender, EventArgs e)
     {
         try
@@ -256,6 +267,58 @@ public partial class MainWindow : Form
         catch (Exception ex)
         {
             MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.");
+            return;
+        }
+    }
+
+    private async void eventCreate_button_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            await _mainWindowController.OpenEventCreate();
+        }
+        catch
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму создания мероприятия.");
+            return;
+        }
+    }
+
+    private void events_dataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+    {
+        try
+        {
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0 && IsAdmin())
+            {
+                events_dataGridView.CurrentCell = events_dataGridView[e.ColumnIndex, e.RowIndex];
+                _contextMenuStrip.Show(Cursor.Position);
+            }
+        }
+        catch
+        {
+            return;
+        }
+    }
+
+    private async void eventDelete_ToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            var currentCell = events_dataGridView.CurrentCell;
+            var currentRow = events_dataGridView.Rows[currentCell.RowIndex];
+            var eventId = (Guid)currentRow.Cells[0].Value;
+            await _mainWindowController.DeleteEventAsync(eventId);
+            MessageBox.Show("Мероприятие успешно удалено.");
+
+            await _mainWindowController.InitializeAsync();
+            InitializeAllEventsGrid();
+            InitializeUserEventsGrid();
+            InitializeAllOrganizedEvents();
+            InitializeLastUpdate();
+        }
+        catch
+        {
+            MessageBox.Show("Ошибка: не удалось удалить мероприятие.");
             return;
         }
     }

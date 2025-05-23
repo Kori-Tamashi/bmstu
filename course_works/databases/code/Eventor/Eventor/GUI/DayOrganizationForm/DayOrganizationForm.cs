@@ -1,7 +1,6 @@
-﻿using Eventor.Common.Enums;
+﻿using Eventor.Common.Core;
+using Eventor.Common.Enums;
 using Eventor.GUI.Controllers;
-using Microsoft.Extensions.Logging;
-using System.Windows.Forms;
 
 namespace Eventor.GUI;
 
@@ -109,11 +108,12 @@ public partial class DayOrganizationForm : Form
             }
 
             items_comboBox.Items.Clear();
-            foreach (var itemName in _dayOrganizationFormController.ItemsIds.Keys)
+            foreach (var item in _dayOrganizationFormController.RemainingItems)
             {
-                items_comboBox.Items.Add(itemName);
+                items_comboBox.Items.Add(item);
             }
             items_comboBox.Items.Add("Добавить");
+            items_comboBox.DisplayMember = "Name";
             items_comboBox.SelectedItem = items_comboBox.Items[0];
         }
         catch (Exception ex)
@@ -221,11 +221,11 @@ public partial class DayOrganizationForm : Form
     {
         try
         {
-            if ((string)items_comboBox.SelectedItem != "Добавить")
+            if (items_comboBox.SelectedItem != "Добавить")
             {
-                var itemName = (string)items_comboBox.SelectedItem;
+                var item = items_comboBox.SelectedItem;
                 var itemsAmount = (int)itemCount_numericUpDown.Value;
-                await _dayOrganizationFormController.AddItemToMenu(itemName, itemsAmount);
+                await _dayOrganizationFormController.AddItemToMenu(item, itemsAmount);
                 MessageBox.Show("Предмет был успешно добавлен.");
             }
             else
@@ -269,6 +269,31 @@ public partial class DayOrganizationForm : Form
         catch
         {
             MessageBox.Show("Ошибка: не удалось удалить предмет из меню.");
+            return;
+        }
+    }
+
+    private void items_comboBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            if (items_comboBox.SelectedItem != "Добавить")
+            {
+                var item = (Item)items_comboBox.SelectedItem;
+
+                string tooltipText = $"{item.Name}\n\n" +
+                    $"Цена: {item.Price}";
+                _toolTip.SetToolTip(items_comboBox, tooltipText);
+
+
+                var itemsAmount = (int)itemCount_numericUpDown.Value;
+                tooltipText = $"Вы добавляете \"{item.Name}\" в размере {itemsAmount} штук.\n" +
+                    $"Стоимость набора составит: {Math.Round(item.Price * itemsAmount, 2)}";
+                _toolTip.SetToolTip(addItem_button, tooltipText);
+            }
+        }
+        catch
+        {
             return;
         }
     }

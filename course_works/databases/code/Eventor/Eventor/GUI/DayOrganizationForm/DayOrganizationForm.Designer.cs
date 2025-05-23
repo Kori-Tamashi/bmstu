@@ -38,6 +38,10 @@
             dayDescription_textBox = new TextBox();
             groupBox1 = new GroupBox();
             dayParticipants_dataGridView = new DataGridView();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column2 = new DataGridViewTextBoxColumn();
+            Column3 = new DataGridViewComboBoxColumn();
+            Column4 = new DataGridViewComboBoxColumn();
             groupBox2 = new GroupBox();
             addItem_button = new Button();
             itemCount_numericUpDown = new NumericUpDown();
@@ -64,10 +68,6 @@
             statusStrip1 = new StatusStrip();
             dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
             _timer = new System.Windows.Forms.Timer(components);
-            Column1 = new DataGridViewTextBoxColumn();
-            Column2 = new DataGridViewTextBoxColumn();
-            Column3 = new DataGridViewComboBoxColumn();
-            Column4 = new DataGridViewComboBoxColumn();
             daySettings_groupBox.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -184,6 +184,39 @@
             dayParticipants_dataGridView.TabIndex = 0;
             dayParticipants_dataGridView.CellValueChanged += dayParticipants_dataGridView_CellValueChanged;
             // 
+            // Column1
+            // 
+            Column1.HeaderText = "Id";
+            Column1.MinimumWidth = 6;
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            Column1.Visible = false;
+            // 
+            // Column2
+            // 
+            Column2.HeaderText = "Имя";
+            Column2.MinimumWidth = 6;
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            // 
+            // Column3
+            // 
+            Column3.HeaderText = "Тип";
+            Column3.Items.AddRange(new object[] { "Организатор", "VIP-персона", "Простой участник" });
+            Column3.MinimumWidth = 6;
+            Column3.Name = "Column3";
+            Column3.Resizable = DataGridViewTriState.True;
+            Column3.SortMode = DataGridViewColumnSortMode.Automatic;
+            // 
+            // Column4
+            // 
+            Column4.HeaderText = "Оплата";
+            Column4.Items.AddRange(new object[] { "Оплачено", "Не оплачено" });
+            Column4.MinimumWidth = 6;
+            Column4.Name = "Column4";
+            Column4.Resizable = DataGridViewTriState.True;
+            Column4.SortMode = DataGridViewColumnSortMode.Automatic;
+            // 
             // groupBox2
             // 
             groupBox2.Controls.Add(addItem_button);
@@ -226,6 +259,7 @@
             items_comboBox.Name = "items_comboBox";
             items_comboBox.Size = new Size(335, 28);
             items_comboBox.TabIndex = 2;
+            items_comboBox.SelectedIndexChanged += items_comboBox_SelectedIndexChanged;
             // 
             // dayMenu_dataGridView
             // 
@@ -440,39 +474,6 @@
             // _timer
             // 
             _timer.Interval = 5000;
-            // 
-            // Column1
-            // 
-            Column1.HeaderText = "Id";
-            Column1.MinimumWidth = 6;
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
-            Column1.Visible = false;
-            // 
-            // Column2
-            // 
-            Column2.HeaderText = "Имя";
-            Column2.MinimumWidth = 6;
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
-            // 
-            // Column3
-            // 
-            Column3.HeaderText = "Тип";
-            Column3.Items.AddRange(new object[] { "Организатор", "VIP-персона", "Простой участник" });
-            Column3.MinimumWidth = 6;
-            Column3.Name = "Column3";
-            Column3.Resizable = DataGridViewTriState.True;
-            Column3.SortMode = DataGridViewColumnSortMode.Automatic;
-            // 
-            // Column4
-            // 
-            Column4.HeaderText = "Оплата";
-            Column4.Items.AddRange(new object[] { "Оплачено", "Не оплачено" });
-            Column4.MinimumWidth = 6;
-            Column4.Name = "Column4";
-            Column4.Resizable = DataGridViewTriState.True;
-            Column4.SortMode = DataGridViewColumnSortMode.Automatic;
             // 
             // DayOrganizationForm
             // 

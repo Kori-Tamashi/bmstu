@@ -23,9 +23,7 @@ public class MainWindowController : INotifyPropertyChanged
         set
         {
             _currentUser = value;
-            OnPropertyChanged(nameof(CurrentUser));
-            OnPropertyChanged(nameof(CurrentGender));
-            OnPropertyChanged(nameof(CurrentRole));
+            OnPropertyChanged();
         }
     }
 
@@ -159,6 +157,16 @@ public class MainWindowController : INotifyPropertyChanged
         }
     }
 
+    public async Task DeleteEventAsync(Guid eventId)
+    {
+        await _eventService.DeleteEventAsync(eventId);
+    }
+
+    public bool IsAdmin()
+    {
+        return CurrentUser.Role == Common.Enums.UserRole.Admin;
+    }
+
     public async Task OpenEventLogic(Guid eventId)
     {
         try
@@ -195,6 +203,20 @@ public class MainWindowController : INotifyPropertyChanged
             var eventForm = _serviceProvider.GetRequiredService<EventOrganizationForm>();
             eventForm.SetIds(eventId, CurrentUser.Id);
             eventForm.Show();
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public async Task OpenEventCreate()
+    {
+        try
+        {
+            var eventCreateForm = _serviceProvider.GetRequiredService<EventCreateForm>();
+            eventCreateForm.SetIds(CurrentUser.Id);
+            eventCreateForm.Show();
         }
         catch
         {
