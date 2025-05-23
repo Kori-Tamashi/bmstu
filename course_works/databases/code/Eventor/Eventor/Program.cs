@@ -7,13 +7,18 @@ using Eventor.GUI;
 using Eventor.GUI.Controllers;
 using Eventor.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Npgsql;
+using System.Net.NetworkInformation;
 
 namespace Eventor;
 
 internal static class Program
 {
+    const string _settingsFile = "dbsettings.env";
+
     static IServiceCollection _services;
     static ServiceProvider _servicesProvider;
 
@@ -22,7 +27,7 @@ internal static class Program
     {
         try
         {
-            InitializeServices(UserRole.Guest);
+            InitializeServices(UserRole.Guest, false);
 
             if (!CheckDatabaseConnection())
             {
@@ -54,16 +59,17 @@ internal static class Program
         }
     }
 
-    static void InitializeServices(UserRole userRole = UserRole.Guest)
+    static void InitializeServices(UserRole userRole = UserRole.Guest, bool pooling = true)
     {
         _services = new ServiceCollection();
-        ConfigureDI(_services, userRole);
+        ConfigureDI(_services, userRole, pooling);
         _servicesProvider = _services.BuildServiceProvider();
     }
 
-    static void ConfigureDI(IServiceCollection services, UserRole userRole = UserRole.Guest)
+    static void ConfigureDI(IServiceCollection services, UserRole userRole = UserRole.Guest, bool pooling = true)
     {
-        ConfigureContext(services, userRole);
+        ConfigureSettings();
+        ConfigureContext(services, userRole, pooling);
         ConfigureLogging(services);
         ConfigureRepositories(services);
         ConfigureServices(services);
@@ -71,18 +77,16 @@ internal static class Program
         ConfigureForms(services);
     }
 
-    static void ConfigureContext(IServiceCollection services, UserRole userRole = UserRole.Guest)
+    static void ConfigureSettings()
+    {
+        Env.Load(Path.Combine(Directory.GetCurrentDirectory(), _settingsFile));
+    }
+
+    static void ConfigureContext(IServiceCollection services, UserRole userRole = UserRole.Guest, bool pooling = true)
     {
         services.AddDbContext<EventorDBContext>(options =>
         {
-            Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "dbsettings.env"));
-
-            var connectionString =
-                $"Host={Env.GetString("DB_HOST")};" +
-                $"Port={Env.GetString("DB_PORT")};" +
-                $"Database={Env.GetString("DB_NAME")};" +
-                $"Username={GetDatabaseRole(userRole)};" + 
-                $"Password={GetDatabaseRolePassword(userRole)};";
+            var connectionString = GetConnectionString(userRole, pooling);
 
             options.UseNpgsql(connectionString, npgsqlOptions =>
             {
@@ -91,7 +95,8 @@ internal static class Program
                 npgsqlOptions.MapEnum<ItemType>("item_type_enum");
                 npgsqlOptions.MapEnum<PersonType>("person_type_enum");
             });
-        });
+        },
+        ServiceLifetime.Transient);
     }
 
     static void ConfigureLogging(IServiceCollection services)
@@ -164,6 +169,16 @@ internal static class Program
         services.AddTransient<EventCreateForm>();
     }
 
+    private static string GetConnectionString(UserRole userRole, bool pooling = true)
+    {
+        return $"Host={Env.GetString("DB_HOST")};" +
+               $"Port={Env.GetString("DB_PORT")};" +
+               $"Database={Env.GetString("DB_NAME")};" +
+               $"Username={GetDatabaseRole(userRole)};" +
+               $"Password={GetDatabaseRolePassword(userRole)};" +
+               $"Pooling={pooling}";
+    }
+
     private static string GetDatabaseRole(UserRole role)
     {
         var roleString = role switch
@@ -199,8 +214,7 @@ internal static class Program
 
         if (loginForm.ShowDialog() == DialogResult.OK && loginForm.AuthenticatedUser != null)
         {
-            var userRole = loginForm.AuthenticatedUser.Role;
-            InitializeServices(userRole);
+            InitializeServices(loginForm.AuthenticatedUser.Role);
 
             var controller = _servicesProvider.GetRequiredService<MainWindowController>();
             controller.CurrentUser = loginForm.AuthenticatedUser;

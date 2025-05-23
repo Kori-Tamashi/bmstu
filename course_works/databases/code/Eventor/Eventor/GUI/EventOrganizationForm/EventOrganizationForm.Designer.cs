@@ -106,6 +106,10 @@
             statusStrip1 = new StatusStrip();
             dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
             _toolTip = new ToolTip(components);
+            tableLayoutPanel5 = new TableLayoutPanel();
+            eventFeedbacks_button = new Button();
+            feedback_button = new Button();
+            participation_button = new Button();
             eventInfo_groupBox.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)eventDaysCount_numericUpDown).BeginInit();
@@ -122,6 +126,7 @@
             tabPage3.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             statusStrip1.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
             SuspendLayout();
             // 
             // eventInfo_groupBox
@@ -1025,7 +1030,7 @@
             // 
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { dataStatus_toolStripStatusLabel });
-            statusStrip1.Location = new Point(0, 455);
+            statusStrip1.Location = new Point(0, 493);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1313, 26);
             statusStrip1.TabIndex = 5;
@@ -1037,11 +1042,65 @@
             dataStatus_toolStripStatusLabel.Size = new Size(151, 20);
             dataStatus_toolStripStatusLabel.Text = "toolStripStatusLabel1";
             // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.Anchor = AnchorStyles.None;
+            tableLayoutPanel5.ColumnCount = 5;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35.00456F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.6325073F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.989399F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 11.3947124F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155F));
+            tableLayoutPanel5.Controls.Add(eventFeedbacks_button, 3, 0);
+            tableLayoutPanel5.Controls.Add(feedback_button, 4, 0);
+            tableLayoutPanel5.Controls.Add(participation_button, 2, 0);
+            tableLayoutPanel5.Location = new Point(12, 451);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 1;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel5.Size = new Size(1289, 37);
+            tableLayoutPanel5.TabIndex = 9;
+            // 
+            // eventFeedbacks_button
+            // 
+            eventFeedbacks_button.Anchor = AnchorStyles.None;
+            eventFeedbacks_button.Location = new Point(1006, 4);
+            eventFeedbacks_button.Name = "eventFeedbacks_button";
+            eventFeedbacks_button.Size = new Size(123, 29);
+            eventFeedbacks_button.TabIndex = 8;
+            eventFeedbacks_button.Text = "Отзывы";
+            eventFeedbacks_button.UseVisualStyleBackColor = true;
+            eventFeedbacks_button.Click += eventFeedbacks_button_Click;
+            // 
+            // feedback_button
+            // 
+            feedback_button.Anchor = AnchorStyles.None;
+            feedback_button.Location = new Point(1135, 4);
+            feedback_button.Name = "feedback_button";
+            feedback_button.Size = new Size(151, 29);
+            feedback_button.TabIndex = 7;
+            feedback_button.Text = "Оставить отзыв";
+            feedback_button.UseVisualStyleBackColor = true;
+            feedback_button.Click += feedback_button_Click;
+            // 
+            // participation_button
+            // 
+            participation_button.Anchor = AnchorStyles.None;
+            participation_button.Location = new Point(825, 4);
+            participation_button.Name = "participation_button";
+            participation_button.Size = new Size(174, 29);
+            participation_button.TabIndex = 6;
+            participation_button.Text = "Участвовать/покинуть";
+            participation_button.UseVisualStyleBackColor = true;
+            participation_button.Visible = false;
+            participation_button.Click += participation_button_Click;
+            // 
             // EventOrganizationForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1313, 481);
+            ClientSize = new Size(1313, 519);
+            Controls.Add(tableLayoutPanel5);
             Controls.Add(statusStrip1);
             Controls.Add(eventLocationId_label);
             Controls.Add(groupBox3);
@@ -1073,6 +1132,7 @@
             tableLayoutPanel3.PerformLayout();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            tableLayoutPanel5.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1156,5 +1216,9 @@
         private Label eventPriceValue_label;
         private Label eventPriceWithPrivilegesValue_label;
         private ToolTip _toolTip;
+        private TableLayoutPanel tableLayoutPanel5;
+        private Button eventFeedbacks_button;
+        private Button feedback_button;
+        private Button participation_button;
     }
 }

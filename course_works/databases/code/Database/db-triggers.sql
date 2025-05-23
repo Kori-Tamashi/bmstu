@@ -390,5 +390,38 @@ AFTER INSERT OR UPDATE OR DELETE ON menu_items
 FOR EACH ROW EXECUTE FUNCTION update_menu_cost_trigger();
 
 
+-- Триггерная функция для обновления среднего рейтинга мероприятия
+CREATE OR REPLACE FUNCTION update_event_rating()
+RETURNS TRIGGER AS $$
+DECLARE
+    target_event_ids UUID[];
+    current_event_id UUID;
+    avg_rating NUMERIC;
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        target_event_ids := ARRAY[NEW.event_id];
+    ELSIF (TG_OP = 'UPDATE') THEN
+        target_event_ids := ARRAY[OLD.event_id, NEW.event_id];
+    ELSIF (TG_OP = 'DELETE') THEN
+        target_event_ids := ARRAY[OLD.event_id];
+    END IF;
 
+    FOREACH current_event_id IN ARRAY ARRAY(SELECT DISTINCT unnest(target_event_ids)) LOOP
+        SELECT COALESCE(ROUND(AVG(rating)::NUMERIC, 2), 10.00)
+        INTO avg_rating
+        FROM feedbacks
+        WHERE event_id = current_event_id;
 
+        UPDATE events
+        SET rating = avg_rating
+        WHERE event_id = current_event_id;
+    END LOOP;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_event_rating
+AFTER INSERT OR UPDATE OR DELETE ON feedbacks
+FOR EACH ROW
+EXECUTE FUNCTION update_event_rating();

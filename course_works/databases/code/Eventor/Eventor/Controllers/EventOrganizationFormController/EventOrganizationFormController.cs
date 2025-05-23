@@ -18,6 +18,7 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     private readonly IEventService _eventService;
     private readonly IDayService _dayService;
     private readonly IEconomyService _economyService;
+    private readonly IPersonService _personService;
     private readonly ILocationService _locationService;
 
     public Guid EventId { get; set; }
@@ -325,6 +326,17 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         }
     }
 
+    private bool _userIsOrganizer;
+    public bool UserIsOrganizer
+    {
+        get => _userIsOrganizer;
+        set
+        {
+            _userIsOrganizer = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string EventName => CurrentEvent?.Name ?? string.Empty;
     public string EventLocationName => CurrentLocation?.Name ?? string.Empty;
     public string EventDescription => CurrentEvent?.Description ?? string.Empty;
@@ -399,12 +411,14 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         IEventService eventService,
         IDayService dayService,
         IEconomyService economyService,
+        IPersonService personService,
         ILocationService locationService)
     {
         _serviceProvider = serviceProvider;
         _eventService = eventService;
         _dayService = dayService;
         _economyService = economyService;
+        _personService = personService;
         _locationService = locationService;
     }
 
@@ -432,6 +446,8 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     {
         try
         {
+            UserIsOrganizer = await IsUserOrganizer();
+
             // Общая информация
 
             CurrentEventCost = await _economyService.GetEventCostAsync(EventId);
@@ -659,6 +675,12 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         return fPrice.ToString();
     }
 
+    private async Task<bool> IsUserOrganizer()
+    {
+        var userPerson = await _personService.GetPersonByUserAndEventAsync(UserId, EventId);
+        return userPerson.Type == Common.Enums.PersonType.Organizer;
+    }
+
     public async Task SaveEvent(string locationId, string name, string description, string date, 
         int daysCount, double percent, double maxPrice)
     {
@@ -714,6 +736,27 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     {
         var locationCreateForm = _serviceProvider.GetRequiredService<LocationCreateForm>();
         locationCreateForm.Show();
+    }
+
+    public void OpenFeedbackCreate()
+    {
+        var feedbackCreateForm = _serviceProvider.GetRequiredService<FeedbackCreateForm>();
+        feedbackCreateForm.SetIds(EventId, UserId);
+        feedbackCreateForm.Show();
+    }
+
+    public void OpenFeedbacks()
+    {
+        var feedbacksForm = _serviceProvider.GetRequiredService<FeedbacksForm>();
+        feedbacksForm.SetIds(EventId, UserId);
+        feedbacksForm.Show();
+    }
+
+    public void OpenParticipation()
+    {
+        var participationForm = _serviceProvider.GetRequiredService<ParticipationForm>();
+        participationForm.SetIds(EventId, UserId);
+        participationForm.Show();
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -20,6 +20,7 @@ public partial class EventOrganizationForm : Form
         try
         {
             await _eventOrganizationFormController.InitializeAsync();
+            InitializeComponents();
             InitializeLocations();
             InitializeEventInfo();
             InitializeDaysGrid();
@@ -128,6 +129,11 @@ public partial class EventOrganizationForm : Form
         {
             return;
         }
+    }
+
+    private void InitializeComponents()
+    {
+        participation_button.Visible = _eventOrganizationFormController.UserIsOrganizer != true;
     }
 
     private void InitializeLastUpdate()
@@ -248,6 +254,45 @@ public partial class EventOrganizationForm : Form
         }
         catch
         {
+            return;
+        }
+    }
+
+    private void feedback_button_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            _eventOrganizationFormController.OpenFeedbackCreate();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму создания отзыва.");
+            return;
+        }
+    }
+
+    private void eventFeedbacks_button_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            _eventOrganizationFormController.OpenFeedbacks();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму информации об отзывах.");
+            return;
+        }
+    }
+
+    private void participation_button_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            _eventOrganizationFormController.OpenParticipation();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму участия на мероприятии.");
             return;
         }
     }

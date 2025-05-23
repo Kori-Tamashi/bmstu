@@ -30,7 +30,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось произвести загрузку главной формы.");
+            MessageBox.Show("Ошибка: не удалось произвести загрузку главной формы.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -48,7 +49,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось произвести связывание данных между главной формой и контроллером.");
+            MessageBox.Show("Ошибка: не удалось произвести связывание данных между главной формой и контроллером.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -167,7 +169,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось установить автоматическое обновление данных в главной форме.");
+            MessageBox.Show("Ошибка: не удалось установить автоматическое обновление данных в главной форме.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -184,7 +187,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось установить контроллер главной формы.");
+            MessageBox.Show("Ошибка: не удалось установить контроллер главной формы.", 
+                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -215,7 +219,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось сохранить информацию о пользователе.");
+            MessageBox.Show("Ошибка: не удалось сохранить информацию о пользователе.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -232,7 +237,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.");
+            MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -249,7 +255,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.");
+            MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -266,7 +273,8 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.");
+            MessageBox.Show("Ошибка: не удалось открыть форму информации о мероприятии.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
             return;
         }
     }
@@ -279,7 +287,8 @@ public partial class MainWindow : Form
         }
         catch
         {
-            MessageBox.Show("Ошибка: не удалось открыть форму создания мероприятия.");
+            MessageBox.Show("Ошибка: не удалось открыть форму создания мероприятия.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
@@ -318,7 +327,8 @@ public partial class MainWindow : Form
         }
         catch
         {
-            MessageBox.Show("Ошибка: не удалось удалить мероприятие.");
+            MessageBox.Show("Ошибка: не удалось удалить мероприятие.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
     }
