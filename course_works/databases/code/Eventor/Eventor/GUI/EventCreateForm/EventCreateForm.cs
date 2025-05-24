@@ -129,9 +129,6 @@ public partial class EventCreateForm : Form
             else
             {
                 _eventCreateFormController.OpenLocationCreate();
-                await _eventCreateFormController.InitializeAsync();
-                InitializeLocations();
-                InitializeLastUpdate();
             }
         }
         catch

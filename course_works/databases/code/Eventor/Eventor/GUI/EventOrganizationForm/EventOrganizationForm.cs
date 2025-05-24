@@ -120,7 +120,7 @@ public partial class EventOrganizationForm : Form
                     day.Id,
                     day.SequenceNumber,
                     day.Name,
-                    day.Price,
+                    day.Price > 0 ? day.Price : "Расчет невозможен",
                     await _eventOrganizationFormController.GetDayParticipantsCountAsync(day.Id)
                 );
             }
@@ -133,7 +133,7 @@ public partial class EventOrganizationForm : Form
 
     private void InitializeComponents()
     {
-        participation_button.Visible = _eventOrganizationFormController.UserIsOrganizer != true;
+        participation_button.Visible = _eventOrganizationFormController?.UserIsOrganizer != true;
     }
 
     private void InitializeLastUpdate()
@@ -188,7 +188,8 @@ public partial class EventOrganizationForm : Form
     {
         try
         {
-            var newLocationId = eventLocationId_label.Text.Trim();
+            var newLocation = eventLocation_comboBox.SelectedItem as Location;
+            var newLocationId = newLocation.Id;
             var newName = eventName_textBox.Text.Trim();
             var newDescription = eventDescription_textBox.Text.Trim();
             var newDate = eventDate_maskedTextBox.Text.Trim();
@@ -293,6 +294,32 @@ public partial class EventOrganizationForm : Form
         catch (Exception ex)
         {
             MessageBox.Show("Ошибка: не удалось открыть форму участия на мероприятии.");
+            return;
+        }
+    }
+
+    private void eventParticipants_label_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            _eventOrganizationFormController.OpenParticipants();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму участников мероприятия.");
+            return;
+        }
+    }
+
+    private void eventParticipantsValue_label_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            _eventOrganizationFormController.OpenParticipants();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Ошибка: не удалось открыть форму участников мероприятия.");
             return;
         }
     }

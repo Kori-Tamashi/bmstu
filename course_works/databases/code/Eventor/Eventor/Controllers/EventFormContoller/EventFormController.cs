@@ -138,7 +138,7 @@ public class EventFormController : INotifyPropertyChanged
         {
             var feedbackForm = _serviceProvider.GetRequiredService<FeedbackCreateForm>();
             feedbackForm.SetIds(EventId, UserId);
-            feedbackForm.Show();
+            feedbackForm.ShowDialog();
         }
         catch (Exception ex)
         {
@@ -152,7 +152,7 @@ public class EventFormController : INotifyPropertyChanged
         {
             var participationForm = _serviceProvider.GetRequiredService<ParticipationForm>();
             participationForm.SetIds(EventId, UserId);
-            participationForm.Show();
+            participationForm.ShowDialog();
         }
         catch (Exception ex)
         {
@@ -166,7 +166,7 @@ public class EventFormController : INotifyPropertyChanged
         {
             var dayForm = _serviceProvider.GetRequiredService<DayForm>();
             dayForm.SetIds(dayId, EventId, UserId);
-            dayForm.Show();
+            dayForm.ShowDialog();
         }
         catch (Exception ex)
         {
@@ -180,7 +180,7 @@ public class EventFormController : INotifyPropertyChanged
         {
             var feedbacksForm = _serviceProvider.GetRequiredService<FeedbacksForm>();
             feedbacksForm.SetIds(EventId, UserId);
-            feedbacksForm.Show();
+            feedbacksForm.ShowDialog();
         }
         catch (Exception ex)
         {
@@ -194,7 +194,7 @@ public class EventFormController : INotifyPropertyChanged
         {
             var participantsForm = _serviceProvider.GetRequiredService<ParticipantsForm>();
             participantsForm.SetIds(EventId, UserId);
-            participantsForm.Show();
+            participantsForm.ShowDialog();
         }
         catch (Exception ex)
         {

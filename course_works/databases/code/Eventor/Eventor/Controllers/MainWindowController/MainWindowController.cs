@@ -188,7 +188,7 @@ public class MainWindowController : INotifyPropertyChanged
         {
             var eventForm = _serviceProvider.GetRequiredService<EventForm>();
             eventForm.SetIds(eventId, CurrentUser.Id);
-            eventForm.Show();
+            eventForm.ShowDialog();
         }
         catch
         {
@@ -202,7 +202,7 @@ public class MainWindowController : INotifyPropertyChanged
         {
             var eventForm = _serviceProvider.GetRequiredService<EventOrganizationForm>();
             eventForm.SetIds(eventId, CurrentUser.Id);
-            eventForm.Show();
+            eventForm.ShowDialog();
         }
         catch
         {
@@ -216,7 +216,7 @@ public class MainWindowController : INotifyPropertyChanged
         {
             var eventCreateForm = _serviceProvider.GetRequiredService<EventCreateForm>();
             eventCreateForm.SetIds(CurrentUser.Id);
-            eventCreateForm.Show();
+            eventCreateForm.ShowDialog();
         }
         catch
         {

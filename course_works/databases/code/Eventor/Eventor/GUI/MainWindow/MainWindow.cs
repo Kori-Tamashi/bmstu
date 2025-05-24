@@ -187,7 +187,7 @@ public partial class MainWindow : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Ошибка: не удалось установить контроллер главной формы.", 
+            MessageBox.Show("Ошибка: не удалось установить контроллер главной формы.",
                 "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
@@ -300,7 +300,7 @@ public partial class MainWindow : Form
             if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0 && IsAdmin())
             {
                 events_dataGridView.CurrentCell = events_dataGridView[e.ColumnIndex, e.RowIndex];
-                _contextMenuStrip.Show(Cursor.Position);
+                allEvents_contextMenuStrip.Show(Cursor.Position);
             }
         }
         catch
@@ -315,6 +315,39 @@ public partial class MainWindow : Form
         {
             var currentCell = events_dataGridView.CurrentCell;
             var currentRow = events_dataGridView.Rows[currentCell.RowIndex];
+            var eventId = (Guid)currentRow.Cells[0].Value;
+            await _mainWindowController.DeleteEventAsync(eventId);
+            MessageBox.Show("Мероприятие успешно удалено.");
+
+            await _mainWindowController.InitializeAsync();
+            InitializeAllEventsGrid();
+            InitializeUserEventsGrid();
+            InitializeAllOrganizedEvents();
+            InitializeLastUpdate();
+        }
+        catch
+        {
+            MessageBox.Show("Ошибка: не удалось удалить мероприятие.",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+    }
+
+    private void organizedEvents_dataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0)
+        {
+            organizedEvents_dataGridView.CurrentCell = organizedEvents_dataGridView[e.ColumnIndex, e.RowIndex];
+            organisedEvents_contextMenuStrip.Show(Cursor.Position);
+        }
+    }
+
+    private async void deleteOrganisedEvent_ToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            var currentCell = organizedEvents_dataGridView.CurrentCell;
+            var currentRow = organizedEvents_dataGridView.Rows[currentCell.RowIndex];
             var eventId = (Guid)currentRow.Cells[0].Value;
             await _mainWindowController.DeleteEventAsync(eventId);
             MessageBox.Show("Мероприятие успешно удалено.");

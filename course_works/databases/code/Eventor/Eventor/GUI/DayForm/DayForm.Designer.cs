@@ -37,23 +37,23 @@
             dayDescription_textBox = new TextBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             groupBox2 = new GroupBox();
+            dayMenu_dataGridView = new DataGridView();
+            Column4 = new DataGridViewTextBoxColumn();
+            Column5 = new DataGridViewTextBoxColumn();
+            Column6 = new DataGridViewTextBoxColumn();
             groupBox1 = new GroupBox();
             dayPersons_dataGridView = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
             Column3 = new DataGridViewTextBoxColumn();
             _timer = new System.Windows.Forms.Timer(components);
-            dayMenu_dataGridView = new DataGridView();
-            Column4 = new DataGridViewTextBoxColumn();
-            Column5 = new DataGridViewTextBoxColumn();
-            Column6 = new DataGridViewTextBoxColumn();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dayMenu_dataGridView).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dayPersons_dataGridView).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dayMenu_dataGridView).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -155,6 +155,46 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Меню";
             // 
+            // dayMenu_dataGridView
+            // 
+            dayMenu_dataGridView.AllowUserToAddRows = false;
+            dayMenu_dataGridView.AllowUserToResizeRows = false;
+            dayMenu_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dayMenu_dataGridView.BackgroundColor = SystemColors.Menu;
+            dayMenu_dataGridView.BorderStyle = BorderStyle.None;
+            dayMenu_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dayMenu_dataGridView.Columns.AddRange(new DataGridViewColumn[] { Column4, Column5, Column6 });
+            dayMenu_dataGridView.Location = new Point(6, 26);
+            dayMenu_dataGridView.Name = "dayMenu_dataGridView";
+            dayMenu_dataGridView.RowHeadersWidth = 51;
+            dayMenu_dataGridView.Size = new Size(459, 419);
+            dayMenu_dataGridView.TabIndex = 0;
+            // 
+            // Column4
+            // 
+            Column4.DataPropertyName = "Id";
+            Column4.HeaderText = "Id";
+            Column4.MinimumWidth = 6;
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            Column4.Visible = false;
+            // 
+            // Column5
+            // 
+            Column5.DataPropertyName = "Name";
+            Column5.HeaderText = "Название";
+            Column5.MinimumWidth = 6;
+            Column5.Name = "Column5";
+            Column5.ReadOnly = true;
+            // 
+            // Column6
+            // 
+            Column6.DataPropertyName = "Amount";
+            Column6.HeaderText = "Количество";
+            Column6.MinimumWidth = 6;
+            Column6.Name = "Column6";
+            Column6.ReadOnly = true;
+            // 
             // groupBox1
             // 
             groupBox1.Controls.Add(dayPersons_dataGridView);
@@ -209,46 +249,6 @@
             // 
             _timer.Interval = 15000;
             // 
-            // dayMenu_dataGridView
-            // 
-            dayMenu_dataGridView.AllowUserToAddRows = false;
-            dayMenu_dataGridView.AllowUserToResizeRows = false;
-            dayMenu_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dayMenu_dataGridView.BackgroundColor = SystemColors.Menu;
-            dayMenu_dataGridView.BorderStyle = BorderStyle.None;
-            dayMenu_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dayMenu_dataGridView.Columns.AddRange(new DataGridViewColumn[] { Column4, Column5, Column6 });
-            dayMenu_dataGridView.Location = new Point(6, 26);
-            dayMenu_dataGridView.Name = "dayMenu_dataGridView";
-            dayMenu_dataGridView.RowHeadersWidth = 51;
-            dayMenu_dataGridView.Size = new Size(459, 419);
-            dayMenu_dataGridView.TabIndex = 0;
-            // 
-            // Column4
-            // 
-            Column4.DataPropertyName = "Id";
-            Column4.HeaderText = "Id";
-            Column4.MinimumWidth = 6;
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
-            Column4.Visible = false;
-            // 
-            // Column5
-            // 
-            Column5.DataPropertyName = "Name";
-            Column5.HeaderText = "Название";
-            Column5.MinimumWidth = 6;
-            Column5.Name = "Column5";
-            Column5.ReadOnly = true;
-            // 
-            // Column6
-            // 
-            Column6.DataPropertyName = "Amount";
-            Column6.HeaderText = "Количество";
-            Column6.MinimumWidth = 6;
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            // 
             // DayForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -256,6 +256,8 @@
             ClientSize = new Size(978, 652);
             Controls.Add(tableLayoutPanel3);
             Controls.Add(tableLayoutPanel1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             Name = "DayForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Информация о дне мероприятия";
@@ -266,9 +268,9 @@
             tableLayoutPanel2.PerformLayout();
             tableLayoutPanel3.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dayMenu_dataGridView).EndInit();
             groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dayPersons_dataGridView).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dayMenu_dataGridView).EndInit();
             ResumeLayout(false);
         }
 

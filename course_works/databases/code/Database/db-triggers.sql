@@ -203,7 +203,7 @@ AFTER INSERT OR UPDATE OR DELETE ON menu_items
 FOR EACH ROW 
 EXECUTE FUNCTION update_days_prices();
 
-CREATE TRIGGER trigger_persons_days_changed
+CREATE TRIGGER trigger_persons_days_changed_2
 AFTER INSERT OR DELETE ON persons_days
 FOR EACH ROW
 EXECUTE FUNCTION update_days_prices();
@@ -292,14 +292,14 @@ BEGIN
         -- Удаляем связи участников с днями
         DELETE FROM persons_days WHERE day_id = ANY(days_to_remove);
 
+        -- Удаляем дни 
+        DELETE FROM days WHERE day_id = ANY(days_to_remove);
+
         -- Явное удаление меню
         DELETE FROM menu 
         WHERE menu_id IN (
             SELECT menu_id FROM days WHERE day_id = ANY(days_to_remove)
         );
-
-		-- Удаляем дни 
-        DELETE FROM days WHERE day_id = ANY(days_to_remove);
     END IF;
 
     RETURN NEW;
@@ -352,7 +352,8 @@ BEGIN
 
     RETURN OLD;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SECURITY DEFINER;
 
 CREATE TRIGGER trigger_delete_event_data
 BEFORE DELETE ON events

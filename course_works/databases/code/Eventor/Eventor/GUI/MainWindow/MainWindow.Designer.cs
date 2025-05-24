@@ -73,8 +73,10 @@
             _timer = new System.Windows.Forms.Timer(components);
             statusStrip = new StatusStrip();
             dataStatus_toolStripStatusLabel = new ToolStripStatusLabel();
-            _contextMenuStrip = new ContextMenuStrip(components);
+            allEvents_contextMenuStrip = new ContextMenuStrip(components);
             eventDelete_ToolStripMenuItem = new ToolStripMenuItem();
+            organisedEvents_contextMenuStrip = new ContextMenuStrip(components);
+            deleteOrganisedEvent_ToolStripMenuItem = new ToolStripMenuItem();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             userEvents_groupBox.SuspendLayout();
@@ -88,7 +90,8 @@
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)organizedEvents_dataGridView).BeginInit();
             statusStrip.SuspendLayout();
-            _contextMenuStrip.SuspendLayout();
+            allEvents_contextMenuStrip.SuspendLayout();
+            organisedEvents_contextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -437,6 +440,7 @@
             organizedEvents_dataGridView.Size = new Size(987, 639);
             organizedEvents_dataGridView.TabIndex = 0;
             organizedEvents_dataGridView.CellClick += organisedEvents_dataGridView_CellClick;
+            organizedEvents_dataGridView.CellMouseClick += organizedEvents_dataGridView_CellMouseClick;
             // 
             // Column5
             // 
@@ -531,12 +535,12 @@
             dataStatus_toolStripStatusLabel.Size = new Size(151, 20);
             dataStatus_toolStripStatusLabel.Text = "toolStripStatusLabel1";
             // 
-            // _contextMenuStrip
+            // allEvents_contextMenuStrip
             // 
-            _contextMenuStrip.ImageScalingSize = new Size(20, 20);
-            _contextMenuStrip.Items.AddRange(new ToolStripItem[] { eventDelete_ToolStripMenuItem });
-            _contextMenuStrip.Name = "_contextMenuStrip";
-            _contextMenuStrip.Size = new Size(234, 56);
+            allEvents_contextMenuStrip.ImageScalingSize = new Size(20, 20);
+            allEvents_contextMenuStrip.Items.AddRange(new ToolStripItem[] { eventDelete_ToolStripMenuItem });
+            allEvents_contextMenuStrip.Name = "_contextMenuStrip";
+            allEvents_contextMenuStrip.Size = new Size(234, 28);
             // 
             // eventDelete_ToolStripMenuItem
             // 
@@ -544,6 +548,20 @@
             eventDelete_ToolStripMenuItem.Size = new Size(233, 24);
             eventDelete_ToolStripMenuItem.Text = "Удалить мероприятие";
             eventDelete_ToolStripMenuItem.Click += eventDelete_ToolStripMenuItem_Click;
+            // 
+            // organisedEvents_contextMenuStrip
+            // 
+            organisedEvents_contextMenuStrip.ImageScalingSize = new Size(20, 20);
+            organisedEvents_contextMenuStrip.Items.AddRange(new ToolStripItem[] { deleteOrganisedEvent_ToolStripMenuItem });
+            organisedEvents_contextMenuStrip.Name = "organisedEvents_contextMenuStrip";
+            organisedEvents_contextMenuStrip.Size = new Size(234, 56);
+            // 
+            // deleteOrganisedEvent_ToolStripMenuItem
+            // 
+            deleteOrganisedEvent_ToolStripMenuItem.Name = "deleteOrganisedEvent_ToolStripMenuItem";
+            deleteOrganisedEvent_ToolStripMenuItem.Size = new Size(233, 24);
+            deleteOrganisedEvent_ToolStripMenuItem.Text = "Удалить мероприятие";
+            deleteOrganisedEvent_ToolStripMenuItem.Click += deleteOrganisedEvent_ToolStripMenuItem_Click;
             // 
             // MainWindow
             // 
@@ -573,7 +591,8 @@
             ((System.ComponentModel.ISupportInitialize)organizedEvents_dataGridView).EndInit();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
-            _contextMenuStrip.ResumeLayout(false);
+            allEvents_contextMenuStrip.ResumeLayout(false);
+            organisedEvents_contextMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -624,7 +643,9 @@
         private StatusStrip statusStrip;
         private ToolStripStatusLabel dataStatus_toolStripStatusLabel;
         private Button eventCreate_button;
-        private ContextMenuStrip _contextMenuStrip;
+        private ContextMenuStrip allEvents_contextMenuStrip;
         private ToolStripMenuItem eventDelete_ToolStripMenuItem;
+        private ContextMenuStrip organisedEvents_contextMenuStrip;
+        private ToolStripMenuItem deleteOrganisedEvent_ToolStripMenuItem;
     }
 }

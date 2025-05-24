@@ -88,7 +88,7 @@ public class FeedbacksFormController : INotifyPropertyChanged
         {
             var feedbackForm = _serviceProvider.GetRequiredService<FeedbackForm>();
             feedbackForm.SetIds(feedbackId, EventId, UserId);
-            feedbackForm.Show();
+            feedbackForm.ShowDialog();
         }
         catch (Exception ex)
         {

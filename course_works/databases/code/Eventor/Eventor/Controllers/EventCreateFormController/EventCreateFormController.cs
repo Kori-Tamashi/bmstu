@@ -1,4 +1,5 @@
 ﻿using Eventor.Common.Core;
+using Eventor.Database.Context;
 using Eventor.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ namespace Eventor.GUI.Controllers;
 
 public class EventCreateFormController : INotifyPropertyChanged
 {
+    private readonly EventorDBContext _dbContext;
     private readonly IEventService _eventService;
     private readonly IDayService _dayService;
     private readonly IUserService _userService;
@@ -32,6 +34,7 @@ public class EventCreateFormController : INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
 
     public EventCreateFormController(
+        EventorDBContext context,
         IEventService eventService, 
         ILocationService locationService,
         IDayService dayService,
@@ -40,6 +43,7 @@ public class EventCreateFormController : INotifyPropertyChanged
         IServiceProvider serviceProvider
     )
     {
+        _dbContext = context;
         _eventService = eventService;
         _locationService = locationService;
         _dayService = dayService;
@@ -83,29 +87,42 @@ public class EventCreateFormController : INotifyPropertyChanged
             rating: 10
         );
 
-        await _eventService.AddEventAsync(newEvent);
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-        // Добавляем пользователя на мероприятия
-        var user = await _userService.GetUserByIdAsync(UserId);
-        var person = await _personService.AddPersonForUserAsync(user.Name, UserId);
-        await _eventService.AddUserForEventAsync(UserId, newEvent.Id);
-
-        // Устанавливаем права организатора
-        person.Type = Common.Enums.PersonType.Organizer;
-        await _personService.UpdatePersonAsync(person);
-
-        // Добавляем на каждый из дней
-        var eventDays = await _dayService.GetAllDaysByEventAsync(newEvent.Id);
-        foreach (var day in eventDays)
+        try
         {
-            await _dayService.AddPersonToDayAsync(person.Id, day.Id);
+            await _eventService.AddEventAsync(newEvent);
+
+            // Добавляем пользователя на мероприятия
+            var user = await _userService.GetUserByIdAsync(UserId);
+            var person = await _personService.AddPersonForUserAsync(user.Name, UserId);
+            await _eventService.AddUserForEventAsync(UserId, newEvent.Id);
+
+            // Устанавливаем права организатора
+            person.Type = Common.Enums.PersonType.Organizer;
+            await _personService.UpdatePersonAsync(person);
+
+            // Добавляем на каждый из дней
+            var eventDays = await _dayService.GetAllDaysByEventAsync(newEvent.Id);
+            foreach (var day in eventDays)
+            {
+                await _dayService.AddPersonToDayAsync(person.Id, day.Id);
+            }
+
+            await transaction.CommitAsync();
         }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+        
     }
 
     public void OpenLocationCreate()
     {
         var locationCreateForm = _serviceProvider.GetRequiredService<LocationCreateForm>();
-        locationCreateForm.Show();
+        locationCreateForm.ShowDialog();
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

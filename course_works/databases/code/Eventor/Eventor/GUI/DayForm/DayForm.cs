@@ -40,8 +40,8 @@ public partial class DayForm : Form
                 try
                 {
                     await _dayFormController.InitializeDayAsync();
-                    await LoadParticipants();
-                    await LoadMenu();
+                    LoadParticipants();
+                    LoadMenu();
                 }
                 catch (Exception ex)
                 {
@@ -61,8 +61,8 @@ public partial class DayForm : Form
         try
         {
             await _dayFormController.InitializeDayAsync();
-            await LoadParticipants();
-            await LoadMenu();
+            LoadParticipants();
+            LoadMenu();
             InitializeTimer();
         }
         catch (Exception ex)
@@ -72,18 +72,21 @@ public partial class DayForm : Form
         }
     }
 
-    private async Task LoadParticipants()
+    private void LoadParticipants()
     {
         try
         {
-            await _dayFormController.LoadParticipantsAsync();
             dayPersons_dataGridView.AutoGenerateColumns = false;
-            dayPersons_dataGridView.DataSource = _dayFormController.DayPersons.Select(p => new
+            dayPersons_dataGridView.Rows.Clear();
+
+            foreach (var person in _dayFormController.DayPersons)
             {
-                p.Id,
-                p.Name,
-                Paid = p.Paid ? "Оплачено" : "Не оплачено"
-            }).ToList();
+                dayPersons_dataGridView.Rows.Add(
+                    person.Id,
+                    person.Name,
+                    person.Paid ? "Оплачено" : "Не оплачено"
+                );
+            }
         }
         catch (Exception ex)
         {
@@ -91,24 +94,21 @@ public partial class DayForm : Form
         }
     }
 
-    private async Task LoadMenu()
+    private async void LoadMenu()
     {
         try
         {
-            await _dayFormController.LoadMenuAsync();
             dayMenu_dataGridView.AutoGenerateColumns = false;
+            dayMenu_dataGridView.Rows.Clear();
 
-            var menuItemsTasks = _dayFormController.MenuItems
-                .Select(async i => new
-                {
-                    i.Id,
-                    i.Name,
-                    Amount = await _dayFormController.GetItemAmountAsync(i.Id)
-                })
-                .ToList();
-
-            var menuItems = await Task.WhenAll(menuItemsTasks);
-            dayMenu_dataGridView.DataSource = menuItems.ToList();
+            foreach (var item in _dayFormController.MenuItems)
+            {
+                dayMenu_dataGridView.Rows.Add(
+                    item.Id,
+                    item.Name,
+                    await _dayFormController.GetItemAmountAsync(item.Id)
+                );
+            }
         }
         catch (Exception ex)
         {

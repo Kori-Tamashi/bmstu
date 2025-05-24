@@ -27,6 +27,7 @@ ALTER TABLE events
     ALTER COLUMN date SET NOT NULL,
     ALTER COLUMN person_count SET NOT NULL,
     ALTER COLUMN days_count SET NOT NULL,
+    ALTER COLUMN rating SET NOT NULL,
     ADD CHECK (days_count > 0),
     ADD CHECK (person_count >= 0),
     ADD CHECK (percent >= 0),

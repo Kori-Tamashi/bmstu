@@ -445,23 +445,27 @@
             // 
             eventParticipants_label.Anchor = AnchorStyles.None;
             eventParticipants_label.AutoSize = true;
+            eventParticipants_label.Cursor = Cursors.Hand;
             eventParticipants_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             eventParticipants_label.Location = new Point(21, 8);
             eventParticipants_label.Name = "eventParticipants_label";
             eventParticipants_label.Size = new Size(175, 20);
             eventParticipants_label.TabIndex = 1;
             eventParticipants_label.Text = "Количество участников:";
+            eventParticipants_label.Click += eventParticipants_label_Click;
             // 
             // eventParticipantsValue_label
             // 
             eventParticipantsValue_label.Anchor = AnchorStyles.None;
             eventParticipantsValue_label.AutoSize = true;
+            eventParticipantsValue_label.Cursor = Cursors.Hand;
             eventParticipantsValue_label.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             eventParticipantsValue_label.Location = new Point(300, 8);
             eventParticipantsValue_label.Name = "eventParticipantsValue_label";
             eventParticipantsValue_label.Size = new Size(17, 20);
             eventParticipantsValue_label.TabIndex = 4;
             eventParticipantsValue_label.Text = "0";
+            eventParticipantsValue_label.Click += eventParticipantsValue_label_Click;
             // 
             // eventRatingValue_label
             // 

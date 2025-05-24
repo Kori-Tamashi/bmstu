@@ -473,7 +473,7 @@
             // 
             // _timer
             // 
-            _timer.Interval = 5000;
+            _timer.Interval = 10000;
             // 
             // DayOrganizationForm
             // 

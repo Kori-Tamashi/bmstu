@@ -42,6 +42,17 @@ public class DayFormController : INotifyPropertyChanged
         }
     }
 
+    private Menu _dayMenu;
+    public Menu DayMenu
+    {
+        get => _dayMenu;
+        set
+        {
+            _dayMenu = value;
+            OnPropertyChanged();
+        }
+    }
+
     private List<Item> _menuItems = new();
     public List<Item> MenuItems
     {
@@ -86,33 +97,9 @@ public class DayFormController : INotifyPropertyChanged
         try
         {
             CurrentDay = await _dayService.GetDayByIdAsync(DayId);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
-
-
-    public async Task LoadParticipantsAsync()
-    {
-        try
-        {
             DayPersons = await _personService.GetAllPersonsByDayAsync(DayId);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
-    public async Task LoadMenuAsync()
-    {
-        try
-        {
-            var menu = await _menuService.GetMenuByDayAsync(DayId);
-            MenuItems = await _itemService.GetAllItemsByMenuAsync(menu.Id);
+            DayMenu = await _menuService.GetMenuByDayAsync(DayId);
+            MenuItems = await _itemService.GetAllItemsByMenuAsync(DayMenu.Id);
         }
         catch (Exception ex)
         {
@@ -124,8 +111,7 @@ public class DayFormController : INotifyPropertyChanged
     {
         try
         {
-            var menu = await _menuService.GetMenuByDayAsync(DayId);
-            return await _menuService.GetAmountForItemAsync(menu.Id, itemId);
+            return await _menuService.GetAmountForItemAsync(DayMenu.Id, itemId);
         }
         catch (Exception ex)
         {

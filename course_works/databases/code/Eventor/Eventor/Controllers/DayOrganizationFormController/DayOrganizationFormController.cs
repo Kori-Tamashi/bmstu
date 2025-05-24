@@ -415,7 +415,7 @@ public class DayOrganizationFormController : INotifyPropertyChanged
         try
         {
             var itemCreateForm = _serviceProvider.GetRequiredService<ItemCreateForm>();
-            itemCreateForm.Show();
+            itemCreateForm.ShowDialog();
         }
         catch
         {

@@ -572,6 +572,19 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         }
     }
 
+    private async void UpdateOrganizerDays()
+    {
+        var userPerson = await _personService.GetPersonByUserAndEventAsync(UserId, EventId);
+        var personDays = await _dayService.GetAllDaysByPersonAsync(userPerson.Id);
+        var eventDays = await _dayService.GetAllDaysByEventAsync(EventId);
+
+        foreach (var day in eventDays)
+        {
+            if (!personDays.Contains(day))
+                await _dayService.AddPersonToDayAsync(userPerson.Id, day.Id);
+        }
+    }
+
     private double GetRelativeDiff(double measured, double real)
     {
         try
@@ -678,15 +691,12 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     private async Task<bool> IsUserOrganizer()
     {
         var userPerson = await _personService.GetPersonByUserAndEventAsync(UserId, EventId);
-        return userPerson.Type == Common.Enums.PersonType.Organizer;
+        return userPerson?.Type == Common.Enums.PersonType.Organizer;
     }
 
-    public async Task SaveEvent(string locationId, string name, string description, string date, 
+    public async Task SaveEvent(Guid locationId, string name, string description, string date, 
         int daysCount, double percent, double maxPrice)
     {
-        if (string.IsNullOrEmpty(locationId))
-            throw new ArgumentNullException("locationId");
-
         if (string.IsNullOrEmpty(name))
             throw new ArgumentNullException("name");
 
@@ -702,15 +712,12 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         if (maxPrice <= 0)
             throw new ArgumentOutOfRangeException("maxPrice");
 
-        if (!Guid.TryParse(locationId, out var updatedLocationId))
-            throw new InvalidDataException("locationId");
-
         if (!DateOnly.TryParse(date, out var updatedDate))
             throw new InvalidDataException("date");
 
         var updatedEvent = new Event(
             id: CurrentEvent.Id,
-            locationId: updatedLocationId,
+            locationId: locationId,
             name: name,
             description: description,
             date: updatedDate,
@@ -721,7 +728,7 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         );
 
         await _eventService.UpdateEventAsync(updatedEvent);
-
+        UpdateOrganizerDays();
         MaxPrice = maxPrice;
     }
 
@@ -729,34 +736,41 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     {
         var dayOrganizationForm = _serviceProvider.GetRequiredService<DayOrganizationForm>();
         dayOrganizationForm.SetIds(dayId, EventId, UserId);
-        dayOrganizationForm.Show();
+        dayOrganizationForm.ShowDialog();
     }
 
     public void OpenLocationCreate()
     {
         var locationCreateForm = _serviceProvider.GetRequiredService<LocationCreateForm>();
-        locationCreateForm.Show();
+        locationCreateForm.ShowDialog();
     }
 
     public void OpenFeedbackCreate()
     {
         var feedbackCreateForm = _serviceProvider.GetRequiredService<FeedbackCreateForm>();
         feedbackCreateForm.SetIds(EventId, UserId);
-        feedbackCreateForm.Show();
+        feedbackCreateForm.ShowDialog();
     }
 
     public void OpenFeedbacks()
     {
         var feedbacksForm = _serviceProvider.GetRequiredService<FeedbacksForm>();
         feedbacksForm.SetIds(EventId, UserId);
-        feedbacksForm.Show();
+        feedbacksForm.ShowDialog();
     }
 
     public void OpenParticipation()
     {
         var participationForm = _serviceProvider.GetRequiredService<ParticipationForm>();
         participationForm.SetIds(EventId, UserId);
-        participationForm.Show();
+        participationForm.ShowDialog();
+    }
+
+    public void OpenParticipants()
+    {
+        var participantsForm = _serviceProvider.GetRequiredService<ParticipantsForm>();
+        participantsForm.SetIds(EventId, UserId);
+        participantsForm.ShowDialog();
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

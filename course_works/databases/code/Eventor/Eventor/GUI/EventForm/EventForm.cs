@@ -45,7 +45,7 @@ public partial class EventForm : Form
                     evt.Id,
                     evt.SequenceNumber,
                     evt.Name,
-                    evt.Price,
+                    evt.Price > 0 ? evt.Price : "Расчет невозможен",
                     _eventFormController.GetDayPersonsCount(evt.Id)
                 );
             }
