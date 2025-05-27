@@ -2,13 +2,36 @@
 
 В этой части представляются требования к программе,
 
-\section{Диаграмма прецендентов}
+\section{Требования к программе}
+
+Программа должна обладать графическим интерфейсом, который позволит пользователю:  
+
+\begin{itemize}[label=--]
+	\item регистрировать новую учетную запись;  
+	\item авторизоваться в системе;  
+	\item просматривать список всех доступных мероприятий;  
+	\item просматривать детальную информацию о мероприятии;  
+	\item создавать новые мероприятия;  
+	\item редактировать созданные мероприятия;  
+	\item отмечать участие в мероприятии;  
+	\item настраивать распределение участника мероприятия по дням;  
+	\item оставлять отзывы о мероприятии.  
+\end{itemize}  
+
+Разработанная программа должна выполнять следующие требования:  
+
+\begin{itemize}[label=--]
+	\item пароли пользователей должны храниться в зашифрованном виде;  
+	\item система должна обрабатывать некорректные вводимые данные.
+\end{itemize}  
+
+\newpage
 
 Диаграмма прецендентов представлена на рисунке~\ref{fig:use-case-diagram}.
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=1\textwidth]{images/use-case-diagram.png}
+	\includegraphics[width=1\textwidth]{images/use-case-2.png}
 	\caption{Диаграмма прецендентов} 
 	\label{fig:use-case-diagram} 
 \end{figure}
@@ -27,7 +50,7 @@
 	\item users -- таблица пользователей.
 \end{enumerate}
 
-На основе информации о выбранной СУБД и ER-диаграммы на рисунке~\ref{fig:er-diagram} можно определить структуры столбцов, их типы и ограничения для каждой таблицы, которые представлены в таблицах~\ref{tbl:locations}-\ref{tbl:users}.
+На основе информации о выбранном типе базы данных и диаграммы <<сущность-связь>> на рисунке~\ref{fig:er-diagram} можно определить структуры столбцов, их типы и ограничения для каждой таблицы, которые представлены в таблицах~\ref{tbl:locations}-\ref{tbl:users}.
 
 \begin{table}[h!]
 	\centering
@@ -38,13 +61,13 @@
 		\hline
 		location\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор локации \\
 		\hline
-		name & VARCHAR(255) & NOT~NULL & Название \\
+		name & Строковой & NOT~NULL & Название \\
 		\hline
-		description & TEXT & NOT~NULL & Описание \\
+		description & Строковой & NOT~NULL & Описание \\
 		\hline
-		price & NUMERIC & NOT~NULL, \newline CHECK~(price~>=~0) & Цена аренды на 1 день \\
+		price & Вещественный & NOT~NULL, \newline CHECK~(price~>=~0) & Цена аренды на 1 день \\
 		\hline
-		capacity & INT & NOT~NULL, \newline CHECK~(capacity~>=~0) & Вместимость \\
+		capacity & Целочисленный & NOT~NULL, \newline CHECK~(capacity~>=~0) & Вместимость \\
 		\hline
 	\end{tabularx}
 	\label{tbl:locations}
@@ -59,19 +82,19 @@
 		\hline
 		event\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор мероприятия \\
 		\hline
-		name & VARCHAR(255) & NOT~NULL & Название \\
+		name & Строковой & NOT~NULL & Название \\
 		\hline
-		description & TEXT & NOT~NULL & Описание \\
+		description & Строковой & NOT~NULL & Описание \\
 		\hline
-		date & DATE & NOT~NULL & Дата \\
+		date & Дата & NOT~NULL & Дата \\
 		\hline
-		person\_count & INT & NOT~NULL, \newline CHECK~(person\_count~>=~0) & Количество участников \\
+		person\_count & Целочисленный & NOT~NULL, \newline CHECK~(person\_count~>=~0) & Количество участников \\
 		\hline
-		days\_count & INT & NOT~NULL, \newline CHECK~(days\_count~>~0) & Количество дней \\
+		days\_count & Целочисленный & NOT~NULL, \newline CHECK~(days\_count~>~0) & Количество дней \\
 		\hline
-		percent & NUMERIC & NOT~NULL, \newline CHECK~(percent~>=~0) & Наценка на посещение в процентах \\
+		percent & Вещественный & NOT~NULL, \newline CHECK~(percent~>=~0) & Наценка на посещение в процентах \\
 		\hline
-		rating & NUMERIC & NOT~NULL, \newline CHECK (rating~BETWEEN~0~AND~10) & Рейтинг \\
+		rating & Вещественный & NOT~NULL, \newline CHECK (rating~BETWEEN~0~AND~10) & Рейтинг \\
 		\hline
 	\end{tabularx}
 	\label{tbl:events}
@@ -86,13 +109,13 @@
 		\hline
 		day\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор дня мероприятия \\
 		\hline
-		name & VARCHAR(255) & NOT~NULL & Название \\
+		name & Строковой & NOT~NULL & Название \\
 		\hline
-		sequence\_ number & INT & NOT~NULL, \newline CHECK (sequence\_number~>~0) & Порядковый номер \\
+		sequence\_ number & Целочисленный & NOT~NULL, \newline CHECK (sequence\_number~>~0) & Порядковый номер \\
 		\hline
-		description & TEXT & NOT~NULL & Описание \\
+		description & Строковой & NOT~NULL & Описание \\
 		\hline
-		price & NUMERIC & NOT~NULL, \newline CHECK~(price~>=~0) & Цена посещения \\
+		price & Вещественный & NOT~NULL, \newline CHECK~(price~>=~0) & Цена посещения \\
 		\hline
 	\end{tabularx}
 	\label{tbl:days}
@@ -107,11 +130,11 @@
 		\hline
 		person\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор участника \\
 		\hline
-		name & VARCHAR(255) & NOT~NULL & Имя \\
+		name & Строковой & NOT~NULL & Имя \\
 		\hline
-		type & ENUM & NOT~NULL & Тип \\
+		type & Перечисляемый & NOT~NULL & Тип \\
 		\hline
-		paid & BOOL & NOT~NULL & Факт оплаты \\
+		paid & Логический & NOT~NULL & Факт оплаты \\
 		\hline
 	\end{tabularx}
 	\label{tbl:persons}
@@ -126,9 +149,9 @@
 		\hline
 		menu\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор меню \\
 		\hline
-		name & VARCHAR(255) & NOT~NULL & Название \\
+		name & Строковой & NOT~NULL & Название \\
 		\hline
-		cost & NUMERIC & NOT~NULL, \newline CHECK~(cost~>=~0) & Стоимость \\
+		cost & Вещественный & NOT~NULL, \newline CHECK~(cost~>=~0) & Стоимость \\
 		\hline
 	\end{tabularx}
 	\label{tbl:menu}
@@ -143,11 +166,11 @@
 		\hline
 		item\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор предмета \\
 		\hline
-		name & VARCHAR(255) & NOT~NULL & Название \\
+		name & Строковой & NOT~NULL & Название \\
 		\hline
-		type & ENUM & NOT~NULL & Тип \\
+		type & Перечисляемый & NOT~NULL & Тип \\
 		\hline
-		price & NUMERIC & NOT~NULL, \newline CHECK~(price~>=~0) & Цена \\
+		price & Вещественный & NOT~NULL, \newline CHECK~(price~>=~0) & Цена \\
 		\hline
 	\end{tabularx}
 	\label{tbl:items}
@@ -166,9 +189,9 @@
 		\hline
 		person\_id & UUID & NOT~NULL, \newline FOREIGN~KEY & Идентификатор участника \\
 		\hline
-		comment & TEXT & NOT~NULL & Комментарий \\
+		comment & Строковой & NOT~NULL & Комментарий \\
 		\hline
-		rating & NUMERIC & NOT~NULL, \newline CHECK (rating~BETWEEN~0~AND~10) & Рейтинг \\
+		rating & Вещественный & NOT~NULL, \newline CHECK (rating~BETWEEN~0~AND~10) & Рейтинг \\
 		\hline
 	\end{tabularx}
 	\label{tbl:feedbacks}
@@ -183,13 +206,13 @@
 		\hline
 		user\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор пользователя \\
 		\hline
-		phone & VARCHAR(255) & NOT~NULL & Телефон \\
+		phone & Строковой & NOT~NULL & Телефон \\
 		\hline
-		gender & ENUM & NOT~NULL & Гендер \\
+		gender & Перечисляемый & NOT~NULL & Гендер \\
 		\hline
-		password & VARCHAR(255) & NOT~NULL & Пароль \\
+		password & Строковой & NOT~NULL & Пароль \\
 		\hline
-		role & ENUM & NOT~NULL & Роль \\
+		role & Перечисляемый & NOT~NULL & Роль \\
 		\hline
 	\end{tabularx}
 	\label{tbl:users}
@@ -197,27 +220,27 @@
 
 \newpage
 
-Диаграмма базы данных представлена на рисунке~\ref{fig:db-diagram}.
+Диаграмма базы данных представлена на рисунке~\ref{fig:db-diagram-notypes}.
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=1\textwidth]{images/db-diagram.png}
+	\includegraphics[width=1\textwidth]{images/db-diagram-notypes.png}
 	\caption{Диаграмма базы данных} 
-	\label{fig:db-diagram} 
+	\label{fig:db-diagram-notypes} 
 \end{figure}
 
 \section{Ролевая модель}
 
 Ролевая модель в СУБД распределяет права доступа между ролями, ограничивая их действия для обеспечения безопасности:
 \begin{itemize}[label=--]
-	\item гость может выполнять SELECT для всех таблиц за исключением таблицы пользователей, INSERT для таблицы пользователей;
-	\item авторизованный пользователь может выполнять SELECT для всех таблиц, INSERT и DELETE для таблицы мероприятий пользователей, UPDATE для таблицы пользователей;
+	\item гость может выполнять SELECT и INSERT для таблицы пользователей;
+	\item авторизованный пользователь может выполнять SELECT, INSERT, \newline UPDATE и DELETE для всех таблиц;
 	\item администратор имеет все права доступа.
 \end{itemize}
 
 \section{Формализация мероприятия}
 
-Мероприятие рассматривается как система, состоящая из участников, дней, предметов (например, еды), меню и других элементов. 
+Мероприятие рассматривается как система, состоящая из участников, дней, предметов, меню и других элементов. 
 
 \subsection{Определение мероприятия}
 
@@ -255,7 +278,7 @@
 \begin{equation}
 	PD = \{(p, c): (p, c) \in P \times 2^D \}
 \end{equation}
-где $p \in P$ -- участник, $c \in 2^D$ -- подмножество дней, которые участник $p_i$ планирует посетить, и $\forall p \in P \ \exists! c \in 2^D: (p, c) \in PD$.
+где $p \in P$ -- участник, $c \in 2^D$ -- подмножество дней, которые участник $p$ планирует посетить, и $\forall p \in P \ \exists! c \in 2^D: (p, c) \in PD$.
 
 \textit{Мероприятием} называется кортеж, объединяющий все перечисленные множества и обозначается:
 \begin{equation}
@@ -296,7 +319,7 @@
 	\item $n$-го порядка -- функции, рассматривающие $n$-мерный случай.
 \end{enumerate}
 
-Из определения следует, что функции первого порядка являются подмножеством функций $n$-го порядка.
+Из определения следует, что функции первого порядка являются частным примером функций $n$-го порядка.
 
 \subsubsection{Функции стоимости}
 
@@ -312,31 +335,20 @@
 	C_M(m) = \sum_{o_i \in m} C_O(o_i)
 \end{equation}
 
-\textit{Функция стоимости дня первого порядка} обозначается как \newline $C_D: D \rightarrow \mathbb{R}_{\ge 0}$ определяется как стоимость меню, соответствующего этому дню:
+\textit{Функция стоимости дня первого порядка} обозначается как \newline $C_D: D \rightarrow \mathbb{R}_{\ge 0}$ и определяется как стоимость меню, соответствующего этому дню:
 \begin{equation}
 	C_D(d) = C_M(m), \ \text{где} \ (d, m) \in DM
 \end{equation}
 
 \textit{Функция стоимости дня $n$-го порядка} обозначается как $C_D: D^n \rightarrow \mathbb{R}_{\ge 0}$ \newline и определяется как сумма всех стоимостей меню, соответствующих \newline набору-аргументу из $n$ дней:
 \begin{equation}
-	C_D(d_1, \dots, d_n) = \sum_{d_i \in \{d_1, \dots, d_n\}}{C_M(m)}, \ \text{где} \ (d_i, m) \in DM
+	C_D(d_1, \dots, d_n) = \sum_{d_i \in (d_1, \dots, d_n)}{C_M(m)}, \ \text{где} \ (d_i, m) \in DM
 \end{equation}
 
-\textit{Функция стоимости мероприятия} обозначается как $C_E: E \rightarrow \mathbb{R}_{\ge 0}$ определяется как сумма стоимостей всех дней мероприятия:
+\textit{Функция стоимости мероприятия} обозначается как $C_E: E \rightarrow \mathbb{R}_{\ge 0}$ и определяется как сумма стоимостей всех дней мероприятия:
 \begin{equation}
 	C_E(E) = \sum_{d_i \in D} C_D(d_i)
 	\label{eq:cost-event}
-\end{equation}
-
-Функция стоимости определяется как:
-\begin{equation}
-	C(X) = 
-	\begin{cases}
-		C_O(X), & X \in O \\
-		C_M(X), & X \in M \\
-		C_D(X), & X \subseteq D \\
-		C_E(X), & X \in E
-	\end{cases}
 \end{equation}
 
 \subsubsection{Функции цены}
@@ -353,18 +365,9 @@
 	P_D: D^n \rightarrow \mathbb{R}_{\ge 0}
 \end{equation}
 
-Функция цены мероприятия обозначается как $P_E: E \rightarrow \mathbb{R}_{\ge 0}$ определяется как сумма цен посещения всех его дней:
+\textit{Функция цены мероприятия} обозначается как $P_E: E \rightarrow \mathbb{R}_{\ge 0}$ и определяется как сумма цен посещения всех его дней:
 \begin{equation}
 	P_E(E) = \sum_{d_i \in D}{P_D(d_i)}
-\end{equation}
-
-Функция цены определяется как:
-\begin{equation}
-	P(X) = 
-	\begin{cases}
-		P_D(X), & X \subseteq D \\
-		P_E(X), & X \in E
-	\end{cases}
 \end{equation}
 
 \subsubsection{Вспомогательные функции}
@@ -374,17 +377,27 @@
 	H(E) = \{c: p \in P \ \exists! c: (p, c) \in PD\}
 \end{equation}
 
-\textit{Функция количества человек конкретного дня первого порядка} обозначается как $N_D: D \rightarrow \mathbb{N}$ и определяется как мощность множества участников конкретного дня:
+\textit{Функция количества человек дня первого порядка} обозначается как \newline $N_D: D \rightarrow \mathbb{N}$ и определяется как мощность множества участников конкретного дня:
 \begin{equation}
 	N_D(d) = |\{p: (p, d) \in PD\}|
 \end{equation}
 
-\textit{Функция количества человек конкретного дня n-го порядка} обозначается как $N_D: D^n \rightarrow \mathbb{N}$ и определяется как мощность множества участников конкретного набора из $n$ дней:
+\textit{Функция количества человек дня n-го порядка} обозначается как \newline $N_D: D^n \rightarrow \mathbb{N}$ и определяется как мощность множества участников конкретного набора из $n$ дней:
 \begin{equation}
-	N_D(d_1, \dots, d_n) = |\{p: (p, \{d_1, \dots, d_n\}) \in PD\}|
+	N_D(d_1, \dots, d_n) = |\{p: (p, (d_1, \dots, d_n)) \in PD\}|
 \end{equation}
 
-\textit{Функцией количества человек мероприятия} обозначается как \newline $N_E: E \rightarrow \mathbb{N}$ и определяется как мощность множества участников:
+\textit{Функция строгого количества человек дня первого порядка} обозначается как $N_D^*: D \rightarrow \mathbb{N}$ и определяется как мощность множества участников, посещающих только конкретный день:
+\begin{equation}
+	N_D^*(d) = |\{p:(p, d) \in PD \wedge \forall d_i \in D \setminus d : (p, d_i) \notin PD\}|
+\end{equation}
+
+\textit{Функция строгого количества человек дня n-го порядка} обозначается как $N_D^*: D^n \rightarrow \mathbb{N}$ и определяется как мощность множества участников, посещающих только дни конкретной комбинации:
+\begin{equation}
+	N_D^*(c) = |\{p:(p, c) \in PD \wedge \forall d_i \in D \setminus c : (p, d_i) \notin PD\}|
+\end{equation}
+
+\textit{Функция количества человек мероприятия} обозначается как \newline $N_E: E \rightarrow \mathbb{N}$ и определяется как мощность множества участников:
 \begin{equation}
 	N_E(E) = |P|
 \end{equation}
@@ -419,13 +432,13 @@
 
 Чтобы все расходы на конкретную комбинацию дней были покрыты, необходимо, чтобы доходы от участников этой комбинации были им равны:
 \begin{equation}
-	C_D(d_1, \dots, d_n) = P_D(d_1, \dots, d_n) \cdot N_D(d_1, \dots, d_n)
+	C_D(d_1, \dots, d_n) = P_D(d_1, \dots, d_n) \cdot N_D^*(d_1, \dots, d_n)
 	\label{eq:cost-price-2}
 \end{equation}
 
 В $n$-мерном случае участники оплачивают присутствие не на конкретных днях, а на их комбинациях, потому, чтобы покрыть расходы на всё мероприятие, необходимо покрыть расходы на все комбинации:
 \begin{equation}
-	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)}
+	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D^*(c_i)}
 	\label{eq:balance-equation-2}
 \end{equation}
 
@@ -433,21 +446,26 @@
 
 \subsection{Фундаментальная цена}
 
-Фундаментальная цена -- это базовая цена, которая используется для расчета цены посещения каждого дня мероприятия. Она определяется таким образом, чтобы цена каждого дня мероприятия была пропорциональна его стоимости. Цена посещения дня выражается через фундаментальную цену $P_0$ и коэффициент дня:
+Фундаментальная цена -- это формальное решение уравнения баланса, которое используется для расчета цены посещения каждого дня мероприятия. Она определяется таким образом, чтобы цена каждого дня мероприятия была пропорциональна его стоимости.
+
+Цена посещения дня выражается через фундаментальную цену $P_0$ и коэффициент дня:
 \begin{itemize}[label=--]
 	\item для одномерного случая:
 	\begin{equation}
-		P_D(d) = A(d) \cdot P_0
+		P_D(d) = A(d) \cdot P_0(E)
 		\label{eq:price-by-fundamental-price-1}
 	\end{equation}
 	\item для $n$-мерного случая:
 	\begin{equation}
-		P_D(d_1, \dots, d_n) = A(d_1, \dots, d_n) \cdot P_0
+		P_D(d_1, \dots, d_n) = A(d_1, \dots, d_n) \cdot P_0(E)
 		\label{eq:price-by-fundamental-price-2}
 	\end{equation}
 \end{itemize}  
 
-Фундаментальную цену можно понимать как формальное решение уравнения баланса.
+В силу линейности уравнения баланса, если фундаментальная цена существует, она единственна:
+\begin{equation}
+	P_0 = P_0(E)
+\end{equation}
 
 \subsubsection{Общий одномерный случай}
 
@@ -465,7 +483,7 @@
 
 Из уравнения~\ref{eq:balance-equation-by-fundamental-1} имеем:
 \begin{equation}
-	P_0 = \frac{C_E(E)}{\sum_{d_i \in D}{A(d_i) \cdot N_D(d_i)}}
+	P_0(E) = \frac{C_E(E)}{\sum_{d_i \in D}{A(d_i) \cdot N_D(d_i)}}
 	\label{eq:fundamental-price-1}
 \end{equation}
 
@@ -473,30 +491,33 @@
 
 Подставив уравнение~\ref{eq:price-by-fundamental-price-2} в уравнение~\ref{eq:cost-price-2}, имеем:
 \begin{equation}
-	C_D(d_1, \dots, d_n) = A(d_1, \dots, d_n) \cdot P_0 \cdot N_D(d_1, \dots, d_n)
+	C_D(d_1, \dots, d_n) = A(d_1, \dots, d_n) \cdot P_0 \cdot N_D^*(d_1, \dots, d_n)
 	\label{eq:cost-by-fundamental-2}
 \end{equation}
 
 Подставив уравнение~\ref{eq:cost-by-fundamental-2} в уравнение баланса~\ref{eq:balance-equation-2}, имеем:
 \begin{equation}
-	C_E(E) = \sum_{c_i \in H(E)}{A(c_i) \cdot P_0 \cdot N_D(c_i)} = P_0 \cdot \sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}
+	C_E(E) = \sum_{c_i \in H(E)}{A(c_i) \cdot P_0 \cdot N_D^*(c_i)} = P_0 \cdot \sum_{c_i \in H(E)}{A(c_i) \cdot N_D^*(c_i)}
 	\label{eq:balance-equation-by-fundamental-2}
 \end{equation}
 
 Из уравнения~\ref{eq:balance-equation-by-fundamental-2} имеем:
 \begin{equation}
-	P_0 = \frac{C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}}
+	P_0(E) = \frac{C_E(E)}{\sum_{c_i \in H(E)}{A(c_i) \cdot N_D^*(c_i)}}
 	\label{eq:fundamental-price-2}
 \end{equation}
 
 \subsection{Получение прибыли}
 
-Прибыль -- это финансовый результат, при котором доходы от мероприятия превышают его затраты. В рамках уравнения баланса наличие прибыли можно обозначить как:
+Наличие прибыли -- это финансовый результат, при котором доходы от мероприятия превышают его затраты. В рамках уравнения баланса условие наличия прибыли можно обозначить как:
 \begin{equation}
-	C_E(E) < \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} \Leftrightarrow \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} - C_E(E) > 0
+	C_E(E) < \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D^*(c_i)} \Leftrightarrow \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D^*(c_i)} - C_E(E) > 0
 \end{equation}
+
+Прибыль определяется как положительная разница между совокупным доходом от участников мероприятия и общими затратами на его организацию:
+
 \begin{equation}
-	\Pi = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} - C_E(E)
+	\Pi = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D^*(c_i)} - C_E(E)
 \end{equation}
 
 Прибыль может быть реализована через процентную наценку на фундаментальную цену. Пусть $\alpha \ge 0$ -- коэффициент, увеличивающий фундаментальную цену $P_0$. Тогда функция цены посещения конкретного дня примет вид:
@@ -506,27 +527,16 @@
 
 Прибыль в этом случае будет равна:
 \begin{equation}
-	\Pi = \sum_{c_i \in H(E)}{P_D'(c_i) \cdot N_D(c_i)} - C_E(E) 
+	\Pi = \sum_{c_i \in H(E)}{P_D'(c_i) \cdot N_D^*(c_i)} - C_E(E) 
 \end{equation}
 \begin{equation}
-	\Pi = (1 + \alpha) \cdot \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} - C_E(E)
+	\Pi = (1 + \alpha) \cdot \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D^*(c_i)} - C_E(E)
 \end{equation}
 \begin{equation}
 	\Pi = (1 + \alpha) \cdot C_E(E) - C_E(E) = \alpha \cdot C_E(E)
 \end{equation}
 
 \subsection{Известные теоремы}
-
-\subsubsection{Теорема о самом дешевом дне}
-
-Если участники концентрируются на дне с минимальной стоимостью $C_D(d)$, то фундаментальная цена $P_0$ возрастает.
-
-\textit{Доказательство:} пусть $d' \in D$ -- день с минимальной стоимостью, то есть $C_D(d') = \min_{d_i \in D}{C_D(d_i)}$. Тогда имеем по определению коэффициента дня:
-\begin{equation}
-	A(d') = \frac{C_D(d')}{\min_{d_i \in D}{C_D(d_i)}} = \frac{\min_{d_i \in D}{C_D(d_i)}}{\min_{d_i \in D}{C_D(d_i)}} = 1
-\end{equation}
-
-Если $N_D(d')$ увеличивается при $N_E(E) = const$, тогда существует день \newline $d \in D, d \ne d'$ такой, что $N_D(d)$ уменьшается. Следовательно, $\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}$ будет уменьшаться, так как $\forall d \in D: A(d') \le A(d)$, и $P_0$ будет возрастать.
 
 \subsubsection{Теорема об условии существования решения}
 
@@ -692,53 +702,6 @@
 	C_E(E) \le P_{max} \cdot |P| \Leftrightarrow |P| \ge \frac{C_E(E)}{P_{max}}
 \end{equation}
 
-\subsubsection{Теорема об интервале фундаментальной цены}
-
-Для фундаментальной цены $P_0$ справедливо неравенство:
-\begin{equation}
-	\frac{C_{min}}{N_{max}} \le P_0 \le \frac{C_{max}}{N_{min}}
-\end{equation}
-
-\textit{Доказательство:} оценим значение знаменателя формулы фундаментальной цены сверху:
-\begin{equation}
-	\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)} \ge \sum_{c_i \in H(E)}{N_D(c_i)} = N_E(E)
-\end{equation}
-
-Оценим значение числителя формулы фундаментальной цены:
-\begin{equation}
-	C_E(E) \ge |D| \cdot C_{min} \ge C_{min}
-\end{equation}
-
-Следовательно имеем:
-\begin{equation}
-	P_0 \ge \frac{C_{min}}{N_{max}}
-\end{equation}
-
-Рассмотрим комбинацию дней $c'$, для которой $N_D(c') = N_{min}$. Для этой комбинации:
-\begin{equation}
-	C_D(c') = \sum_{d \in c'}{C_D(d)} \le |c'| \cdot C_{max}
-\end{equation}
-
-Из уравнения баланса:
-\begin{equation}
-	C_D(c') = A(c') \cdot P_0 \cdot N_{min}
-\end{equation}
-
-Коэффициент дня $c'$ равен:
-\begin{equation}
-	A(c') = \frac{C_D(c')}{C_{min}} \le \frac{C_{max}}{C_{min}}|c'|
-\end{equation}
-
-Подставив коэффициент дня в уравнение баланса, имеем:
-\begin{equation}
-	|c'| \cdot C_{max} \ge P_0 \cdot \frac{C_{max}}{C_{min}}|c'| \cdot N_{min} \Leftrightarrow P_0 \le \frac{C_{min}}{N_{min}} \le \frac{C_{max}}{N_{min}}
-\end{equation}
-
-Следовательно имеем:
-\begin{equation}
-	\frac{C_{min}}{N_{max}} \le P_0 \le \frac{C_{max}}{N_{min}}
-\end{equation}
-
 \subsubsection{Теорема об ограничении наценки}
 
 Коэффициент наценки $\alpha$ при условии $P_D(c_i) \le P_{max}$ для всех комбинаций дней $c_i \in H(E)$ ограничен сверху:
@@ -753,27 +716,89 @@
 
 Условие $\forall c_i \in H(E): P_D(c_i) \le P_{max}$ может быть записано следующим образом:
 \begin{equation}
-	(1 + \alpha) \cdot A(c_i) \cdot P_0 \le P_{max} \Leftrightarrow \alpha \le \frac{P_{max}}{A_(c_i) \cdot P_0} - 1
+	(1 + \alpha) \cdot A(c_i) \cdot P_0 \le P_{max} \Leftrightarrow \alpha \le \frac{P_{max}}{A(c_i) \cdot P_0} - 1
 \end{equation}
 
 Чтобы неравенство выполнялось для всех $c_i$, выберем минимальное значение правой части:
 \begin{equation}
-	\alpha \le \min_{c_i \in H(E)}{\Big(\frac{P_{max}}{A_(c_i) \cdot P_0} - 1\Big)}
+	\alpha \le \min_{c_i \in H(E)}{\Big(\frac{P_{max}}{A(c_i) \cdot P_0} - 1\Big)}
 \end{equation}
+
+\subsubsection{Теорема о самом дешевом дне}
+
+Если участники концентрируются на дне с минимальной стоимостью $C_D(d)$, то фундаментальная цена $P_0$ возрастает.
+
+\textit{Доказательство:} пусть $d' \in D$ -- день с минимальной стоимостью, то есть $C_D(d') = \min_{d_i \in D}{C_D(d_i)}$. Тогда имеем по определению коэффициента дня:
+\begin{equation}
+	A(d') = \frac{C_D(d')}{\min_{d_i \in D}{C_D(d_i)}} = \frac{\min_{d_i \in D}{C_D(d_i)}}{\min_{d_i \in D}{C_D(d_i)}} = 1
+\end{equation}
+
+Если $N_D(d')$ увеличивается при $N_E(E) = const$, тогда существует день \newline $d \in D, d \ne d'$ такой, что $N_D(d)$ уменьшается. Следовательно, \newline $\sum_{c_i \in H(E)}{A(c_i) \cdot N_D(c_i)}$ будет уменьшаться, так как $\forall d \in D: A(d') \le A(d)$, и $P_0$ будет возрастать.
 
 \section{Используемые триггеры}
 
+В базе данных реализованы следующие триггеры, каждый из которых автоматизирует управление связанными данными мероприятий, включая создание и удаление связанных сущностей, синхронизацию количества дней, обновление количества участников, динамическое ценообразование, пересчёт стоимости меню и рейтинга мероприятия:
+\begin{enumerate}
+	\item Триггер создания связанных данных мероприятия --  автоматически создаёт связанные дни и меню при добавлении нового мероприятия;
+	\item Триггер синхронизации количества дней -- поддерживает актуальное количество дней мероприятия при изменении связей, увеличивает или уменьшает число дней в соответствии с заданным значением, удаляя или добавляя необходимые сущности;
+	\item Триггер обновления количества участников -- пересчитывает общее число участников мероприятия при изменении данных о посещении дней, учитывает добавление, удаление или изменение записей о присутствии;
+	\item Триггер динамического ценообразования -- автоматически корректирует цены дней при изменении влияющих параметров;
+	\item Триггер удаления связанных данных -- обеспечивает каскадное удаление всех связанных сущностей при удалении мероприятия, гарантируя целостность данных;
+	\item Триггер обновления стоимости меню -- пересчитывает стоимость меню при изменении его состава;
+	\item Триггер расчёта рейтинга мероприятия -- обновляет средний рейтинг мероприятия при добавлении, изменении или удалении отзывов.
+\end{enumerate}
+
 \section{Архитектура приложения}
+
+Структура данного приложения основана на принципах чистой архитектуры. Данная архитектура направлена на создание систем, которые легко модифицировать и тестировать, а также которые обеспечивают высокую степень независимости от внешних факторов, таких как фреймворки, базы данных и пользовательские интерфейсы~\cite{lit10}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\textwidth]{images/clean-architecture.png}
+	\caption{Слои приложения согласно принципам чистой архитектуры} 
+	\label{fig:clean-architecture} 
+\end{figure}
+
+В рамках этой архитектуры приложение структурировано таким образом, что бизнес-логика отделена от деталей реализации, что позволяет сосредоточиться на функциональности без необходимости беспокоиться о том, как именно функции будут реализованы в различных средах. Это достигается за счёт четкого разделения на уровни, где каждый уровень отвечает за свою область ответственности~\cite{lit10}.
 
 \subsection{Диаграмма потока данных}
 
+Поток данных в приложении инициируется взаимодействием пользователя с графическим интерфейсом, передающим действия в контроллеры слоя представления. Контроллеры перенаправляют запросы в слой бизнес-логики, где данные проходят валидацию и обработку в соответствии с установленными правилами. Бизнес-логика взаимодействует с адаптерами для выполнения операций с базой данных, после чего обработанные данные возвращаются через слои приложения в графический интерфейс для отображения.
+
+Диаграмма потока данных представлена на рисунке~\ref{fig:data-flow}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/data-flow.png}
+	\caption{Диаграмма потока данных} 
+	\label{fig:data-flow} 
+\end{figure}
+
 \subsection{Диаграмма компонентов}
+
+Диаграмма компонентов представлена на рисунке~\ref{fig:components-diagram}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/uml-components.png}
+	\caption{Диаграмма компонентов} 
+	\label{fig:components-diagram} 
+\end{figure}
+
 
 \subsection{Диаграмма классов}
 
+Диаграмма классов представлена на рисунке~\ref{fig:class-diagram}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/uml-classes.png}
+	\caption{Диаграмма классов} 
+	\label{fig:class-diagram} 
+\end{figure}
 
 \section{Вывод}
 
-В конструкторской части работы были представлены требования к программе, 
+В конструкторской части работы были сформулированы требования к программе, разработаны диаграммы прецедентов и базы данных, определены структуры таблиц с типами данных и ограничениями, формализована модель мероприятия, описаны триггеры для автоматизации процессов, а также представлена архитектура приложения с диаграммами потоков данных, компонентов и классов.
 
 \clearpage

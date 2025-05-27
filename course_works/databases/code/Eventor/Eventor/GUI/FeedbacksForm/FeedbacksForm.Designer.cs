@@ -48,11 +48,12 @@
             eventFeedbacks_label.Anchor = AnchorStyles.None;
             eventFeedbacks_label.AutoSize = true;
             eventFeedbacks_label.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            eventFeedbacks_label.Location = new Point(139, 9);
+            eventFeedbacks_label.Location = new Point(139, 23);
             eventFeedbacks_label.Name = "eventFeedbacks_label";
             eventFeedbacks_label.Size = new Size(228, 28);
             eventFeedbacks_label.TabIndex = 0;
             eventFeedbacks_label.Text = "Отзывы мероприятия";
+            eventFeedbacks_label.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel1
             // 
@@ -64,7 +65,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(507, 47);
+            tableLayoutPanel1.Size = new Size(507, 75);
             tableLayoutPanel1.TabIndex = 1;
             // 
             // feedbacks_dataGridView
@@ -76,10 +77,10 @@
             feedbacks_dataGridView.BorderStyle = BorderStyle.None;
             feedbacks_dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             feedbacks_dataGridView.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5, Column6 });
-            feedbacks_dataGridView.Location = new Point(12, 65);
+            feedbacks_dataGridView.Location = new Point(12, 93);
             feedbacks_dataGridView.Name = "feedbacks_dataGridView";
             feedbacks_dataGridView.RowHeadersWidth = 51;
-            feedbacks_dataGridView.Size = new Size(507, 373);
+            feedbacks_dataGridView.Size = new Size(507, 345);
             feedbacks_dataGridView.TabIndex = 2;
             feedbacks_dataGridView.CellClick += feedbacks_dataGridView_CellClick;
             // 

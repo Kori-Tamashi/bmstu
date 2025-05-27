@@ -532,7 +532,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql STABLE;
-COMMENT ON FUNCTION get_person_count_exact(UUID[]) IS 'Функция строгого подсчёта участников для набора дней (с учётом привилегий)';
+COMMENT ON FUNCTION get_person_count_exact(UUID[]) IS 'Функция строгого подсчёта участников для набора дней';
 
 -- Функция с исключением привилегированных ролей
 CREATE OR REPLACE FUNCTION get_person_count_exact_excluding_roles(days_id UUID[])

@@ -40,7 +40,7 @@ public class FeedbacksFormController : INotifyPropertyChanged
         }
     }
 
-    public string MainLabel => $"Отзывы об мероприятии \"{CurrentEvent?.Name}\"";
+    public string MainLabel => $"Отзывы о мероприятии\n\"{CurrentEvent?.Name}\"";
 
     public event PropertyChangedEventHandler PropertyChanged;
 
