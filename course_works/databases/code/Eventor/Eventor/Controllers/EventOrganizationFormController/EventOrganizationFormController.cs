@@ -728,7 +728,9 @@ public class EventOrganizationFormController : INotifyPropertyChanged
         );
 
         await _eventService.UpdateEventAsync(updatedEvent);
-        UpdateOrganizerDays();
+
+        if (await IsUserOrganizer())
+            UpdateOrganizerDays();
         MaxPrice = maxPrice;
     }
 
@@ -736,7 +738,7 @@ public class EventOrganizationFormController : INotifyPropertyChanged
     {
         var dayOrganizationForm = _serviceProvider.GetRequiredService<DayOrganizationForm>();
         dayOrganizationForm.SetIds(dayId, EventId, UserId);
-        dayOrganizationForm.ShowDialog();
+        dayOrganizationForm.Show();
     }
 
     public void OpenLocationCreate()
