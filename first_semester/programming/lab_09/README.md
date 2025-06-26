@@ -18,15 +18,15 @@
 
 | Файл                                                                                                                           | Описание                                                                 |
 |:-------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------|
-| [task_1.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/task_1.py)                  | Программа 1: Формирование матрицы по формуле                             |
-| [task_2.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/task_2.py)                  | Программа 2: Поворот квадратной матрицы                                  |
-| [task_3.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/task_3.py)                  | Программа 3: Сравнение элементов матрицы с суммами строк                |
-| [task_4.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/task_4.py)                  | Программа 4: Поиск максимальных элементов в заданных строках            |
-| [task_5.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/task_5.py)                  | Программа 5: Замена гласных букв на точки                               |
-| [task_6.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/task_6.py)                  | Программа 6: Построчное перемножение матриц                             |
-| [task_7.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/task_7.py)                  | Программа 7: Работа с трёхмерным массивом                               |
-| [config.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/config.py)                  | Файл, содержащий константы                                              |
-| [lab_09.pdf](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/documents/lab_09.pdf)           | Файл c заданием лабораторной работы                                     |
+| [task_1.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/task_1.py)                  | Программа 1: Формирование матрицы по формуле                             |
+| [task_2.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/task_2.py)                  | Программа 2: Поворот квадратной матрицы                                  |
+| [task_3.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/task_3.py)                  | Программа 3: Сравнение элементов матрицы с суммами строк                |
+| [task_4.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/task_4.py)                  | Программа 4: Поиск максимальных элементов в заданных строках            |
+| [task_5.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/task_5.py)                  | Программа 5: Замена гласных букв на точки                               |
+| [task_6.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/task_6.py)                  | Программа 6: Построчное перемножение матриц                             |
+| [task_7.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/task_7.py)                  | Программа 7: Работа с трёхмерным массивом                               |
+| [config.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/config.py)                  | Файл, содержащий константы                                              |
+| [lab_09.pdf](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/documents/lab_09.pdf)           | Файл c заданием лабораторной работы                                     |
 
 ### Последовательность выполнения
 
@@ -54,7 +54,7 @@
 ### Особенности выполнения
 
 #### Файл с константами
-> Файл [config.py](https://github.com/Kori-Tamashi/bmstu/blob/main/first_semester/programming/lab_09/code/config.py) содержит:
+> Файл [config.py](https://github.com/Kori-Tamashi/bmstu/blob/first_semester/first_semester/programming/lab_09/code/config.py) содержит:
 > - Диапазоны значений для автоматического заполнения (`min_element`, `max_element`)
 > - Сообщения об ошибках ввода (`int_inpt_err_msg`, `float_inpt_err_msg` и др.)
 > - Визуальные элементы форматирования (`separator`, `green_start` и др.)
