@@ -24,3 +24,4 @@
 | 8  |              [Матрицы (часть I)](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_08)              |    ✅    |
 | 9  |             [Матрицы (часть II)](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_09)              |    ✅    |
 | 10 | [Вычисление приближённого значения интеграла](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_10) |    ✅    |
+| 11 |       [Исследование методов сортировки](https://github.com/Kori-Tamashi/bmstu/tree/first_semester/first_semester/programming/lab_11)       |    ✅    |
