@@ -14,7 +14,7 @@
 	\item создавать новые мероприятия;  
 	\item редактировать созданные мероприятия;  
 	\item отмечать участие в мероприятии;  
-	\item настраивать распределение участника мероприятия по дням;  
+	\item настраивать распределение по дням;  
 	\item оставлять отзывы о мероприятии.  
 \end{itemize}  
 
@@ -27,14 +27,16 @@
 
 \newpage
 
-Диаграмма прецендентов представлена на рисунке~\ref{fig:use-case-diagram}.
+Диаграмма прецедентов представлена на рисунке~\ref{fig:use-case-diagram}.
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=1\textwidth]{images/use-case-2.png}
-	\caption{Диаграмма прецендентов} 
+	\caption{Диаграмма прецедентов} 
 	\label{fig:use-case-diagram} 
 \end{figure}
+
+\newpage
 
 \section{Описание сущностей базы данных}
 
@@ -61,9 +63,9 @@
 		\hline
 		location\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор локации \\
 		\hline
-		name & Строковой & NOT~NULL & Название \\
+		name & Строковый & NOT~NULL & Название \\
 		\hline
-		description & Строковой & NOT~NULL & Описание \\
+		description & Строковый & NOT~NULL & Описание \\
 		\hline
 		price & Вещественный & NOT~NULL, \newline CHECK~(price~>=~0) & Цена аренды на 1 день \\
 		\hline
@@ -82,9 +84,9 @@
 		\hline
 		event\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор мероприятия \\
 		\hline
-		name & Строковой & NOT~NULL & Название \\
+		name & Строковый & NOT~NULL & Название \\
 		\hline
-		description & Строковой & NOT~NULL & Описание \\
+		description & Строковый & NOT~NULL & Описание \\
 		\hline
 		date & Дата & NOT~NULL & Дата \\
 		\hline
@@ -109,11 +111,11 @@
 		\hline
 		day\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор дня мероприятия \\
 		\hline
-		name & Строковой & NOT~NULL & Название \\
+		name & Строковый & NOT~NULL & Название \\
 		\hline
 		sequence\_ number & Целочисленный & NOT~NULL, \newline CHECK (sequence\_number~>~0) & Порядковый номер \\
 		\hline
-		description & Строковой & NOT~NULL & Описание \\
+		description & Строковый & NOT~NULL & Описание \\
 		\hline
 		price & Вещественный & NOT~NULL, \newline CHECK~(price~>=~0) & Цена посещения \\
 		\hline
@@ -130,7 +132,7 @@
 		\hline
 		person\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор участника \\
 		\hline
-		name & Строковой & NOT~NULL & Имя \\
+		name & Строковый & NOT~NULL & Имя \\
 		\hline
 		type & Перечисляемый & NOT~NULL & Тип \\
 		\hline
@@ -149,7 +151,7 @@
 		\hline
 		menu\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор меню \\
 		\hline
-		name & Строковой & NOT~NULL & Название \\
+		name & Строковый & NOT~NULL & Название \\
 		\hline
 		cost & Вещественный & NOT~NULL, \newline CHECK~(cost~>=~0) & Стоимость \\
 		\hline
@@ -166,7 +168,7 @@
 		\hline
 		item\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор предмета \\
 		\hline
-		name & Строковой & NOT~NULL & Название \\
+		name & Строковый & NOT~NULL & Название \\
 		\hline
 		type & Перечисляемый & NOT~NULL & Тип \\
 		\hline
@@ -189,7 +191,7 @@
 		\hline
 		person\_id & UUID & NOT~NULL, \newline FOREIGN~KEY & Идентификатор участника \\
 		\hline
-		comment & Строковой & NOT~NULL & Комментарий \\
+		comment & Строковый & NOT~NULL & Комментарий \\
 		\hline
 		rating & Вещественный & NOT~NULL, \newline CHECK (rating~BETWEEN~0~AND~10) & Рейтинг \\
 		\hline
@@ -206,11 +208,11 @@
 		\hline
 		user\_id & UUID & NOT~NULL, \newline PRIMARY~KEY & Идентификатор пользователя \\
 		\hline
-		phone & Строковой & NOT~NULL & Телефон \\
+		phone & Строковый & NOT~NULL & Телефон \\
 		\hline
 		gender & Перечисляемый & NOT~NULL & Гендер \\
 		\hline
-		password & Строковой & NOT~NULL & Пароль \\
+		password & Строковый & NOT~NULL & Пароль \\
 		\hline
 		role & Перечисляемый & NOT~NULL & Роль \\
 		\hline
@@ -659,7 +661,7 @@
 	|P| = \sum_{c_i \in H(E)}{N_D(c_i)}
 \end{equation}
 
-\textit{Доказательство:} из определения $PD$ следует, что каждый участник $p \in P$ выбирает ровно одну комбинацию дней $c \subseteq D$. То есть:
+\textit{Доказательство:} из определения $PD$ следует, что каждый участник \newline $p \in P$ выбирает ровно одну комбинацию дней $c \subseteq D$. То есть:
 \begin{equation}
 	\forall p \in P \ \exists! c \in H(E): (p, c) \in PD
 \end{equation}
@@ -691,7 +693,7 @@
 	P_{max} = max_{c_i \in H(E)}{P_D(c_i)}
 \end{equation}
 
-Рассмотрим уравнение баланса:
+Рассмотрев уравнение баланса, имеем:
 \begin{equation}
 	C_E(E) = \sum_{c_i \in H(E)}{P_D(c_i) \cdot N_D(c_i)} \le max_{c_i \in H(E)}{P_D(c_i)} \cdot \sum_{c_i \in H(E)}{N_D(c_i)}
 	\label{ineq:cost-event}
@@ -748,9 +750,20 @@
 	\item Триггер расчёта рейтинга мероприятия -- обновляет средний рейтинг мероприятия при добавлении, изменении или удалении отзывов.
 \end{enumerate}
 
+Схема алгоритма работы триггера обновления стоимости меню представлена на рисунке~\ref{fig:menu-diagram}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/tg-diagram.png}
+	\caption{Схема алгоритма работы триггера обновления стоимости меню} 
+	\label{fig:menu-diagram} 
+\end{figure}
+
 \section{Архитектура приложения}
 
 Структура данного приложения основана на принципах чистой архитектуры. Данная архитектура направлена на создание систем, которые легко модифицировать и тестировать, а также которые обеспечивают высокую степень независимости от внешних факторов, таких как фреймворки, базы данных и пользовательские интерфейсы~\cite{lit10}.
+
+Слои приложения согласно принципам чистой архитектуры представлены на рисунке~\ref{fig:clean-architecture}.
 
 \begin{figure}[h]
 	\centering
@@ -765,9 +778,11 @@
 
 Поток данных в приложении инициируется взаимодействием пользователя с графическим интерфейсом, передающим действия в контроллеры слоя представления. Контроллеры перенаправляют запросы в слой бизнес-логики, где данные проходят валидацию и обработку в соответствии с установленными правилами. Бизнес-логика взаимодействует с адаптерами для выполнения операций с базой данных, после чего обработанные данные возвращаются через слои приложения в графический интерфейс для отображения.
 
+\newpage
+
 Диаграмма потока данных представлена на рисунке~\ref{fig:data-flow}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{images/data-flow.png}
 	\caption{Диаграмма потока данных} 
@@ -785,12 +800,13 @@
 	\label{fig:components-diagram} 
 \end{figure}
 
+\newpage
 
 \subsection{Диаграмма классов}
 
 Диаграмма классов представлена на рисунке~\ref{fig:class-diagram}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth]{images/uml-classes.png}
 	\caption{Диаграмма классов} 
