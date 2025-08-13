@@ -1,0 +1,307 @@
+﻿using Eventor.Common.Core;
+using Eventor.Common.Enums;
+using Eventor.Database.Core;
+using Eventor.Services.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Eventor.Services;
+
+public class PersonService : IPersonService
+{
+    private readonly IPersonRepository _personRepository;
+    private readonly ILogger<PersonService> _logger;
+
+    public PersonService(IPersonRepository personRepository, ILogger<PersonService> logger)
+    {
+        _personRepository = personRepository ?? throw new ArgumentNullException(nameof(personRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public async Task<List<Person>> GetAllPersonsAsync()
+    {
+        try
+        {
+            return await _personRepository.GetAllPersonsAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error retrieving persons");
+            throw new PersonServiceException("Failed to retrieve persons", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving persons");
+            throw new PersonServiceException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task<List<Person>> GetAllPersonsByDayAsync(Guid dayId)
+    {
+        try
+        {
+            return await _personRepository.GetAllPersonsByDayAsync(dayId);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error retrieving persons for day {DayId}", dayId);
+            throw new PersonServiceException($"Failed to retrieve persons for day {dayId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving persons for day {DayId}", dayId);
+            throw new PersonServiceException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task<List<Person>> GetAllPersonsByEventAsync(Guid eventId)
+    {
+        try
+        {
+            return await _personRepository.GetAllPersonsByEventAsync(eventId);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error retrieving persons for event {EventId}", eventId);
+            throw new PersonServiceException($"Failed to retrieve persons for event {eventId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving persons for event {EventId}", eventId);
+            throw new PersonServiceException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task<List<Person>> GetAllPersonsByUserAsync(Guid userId)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByUserAsync(userId);
+
+            return persons;
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Ошибка при получении участников пользователя {UserId}", userId);
+            throw new PersonServiceException($"Не удалось получить участников пользователя {userId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Неизвестная ошибка при обработке пользователя {UserId}", userId);
+            throw new PersonServiceException("Внутренняя ошибка сервиса", ex);
+        }
+    }
+
+    public async Task<int> GetPersonCountExcludingTypesByDayAsync(Guid dayId, List<PersonType> excludedTypes)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByDayExcludingTypesAsync(dayId, excludedTypes);
+            return persons?.Count ?? 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка подсчета участников дня {DayId} с исключением типов", dayId);
+            throw new PersonServiceException(
+                $"Не удалось подсчитать участников дня {dayId} с фильтрацией", ex);
+        }
+    }
+
+    public async Task<int> GetPersonCountExcludingTypesByDaysAsync(List<Guid> dayIds, List<PersonType> excludedTypes)
+    {
+        try
+        {
+            var persons = await _personRepository.GetAllPersonsByDaysExcludingTypesAsync(dayIds, excludedTypes);
+            return persons?.Count ?? 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ошибка подсчета участников дней с исключением типов");
+            throw new PersonServiceException(
+                "Не удалось подсчитать участников с фильтрацией по нескольким дням", ex);
+        }
+    }
+
+    public async Task<Person> GetPersonByIdAsync(Guid personId)
+    {
+        try
+        {
+            var person = await _personRepository.GetPersonByIdAsync(personId);
+            if (person == null)
+            {
+                _logger.LogError("Person {PersonId} not found", personId);
+                throw new PersonNotFoundException($"Person {personId} not found");
+            }
+            return person;
+        }
+        catch (PersonNotFoundException)
+        {
+            throw;
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error retrieving person {PersonId}", personId);
+            throw new PersonServiceException($"Failed to retrieve person {personId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error retrieving person {PersonId}", personId);
+            throw new PersonServiceException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task<Person> GetPersonByUserAndEventAsync(Guid userId, Guid eventId)
+    {
+        try
+        {
+            return await _personRepository.GetPersonByUserAndEventAsync(userId, eventId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex,
+                "Ошибка при получении участника для пользователя {UserId} и мероприятия {EventId}",
+                userId, eventId);
+            throw new PersonServiceException(
+                $"Не удалось получить участника для пользователя {userId} в мероприятии {eventId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Неизвестная ошибка при обработке пользователя {UserId} и мероприятия {EventId}",
+                userId, eventId);
+            throw new PersonServiceException(
+                "Внутренняя ошибка сервиса при получении участника", ex);
+        }
+    }
+
+    public async Task AddPersonAsync(Person person)
+    {
+        try
+        {
+            ValidatePerson(person);
+            await _personRepository.InsertPersonAsync(person);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Validation error creating person");
+            throw new PersonCreateException("Invalid person data: " + ex.Message, ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error creating person");
+            throw new PersonCreateException("Failed to create person", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error creating person");
+            throw new PersonCreateException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task<Person> AddPersonForUserAsync(string personName, Guid userId)
+    {
+        try
+        {
+            return await _personRepository.InsertPersonForUserAsync(personName, userId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Ошибка создания участника для пользователя {UserId}", userId);
+            throw new PersonServiceException($"Не удалось создать участника для пользователя {userId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Неизвестная ошибка при создании участника для пользователя {UserId}", userId);
+            throw new PersonServiceException("Внутренняя ошибка сервиса", ex);
+        }
+    }
+
+    public async Task UpdatePersonAsync(Person updatePerson)
+    {
+        try
+        {
+            ValidatePerson(updatePerson);
+            await _personRepository.UpdatePersonAsync(updatePerson);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Validation error updating person {PersonId}", updatePerson.Id);
+            throw new PersonUpdateException("Invalid person data: " + ex.Message, ex);
+        }
+        catch (PersonNotFoundException)
+        {
+            throw;
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error updating person {PersonId}", updatePerson.Id);
+            throw new PersonUpdateException($"Failed to update person {updatePerson.Id}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error updating person {PersonId}", updatePerson.Id);
+            throw new PersonUpdateException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task DeletePersonAsync(Guid personId)
+    {
+        try
+        {
+            var existingPerson = await GetExistingPerson(personId);
+            await _personRepository.DeletePersonAsync(personId);
+        }
+        catch (PersonNotFoundException)
+        {
+            throw;
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Error deleting person {PersonId}", personId);
+            throw new PersonDeleteException($"Failed to delete person {personId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error deleting person {PersonId}", personId);
+            throw new PersonDeleteException("Unexpected error occurred", ex);
+        }
+    }
+
+    public async Task DeletePersonForUserAsync(Guid eventId, Guid userId)
+    {
+        try
+        {
+            await _personRepository.DeletePersonForUserAsync(eventId, userId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex,
+                "Ошибка удаления участника для пользователя {UserId} в мероприятии {EventId}",
+                userId, eventId);
+            throw new PersonServiceException(
+                $"Не удалось удалить участника для пользователя {userId} в мероприятии {eventId}", ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Неизвестная ошибка при удалении участника для пользователя {UserId} в мероприятии {EventId}",
+                userId, eventId);
+            throw new PersonServiceException("Внутренняя ошибка сервиса", ex);
+        }
+    }
+
+    private async Task<Person> GetExistingPerson(Guid personId)
+    {
+        var person = await _personRepository.GetPersonByIdAsync(personId);
+        return person ?? throw new PersonNotFoundException($"Person {personId} not found");
+    }
+
+    private void ValidatePerson(Person person)
+    {
+        if (string.IsNullOrWhiteSpace(person.Name))
+            throw new ArgumentException("Person name is required");
+    }
+}

@@ -1,0 +1,18 @@
+CREATE ROLE admin WITH LOGIN PASSWORD 'admin';
+CREATE ROLE user_role WITH LOGIN PASSWORD 'user';
+CREATE ROLE guest WITH LOGIN PASSWORD 'guest';
+
+-- Для администратора
+GRANT ALL PRIVILEGES ON DATABASE eventor TO admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO admin;
+
+-- Для пользователя (user_role)
+GRANT CONNECT ON DATABASE eventor TO user_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO user_role;
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO user_role;
+
+-- Для гостя
+GRANT CONNECT ON DATABASE eventor TO guest;
+GRANT SELECT ON TABLE users TO guest;
+GRANT INSERT ON TABLE users TO guest;

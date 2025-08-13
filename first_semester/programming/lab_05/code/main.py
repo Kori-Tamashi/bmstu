@@ -1,0 +1,84 @@
+# <имя> <фамилия> <группа>
+# Программа поиска суммы бесконечного ряда с заданной точностью за определенное количество итераций
+
+table_width = 75    # ширина таблицы значений
+flt_inpt_err_msg = 'Ошибка: введите вещественное числовое значение'
+pint_inpt_err_msg = 'Ошибка: введите натуральное числовое значение'
+pflt_inpt_err_msg = 'Ошибка: введите положительное вещественное числовое значение'
+
+# Ввод входных значений
+while True:
+    try:
+        x = float(input('Введите значение аргумента X: '))
+        break
+    except ValueError:
+        print(flt_inpt_err_msg)
+
+while True:
+    try:
+        eps = float(input('Введите точность, с которой требуется вычислить сумму: '))
+        if eps > 0:
+            break
+        else:
+            print(pflt_inpt_err_msg)
+    except ValueError:
+        print(pflt_inpt_err_msg)
+
+while True:
+    try:
+        n = int(input('Введите количество итераций, за которое требуется вычислить сумму: '))
+        if n > 0:
+            break
+        else:
+            print(pint_inpt_err_msg)
+    except ValueError:
+        print(pint_inpt_err_msg)
+
+while True:
+    try:
+        h = int(input('Введите значение шага печати: '))
+        if h > 0:
+            break
+        else:
+            print(pint_inpt_err_msg)
+    except ValueError:
+        print(pint_inpt_err_msg)
+
+
+# Вывод таблицы
+full_column_width = table_width - 10
+column_width = full_column_width // 3
+separator = '-' * (table_width - (full_column_width % 3))
+header_format = f"| {'№ итерации':^{column_width}} | {'t':^{column_width}} | {'s':^{column_width}} |"
+
+print(separator)
+print(header_format)
+print(separator)
+print(f"| {1:^{column_width}} | {1:^{column_width}g} | {1:^{column_width}g} |")
+
+s = 1
+t_last = 1
+counter = h
+is_accurate = False
+for i in range(n):
+    t_current = -t_last * (2 * i - 1) / (2 * i + 2) * x
+    s += t_current
+
+    if abs(t_current) < eps:
+        is_accurate = True
+        break
+
+    if i + 1 == counter:
+        print(f"| {(counter + 1):^{column_width}} | {t_current:^{column_width}g} | {s:^{column_width}g} |")
+        counter += h
+
+    t_last = t_current
+
+print(separator)
+
+
+# Вывод результата
+if is_accurate:
+    print(f"Сумма бесконечного ряда равна {s:.5g}, вычислена за {i + 1} итераций")
+else:
+    print('За введенное количество итераций не удалось вычислить сумму с заданной точностью')

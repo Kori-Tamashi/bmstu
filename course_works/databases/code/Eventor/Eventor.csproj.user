@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Compile Update="Eventor\GUI\DayForm\DayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\DayOrganizationForm\DayOrganizationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\EventCreateForm\EventCreateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\EventForm\EventForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\EventOrganizationForm\EventOrganizationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\FeedbackCreateForm\FeedbackCreateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\FeedbackForm\FeedbackForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\FeedbacksForm\FeedbacksForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\ItemCreateForm\ItemCreateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\LocationCreateForm\LocationCreateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\LoginForm\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\MainWindow\MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\ParticipantsForm\ParticipantsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Eventor\GUI\ParticipationForm\ParticipationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Eventor": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "sqlDebugging": false
+    }
+  }
+}
