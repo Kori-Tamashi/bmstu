@@ -32,6 +32,24 @@
 	}
 }
 
+% Установка заголовков РПЗ
+\renewcommand{\titlepagenotetitle}[2]
+{
+	{
+		\LARGE \bfseries
+		РАСЧЕТНО-ПОЯСНИТЕЛЬНАЯ ЗАПИСКА \\
+	}
+	\vspace{5mm}
+	{
+		\Large \itshape
+		#1 \\
+		\vspace{5mm}
+		НА ТЕМУ: \\
+		\vspace{5mm}
+		<<#2>> \\
+	}
+}
+
 % Создание страницы определений
 \renewenvironment{definitions}
 {
@@ -90,3 +108,6 @@
 			\adddot
 			\thefield{urlyear}}})
 }
+
+% Переопределение списков
+\setlist[itemize]{label=--}
