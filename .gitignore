@@ -15,7 +15,7 @@ obj/
 *.bbl
 *.bcf
 *.blg
-*.run
+*.run.xml
 
 /*.vscode*
 /*.idea*
