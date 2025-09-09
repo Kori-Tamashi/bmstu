@@ -12,6 +12,10 @@ obj/
 *.toc
 *.log
 *.synctex*
+*.bbl
+*.bcf
+*.blg
+*.run
 
 /*.vscode*
 /*.idea*
