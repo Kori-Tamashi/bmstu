@@ -1,0 +1,28 @@
+workspace {
+
+    model {
+        client = person "Клиент" "Обращается с запросами к серверу."
+    
+        Server = softwareSystem "Сервер" "Система для отдачи статического содержимого с диска." {
+            masterProcess = container "Главный процесс" "Управляет рабочими процессами и распределением соединений." "Server-side Application"
+            workerProcess = container "Дочерний процесс" "Рабочий процесс" "Обрабатывает HTTP-запросы." "Server-side Application"
+            logSystem = container "Система логирования" "Сохраняет журнал событий сервера" "Log File"
+        }
+        
+        physicalStorage = softwareSystem "Физическое хранилище" "Система хранения статического содержимого."
+        
+        client -> workerProcess "Отправляет HTTP запросы (GET/HEAD)"
+        masterProcess -> workerProcess "Создает и управляет"
+        workerProcess -> physicalStorage "Читает статическое содержимое"
+        workerProcess -> logSystem "Записывает события и ошибки"
+    }
+    
+    views {
+        systemContext Server {
+            include *
+            autolayout lr
+        }
+
+        theme defaults
+    }
+}
