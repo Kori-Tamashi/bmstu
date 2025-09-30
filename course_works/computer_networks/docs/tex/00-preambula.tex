@@ -1,3 +1,12 @@
+\usepackage{graphicx} % Для \includegraphics
+\usepackage{rotating}
+\usepackage{adjustbox}
+\RequirePackage{float}
+\RequirePackage{wrapfig}
+\RequirePackage{tikzscale}
+\RequirePackage{rotating} % For \rotatebox command
+\RequirePackage{calc}  
+
 % Создание шапки титульной страницы
 \renewcommand{\titlepageheader}[2]
 {
@@ -108,6 +117,49 @@
 			\adddot
 			\thefield{urlyear}}})
 }
+
+% Improved command for creating a figure
+\renewcommand{\includeimage}[6]% Now has 6 mandatory arguments
+{
+	\ifthenelse{\equal{#2}{f}}
+	{
+		\ifthenelse{\equal{#6}{y}}% Check the rotation flag
+		{
+			% Use a standard figure environment and rotate contents with adjustbox
+			\begin{figure}[#3] % The placement specifier #3 is now used
+				\centering
+				\begin{adjustbox}{addcode={\begin{minipage}{\width}}{\caption{#5}\label{img:#1}\end{minipage}},rotate=90,center}
+					\includegraphics[width=#4]{inc/img/#1}%
+				\end{adjustbox}
+			\end{figure}
+		}% Rotate if 'y'
+		{
+			% Standard figure if no rotation is needed
+			\begin{figure}[#3]
+				\centering
+				\includegraphics[width=#4]{inc/img/#1}
+				\caption{#5}
+				\label{img:#1}
+			\end{figure}
+		}% Original if not 'y'
+	}
+	{
+		\ifthenelse{\equal{#2}{w}}
+		{
+			\PackageWarning{bmstu}{The 'wrapfigure' environment and rotation ('y') are not simultaneously implemented in this example. Using unrotated version.}
+			\begin{wrapfigure}{#3}{#4}
+				\centering
+				\includegraphics[width=#4]{inc/img/#1}
+				\caption{#5}
+				\label{img:#1}
+			\end{wrapfigure}
+		}
+		{
+			\PackageError{bmstu}{unknown image type}{}    
+		}
+	}
+}
+
 
 % Переопределение списков
 \setlist[itemize]{label=--}

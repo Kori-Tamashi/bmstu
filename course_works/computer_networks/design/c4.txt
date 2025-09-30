@@ -1,0 +1,84 @@
+workspace {
+
+    model {
+    
+        client = person "Клиент" "Обращается с запросами к серверу"
+    
+        Server = softwareSystem "Сервер" "Система для отдачи статического содержимого с диска" {
+            
+             masterProcess = container "Главный процесс" "Управляет рабочими процессами и распределением соединений" "Process" {
+                connectionDistributor = component "Connection Distributor" "Распределяет входящие соединения между рабочими процессами" "C Module"
+                preforkManager = component "Prefork Manager" "Управляет созданием и поддержанием пула рабочих процессов" "C Module"
+                masterLogger = component "Master Logger" "Логирует события главного процесса" "C Module"
+            }
+            
+            workerProcess = container "Рабочий процесс" "Обрабатывает HTTP-запросы" "Process" {
+                connectionHandler = component "Connection Handler" "Обрабатывает запросы клиента" "C Module"
+                requestParser = component "HTTP Request Parser" "Анализирует входящие HTTP-запросы" "C Module"
+                responseBuilder = component "HTTP Response Builder" "Формирует HTTP-ответы с соответствующими статусами" "C Module"
+                securityModule = component "Security Module" "Обеспечивает базовые меры безопасности" "C Module"
+                fileReader = component "File Reader" "Читает статические файлы с диска" "C Module"
+                workerLogger = component "Worker Logger" "Логирует события рабочего процесса" "C/C++ Module"
+            }
+            
+            logSystem = container "Система логирования" "Сохраняет журнал событий сервера" "Log File"
+        }
+        
+        physicalStorage = softwareSystem "Физическое хранилище" "Система хранения статического содержимого."
+        
+        // Контекст
+        client -> connectionHandler "Посылает HTTP-запрос"
+        client -> connectionDistributor "Устанавливает соединение"
+        connectionHandler -> client "Посылает HTTP-ответ"
+        
+        
+        // Внутренние связи между компонентами главного процесса
+        connectionDistributor -> preforkManager "Запрашивает информацию о доступных процессах"
+        connectionDistributor -> connectionHandler "Передает установленное соединение"
+        connectionDistributor -> masterLogger "Логирует распределение соединений"
+        preforkManager -> workerProcess "Создает и управляет"
+        preforkManager -> masterLogger "Логирует создание/завершение процессов"
+        masterLogger -> logSystem "Передает записи для логирования"
+        
+        
+        // Внутренние связи между компонентами рабочего процесса
+        connectionHandler -> requestParser "Передает данные запроса"
+        connectionHandler -> workerLogger "Логирует события соединений"
+        requestParser -> responseBuilder "Передает разобранный запрос"
+        requestParser -> workerLogger "Логирует детали запросов"
+        responseBuilder -> securityModule "Проверяет безопасность запросов"
+        responseBuilder -> workerLogger "Логирует формирование ответа"
+        securityModule -> workerLogger "Логирует нарушения безопасности"
+        responseBuilder -> fileReader "Запрашивает содержимое для отдачи"
+        fileReader -> physicalStorage "Читает статическое содержимое"
+        fileReader -> workerLogger "Логирует операции чтения файлов"
+        workerLogger -> logSystem "Передает записи для логирования"
+    }
+    
+    views {
+    
+        systemContext Server {
+            include *
+        }
+    
+        container Server {
+            include *
+        }
+        
+        component masterProcess {
+            include *
+        }
+        
+        component workerProcess {
+            include *
+        }
+        
+        theme default
+        
+        styles {
+            relationship "Relationship" {
+                color #ffffff
+            }
+        }
+    }
+}
