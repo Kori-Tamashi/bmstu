@@ -1,0 +1,27 @@
+[2025-10-01 01:01:05] [INFO]  [MASTER] [PID:50969] distributor_accept_connection: accepted connection from 127.0.0.1:35566 (socket_fd 10)
+[2025-10-01 01:01:05] [INFO]  [MASTER] [PID:50969] distributor_conn_delegate: delegated connection to worker with PID 50972
+[2025-10-01 01:01:05] [INFO]  [WORKER] [PID:50972] connection_handler_new_connection_handle: new client connected, socket_fd 10
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_recieve_request: request text - HEAD /test.txt HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/7.81.0
+Accept: */*
+
+
+[2025-10-01 01:01:05] [INFO]  [WORKER] [PID:50972] connection_handler_http_request_handle: request from sock_fd 10 succesfully recieved
+[2025-10-01 01:01:05] [INFO]  [WORKER] [PID:50972] connection_handler_http_request_handle: request from sock_fd 10 succesfully parsed
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_http_request_handle: request method:  "HEAD"
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_http_request_handle: request path:    "/test.txt"
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_http_request_handle: request version: "HTTP/1.1"
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_http_request_handle: request header:  "Host: localhost:8080"
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_http_request_handle: request header:  "User-Agent: curl/7.81.0"
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_http_request_handle: request header:  "Accept: */*"
+[2025-10-01 01:01:05] [INFO]  [WORKER] [PID:50972] connection_handler_http_request_handle: response for sock_fd 10 succesfully created
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_send_response: http_response_text - HTTP/1.1 200 OK
+Server: Simple HTTP Server
+Connection: close
+Content-Type: text/plain
+Content-Length: 11
+
+
+[2025-10-01 01:01:05] [DEBUG]  [WORKER] [PID:50972] connection_handler_send_response: body length - 0
+[2025-10-01 01:01:05] [INFO]  [WORKER] [PID:50972] connection_handler_http_request_handle: response for sock_fd 10 succesfully has been sent

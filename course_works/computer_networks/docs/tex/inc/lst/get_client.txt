@@ -1,0 +1,4 @@
+kori@kori:~/bmstu/cw_cn/test$ curl http://localhost:8080/test.txt -O
+% Total % Received % Xferd Average Speed Time  Time  Time Current
+                           Dload  Upload Total Spent Left Speed
+100 11  100 11     0 0    779  0 --:--:-- --:--:-- --:--:-- 846

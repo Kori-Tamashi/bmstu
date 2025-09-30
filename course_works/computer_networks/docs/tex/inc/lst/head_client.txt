@@ -1,0 +1,6 @@
+kori@kori:~/bmstu/cw_cn/test$ curl http://localhost:8080/test.txt -I
+HTTP/1.1 200 OK
+Server: Simple HTTP Server
+Connection: close
+Content-Type: text/plain
+Content-Length: 11

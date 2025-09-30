@@ -1,0 +1,20 @@
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] main: logger created
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] distributor_socket_create: socket created successfully on port 8080
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] distributor_ctxt_create: connection distributor created successfully
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] main: connection distributor created
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] worker_pool_processes_create: creating 3 worker processes
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] worker_pool_process_create: created worker process with PID 50970
+[2025-10-01 00:57:30] [DEBUG]  [MASTER] [PID:50969] worker_pool_processes_create: worker 0 created with PID 50970
+[2025-10-01 00:57:30] [INFO]  [WORKER] [PID:50970] connection_handler_handler: worker process with PID 50970 started
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] worker_pool_process_create: created worker process with PID 50971
+[2025-10-01 00:57:30] [DEBUG]  [MASTER] [PID:50969] worker_pool_processes_create: worker 1 created with PID 50971
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] worker_pool_process_create: created worker process with PID 50972
+[2025-10-01 00:57:30] [INFO]  [WORKER] [PID:50971] connection_handler_handler: worker process with PID 50971 started
+[2025-10-01 00:57:30] [INFO]  [WORKER] [PID:50972] connection_handler_handler: worker process with PID 50972 started
+[2025-10-01 00:57:30] [DEBUG]  [MASTER] [PID:50969] worker_pool_processes_create: worker 2 created with PID 50972
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] worker_pool_processes_create: successfully created 3 worker processes
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] main: worker pool created
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] main: distributor thread created
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] main: worker pool thread created
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] distributor_listening: starting connection distribution
+[2025-10-01 00:57:30] [INFO]  [MASTER] [PID:50969] worker_pool_monitoring: starting worker pool monitoring
