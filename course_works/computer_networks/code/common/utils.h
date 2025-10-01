@@ -48,4 +48,8 @@ bool is_file_in_directory(const char* directory, const char* filename);
 
 char* absolute_path(const char* folder, const char* filename);
 
+bool process_is_alive(pid_t pid);
+
+bool process_is_terminated(pid_t pid);
+
 #endif // UTILS_H__s

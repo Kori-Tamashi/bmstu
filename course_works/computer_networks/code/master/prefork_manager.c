@@ -4,10 +4,7 @@
 #define CHILD_PROCESS     0
 #define WORKER__          worker_info_init()
 
-static inline bool process_is_alive(pid_t pid)
-{
-    return (kill(pid, 0) == 0) ? true : errno != ESRCH;
-}
+
 
 static inline worker_info_t worker_info_init()
 {
@@ -85,7 +82,7 @@ error_t worker_pool_process_create(worker_info_t *w_info, logger_t* logger)
     if (w_info->pid == CHILD_PROCESS) {
         logger_t* worker_logger = logger_init(LOG_TARGET, NULL, WORKER);
         if (IS_NULL(worker_logger)) 
-            return EXIT_FAILURE;
+            exit(EXIT_FAILURE);
 
         w_info->pid = getpid();
         w_info->logger = worker_logger;
@@ -93,12 +90,11 @@ error_t worker_pool_process_create(worker_info_t *w_info, logger_t* logger)
 
         if (IS_ERROR(connection_handler_listening(w_info))) {
             logger_free(worker_logger);
-            return EXIT_FAILURE;
+            exit(EXIT_FAILURE);
         }
             
         logger_free(worker_logger);
-
-        return EXIT_SUCCESS;
+        exit(EXIT_SUCCESS);
     } else {
         LOG_INFO(logger, "worker_pool_process_create: created worker process with PID %d", w_info->pid);
     }
@@ -228,13 +224,73 @@ bool worker_pool_is_max_workers(worker_pool_t* wp)
     return wp->worker_count == MAX_WORKERS;
 }
 
+static inline size_t worker_pool_process_count_open_fds(pid_t pid)
+{
+    char path[PATH_MAX];
+    snprintf(path, sizeof(path), "/proc/%d/fd", pid);
+    
+    DIR *dir = opendir(path);
+    if (IS_NULL(dir)) 
+        return __INT_MAX__; 
+    
+    size_t count = 0;
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+            count++;
+        }
+    }
+    
+    closedir(dir);
+    return count;
+}
+
+static inline worker_info_t* worker_pool_get_worker_with_min_fds(worker_pool_t* wp)
+{
+    if (IS_NULL(wp) || wp->worker_count == 0) 
+        return NULL;
+    
+    worker_info_t* best_worker = NULL;
+    size_t min_fds = __INT_MAX__;
+    
+    for (size_t i = 0; i < wp->worker_count; i++) {
+        worker_info_t* worker = &wp->workers[i];
+        
+        if (!process_is_alive(worker->pid) || process_is_terminated(worker->pid)) 
+            continue;
+        
+        size_t fds_count = worker_pool_process_count_open_fds(worker->pid);
+        LOG_DEBUG(wp->logger, "distributor_get_worker_with_min_fds: worker %d has %zu open fds", 
+                 worker->pid, fds_count);
+        
+        if (fds_count < min_fds) {
+            min_fds = fds_count;
+            best_worker = worker;
+        }
+    }
+    
+    if (best_worker) {
+        LOG_DEBUG(wp->logger, "distributor_get_worker_with_min_fds: selected worker %d with %zu fds", 
+                 best_worker->pid, min_fds);
+    }
+    
+    return best_worker;
+}
+
+worker_info_t* worker_pool_get_rand_worker(worker_pool_t* wp) 
+{
+    if (IS_NULL(wp)) 
+        return NULL;
+
+    return wp->workers + (rand() % wp->worker_count);
+}
+
 worker_info_t* worker_pool_get_worker(worker_pool_t* wp)
 {
     if (IS_NULL(wp)) 
         return NULL;
     
-    int worker_index = rand() % wp->worker_count;
-    return wp->workers + worker_index;
+    return worker_pool_get_worker_with_min_fds(wp);
 }
 
 static inline void worker_pool_processes_check(worker_pool_t* wp)
@@ -243,7 +299,7 @@ static inline void worker_pool_processes_check(worker_pool_t* wp)
         return;
     
     for (int i = 0; i < wp->worker_count; i++) {
-        if (!process_is_alive(wp->workers[i].pid)) {
+        if (!process_is_alive(wp->workers[i].pid) || process_is_terminated(wp->workers[i].pid)) {
             LOG_WARNING(wp->logger, "worker_pool_processes_check: worker process with PID %d is not alive, restarting", wp->workers[i].pid);
             if (IS_ERROR(worker_pool_process_create(wp->workers + i, wp->logger))) {
                 LOG_ERROR(wp->logger, "worker_pool_processes_check error: failed to restart worker process %d", wp->workers[i].pid);

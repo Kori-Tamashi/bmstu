@@ -24,12 +24,13 @@
 #define EXIT_FAILURE -1
 
 #define LOG_TARGET LOG_TARGET_ERRORS
+#define LOG_FILENAME "log.txt"
 
 #define SERVER_PORT 8080
 #define MAX_CONNECTIONS 1024
 
 #define MAX_WORKERS 10
-#define MIN_WORKERS 3
+#define MIN_WORKERS 10
 
 #define DEFAULT_BASE_DIR "base"
 #define DEFAULT_FILE "index.html"

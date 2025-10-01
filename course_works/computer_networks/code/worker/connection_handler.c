@@ -117,7 +117,7 @@ static inline error_t connection_handler_send_response_by_status(worker_info_t* 
     if (!IS_NULL(http_response->body) && http_response->body_length > 0) {
         size_t body_sent = 0;
         while (body_sent < http_response->body_length) {
-            bytes_sent = send(conn_sock_fd, http_response->body + body_sent, MIN(8128, http_response->body_length - body_sent), MSG_NOSIGNAL);
+            bytes_sent = send(conn_sock_fd, http_response->body + body_sent, MIN(2 * 8128, http_response->body_length - body_sent), MSG_NOSIGNAL);
             if (IS_ERROR(bytes_sent)) {
                 LOG_ERROR(w->logger, "connection_handler_send_response_by_status error: http response body send failed");
                 free(http_response_text);
@@ -169,7 +169,7 @@ static inline error_t connection_handler_send_response(worker_info_t* w, http_re
     if (!IS_NULL(http_response->body) && http_response->body_length > 0) {
         size_t body_sent = 0;
         while (body_sent < http_response->body_length) {
-            bytes_sent = send(conn_sock_fd, http_response->body + body_sent, MIN(8128, http_response->body_length - body_sent), MSG_NOSIGNAL);
+            bytes_sent = send(conn_sock_fd, http_response->body + body_sent, MIN(2 * 8128, http_response->body_length - body_sent), MSG_NOSIGNAL);
             if (IS_ERROR(bytes_sent) && errno != EAGAIN && errno != EWOULDBLOCK) {
                 LOG_ERROR(w->logger, "connection_handler_send_response error: http response body send failed");
                 free(http_response_text);

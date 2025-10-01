@@ -54,7 +54,7 @@ static inline int distributor_socket_create(distributor_cfg_t d_cfg, logger_t* l
         return EXIT_FAILURE;
     }
 
-    if (IS_ERROR(listen(listen_sock, MAX_CONNECTIONS))) {
+    if (IS_ERROR(listen(listen_sock, MAX_WORKERS * MAX_CONNECTIONS))) {
         LOG_ERROR(logger, "distributor_socket_create error: failed to listen on socket: %s", strerror(errno));
         close(listen_sock);
         return EXIT_FAILURE;
@@ -129,6 +129,10 @@ error_t distributor_accept_connection(distributor_ctxt_t* d_ctxt, conn_cfg_t* co
     return EXIT_SUCCESS;
 }
 
+
+
+
+
 static inline error_t distributor_conn_delegate(conn_cfg_t* conn, worker_pool_t* wp)
 {
     if (IS_NULL(wp)) 
@@ -140,7 +144,7 @@ static inline error_t distributor_conn_delegate(conn_cfg_t* conn, worker_pool_t*
     }
 
     worker_info_t* w_info = worker_pool_get_worker(wp);
-    if (IS_NULL(w_info)) {
+    if (IS_NULL(w_info) || wp->worker_count == 0) {
         LOG_DEBUG(wp->logger, "distributor_conn_delegate: no idle workers available");
         
         if (worker_pool_is_max_workers(wp)) {

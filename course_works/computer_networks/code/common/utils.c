@@ -332,3 +332,27 @@ char* absolute_path(const char* folder, const char* filename)
 
     return absolute_path;
 }
+
+bool process_is_alive(pid_t pid)
+{
+    if (IS_ERROR(pid)) 
+        return false;
+
+    return (kill(pid, 0) == 0) ? true : errno != ESRCH;
+}
+
+bool process_is_terminated(pid_t pid)
+{
+    if (IS_ERROR(pid)) 
+        return true;
+    
+    int status;
+    pid_t result = waitpid(pid, &status, WNOHANG);
+    
+    if (result == 0)
+        return false;
+    else if (result == pid) 
+        return true;
+    
+    return errno == ECHILD;
+}

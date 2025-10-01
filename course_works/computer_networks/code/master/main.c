@@ -42,7 +42,7 @@ int main(void)
     if (signal(SIGINT, sig_handler) == SIG_ERR)
         return EXIT_FAILURE;
 
-    logger = logger_init(LOG_TARGET, NULL, MASTER);
+    logger = logger_init(LOG_TARGET, LOG_FILENAME, MASTER);
     if (IS_NULL(logger)) 
         return EXIT_FAILURE;
     else
