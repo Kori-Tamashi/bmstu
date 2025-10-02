@@ -1,0 +1,5 @@
+kori@kori:~/bmstu/cw_cn/test$ curl -X POST -d {"data": "value"} http://localhost:8080/
+HTTP/1.1 405 Method Not Allowed
+Server: Simple HTTP Server
+Connection: close
+Allowed: GET, HEAD
