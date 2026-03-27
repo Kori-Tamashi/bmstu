@@ -1,0 +1,5 @@
+{
+    "target_size": [224, 224],
+    "margin": 0.1,
+    "min_face_size": [40, 40]
+}

@@ -1,0 +1,9 @@
+{
+  "cnn_model_name": "efficientnet_b1",
+  "vit_model_name": "google/vit-base-patch16-224-in21k",
+  "fusion_dim": 512,
+  "dropout_rate": 0.3,
+  "num_classes": 1,
+  "threshold": 0.5,
+  "input_size": [224, 224]
+}
