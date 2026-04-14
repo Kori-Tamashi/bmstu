@@ -1,0 +1,172 @@
+\usepackage{tikz}
+\usepackage{pdfpages}
+\usepackage{xcolor}
+\usepackage{float}
+\usetikzlibrary{fit, calc, positioning, matrix, arrows.meta, shadows}
+
+% Вариант 1: Создание команды \highlight
+\newcommand{\highlight}[1]{\colorbox{yellow!50}{#1}}
+
+% Создание шапки титульной страницы
+\renewcommand{\titlepageheader}[2]
+{
+	\begin{wrapfigure}[7]{l}{0.14\linewidth}
+		\vspace{3.4mm}
+		\hspace{-8mm}
+		\includegraphics[width=0.89\linewidth]{bmstu-logo}
+	\end{wrapfigure}
+	
+	{
+		\singlespacing \small
+		Министерство науки и высшего образования Российской Федерации \\
+		Федеральное государственное автономное образовательное учреждение \\
+		высшего образования \\
+		<<Московский государственный технический университет \\
+		имени Н.~Э.~Баумана \\
+		(национальный исследовательский университет)>> \\
+		(МГТУ им. Н.~Э.~Баумана) \\
+	}
+	
+	\vspace{-4.2mm}
+	\vhrulefill{0.9mm} \\
+	\vspace{-7mm}
+	\vhrulefill{0.2mm} \\
+	\vspace{2.8mm}
+	
+	{
+		\small
+		ФАКУЛЬТЕТ \longunderline{<<#1>>} \\
+		\vspace{3.3mm}
+		КАФЕДРА \longunderline{<<#2>>} \\
+	}
+}
+
+% Установка заголовков РПЗ
+\renewcommand{\titlepagenotetitle}[2]
+{
+	{
+		\LARGE \bfseries
+		РАСЧЕТНО-ПОЯСНИТЕЛЬНАЯ ЗАПИСКА \\
+	}
+	\vspace{5mm}
+	{
+		\Large \itshape
+		#1 \\
+		\vspace{5mm}
+		НА ТЕМУ: \\
+		\vspace{5mm}
+		<<#2>> \\
+	}
+}
+
+% Создание страницы определений
+\renewenvironment{definitions}
+{
+	\chapter*{ОПРЕДЕЛЕНИЯ}
+	\addcontentsline{toc}{chapter}{ОПРЕДЕЛЕНИЯ}
+	
+	В настоящей расчетно-пояснительной записке применяют следующие термины с соответствующими определениями.
+	
+	\begin{description}[leftmargin=0pt]
+	}
+	{
+	\end{description}
+}
+
+% Создание страницы обозначений и сокращений
+\renewenvironment{abbreviations}
+{
+	\chapter*{ОБОЗНАЧЕНИЯ И СОКРАЩЕНИЯ}
+	\addcontentsline{toc}{chapter}{ОБОЗНАЧЕНИЯ И СОКРАЩЕНИЯ}
+	
+	В настоящей расчетно-пояснительной записке применяют следующие сокращения и обозначения.
+	
+	\begin{description}[leftmargin=0pt]
+	}
+	{
+	\end{description}
+}
+
+\RequirePackage{enumitem}
+\newcommand{\abbreviation}[2]
+{
+	\item \noindent #1 --- #2
+}
+
+\newcommand{\ssr}[1]
+{
+	\chapter{#1}
+	\addcontentsline{toc}{chapter}{#1}  
+}
+
+\newcommand{\ssrno}[1]
+{
+	\chapter*{#1}
+	\addcontentsline{toc}{chapter}{#1}  
+}
+
+
+% Переопределение формата даты обращения
+\DeclareFieldFormat{urldate}
+{%
+	(дата~обращения:%
+	\addspace
+	\iffieldundef{urlday}{}{\ifnumless{\thefield{urlday}}{10}{0\thefield{urlday}}{\thefield{urlday}}%
+		\adddot
+		\iffieldundef{urlmonth}{}{\ifnumless{\thefield{urlmonth}}{10}{0\thefield{urlmonth}}{\thefield{urlmonth}}%
+			\adddot
+			\thefield{urlyear}}})
+}
+
+% Переопределение списков
+\setlist[itemize]{label=---}
+
+% Команды для различных типов слоев
+\newcommand{\convlayer}[4][]{
+	% Сверточный слой
+	\foreach \i in {0,...,#4} {
+		\node[layer, convcolor, right=2cm of #2, yshift=\i*(-6pt)+(#4*3pt), xshift=\i*(-6pt)+(#4*3pt), #1] (#3\i) {};
+	}
+}
+
+\newcommand{\poollayer}[4][]{
+	% Подвыборочный слой
+	\foreach \i in {0,...,#4} {
+		\node[smalllayer, poolcolor, right=2.5cm of #2, yshift=\i*(-6pt)+(#4*3pt), xshift=\i*(-6pt)+(#4*3pt), #1] (#3\i) {};
+	}
+}
+
+\newcommand{\fclayer}[4][]{
+	% Полносвязный слой
+	\foreach \i in {0,...,#4} {
+		\node[fclayer, fccolor, right=2.75cm of #2, yshift=\i*(-6pt)+(#4*3pt), xshift=\i*(-6pt)+(#4*3pt), #1] (#3\i) {};
+	}
+}
+
+% Команда для капсульных слоев
+\newcommand{\capsulelayer}[4][]{
+	% Капсульный слой
+	\foreach \i in {0,...,#4} {
+		\node[layer, capsulecolor, right=2.5cm of #2, yshift=\i*(-6pt)+(#4*3pt), xshift=\i*(-6pt)+(#4*3pt), #1] (#3\i) {};
+	}
+}
+
+% Команда для капсульных слоев
+\newcommand{\attentionlayer}[4][]{
+	% Капсульный слой
+	\foreach \i in {0,...,#4} {
+		\node[layer, attentioncolor, right=2.5cm of #2, yshift=\i*(-6pt)+(#4*3pt), xshift=\i*(-6pt)+(#4*3pt), #1] (#3\i) {};
+	}
+}
+
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+\makeatletter
+\renewcommand*{\l@chapter}[2]{
+	\ifnum \c@tocdepth>\m@ne
+	\addpenalty{-\@highpenalty}
+	\vskip 1em \@plus.2em
+	\@dottedtocline{0}{0pt}{1.5em}{\bfseries #1}{\bfseries #2}
+	\fi
+}
+\makeatother

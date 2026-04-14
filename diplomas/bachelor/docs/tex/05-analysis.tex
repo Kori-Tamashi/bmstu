@@ -1,0 +1,1090 @@
+\chapter{Аналитический раздел}
+
+В данном разделе представлены анализ предметной области, анализ известных нейросетевых решений, классификация и сравнительный анализ рассмотренных решений, формализации изображения и задачи.
+
+\section{Анализ предметной области}
+
+\textit{Признак генерации} -- это опирающийся на технологии машинного обучения целенаправленно созданный атрибут медиапродукта (видео, фотографии, аудиозаписи). Изображение, содержащее признак генерации, называется \textit{поддельным}, если имеющийся на нём достоверно установленный признак направлен на формирование у целевых аудиторий фальсифицированного образа социального субъекта с целью получения выгоды или нанесения ущерба. Такие изображения представляют серьезную угрозу для доверия к цифровому контенту~\cite{spb-uni}.
+
+В данном разделе представляется история возникновения поддельных изображений и применение методов обнаружения признаков генерации на изображении.
+
+\subsection{История возникновения поддельных изображений}
+
+Исследования в области автоматизированного синтеза визуального контента начались в конце 1990-х годов. В 1997 году была представлена программа <<Video Rewrite>>, которая позволяла формировать видеоряд, где артикуляционная мимика лица соответствовала синтезированной аудиодорожке~\cite{video-rewrite}. Эти разработки носили академический характер и были доступны ограниченному кругу специалистов. Эволюция технологий продолжилась в последующие два десятилетия, включая такие проекты, как использование цифрового аватара Одри Хепберн в рекламной кампании 2014 года и омоложение лиц актёров в кинематографе, например, в фильме <<Ирландец>> 2019 года~\cite{audrey-hepburn}\cite{flux}. В данный период синтез видеоконтента в значительной степени оставался процессом, контролируемым разработчиками.
+
+Существенный прогресс в развитии технологии произошел в 2014 году с разработкой Яном Гудфеллоу программного метода генеративно-состязательных ИНС~\cite{gan}. Данный метод основан на использовании двух конкурирующих искусственных нейронных сетей: генератора, создающего синтетические данные, и дискриминатора, задачей которого является обнаружение сгенерированных образцов среди всего набора данных. 
+
+Широкое распространение поддельные изображения получили в 2017 году, когда пользователь платформы Reddit под псевдонимом <<Deepfakes>> опубликовал серию видеороликов с заменой лиц знаменитостей. Это событие продемонстрировало потенциал технологии глубокого обучения ИНС и вызвало значительный общественный резонанс~\cite{spb-uni}.
+
+\subsection{Применение методов обнаружения признаков генерации на изображении}
+
+Методы обнаружения признаков генерации на изображении используются в следующих областях:
+\begin{itemize}
+	\item верификация видеоматериалов и аудиозаписей государственными учреждениями и новостными агентствами для противодействия манипуляции общественным мнением и провоцированию социальной напряжённости~\cite{deep-fakes}\cite{spb-uni};
+	\item биометрическая аутентификация и предотвращение мошеннических операций~\cite{meso4}\cite{capsforensics}\cite{vit};
+	\item анализ цифровых доказательств для установления подлинности или факта модификации видеозаписей и фотографий, представляемых в судебном делопроизводстве~\cite{faceforensics}\cite{faceforensicspp};
+	\item идентификация неправомерного использования изображений граждан в синтетическом контенте без их согласия~\cite{spb-uni};
+	\item контроль целостности и установление авторства цифрового контента для защиты интеллектуальной собственности от несанкционированного использования~\cite{deepfakes-document}.
+\end{itemize}
+
+\section{Анализ известных нейросетевых решений}
+
+История развития искусственных нейронных сетей берет начало в середине 20-го века с создания упрощенных математических моделей биологического нейрона -- \textit{искусственных нейронов}. Первой такой формальной моделью стала модель, предложенная Уорреном Мак-Каллоком и Уолтером Питтсом в 1943 году~\cite{neuron}. Данная модель представляет собой устройство с несколькими бинарными входами и одним бинарным выходом. Общая схема данной модели представлена на рисунке~\ref{img:neuron}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[>=stealth, node distance=1.6cm]
+		
+		% Inputs
+		\node[circle, draw, minimum size=12mm] (x1) {$x_1$};
+		\node[circle, draw, below=0.9cm of x1, minimum size=12mm] (x2) {$x_2$};
+		\node[below=0.45cm of x2] (dots) {$\vdots$};
+		\node[circle, draw, below=0.5cm of dots, minimum size=12mm] (xn) {$x_n$};
+		
+		% Bias input
+		\node[circle, draw, right=2.3cm of xn, minimum size=12mm] (bias) {$b$};
+		
+		% Sum block
+		\node[draw, line width=1pt, minimum width=20mm, minimum height=18mm, right=2.2cm of x2] (sum) {$\overset{n}{\underset{i=1}{\sum}}{w_ix_i}+b$};
+		
+		% Activation block
+		\node[draw, line width=1pt, minimum width=14mm, minimum height=18mm, right=1.25cm of sum] (act) {$f_{\theta}(s)$};
+		
+		% Output
+		\node[circle, draw, minimum size=10mm, right=1cm of act] (a) {$\alpha$};
+		
+		% Arrows with weights
+		\draw[->] (x1) -- node[above, xshift=0.1cm, yshift=0.1cm] {$w_1$} (sum);
+		\draw[->] (x2) -- node[above, xshift=-0.1cm] {$w_2$} (sum);
+		\draw[->] (xn) -- node[above, xshift=-0.25cm] {$w_n$} (sum);
+		\draw[->] (bias) -- node[above, xshift=-0.4cm, yshift=-0.35cm] {$1$} (sum);
+		
+		% Sum to activation
+		\draw[->] (sum) -- node[above] {$s$} (act);
+		
+		% Activation to output
+		\draw[->] (act) -- (a);
+		
+	\end{tikzpicture}
+	\caption{Общая схема искусственного нейрона Мак-Каллока-Питтса~\cite{neuron}}
+	\label{img:neuron}
+\end{figure}
+
+Искусственный нейрон осуществляет вычисление взвешенной суммы~$\underset{i=1}{\overset{n}{\sum}}{x_iw_i}+b$ входных сигналов, которая затем сравнивается с некоторым пороговым значением $\theta$. Если сумма превышает порог, выход нейрона $\alpha$ принимает единичное значение, в противном случае -- нулевое~\cite{mei}.
+
+\textit{Искусственная нейронная сеть} представляет собой совокупность взаимосвязанных искусственных нейронов. Связи между нейронами определяются системой весов, которые задают структуру сети и обеспечивают преобразование входного векторного сигнала в выходной. Упорядоченная совокупность искусственных нейронов, выполняющая одновременное и идентичное преобразование входного векторного сигнала в выходной сигнал называется \textit{слоем}. ИНС может содержать неограниченное число слоёв~\cite{rumelhart}.
+
+Одним из первых формализованных принципов изменения весов связей между нейронами является правило Хэбба, предложенное в 1949 году~\cite{hebb}. Согласно данному принципу, изменение веса связи между двумя нейронами пропорционально произведению их активностей. Если возбуждение одного нейрона регулярно сопровождается возбуждением другого, вес связи между ними увеличивается. 
+
+Целенаправленная настройка параметров искусственной нейронной сети на основе анализа входных данных для достижения требуемого поведения модели называется \textit{обучением}~\cite{rosenblatt}.
+
+\subsection{Свёрточные нейронные сети}
+
+\textit{Свёрточные искусственные нейронные сети} представляют собой разновидность многослойных ИНС, разработанную для обработки данных с сеточной структурой, таких как изображения. Данная архитектура была предложена Яном Лекуном в 1988 году и вдохновлена биологическими процессами человеческой зрительной системы~\cite{convnet}.
+
+Ключевой концепцией свёрточных сетей является использование операции \textit{свёртки}, которая позволяет выявлять локальные пространственные зависимости в обрабатываемых данных~\cite{conv}. 
+
+Архитектура свёрточной нейронной сети включает следующие компоненты:
+\begin{enumerate}
+	\item \textit{Свёрточные слои} выполняют извлечение признаков путём применения набора обучаемых фильтров к входным данным. Каждый фильтр сканирует изображение, обнаруживая определённые паттерны~\cite{conv};
+	\item \textit{Подвыборочные слои} уменьшают размерность карт признаков, сохраняя наиболее значимую информацию. Это позволяет снизить вычислительную сложность~\cite{pooling};
+	\item \textit{Полносвязные слои} завершают архитектуру сети, преобразуя извлечённые иерархические признаки в конечный результат~\cite{convnet}\cite{rumelhart}.
+\end{enumerate}
+
+Пример схемы свёрточной искусственной нейронной сети представлен на рисунке~\ref{img:convnet}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[
+		line width=0.8pt,
+		>=Stealth,
+		node distance=0.3cm and 1.5cm,
+		layer/.style={draw, fill=white, rounded corners=3pt, 
+			minimum width=2cm, minimum height=2cm},
+		smalllayer/.style={layer, minimum width=1.2cm, minimum height=1.2cm},
+		fclayer/.style={layer, minimum width=0.8cm, minimum height=0.8cm},
+		convcolor/.style={fill=blue!20},
+		poolcolor/.style={fill=green!20},
+		fccolor/.style={fill=red!20}
+		]
+		
+		\pgfdeclarelayer{background}
+		\pgfdeclarelayer{foreground}
+		\pgfsetlayers{background,main,foreground}
+		
+		\coordinate (top-level) at (0,2.6); % фиксированная Y-координата
+		\coordinate (low-level) at (0,-2.5); % фиксированная Y-координата
+		
+		% Изображение (вход)
+		\node[layer, fill=gray!15] (input) at (0,0) {};
+		\node at (input |- top-level) {\texttt{Изображение}};
+		\node at ($(input.east)+(0.7,0)$) {\huge$\rightarrow$};
+		
+		% Первый свёрточный слой
+		\convlayer{input}{conv1}{5}
+		\node[align=center] at (conv12 |- top-level) {\texttt{Свёрточный} \\ \texttt{слой}};
+		\node at ($(input.east)+(5.45,0)$) {\huge$\rightarrow$};
+		
+		% Первый подвыборочный слой
+		\poollayer{conv12}{pool1}{2}
+		\node[align=center] at (pool11 |- top-level) {\texttt{Подвыборочный} \\ \texttt{слой}};
+		\node at ($(input.east)+(9.4,0)$) {\huge$\rightarrow$};
+		
+		\fclayer{pool11}{fc1}{0}
+		\node[align=center] at (fc10 |- top-level) {\texttt{Полносвязный} \\ \texttt{слой}};
+		
+		
+	\end{tikzpicture}
+	\caption{Пример схемы свёрточной ИНС}
+	\label{img:convnet}
+\end{figure}
+
+\subsubsection{Meso-4}
+
+Архитектура Meso-4 была разработана в 2018 году исследовательской группой под руководством Дариуса Афшара. Она предназначена для обнаружения дипфейков на изображениях лиц людей. Основная идея архитектуры заключается в анализе \textit{мезоскопических свойств изображений}~--~промежуточного уровня между анализом цветов пикселей и их семантическим анализом~\cite{meso4}.
+
+Данная свёрточная ИНС состоит из последовательности четырёх блоков, каждый из которых включает свёрточные и подвыборочные слои. В свёрточных слоях используется пороговая функция активации под названием Rectified Linear Unit, имеющая следующий вид~\cite{relu}:
+\begin{equation}
+	ReLU(z) = \max(0,z)
+\end{equation}
+Для улучшения обобщающей способности применяются операция \textit{пакетной нормализации}~\cite{batch} после каждого свёрточного слоя и операция \textit{отключения нейронов}~\cite{dropout} в полносвязных слоях. Схема архитектуры Meso-4 представлена на рисунке~\ref{img:meso4}.
+
+Обучающие наборы данных и результаты подсчёта долей верно классифицированных изображений~\cite{meso4} представлены в таблицах~\ref{tbl:meso4-datasets}~и~\ref{tbl:meso4-results} соответственно.
+
+Основным преимуществом данной архитектуры является ее относительная компактность, включающая 27\,977 параметров, что обеспечивает меньшие вычислительные затраты и возможность быстрого обучения на ограниченных ресурсах. К недостаткам можно отнести снижение точности при сжатии входных изображений~\cite{meso4}.
+
+\begin{table}[H]
+	\centering
+	\caption{Результаты тестирования Meso-4}
+	\label{tbl:meso4-results}
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Контрольный набор данных} & \textbf{Точность, \%} \\
+		\hline
+		Авторский набор данных  & 89.1 \\
+		\hline
+		FaceForensics~\cite{faceforensics} & 94.6 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance=6mm]
+		
+		\tikzset{
+			layer/.style={
+				rectangle, draw, minimum width=6.3cm,
+				minimum height=0.5cm, align=center,
+				font=\small, fill=#1
+			},
+			layer/.default=white,
+			blockbox/.style={
+				draw, rectangle, rounded corners,
+				inner sep=6pt
+			},
+			arrow/.style={
+				-latex, thick
+			}
+		}
+		
+		% ---------- Left branch ----------
+		\node[layer=gray!10] (input){\texttt{Изображение 256$\times$256$\times$3}};
+		
+		\node[layer=blue!20, below=0.8cm of input] (c1) {\texttt{Свёрточный 8$\times$(3$\times$3) + ReLU}};
+		\node[layer=yellow!10, below=0.1cm of c1] (bn1) {\texttt{Пакетная нормализация}};
+		\node[layer=green!20, below=0.1cm of bn1] (mp1) {\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(c1) (bn1) (mp1), below=of input] (block1) {};
+		
+		\node[layer=blue!20, below=1.05cm of mp1] (c2){\texttt{Свёрточный 8$\times$(5$\times$5) + ReLU}};
+		\node[layer=yellow!10, below=0.1cm of c2] (bn2){\texttt{Пакетная нормализация}};
+		\node[layer=green!20, below=0.1cm of bn2] (mp2){\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(c2) (bn2) (mp2), below=of block1] (block2) {};
+		
+		\node[layer=blue!20, below=1.05cm of mp2] (c3){\texttt{Свёрточный 16$\times$(5$\times$5) + ReLU}};
+		\node[layer=yellow!10, below=0.1cm of c3] (bn3){\texttt{Пакетная нормализация}};
+		\node[layer=green!20, below=0.1cm of bn3] (mp3){\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(c3) (bn3) (mp3), below=of block2] (block3) {};
+		
+		\draw[arrow] (input) -- (block1);
+		\draw[arrow] (block1) -- (block2)node[midway, left, font=\small\ttfamily]{128$\times$128$\times$8};
+		\draw[arrow] (block2) -- (block3)node[midway, left, font=\small\ttfamily]{64$\times$64$\times$8};
+		
+		% ---------- Right branch (Meso-4) ----------
+		\node[layer=blue!20, right=1.05cm of c1] (c4){\texttt{Свёрточный 16$\times$(5$\times$5) + ReLU}};
+		\node[layer=yellow!10, below=0.1cm of c4] (bn4){\texttt{Пакетная нормализация}};
+		\node[layer=green!20, below=0.1cm of bn4] (mp4){\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(c4) (bn4) (mp4), right=of block1] (block4) {};
+		
+		\node[layer=orange!20, below=1.05cm of mp4] (d5){\texttt{Отключение нейронов 0.5}};
+		\node[layer=red!20, below=0.1cm of d5] (f5){\texttt{Полносвязный 16}};
+		\node[blockbox, fit=(d5) (f5), below=of block4] (block5) {};
+		
+		\node[layer=orange!20, below=1.05cm of f5] (d6){\texttt{Отключение нейронов 0.5}};
+		\node[layer=red!20, below=0.1cm of d6] (f6){\texttt{Полносвязный 1 + Sigmoid}};
+		\node[blockbox, fit=(d6) (f6), below=of block5] (block6) {};
+		
+		\node[layer=gray!10, below=0.8cm of f6] (output){\texttt{Результат}};
+		
+		
+		\coordinate (p1) at ($(block3.south)+(0,-0.3)$);   % вниз
+		\coordinate (p2) at ($(p1)+(3.7,0)$);              % вправо
+		\coordinate (p3) at ($(p2)+(0,10.25)$); 			   % вверх 
+		\coordinate (p4) at ($(p3)+(3.65,0)$); 			   % вправо 
+		\draw[arrow] 
+		(block3.south) -- 
+		(p1) -- 
+		(p2) -- 
+		(p3) -- 
+		(p4) --
+		(block4.north)
+		node[midway, right, font=\small\ttfamily]{32$\times$32$\times$16};
+		\draw[arrow] (block4) -- (block5)node[midway, right, font=\small\ttfamily]{1024};
+		\draw[arrow] (block5) -- (block6)node[midway, right, font=\small\ttfamily]{16};
+		\draw[arrow] (block6) -- (output)node[midway, right, font=\small\ttfamily]{1};	
+	\end{tikzpicture}
+	\caption{Схема архитектуры Meso-4}
+	\label{img:meso4}
+\end{figure}
+
+
+\subsubsection{MesoInception-4}
+
+Архитектура MesoInception-4, предложенная в 2018 году Дариусом Афшаром, представляет собой модификацию архитектуры Meso-4~\cite{meso4}. Её ключевая особенность заключается в наличии \textit{слоёв многомасштабной свёртки}~\cite{inception} на начальных этапах сети.
+
+Идея слоя многомасштабной свёртки заключается в применении параллельных операций свёртки с ядрами различного размера. Данное решение позволяет анализировать признаки изображения на разных уровнях детализации в рамках одного вычислительного блока. Схемы архитектуры данного слоя и архитектуры MesoInception-4 представлены на рисунках~\ref{img:mesoinception4-inception}~и~\ref{img:mesoinception4} соответственно.
+
+\begin{table}[h]
+	\centering
+	\caption{Параметры слоёв многомасштабной свёртки архитектуры MesoInception-4}
+	\label{tbl:mesoinception4-inception-params}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		\textbf{Номер слоя} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\
+		\hline
+		1 & 1 & 4 & 4 & 1 \\
+		\hline
+		2 & 1 & 4 & 4 & 2 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Параметры слоёв многомасштабной свёртки, обучающие наборы данных и результаты подсчёта долей верно классифицированных изображений~\cite{meso4} представлены в таблицах~\ref{tbl:mesoinception4-inception-params},~\ref{tbl:meso4-datasets}~и~\ref{tbl:mesoinception4-results} соответственно.
+
+\begin{figure}[h]
+	\centering
+	\begin{tikzpicture}[node distance=6mm]
+		
+		\tikzset{
+			layer/.style={
+				rectangle, draw, minimum width=6.6cm,
+				minimum height=0.5cm, align=center,
+				font=\small, fill=#1
+			},
+			layer/.default=white,
+			blockbox/.style={
+				draw, rectangle, rounded corners,
+				inner sep=6pt
+			},
+			arrow/.style={
+				-latex, thick
+			}
+		}
+		
+		% ---------- Left branch ----------
+		\node[layer=gray!10] (input){\texttt{Входные данные L$\times$L$\times$P}};
+		
+		\node[layer=blue!10, below=0.8cm of input] (conv1x1-1) {\texttt{Свёрточный A$\times$(1$\times$1)}};
+		\node[blockbox, fit=(conv1x1-1)] (branch1) {};
+		
+		\node[layer=blue!10, below=1.05cm of conv1x1-1] (conv1x1-2) {\texttt{Свёрточный B$\times$(1$\times$1)}};
+		\node[layer=blue!20, below=0.1cm of conv1x1-2] (dilated3x3-1) {\texttt{Свёрточный B$\times$(3$\times$3)}};
+		\node[blockbox, fit=(conv1x1-2) (dilated3x3-1), below=of branch1] (branch2) {};
+		
+		\node[layer=blue!10, below=1.05cm of dilated3x3-1] (conv1x1-3) {\texttt{Свёрточный C$\times$(1$\times$1)}};
+		\node[layer=blue!20, below=0.1cm of conv1x1-3] (dilated3x3-2) {\texttt{Свёрточный C$\times$(3$\times$3)}};
+		\node[blockbox, fit=(conv1x1-3) (dilated3x3-2), below=of branch2] (branch3) {};
+		
+		\node[layer=blue!10, below=1.05cm of dilated3x3-2] (conv1x1-4) {\texttt{Свёрточный D$\times$(1$\times$1)}};
+		\node[layer=blue!20, below=0.1cm of conv1x1-4] (dilated3x3-3) {\texttt{Свёрточный D$\times$(3$\times$3)}};
+		\node[blockbox, fit=(conv1x1-4) (dilated3x3-3), below=of branch3] (branch4) {};
+		
+		\coordinate (p1) at ($(input.south)+(0,-0.3)$);
+		\coordinate (p2) at ($(p1)+(-4,0)$);
+		
+		\draw[arrow]
+		(input.south) --
+		(p1) --
+		(p2) --
+		($(branch1.west)-(0.475,0)$) --
+		(branch1.west);
+		
+		\draw[arrow]
+		(input.south) --
+		(p1) --
+		(p2) --
+		($(branch2.west)-(0.475,0)$) --
+		(branch2.west);
+		
+		\draw[arrow]
+		(input.south) --
+		(p1) --
+		(p2) --
+		($(branch3.west)-(0.475,0)$) --
+		(branch3.west);
+		
+		\draw[arrow]
+		(input.south) --
+		(p1) --
+		(p2) --
+		($(branch4.west)-(0.475,0)$) --
+		(branch4.west);
+		
+		% ---------- Right branch ----------
+		\node[layer=gray!10, right=1.25cm of input] (output){\texttt{Выходные данные L$\times$L$\times$(A+B+C+D)}};
+		
+		\node[layer=pink!50, right=1.3625cm of conv1x1-1] (conc) {\texttt{Конкатенация}};
+		\node[blockbox, fit=(conc)] (branch5) {};
+		
+		% Создаём промежуточные координаты для выравнивания стрелок
+		\coordinate (vertical-line) at ($(branch5.west)-(0.5,0)$);
+		
+		% Выравниваем стрелки по вертикали
+		\draw[arrow] (branch1.east) -- (vertical-line |- branch5.west) -- (branch5.west);
+		\draw[arrow] (branch2.east) -- (branch2.east -| vertical-line) -- (vertical-line |- branch5.west) -- (branch5.west);
+		\draw[arrow] (branch3.east) -- (branch3.east -| vertical-line) -- (vertical-line |- branch5.west) -- (branch5.west);
+		\draw[arrow] (branch4.east) -- (branch4.east -| vertical-line) -- (vertical-line |- branch5.west) -- (branch5.west);
+		\draw[arrow] (branch5.north) -- (output.south);
+		
+	\end{tikzpicture}
+	\caption{Схема архитектуры слоя многомасштабной свёртки, параметризуемой с помощью $A, B, C, D \in \mathbb{N}$}
+	\label{img:mesoinception4-inception}
+\end{figure}
+
+Главным преимуществом архитектуры MesoInception-4 является способность комбинировать признаки различного масштаба благодаря использованию слоёв многомасштабной свёртки, что привело к небольшому повышению точности по сравнению с Meso-4, при практически неизменной вычислительной сложности. Недостатком является чувствительность к сжатию входных изображений.
+
+\begin{table}[H]
+	\centering
+	\caption{Результаты тестирования MesoInception-4}
+	\label{tbl:mesoinception4-results}
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Контрольный набор данных} & \textbf{Точность, \%} \\
+		\hline
+		Авторский набор данных & 91.7 \\
+		\hline
+		FaceForensics & 96.8 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance=6mm]
+		
+		\tikzset{
+			layer/.style={
+				rectangle, draw, minimum width=6.3cm,
+				minimum height=0.5cm, align=center,
+				font=\small, fill=#1
+			},
+			layer/.default=white,
+			blockbox/.style={
+				draw, rectangle, rounded corners,
+				inner sep=6pt
+			},
+			arrow/.style={
+				-latex, thick
+			}
+		}
+		
+		% ---------- Left branch ----------
+		\node[layer=gray!10] (input){\texttt{Изображение 256$\times$256$\times$3}};
+		
+		\node[layer=blue!20, below=0.8cm of input] (mp1) {\texttt{Многомасштабная свёртка}};
+		\node[blockbox, fit=(mp1), below=of input] (block1) {};
+		
+		\node[layer=blue!20, below=1.05cm of mp1] (mp2){\texttt{Многомасштабная свёртка}};
+		\node[blockbox, fit=(mp2), below=of block1] (block2) {};
+		
+		\node[layer=blue!20, below=1.05cm of mp2] (c3){\texttt{Свёрточный 16$\times$(5$\times$5) + ReLU}};
+		\node[layer=yellow!10, below=0.1cm of c3] (bn3){\texttt{Пакетная нормализация}};
+		\node[layer=green!20, below=0.1cm of bn3] (mp3){\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(c3) (bn3) (mp3), below=of block2] (block3) {};
+		
+		\draw[arrow] (input) -- (block1);
+		\draw[arrow] (block1) -- (block2)node[midway, left, font=\small\ttfamily]{};
+		\draw[arrow] (block2) -- (block3)node[midway, left, font=\small\ttfamily]{};
+		
+		% ---------- Right branch ----------
+		\node[layer=blue!20, right=1.05cm of mp1, yshift=0.8cm] (c4){\texttt{Свёрточный 16$\times$(5$\times$5) + ReLU}};
+		\node[layer=yellow!10, below=0.1cm of c4] (bn4){\texttt{Пакетная нормализация}};
+		\node[layer=green!20, below=0.1cm of bn4] (mp4){\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(c4) (bn4) (mp4), right=of block1] (block4) {};
+		
+		\node[layer=orange!20, below=1.05cm of mp4] (d5){\texttt{Отключение нейронов 0.5}};
+		\node[layer=red!20, below=0.1cm of d5] (f5){\texttt{Полносвязный 16}};
+		\node[blockbox, fit=(d5) (f5), below=of block4] (block5) {};
+		
+		\node[layer=orange!20, below=1.05cm of f5] (d6){\texttt{Отключение нейронов 0.5}};
+		\node[layer=red!20, below=0.1cm of d6] (f6){\texttt{Полносвязный 1 + Sigmoid}};
+		\node[blockbox, fit=(d6) (f6), below=of block5] (block6) {};
+		
+		\node[layer=gray!10, below=0.8cm of f6] (output){\texttt{Результат}};
+		
+		
+		\coordinate (p1) at ($(block3.south)+(0,-0.3)$);   % вниз
+		\coordinate (p2) at ($(p1)+(3.7,0)$);              % вправо
+		\coordinate (p3) at ($(p2)+(0,7.75)$); 			   % вверх 
+		\coordinate (p4) at ($(p3)+(3.65,0)$); 			   % вправо 
+		\draw[arrow] 
+		(block3.south) -- 
+		(p1) -- 
+		(p2) -- 
+		(p3) -- 
+		(p4) --
+		(block4.north)
+		node[midway, right, font=\small\ttfamily]{};
+		\draw[arrow] (block4) -- (block5)node[midway, right, font=\small\ttfamily]{1024};
+		\draw[arrow] (block5) -- (block6)node[midway, right, font=\small\ttfamily]{16};
+		\draw[arrow] (block6) -- (output)node[midway, right, font=\small\ttfamily]{1};	
+	\end{tikzpicture}
+	\caption{Схема архитектуры MesoInception-4}
+	\label{img:mesoinception4}
+\end{figure}
+
+\subsection{Капсульные нейронные сети}
+
+\textit{Капсульные искусственные нейронные сети} представляют собой архитектуру, предложенную в 2017 году Джеффри Хинтоном~\cite{capsnn}, целью которой является преодоление ограничений свёрточных ИНС в области инвариантности к пространственным преобразованиям и анализа иерархических отношений между частями объектов. Пример схемы капсульной ИНС представлен на рисунке~\ref{img:capsnet}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[
+		line width=0.8pt,
+		>=Stealth,
+		node distance=0.3cm and 1.5cm,
+		layer/.style={draw, fill=white, rounded corners=3pt, 
+			minimum width=2cm, minimum height=2cm},
+		smalllayer/.style={layer, minimum width=1.2cm, minimum height=1.2cm},
+		fclayer/.style={layer, minimum width=0.8cm, minimum height=0.8cm},
+		convcolor/.style={fill=blue!20},
+		poolcolor/.style={fill=green!20},
+		fccolor/.style={fill=red!20},
+		capsulecolor/.style={fill=orange!20}
+		]
+		
+		\pgfdeclarelayer{background}
+		\pgfdeclarelayer{foreground}
+		\pgfsetlayers{background,main,foreground}
+		
+		\coordinate (top-level) at (0,2.75); % фиксированная Y-координата
+		\coordinate (low-level) at (0,-2.5); % фиксированная Y-координата
+		
+		% Изображение (вход)
+		\node[layer, fill=gray!15] (input) at (0,0) {};
+		\node at (input |- top-level) {\texttt{Изображение}};
+		\node at ($(input.east)+(0.7,0)$) {\huge$\rightarrow$};
+		
+		% Свёрточный слой
+		\convlayer{input}{conv1}{5}
+		\node[align=center] at (conv12 |- top-level) {\texttt{Свёрточный} \\ \texttt{слой}};
+		\node at ($(input.east)+(5.3,0)$) {\huge$\rightarrow$};
+		
+		% капсулы
+		\capsulelayer{conv12}{capsule1}{5}
+		\node[align=center] at (capsule12 |- top-level) {\texttt{Капсульный} \\ \texttt{слой}};
+		\node at ($(input.east)+(10.15,0)$) {\huge$\rightarrow$};
+		
+		% Выходные капсулы (классы)
+		\fclayer{capsule12}{fc1}{4}
+		\node[align=center] at (fc11 |- top-level) {\texttt{Полносвязный} \\ \texttt{слой}};
+		
+	\end{tikzpicture}
+	\caption{Пример схемы капсульной ИНС}
+	\label{img:capsnet}
+\end{figure}
+
+Основной единицей данной архитектуры является \textit{капсула} -- группа нейронов, активность которых отражает вероятность обнаружения определённого объекта или его части, а также его параметры, такие как положение, ориентация, масштаб и иные пространственные свойства. В отличие от скалярных выходов нейронов в свёрточных сетях или перцептронах, выход капсулы является вектором, длина которого определяет вероятность обнаружения объекта, а компоненты содержат значения его параметров. Пример схемы структуры капсулы представлена на рисунке~\ref{img:capsule-structure}.
+
+\begin{figure}[h]
+	\centering
+	\begin{tikzpicture}[
+		line width=0.8pt,
+		>=Stealth,
+		neuron/.style={draw, circle, minimum size=1cm},
+		capsule/.style={draw, fill=orange!20, rounded corners=5pt, 
+			minimum width=2cm, minimum height=8cm}
+		]
+		
+		\coordinate (top-level) at (0,5);
+		
+		% Капсула
+		\node[capsule] (capsule) at (0,0) {};
+		
+		% Нейроны внутри капсулы с подписями
+		\node[neuron, fill=yellow!15] (n1) at (0,3) {$s_{j1}$};
+		\node[neuron, fill=yellow!15] (n2) at (0,1.5) {$s_{j2}$};
+		\node[neuron, fill=yellow!15] (n3) at (0,0.0) {$s_{j3}$};
+		\node[neuron, fill=yellow!15] (n4) at (0,-1.5) {$s_{j4}$};
+		\node[neuron, fill=yellow!15] (n5) at (0,-3) {$s_{j5}$};
+		
+		% Входы
+		\node[neuron, fill=blue!15] [left=3.5cm of n1] (in1) {$\vec{v_{i1}}$};
+		\node[neuron, fill=blue!15] [left=3.5cm of n2] (in2) {$\vec{v_{i2}}$};
+		\node[neuron, fill=blue!15] [left=3.5cm of n3] (in3) {$\vec{v_{i3}}$};
+		\node[neuron, fill=blue!15] [left=3.5cm of n4] (in4) {$\vec{v_{i4}}$};
+		\node[neuron, fill=blue!15] [left=3.5cm of n5] (in5) {$\vec{v_{i5}}$};
+		
+		% Выходной вектор
+		\node[neuron, fill=red!15] [right=3.5cm of capsule] (output) {$\vec{v}_j$};
+		
+		\coordinate (nn1) at ($(n1.west)-(0.4,0)$);
+		\coordinate (nn2) at ($(n2.west)-(0.4,0)$);
+		\coordinate (nn3) at ($(n3.west)-(0.4,0)$);
+		\coordinate (nn4) at ($(n4.west)-(0.4,0)$);
+		\coordinate (nn5) at ($(n5.west)-(0.4,0)$);
+		
+		\foreach \i in {1,...,5}
+		\foreach \j in {1,...,5}
+		\draw[->] (in\i) -- (nn\j) -- (n\j);
+		
+		
+		\draw[->] (n1) -- (output);
+		\draw[->] (n2) -- (output);
+		\draw[->] (n3) -- (output);
+		\draw[->] (n4) -- (output);
+		\draw[->] (n5) -- (output);
+		
+		% Поясняющие надписи
+		\node[align=center] at (in1 |- top-level) {\texttt{Входные векторы}};
+		\node[align=center] at (capsule |- top-level) {\texttt{Группа нейронов}};
+		\node[align=center] at (output |- top-level) {\texttt{Выходной вектор}};
+		
+	\end{tikzpicture}
+	\caption{Пример схемы структуры капсулы}
+	\label{img:capsule-structure}
+\end{figure}
+
+Алгоритмом, обеспечивающим взаимодействие между капсулами, является алгоритм \textit{динамической маршрутизации}~\cite{capsnn}, определяющий степень связи между капсулами смежных слоёв. Формально, выходной вектор капсулы вычисляется с помощью нелинейной \textit{функции сжатия}, которая сохраняет ориентацию вектора и нормализует его длину:
+\begin{equation}
+	\vec{v}_j = \frac{\|\vec{s}_j\|^2}{1 + \|\vec{s}_j\|^2} \cdot \frac{\vec{s}_j}{\|\vec{s}_j\|},
+\end{equation}
+где $\vec{s_j}$ -- вектор выходных значений нейронов капсулы.
+
+Архитектура капсульных сетей отличается от свёрточных сетей наличием капсульных слоёв, меньшим количеством или полным отсутствием подвыборочных слоёв и большей подверженности воздействию шумов на входных данных~\cite{capsnn}. 
+
+\subsubsection{Capsule-Forensics}
+
+Капсульная сеть Capsule-Forensics была представлена в 2018 году авторами Х. Нгуеном, Джуничи Ямагиши и Исао Эчизеном~\cite{capsforensics}. Это одна из первых архитектур, применяющих капсульные сети для обнаружения дипфейков на изображениях.
+
+Ключевая идея данной архитектуры заключается в использовании предобученных свёрточных слоёв сети VGG-19~\cite{vgg19} для извлечения признаков входных изображений и их последующей обработки капсульными слоями. Схема архитектуры Capsule-Forensics представлена на рисунке~\ref{img:capsule-forensics}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance=6mm]
+		
+		\tikzset{
+			layer/.style={
+				rectangle, draw, minimum width=6.5cm,
+				minimum height=0.5cm, align=center,
+				font=\small, fill=#1
+			},
+			layer/.default=white,
+			blockbox/.style={
+				draw, rectangle, rounded corners,
+				inner sep=6pt
+			},
+			arrow/.style={
+				-latex, thick
+			}
+		}
+		
+		% Вход
+		\node[layer=gray!10] (input){\texttt{Изображение 224$\times$224$\times$3}};
+		
+		% VGG-19 Feature Extractor
+		\node[layer=blue!20, below=0.8cm of input] (vgg-conv1) {\texttt{Свёрточный 64$\times$(3$\times$3) + ReLU}};
+		\node[layer=blue!20, below=0.1cm of vgg-conv1] (vgg-conv2) {\texttt{Свёрточный 64$\times$(3$\times$3) + ReLU}};
+		\node[layer=green!20, below=0.1cm of vgg-conv2] (vgg-pool1) {\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(vgg-conv1) (vgg-conv2) (vgg-pool1), below=of input] (block1) {};
+		
+		\node[layer=blue!20, below=1.05cm of vgg-pool1] (vgg-conv3) {\texttt{Свёрточный 128$\times$(3$\times$3) + ReLU}};
+		\node[layer=blue!20, below=0.1cm of vgg-conv3] (vgg-conv4) {\texttt{Свёрточный 128$\times$(3$\times$3) + ReLU}};
+		\node[layer=green!20, below=0.1cm of vgg-conv4] (vgg-pool2) {\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(vgg-conv3) (vgg-conv4) (vgg-pool2), below=of block1] (block2) {};
+		
+		\node[layer=blue!20, below=1.05cm of vgg-pool2] (vgg-conv5) {\texttt{Свёрточный 256$\times$(3$\times$3) + ReLU}};
+		\node[layer=blue!20, below=0.1cm of vgg-conv5] (vgg-conv6) {\texttt{Свёрточный 256$\times$(3$\times$3) + ReLU}};
+		\node[layer=blue!20, below=0.1cm of vgg-conv6] (vgg-conv7) {\texttt{Свёрточный 256$\times$(3$\times$3) + ReLU}};
+		\node[layer=blue!20, below=0.1cm of vgg-conv7] (vgg-conv8) {\texttt{Свёрточный 256$\times$(3$\times$3) + ReLU}};
+		\node[layer=green!20, below=0.1cm of vgg-conv8] (vgg-pool3) {\texttt{Подвыборочный 2$\times$2}};
+		\node[blockbox, fit=(vgg-conv5) (vgg-conv6) (vgg-conv7) (vgg-conv8) (vgg-pool3), below=of block2] (block3) {};
+		
+		% Primary Capsules
+		\node[layer=orange!20, right=1.05cm of vgg-conv1, yshift=-0.8cm] (primary1) {\texttt{Капсульный 3}};
+		\node[blockbox, fit=(primary1), right=of block1] (caps-block) {};
+		
+		% Output Capsules
+		\node[layer=orange!20, below=1.05cm of primary1] (output1) {\texttt{Капсульный 2}};
+		\node[blockbox, fit=(output1), below=of caps-block] (output-block) {};
+		
+		\node[layer=red!20, below=1.05cm of output1] (fc1) {\texttt{Полносвязный 1 + Softmax}};
+		\node[blockbox, fit=(output1), below=of output-block] (fc-block) {};
+		
+		% Final Output
+		\node[layer=gray!10, below=0.8cm of fc1] (final){\texttt{Результат}};
+		
+		% Соединения
+		\draw[arrow] (input) -- (block1);
+		\draw[arrow] (block1) -- (block2)node[midway, left, font=\small\ttfamily]{224$\times$224$\times$64};
+		\draw[arrow] (block2) -- (block3)node[midway, left, font=\small\ttfamily]{112$\times$112$\times$128};
+		
+		\coordinate (p1) at ($(block3.south)+(0,-0.35)$);   % вниз
+		\coordinate (p2) at ($(p1)+(3.75,0)$);              % вправо
+		\coordinate (p3) at ($(p2)+(0,11.15)$); 			   % вверх 
+		\coordinate (p4) at ($(p3)+(3.85,0)$);
+		\draw[arrow] 
+		(block3) -- 
+		(p1) --
+		(p2) --
+		(p3) --
+		(p4) --
+		(caps-block)node[midway, right, font=\small\ttfamily]{56$\times$56$\times$256};
+		
+		\draw[arrow] (caps-block) -- (output-block);
+		\draw[arrow] (output-block) -- (fc-block);
+		\draw[arrow] (fc-block) -- (final);
+		
+	\end{tikzpicture}
+	\caption{Схема архитектуры Capsule-Forensics}
+	\label{img:capsule-forensics}
+\end{figure}
+
+Наличие капсульных слоёв позволяет данной сети лучше определять пространственные иерархии и отношения между частями изображения по сравнению со свёрточными сетями~\cite{capsnn}. Недостатками можно считать относительно сложную архитектуру, вычислительную сложность алгоритма динамической маршрутизации, а также зависимость от предобученной модели VGG-19~\cite{capsforensics}.
+
+В выходном полносвязном слое используется пороговая функция активации под названием Softmax, которая имеет следующий вид~\cite{softmax}:
+\begin{equation}
+	Softmax(\vec{z})_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}, \quad i=\overline{1,K},
+\end{equation}
+где
+\begin{itemize}[label=---]
+	\item $\vec{z} = (z_1, z_2, \dots, z_K)$ -- входной вектор;
+	\item $K$ -- количество параметров.
+\end{itemize}
+
+Обучающий набор данных рассматриваемой ИНС представлен в виде FaceForensics. Результаты тестирования представлены в таблице~\ref{tbl:capsule-forensics-results}~\cite{capsforensics}.
+
+\begin{table}[H]
+	\centering
+	\caption{Результаты тестирования Capsule-Forensics}
+	\label{tbl:capsule-forensics-results}
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Контрольный набор данных} & \textbf{Точность, \%} \\
+		\hline
+		FaceForensics & 99.37 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsection{Трансформеры}
+
+\textit{Трансформеры} представляют собой архитектуру искусственных нейронных сетей, предназначенную для обработки последовательностей данных. Данная архитектура была предложена в 2017 году коллективом авторов из Google Brain~\cite{attention} и была применена в задаче обработки языка.
+
+Особенностью трансформеров является использование \textit{механизма внимания}~\cite{attention}, который позволяет оценивать взаимное влияние всех элементов последовательности данных друг на друга и представлять их в форме, учитывающей это влияние.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[
+		line width=0.8pt,
+		>=Stealth,
+		node distance=0.3cm and 1.5cm,
+		layer/.style={draw, fill=white, rounded corners=3pt, 
+			minimum width=2cm, minimum height=2cm},
+		smalllayer/.style={layer, minimum width=1.2cm, minimum height=1.2cm},
+		fclayer/.style={layer, minimum width=0.8cm, minimum height=0.8cm},
+		convcolor/.style={fill=blue!20},
+		poolcolor/.style={fill=green!20},
+		fccolor/.style={fill=red!20},
+		attentioncolor/.style={fill=yellow!20}
+		]
+		
+		\pgfdeclarelayer{background}
+		\pgfdeclarelayer{foreground}
+		\pgfsetlayers{background,main,foreground}
+		
+		\coordinate (top-level) at (0,2.75); % фиксированная Y-координата
+		
+		% Изображение (вход)
+		\node[layer, fill=gray!15] (input) at (0,0) {};
+		\node[align=center] at (input |- top-level) {\texttt{Входные} \\ \texttt{данные}};
+		\node at ($(input.east)+(0.9,0)$) {\huge$\rightarrow$};
+		
+		\attentionlayer{input}{attention1}{6}
+		\node[align=center] at (attention12 |- top-level) {\texttt{Слой} \\ \texttt{внимания}};
+		\node at ($(input.east)+(6.1,0)$) {\huge$\rightarrow$};
+		
+		\fclayer{attention13}{fc1}{4}
+		\node[align=center] at (fc11 |- top-level) {\texttt{Полносвязный} \\ \texttt{слой}};
+		
+	\end{tikzpicture}
+	\caption{Пример схемы трансформера}
+	\label{img:transformer}
+\end{figure}
+
+Пусть задана последовательность векторов $\vec{x}_1, \vec{x}_2, \ldots, \vec{x}_n \in \mathbb{R}^d$, где $n~\in~\mathbb{N}$~--~длина последовательности, $d \in \mathbb{N}$~--~размерность векторного представления элемента. Для каждого элемента последовательности вычисляется следующий набор векторов~\cite{attention}:
+\begin{enumerate}
+	\item \textit{Запрос} $\vec{q}_i$ -- вектор, представляющий текущий элемент в роли <<искателя>> контекста от других элементов
+	\begin{equation}
+		\vec{q}_i = W^Q \vec{x}_i,
+	\end{equation}
+	где $W^Q$ -- обучаемая матрица параметров запросов;
+	
+	\item \textit{Ключ} $\vec{k}_i$ -- вектор, представляющий элемент в роли <<источника>> контекста для других элементов
+	\begin{equation}
+		\vec{k}_i = W^K \vec{x}_i,
+	\end{equation}
+	где $W^K$ -- обучаемая матрица параметров ключей;
+	
+	\item \textit{Значение} $\vec{v}_i$ -- вектор, содержащий фактическую информацию об элементе для агрегирования
+	\begin{equation}
+		\vec{v}_i = W^V \vec{x}_i,
+	\end{equation}
+	где $W^V$ -- обучаемая матрица параметров значений.
+\end{enumerate}
+
+Затем для каждого элемента $\vec{x}_i$ вычисляется степень его влияния на все остальные элементы последовательности. Для этого определяется скалярное произведение вектора запроса $\vec{q}_i$ на векторы ключей всех элементов $\vec{k}_j$ с последующим применением функции Softmax:
+\begin{equation}
+	\alpha_{ij} = \frac{\exp\left( \frac{\vec{q}_i \cdot \vec{k}_j}{\sqrt{d}} \right)}{\sum_{m=1}^n \exp\left( \frac{\vec{q}_i \cdot \vec{k}_m}{\sqrt{d}} \right)},
+\end{equation}
+где $\alpha_{ij} \in [0,1]$ -- степень влияния элемента $\vec{x}_j$ на элемент $\vec{x}_i$.
+
+Выходной вектор $\vec{z}_i$ для элемента $\vec{x}_i$, учитывающий влияние других элементов,  представляет собой взвешенную сумму векторов значений~\cite{attention}:
+\begin{equation}
+	\vec{z}_i = \sum_{j=1}^n \alpha_{ij} \vec{v}_j
+\end{equation}
+
+В результате механизма внимания формируется новая последовательность контекстуализированных векторов $\vec{z}_1, \vec{z}_2, \ldots, \vec{z}_n$. Каждый вектор $\vec{z}_i$ содержит информацию не только об исходном элементе $\vec{x}_i$, но и о всех элементах последовательности, с которыми он значимо взаимодействует~\cite{attention}.
+
+Трансформер может быть адаптирован для работы с изображениями. Для этого изображение разбивается на непересекающиеся фрагменты фиксированного размера. Каждый фрагмент линейно преобразуется в векторное представление, после чего получается последовательность векторов $\vec{x}_1, \vec{x}_2, \ldots, \vec{x}_n$, где $n$ -- количество фрагментов. К этой последовательности применяется стандартный механизм работы трансформера~\cite{vit}.
+
+К преимуществам обработки изображений трансформерами относятся восприятие глобального контекста за счёт механизма внимания и  возможность параллельной обработки всех элементов последовательности. Недостатками являются квадратичная вычислительная сложность по отношению к количеству фрагментов и относительно большое количество параметров~\cite{attention}.
+
+\subsubsection{Vision Transformer}
+
+Архитектура Vision Transformer была представлена в 2020 году исследовательской командой Google Brain. Её ключевой особенностью является адаптация архитектуры трансформера к задаче компьютерного зрения~\cite{vit}.
+
+Основная идея данной архитектуры заключается в разделении изображения на квадратные фрагменты $16\times16$, последующем создании векторных представлений этих фрагментов и применении стандартного механизма работы для получившейся последовательности векторов. Векторным представлением фрагмента является набор из $16\times16\times3$ элементов, компоненты которого соответствуют интенсивностям пикселей фрагмента. Схема Vision Transformer представлена на рисунке~\ref{img:vit}.
+
+Преимуществом данной архитектуры является высокая обобщающая способность. Недостатком же является относительно большая вычислительная сложность и количество параметров -- 84 миллиона~\cite{vit}.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance=6mm]
+		
+		\tikzset{
+			layer/.style={
+				rectangle, draw, minimum width=6.3cm,
+				minimum height=0.5cm, align=center,
+				font=\small, fill=#1
+			},
+			layer/.default=white,
+			blockbox/.style={
+				draw, rectangle, rounded corners,
+				inner sep=6pt
+			},
+			blockbox-dashed/.style={
+				draw, rectangle, rounded corners,
+				inner sep=6pt,
+				dashed
+			},
+			arrow/.style={
+				-latex, thick
+			}
+		}
+		
+		% ---------- Left branch ----------
+		\node[layer=gray!10] (input){\texttt{Изображение 256$\times$256$\times$3}};
+		
+		\node[layer=yellow!10, below=0.8cm of input] (bn1) {\texttt{Пакетная нормализация}};
+		\node[layer=yellow!20, below=0.1cm of bn1] (c1) {\texttt{Слой внимания 16}};
+		\node[layer=yellow!10, below=0.1cm of c1] (bn2) {\texttt{Пакетная нормализация}};
+		\node[layer=red!20, below=0.1cm of bn2] (mp1) {\texttt{Полносвязный 5120 + GELU}};
+		\node[blockbox-dashed, fit=(bn1) (c1) (bn2) (mp1), below=of input] (block1) {};
+		\node[align=center, right=0.2cm of block1] {\texttt{$\times$ 16}};
+		
+		\node[layer=red!20, below=1.05cm of mp1] (mp2) {\texttt{Полносвязный 2 + Softmax}};
+		\node[blockbox, fit=(mp2), below=of block1] (block2) {};
+		
+		\node[layer=gray!10, below=0.8cm of mp2] (output){\texttt{Результат}};
+		
+		\draw[arrow] (input) -- (block1);
+		\draw[arrow] (block1) -- (block2);
+		\draw[arrow] (block2) -- (output);
+		
+	\end{tikzpicture}
+	\caption{Схема архитектуры Vision Transformer}
+	\label{img:vit}
+\end{figure}
+
+В большинстве полносвязных слоёв архитектуры используется функция активации под названием Gaussian Error Linear Unit, имеющая следующий вид~\cite{gelu}:
+\begin{equation}
+	GELU(x) = 0.5x \left( 1 + \tanh\left[ \sqrt{\frac{2}{\pi}} \left( x + 0.044715x^3 \right) \right] \right)
+\end{equation}
+
+Обучающий набор данных рассматриваемой ИНС представлен в виде FaceForensics. Результаты тестирования представлены в таблице~\ref{tbl:vit-results}~\cite{dd-vit}.
+
+\begin{table}[H]
+	\centering
+	\caption{Результаты тестирования Vision Transformer}
+	\label{tbl:vit-results}
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Контрольный набор данных} & \textbf{Точность, \%} \\
+		\hline
+		FaceForensics & 97.00 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Классификация рассмотренных решений}
+
+В данном разделе представляются критерии и проведение классификации рассмотренных решений.
+
+\subsection{Критерии классификации}
+
+Выбор критериев классификации обусловлен необходимостью комплексной оценки методов обнаружения признаков генерации. Уровень декомпозиции изображения определяет подход к анализу визуальной информации, вычислительная сложность характеризует практическую применимость метода, а устойчивость к шумам отражает его надёжность при работе с данными, подверженными искажениям. Критерии классификации и классы, соответствующие критериям представлены в таблицах~\ref{tab:classification-criteria}-\ref{tab:noise-resistance-classification}.
+
+\begin{table}[H]
+	\centering
+	\caption{Критерии классификации методов обнаружения признаков генерации на изображении}
+	\label{tab:classification-criteria}
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{4cm}|Y|}
+		\hline
+		\textbf{Критерий} & \textbf{Описание} \\
+		\hline
+		Уровень декомпозиции изображения & Уровень признаков, на которых фокусируется метод при анализе изображения \\
+		\hline
+		Вычислительная сложность & Количество параметров метода \\
+		\hline
+		Устойчивость к шумам & Способность метода сохранять точность при работе с зашумлёнными изображениями \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Классификация по уровню декомпозиции изображения}
+	\label{tab:analysis-level-classification}
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{4cm}|Y|}
+		\hline
+		\textbf{Класс} & \textbf{Описание} \\
+		\hline
+		Микроскопические & Анализ на уровне интенсивностей пикселей \\
+		\hline
+		Мезоскопические & Анализ признаков промежуточного уровня между пикселями и семантическими объектами \\
+		\hline
+		Макроскопические & Анализ глобальных признаков, семантических связей и пространственных отношений между частями изображения \\
+		\hline
+		Холистические & Анализ изображения как целостной системы с учетом четырех взаимосвязей всех элементов и глобального контекста \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+Выбор количественных границ для классификации по вычислительной сложности обусловлен распределением параметров рассмотренных методов. Значение 500 тысяч определено как верхняя граница компактных архитектур, к которым относятся свёрточные сети с объёмом 28-30 тысяч параметров, пригодные для устройств с ограниченными ресурсами. 
+\begin{table}[h]
+	\centering
+	\caption{Классификация по вычислительной сложности}
+	\label{tab:complexity-classification}
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{4cm}|Y|}
+		\hline
+		\textbf{Класс} & \textbf{Описание} \\
+		\hline
+		Компактные & Количество параметров метода меньше 500\,000 \\
+		\hline
+		Средние & Количество параметров метода в интервале от 500\,000 до 10\,000\,000\\
+		\hline
+		Крупные &  Количество параметров метода больше 10\,000\,000 \\
+		\hline
+	\end{tabularx}
+\end{table}
+Нижняя граница крупных методов установлена на 10 миллионов, поскольку трансформеры и капсульные сети, обеспечивающие глобальный анализ, имеют от 70 до 80 миллионов параметров и выше.
+
+\begin{table}[H]
+	\centering
+	\caption{Классификация по устойчивости к шумам}
+	\label{tab:noise-resistance-classification}
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{4cm}|Y|}
+		\hline
+		\textbf{Класс} & \textbf{Описание} \\
+		\hline
+		Неустойчивые & Методы, точность которых значительно снижается при работе с зашумлёнными изображениями \\
+		\hline
+		Устойчивые & Методы, точность которых незначительно снижается при работе с зашумлёнными изображениями \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+
+\subsection{Результаты классификации}
+
+Результаты классификации обозреваемых решений по вышеописанным критериям представлены в таблице~\ref{tab:methods-classification}.
+
+\begin{table}[H]
+	\centering
+	\caption{Классификация методов обнаружения признаков генерации на изображении}
+	\label{tab:methods-classification}
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3.4cm}|Y|>{\centering\arraybackslash}p{3.4cm}|Y|}
+		\hline
+		\textbf{Метод} & \textbf{Уровень декомпозиции изображения} & \textbf{Вычисли-тельная сложность} & \textbf{Устойчивость к шумам} \\
+		\hline
+		Meso-4 & Мезоскопические & Компактные & Неустойчивые \\
+		\hline
+		Meso Inception-4 & Мезоскопические & Компактные & Устойчивые \\
+		\hline
+		Capsule Forensics & Макроскопические & Средние & Неустойчивые \\
+		\hline
+		Vision Transformer & Холистические & Крупные & Устойчивые \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+\section{Сравнительный анализ рассмотренных решений}
+\label{sec:comparative-analysis}
+
+В данном разделе представляются критерии и проведение сравнения рассмотренных решений.
+
+\subsection{Критерии сравнения}
+
+Критерии сравнения представлены в таблице~\ref{tab:compare-criteria}.
+
+\begin{table}[H]
+	\centering
+	\caption{Критерии сравнения методов обнаружения признаков генерации}
+	\label{tab:compare-criteria}
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{5cm}|Y|}
+		\hline
+		\textbf{Критерий} & \textbf{Описание} \\
+		\hline
+		Точность на наборе данных FaceForensics & Доля верно классифицированных изображений на наборе FaceForensics \\
+		\hline
+		Количество параметров & Количество параметров метода \\
+		\hline
+		Пороговое значение PSNR & Минимальное значение PSNR, при котором снижение точности метода не превышает 1\% \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+\subsection{Результаты сравнения}
+
+Результаты сравнительного анализа рассмотренных решений представлены в таблице~\ref{tab:methods-compare}.
+
+\begin{table}[H]
+	\centering
+	\caption{Сравнительный анализ методов обнаружения признаков генерации}
+	\label{tab:methods-compare}
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3.4cm}|Y|Y|>{\centering\arraybackslash}p{3.5cm}|}
+		\hline
+		\textbf{Метод} & 
+		\textbf{Точность на FaceForensics, \%} &
+		\textbf{Количество параметров, шт.} &
+		\textbf{Пороговое значение PSNR, дБ.} \\
+		\hline
+		Meso-4 & 94.6 & 27\,997 & 30 \\
+		\hline
+		Meso Inception-4 & 96.8 & 28\,615 & 28 \\
+		\hline
+		Capsule Forensics & 99.37 & 2\,800\,000 & 34 \\
+		\hline
+		Vision Transformer & 97.0 & 84\,000\,000 & 24 \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+Из результатов сравнительного анализа можно сделать вывод, что капсульные ИНС демонстрируют наивысшую точность на незашумлённых изображениях, в то время как свёрточные ИНС демонстрируют относительно высокую точность на изображениях любого вида. Трансформеры обладают наибольшей устойчивостью к шуму, что обеспечивается наибольшим количеством параметров.
+
+\section{Формализация изображения}
+
+\textit{Цветом} называется вектор $\vec{c}$, описывающий восприятие электромагнитного излучения в видимом диапазоне и характеризующийся набором интенсивностей, каждая из которых соответствует отдельному каналу восприятия:
+\begin{equation}
+	\vec{c} = (c_0, c_1, \ldots, c_{N-1}) \in \mathbb{R}^{N}_+,
+\end{equation}
+где $N \in \mathbb{N}$ -- количество каналов восприятия. Множество всех возможных цветов c $N$ каналами восприятия называется \textit{цветовым пространством} и обозначается $\mathbb{C}_N \subseteq \mathbb{R}^N_+$.
+
+\textit{Изображением} $I$ называется отображение, сопоставляющее каждой точке некоторого координатного пространства $\Omega \subset \mathbb{R}^M_+$ цвет в выбранном цветовом пространстве $\mathbb{C}_N$:
+\begin{equation}
+	I: \Omega \rightarrow \mathbb{C}_N
+\end{equation}
+При этом выделяются следующие виды изображений:
+\begin{itemize}
+	\item изображение называется \textit{непрерывным}, если его область определения $\Omega$ является связным подмножеством $\mathbb{R}^M_+$;
+	\item изображение называется \textit{дискретным (цифровым)}, если его область определения $\Omega$ является конечным подмножеством $\mathbb{Z}^M_+$.
+\end{itemize}
+
+\textit{Тензором} некоторого дискретного изображения $I$ называется тензор $T^I \in \mathbb{R}^{L_1 \times L_2 \times \cdots \times L_M \times N}_+$, элементы которого определяются следующим правилом:
+\begin{equation}
+	T^I_{i_1, i_2, \ldots, i_M, k} = I^{(k)}(i_1, i_2, \ldots, i_M), \quad i_\mu = \overline{0, L_\mu-1}, \quad k = \overline{0, N-1}
+\end{equation}
+где
+\begin{itemize}
+	\item $I^{(k)}(i_1,\ldots,i_M)$ -- значение интенсивности сигнала $k$-го канала восприятия цвета в точке с координатами $(i_1,\ldots,i_M)$;
+	\item $L_\mu \in \mathbb{N}$ -- размер изображения по $\mu$-му координатному направлению;
+	\item $N \in \mathbb{N}$ -- количество каналов восприятия.
+\end{itemize}
+
+\section{Формализация задачи}
+\label{sec:task-formalization}
+
+Пусть $I$ является некоторым цифровым двумерным изображением, а событие $A~=~\{\textit{изображение содержит признаки генерации}\}$. \textit{Функцией дискриминации}~$F_{\tau}$ называется следующая функция:
+\begin{equation}
+	F_{\tau}(I) = 
+	\begin{cases}
+		1, & P({A \mid I}) \geqslant \tau \\
+		0, & \textit{иначе}
+	\end{cases},
+\end{equation}
+где
+\begin{itemize}[label=---]
+	\item $\tau \in (0;1)$ -- пороговая вероятность;
+	\item $P({A \mid I})$ -- вероятность наличия признаков генерации на изображении $I$.
+\end{itemize}
+Возвращаемые значения функции дискриминации $F_{\tau}(I)$ отвечают следующему правилу:
+\begin{equation}
+	\begin{cases}
+		1, & \textit{изображение $I$ содержит признаки генерации} \\
+		0, & \textit{изображение $I$ не содержит признаки генерации} 
+	\end{cases}
+\end{equation}
+При этом следует отметить, что наличие признаков генерации является необходимым, но не достаточным условием для отнесения изображения к категории <<поддельных>>, так как подделка предполагает также целенаправленный характер фальсификации. Однако в рамках формализации задачи \textbf{допускается} интерпретация факта наличия признаков генерации на изображении как индикатора его поддельности, то есть возвращаемые значения функции дискриминации также понимаются следующим образом:
+\begin{equation}
+	\begin{cases}
+		1, & \textit{изображение $I$ является поддельным} \\
+		0, & \textit{изображение $I$ не является поддельным} 
+	\end{cases}
+\end{equation}
+
+Задача обнаружения признаков генерации на изображении состоит в том, чтобы определить апостериорную вероятность $P(A \mid I)$. Функциональная постановка задачи представлена на рисунке~\ref{img:fpz}.
+
+\includeimage
+{fpz}
+{f} % Обтекание (без обтекания)
+{H}
+{\textwidth} % Ширина рисунка
+{Функциональная постановка задачи обнаружения признаков генерации на изображении}
+
+\section{Выводы из аналитического раздела}
+
+В результате проведенного анализа для реализации метода обнаружения признаков генерации на изображении с использованием нейронной сети были решены следующие задачи:
+\begin{itemize}
+	\item проанализирована предметная область;
+	\item проведен сравнительный анализ известных нейросетевых решений: сверточных ИНС, капсульных ИНС и трансформеров;
+	\item предложены и обоснованы критерии классификации рассмотренных решений.
+\end{itemize}	
+
+В результате проведенных классификации и сравнительного анализа было установлено, что:
+\begin{itemize}	
+	\item вычислительная сложность метода напрямую связана с уровнем декомпозиции изображения;
+	\item капсульные ИНС достигают наибольшей точности на наборе FaceForensics, свёрточные ИНС обеспечивают баланс между точностью и устойчивостью к шуму, а трансформеры демонстрируют наибольшую устойчивость к искажениям данных, имея наибольшее количество параметров.
+\end{itemize}
+
+Предложена формализация задачи в виде функциональной модели, включающая определение апостериорной вероятности наличия признаков генерации и формальное задание функции дискриминации, что позволяет  интерпретировать задачу обнаружения признаков генерации как задачу бинарной классификации.
